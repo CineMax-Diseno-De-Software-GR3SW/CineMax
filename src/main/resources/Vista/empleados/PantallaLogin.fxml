@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<!-- stylesheets = "@ayu-theme.css" -->
+
+<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.Controlador.ControladorLogin">
+
+    <Label text="CineMAX">
+        <font>
+            <Font size="60" />
+        </font>
+    </Label>
+
+    <TextField fx:id="txtUsuario" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Usuario" />
+
+    <PasswordField fx:id="txtPassword" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Contraseña" />
+
+    <Button onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Log In">
+      <font>
+         <Font size="18.0" />
+      </font></Button>
+
+    <Label fx:id="lblError" maxWidth="300" visible="false" wrapText="true" />
+
+</VBox>

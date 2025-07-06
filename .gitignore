@@ -1,0 +1,50 @@
+# Archivos compilados de Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Archivos de log
+*.log
+
+# Carpetas de compilación de Maven
+# Ignora la carpeta target principal, pero no las subcarpetas con el mismo nombre
+/target/
+
+# ¡Importante! No ignorar el Maven Wrapper
+# Esto permite que otros construyan el proyecto con la misma versión de Maven
+!.mvn/wrapper/maven-wrapper.jar
+
+# Carpetas y archivos de configuración del IDE (IntelliJ IDEA)
+# Ignorar la carpeta completa es más simple y seguro
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Archivos de configuración del IDE (Eclipse)
+.classpath
+.project
+.settings/
+.factorypath
+.apt_generated
+.springBeans
+.sts4-cache
+
+# Archivos de configuración del IDE (NetBeans)
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+# Archivos de configuración del IDE (VS Code)
+.vscode/
+
+# Archivos de Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de volcado de memoria de la JVM
+hs_err_pid*

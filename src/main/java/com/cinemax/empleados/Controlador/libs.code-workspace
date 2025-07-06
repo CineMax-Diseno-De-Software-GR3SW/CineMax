@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"name": "libs",
+			"path": "../../../../../../../../../GUBeta2/libs"
+		},
+		{
+			"name": "Empleados",
+			"path": "../../../../../../.."
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "interactive"
+	}
+}
