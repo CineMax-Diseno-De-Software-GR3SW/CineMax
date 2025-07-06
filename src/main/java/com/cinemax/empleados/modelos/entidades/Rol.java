@@ -1,4 +1,4 @@
-package com.cinemax.empleados.Modelo.Entidades;
+package com.cinemax.empleados.modelos.entidades;
 
 import java.util.Set;
 import java.util.HashSet;

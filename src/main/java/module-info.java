@@ -5,8 +5,8 @@ module com.cinemax.empleados {
 
 
 opens com.cinemax.empleados to javafx.fxml;
-opens com.cinemax.empleados.Modelo.Entidades to javafx.base;
+opens com.cinemax.empleados.modelos.entidades to javafx.base;
 exports com.cinemax.empleados;
-opens com.cinemax.empleados.Controlador to javafx.fxml;
-exports com.cinemax.empleados.Controlador;
+opens com.cinemax.empleados.controladores to javafx.fxml;
+exports com.cinemax.empleados.controladores;
 }

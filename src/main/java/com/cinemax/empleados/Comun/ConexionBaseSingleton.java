@@ -1,4 +1,4 @@
-package com.cinemax.empleados.Comun;
+package com.cinemax.empleados.comun;
 
 import java.sql.*;
 

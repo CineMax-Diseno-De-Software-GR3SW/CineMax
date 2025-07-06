@@ -1,8 +1,8 @@
-package com.cinemax.empleados.Modelo.Persistencia;
+package com.cinemax.empleados.modelos.persistencia;
 
-import com.cinemax.empleados.Comun.ConexionBaseSingleton;
-import com.cinemax.empleados.Modelo.Entidades.Usuario;
-import com.cinemax.empleados.Modelo.Entidades.Rol;
+import com.cinemax.empleados.comun.ConexionBaseSingleton;
+import com.cinemax.empleados.modelos.entidades.Rol;
+import com.cinemax.empleados.modelos.entidades.Usuario;
 
 import java.sql.*;
 import java.time.LocalDateTime;

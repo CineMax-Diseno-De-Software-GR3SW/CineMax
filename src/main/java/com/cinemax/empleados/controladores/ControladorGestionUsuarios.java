@@ -1,12 +1,10 @@
-package com.cinemax.empleados.Controlador;
+package com.cinemax.empleados.controladores;
 
-import com.cinemax.empleados.Servicios.ServicioRoles;
-import com.cinemax.empleados.Servicios.GestorSesionSingleton;
-import com.cinemax.empleados.Modelo.Entidades.Usuario;
-import com.cinemax.empleados.Modelo.Entidades.*;
+import com.cinemax.empleados.modelos.entidades.*;
+import com.cinemax.empleados.servicios.GestorSesionSingleton;
+import com.cinemax.empleados.servicios.ServicioRoles;
+import com.cinemax.empleados.servicios.ServicioUsuarios;
 
-
-import com.cinemax.empleados.Servicios.ServicioUsuarios;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

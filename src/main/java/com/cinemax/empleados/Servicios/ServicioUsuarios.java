@@ -1,8 +1,9 @@
-package com.cinemax.empleados.Servicios;
+package com.cinemax.empleados.servicios;
 
-import com.cinemax.empleados.Modelo.Entidades.*;
-import com.cinemax.empleados.Modelo.Persistencia.UsuarioDAO;
 import java.util.List;
+
+import com.cinemax.empleados.modelos.entidades.*;
+import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
 public class ServicioUsuarios {
     private ValidadorUsuario validador;

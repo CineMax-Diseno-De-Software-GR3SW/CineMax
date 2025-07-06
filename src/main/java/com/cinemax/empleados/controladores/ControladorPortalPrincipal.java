@@ -1,7 +1,7 @@
-package com.cinemax.empleados.Controlador;
+package com.cinemax.empleados.controladores;
 
-import com.cinemax.empleados.Servicios.GestorSesionSingleton;
-import com.cinemax.empleados.Modelo.Entidades.*;
+import com.cinemax.empleados.modelos.entidades.*;
+import com.cinemax.empleados.servicios.GestorSesionSingleton;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

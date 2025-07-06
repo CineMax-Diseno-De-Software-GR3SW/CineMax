@@ -1,10 +1,9 @@
-package com.cinemax.empleados.Servicios;
+package com.cinemax.empleados.servicios;
 
-import com.cinemax.empleados.Modelo.Entidades.Permiso;
-import com.cinemax.empleados.Modelo.Entidades.Usuario;
-import com.cinemax.empleados.Modelo.Persistencia.UsuarioDAO;
-
-import com.cinemax.empleados.Modelo.Entidades.Rol;
+import com.cinemax.empleados.modelos.entidades.Permiso;
+import com.cinemax.empleados.modelos.entidades.Rol;
+import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
 public class GestorSesionSingleton {
     private static GestorSesionSingleton gestorSesion;
