@@ -1,4 +1,4 @@
-package com.cinemax.modulopeliculas.Comun;
+package com.cinemax.comun.modelos.persistencia;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

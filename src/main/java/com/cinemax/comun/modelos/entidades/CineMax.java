@@ -1,4 +1,4 @@
-package com.cinemax.modulopeliculas.Modelos;
+package com.cinemax.comun.modelos.entidades;
 
 import java.util.List;
 

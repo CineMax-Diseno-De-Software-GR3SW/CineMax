@@ -1,11 +1,11 @@
-package com.cinemax.modulopeliculas.Servicios.Peliculas;
+package com.cinemax.peliculas.servicios;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import com.cinemax.modulopeliculas.Modelos.Peliculas.Idioma;
-import com.cinemax.modulopeliculas.Modelos.Peliculas.Pelicula;
-import com.cinemax.modulopeliculas.Modelos.Persistencia.Peliculas.PeliculaDAO;
+import com.cinemax.peliculas.modelos.entidades.Idioma;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 
 public class ServicioPelicula {
     

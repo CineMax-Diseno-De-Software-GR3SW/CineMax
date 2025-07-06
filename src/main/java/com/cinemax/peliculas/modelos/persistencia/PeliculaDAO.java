@@ -1,4 +1,4 @@
-package com.cinemax.modulopeliculas.Modelos.Persistencia.Peliculas;
+package com.cinemax.peliculas.modelos.persistencia;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -8,9 +8,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.modulopeliculas.Comun.GestorDB;
-import com.cinemax.modulopeliculas.Modelos.Peliculas.Idioma;
-import com.cinemax.modulopeliculas.Modelos.Peliculas.Pelicula; 
+import com.cinemax.comun.modelos.persistencia.GestorDB;
+import com.cinemax.peliculas.modelos.entidades.Idioma;
+import com.cinemax.peliculas.modelos.entidades.Pelicula; 
 
 public class PeliculaDAO {
     

@@ -1,13 +1,13 @@
-package com.cinemax.modulopeliculas.Controladores.Peliculas;
+package com.cinemax.peliculas.controladores;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-import com.cinemax.modulopeliculas.Modelos.Peliculas.Genero;
-import com.cinemax.modulopeliculas.Modelos.Peliculas.Idioma;
-import com.cinemax.modulopeliculas.Modelos.Peliculas.Pelicula;
-import com.cinemax.modulopeliculas.Servicios.Peliculas.ServicioPelicula;
+import com.cinemax.peliculas.modelos.entidades.Genero;
+import com.cinemax.peliculas.modelos.entidades.Idioma;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.peliculas.servicios.ServicioPelicula;
 
 
 public class ControladorPelicula {

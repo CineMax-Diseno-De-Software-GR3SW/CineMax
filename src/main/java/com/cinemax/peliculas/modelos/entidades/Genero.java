@@ -1,4 +1,4 @@
-package com.cinemax.modulopeliculas.Modelos.Peliculas;
+package com.cinemax.peliculas.modelos.entidades;
 
 public enum Genero {
     ACCION("Acción"),

@@ -1,8 +1,8 @@
-package com.cinemax.modulopeliculas;
+package com.cinemax;
 
-import com.cinemax.modulopeliculas.Controladores.ControladorCineMax;
-import com.cinemax.modulopeliculas.Modelos.CineMax;
-import com.cinemax.modulopeliculas.Vistas.VistaCineMax;
+import com.cinemax.comun.controladores.ControladorCineMax;
+import com.cinemax.comun.modelos.entidades.CineMax;
+import com.cinemax.comun.vistas.VistaCineMax;
 
 
 public class Main{
