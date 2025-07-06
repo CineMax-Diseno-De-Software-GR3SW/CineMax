@@ -25,6 +25,11 @@
             <artifactId>javafx-fxml</artifactId>
             <version>22-ea+11</version>
         </dependency>
+        <dependency>
+    <groupId>org.apache.pdfbox</groupId>
+    <artifactId>pdfbox</artifactId>
+    <version>2.0.24</version>
+</dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -32,6 +37,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+    <groupId>com.itextpdf</groupId>
+    <artifactId>itextpdf</artifactId>
+    <version>5.5.13.2</version>
+</dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>

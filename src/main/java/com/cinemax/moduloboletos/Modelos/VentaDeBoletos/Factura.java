@@ -10,7 +10,7 @@ public class Factura {
     private double subTotal;
     private double total;
 
-    public Factura(){
+    public Factura() {
 
     }
 
@@ -18,7 +18,7 @@ public class Factura {
         this.codigoFactura = numeroFactura;
         this.fecha = fechaEmision;
         this.cliente = cliente;
-        //this.total = total;
+        // this.total = total;
     }
 
     public String getCodigoFactura() {
@@ -42,14 +42,14 @@ public class Factura {
     }
 
     public void calcularSubTotal() {
-        //this.subTotal = calculadorImpuesto.calcularImpuesto(productos);
+        // this.subTotal = calculadorImpuesto.calcularImpuesto(productos);
         for (Producto producto : productos) {
             subTotal += producto.getPrecio();
         }
     }
 
     public void calcularTotal(CalculadorImpuesto calculadorImpuesto) {
-        this.total =  subTotal + calculadorImpuesto.calcularImpuesto(subTotal);
+        this.total = subTotal + calculadorImpuesto.calcularImpuesto(subTotal);
     }
 
     @Override
@@ -66,5 +66,9 @@ public class Factura {
 
     public double getSubTotal() {
         return subTotal;
+    }
+
+    public List<Producto> getProductos() {
+        return this.productos;
     }
 }

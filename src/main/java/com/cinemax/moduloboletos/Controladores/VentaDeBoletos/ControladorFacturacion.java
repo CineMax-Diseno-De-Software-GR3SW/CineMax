@@ -15,7 +15,7 @@ public class ControladorFacturacion {
         this.servicioFacturacion = new ServicioFacturacion();
     }
 
-    public Factura generarFactura(List<Producto> productos, Cliente cliente){
+    public Factura generarFactura(List<Producto> productos, Cliente cliente) {
         return servicioFacturacion.generarFactura(productos, cliente);
-    }    
+    }
 }
