@@ -1,0 +1,116 @@
+@startuml General_DiagramaDeClases
+
+package empleados {
+
+}
+
+
+package peliculas {
+
+}
+
+package salas {
+' Enumeraciones
+    enum EstadoSala {
+        DISPONIBLE
+        OCUPADA
+        MANTENIMIENTO
+    }
+
+    enum TipoSala {
+        NORMAL
+        VIP
+    }
+
+    enum EstadoButaca {
+        DISPONIBLE
+        RESERVADA
+        OCUPADA
+        INHABILITADA
+    }
+
+    enum TipoButaca {
+        NORMAL
+        RECLINABLE
+        VIP
+    }
+
+    ' Clases principales
+    class Sala {
+        - id: int
+        - nombre: String
+        - capacidad: String [fila][numeroColumna]
+        - mapaDeButacas: List<Butaca>
+        - estado: EstadoSala
+        - tipo: TipoSala
+        + getInfoSala(): String
+        + setInfoSala(nombre: String, capacidad: int, tipo: TipoSala): void
+    }
+
+    class Butaca {
+        - id: int
+        - estado: EstadoButaca
+        - numeroColumna: String
+        - fila: String
+        - tipo: TipoButaca
+        + getInfoButaca(): String
+        + setInfoButaca(numero: String, fila: String): void
+    }
+
+    ' Controladores
+    class ControladorSalas {
+        - Salas: List<Sala>
+        + crearSala()
+        + eliminarSala()
+        + listarSalas()
+        + reservarButaca()
+        + cancelarReserva()
+    }
+
+    class ControladorButacas {
+        - Butacas: List<Butaca>
+        + crearButaca()
+        + eliminarButaca()
+        + listarButacas()
+        + reservarButaca()
+        + cancelarReserva()
+    }
+
+    class ControladorDeConsultaSalas {
+        - Salas: List<Sala>
+        + consultarSalasDisponibles(): List<Sala>
+        + consultarMapaDeButacas(sala: Sala): List<Butaca>
+    }
+
+    class InterfazAdministradorDeSalasYButacas {
+        - controladorSalas: ControladorSalas
+        - controladorButacas: ControladorButacas
+        + presentarOpcionesDeAdministración(): void
+    }
+
+    ' Relaciones
+    InterfazAdministradorDeSalasYButacas --> ControladorSalas : gestiona salas
+    InterfazAdministradorDeSalasYButacas --> ControladorButacas : gestiona butacas
+
+    ControladorSalas --> Sala : gestiona
+    ControladorButacas --> Butaca : gestiona
+    ControladorDeConsultaSalas --> Sala : consulta
+    ControladorDeConsultaSalas --> Butaca : consulta
+
+    Sala --> EstadoSala : tiene estado
+    Sala --> TipoSala : tiene tipo
+    Sala --> "1..*" Butaca : mapaDeButacas
+
+    Butaca --> EstadoButaca : tiene estado
+    Butaca --> TipoButaca : tiene tipo
+}
+
+package venta-boletos {
+
+}
+
+package reportes {
+
+}
+
+@enduml
