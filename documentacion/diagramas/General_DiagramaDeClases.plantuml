@@ -1,1 +1,24 @@
+@startuml General_DiagramaDeClases
 
+package empleados {
+
+}
+
+
+package peliculas {
+
+}
+
+package salas {
+
+}
+
+package venta-boletos {
+
+}
+
+package reportes {
+
+}
+
+@enduml
