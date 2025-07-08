@@ -187,11 +187,9 @@ package peliculas {
 }
 
 package salas {
-
-    ' Enumeraciones
+package modelos {
     enum EstadoSala {
         DISPONIBLE
-        OCUPADA
         MANTENIMIENTO
     }
 
@@ -207,13 +205,6 @@ package salas {
         INHABILITADA
     }
 
-    enum TipoButaca {
-        NORMAL
-        RECLINABLE
-        VIP
-    }
-
-    ' Clases principales
     class Sala {
         - id: int
         - nombre: String
@@ -230,19 +221,35 @@ package salas {
         - estado: EstadoButaca
         - numeroColumna: String
         - fila: String
-        - tipo: TipoButaca
         + getInfoButaca(): String
         + setInfoButaca(numero: String, fila: String): void
     }
+}
 
-    ' Controladores
+package servicios {
+    class ServicioSalas {
+        + crearSala(sala: Sala): void
+        + eliminarSala(id: int): void
+        + listarSalas(): List<Sala>
+        + actualizarSala(sala: Sala): void
+        + buscarSalaPorId(id: int): Sala
+    }
+
+    class ServicioButacas {
+        + crearButaca(butaca: Butaca): void
+        + eliminarButaca(id: int): void
+        + listarButacas(sala: Sala): List<Butaca>
+        + reservarButaca(id: int): void
+        + cancelarReserva(id: int): void
+    }
+}
+
+package Controladores {
     class ControladorSalas {
         - Salas: List<Sala>
         + crearSala()
         + eliminarSala()
         + listarSalas()
-        + reservarButaca()
-        + cancelarReserva()
     }
 
     class ControladorButacas {
@@ -250,8 +257,6 @@ package salas {
         + crearButaca()
         + eliminarButaca()
         + listarButacas()
-        + reservarButaca()
-        + cancelarReserva()
     }
 
     class ControladorDeConsultaSalas {
@@ -259,28 +264,29 @@ package salas {
         + consultarSalasDisponibles(): List<Sala>
         + consultarMapaDeButacas(sala: Sala): List<Butaca>
     }
+}
 
-    class InterfazAdministradorDeSalasYButacas {
-        - controladorSalas: ControladorSalas
-        - controladorButacas: ControladorButacas
-        + presentarOpcionesDeAdministración(): void
-    }
+' Relaciones de controladores a servicios
+ControladorSalas ..> ServicioSalas
+ControladorButacas ..> ServicioButacas
+ControladorDeConsultaSalas ..> ServicioSalas
+ControladorDeConsultaSalas ..> ServicioButacas
 
-    ' Relaciones
-    InterfazAdministradorDeSalasYButacas --> ControladorSalas : gestiona salas
-    InterfazAdministradorDeSalasYButacas --> ControladorButacas : gestiona butacas
+' Relaciones de servicios a modelos
+ServicioSalas ..> Sala
+ServicioButacas ..> Butaca
 
-    ControladorSalas --> Sala : gestiona
-    ControladorButacas --> Butaca : gestiona
-    ControladorDeConsultaSalas --> Sala : consulta
-    ControladorDeConsultaSalas --> Butaca : consulta
+' Relaciones existentes
+ControladorSalas --> Sala : gestiona
+ControladorButacas --> Butaca : gestiona
+ControladorDeConsultaSalas --> Sala : consulta
+ControladorDeConsultaSalas --> Butaca : consulta
 
-    Sala --> EstadoSala : tiene estado
-    Sala --> TipoSala : tiene tipo
-    Sala --> "1..*" Butaca : mapaDeButacas
+Sala --> EstadoSala : tiene estado
+Sala --> TipoSala : tiene tipo
+Sala --> "1..*" Butaca : mapaDeButacas
 
-    Butaca --> EstadoButaca : tiene estado
-    Butaca --> TipoButaca : tiene tipo
+Butaca --> EstadoButaca : tiene estado
 }
 
 package venta-boletos {
