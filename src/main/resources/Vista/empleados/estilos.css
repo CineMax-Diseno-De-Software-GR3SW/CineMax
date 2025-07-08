@@ -1,0 +1,82 @@
+/* Fondo oscuro estilizado */
+.vbox {
+    -fx-background-color: #0A0E14;
+    -fx-padding: 40px;
+    -fx-background-radius: 0;
+}
+/* --- ESTILOS GENERALES (TEMA OSCURO - VERSIÓN "AYU DARK" + BLUR) --- */
+.root, .content-pane {
+    -fx-background-color: #0A0E14; /* Fondo principal de Ayu Dark */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+/* Contenedor principal específico para PortalPrincipal */
+#portalPrincipalVBox {
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+    -fx-pref-width: 600px;
+    -fx-pref-height: 500px;
+    -fx-padding: 30px;
+    -fx-background-color: #0D121A;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.1), 20, 0, 0, 0);
+}
+
+/* Título con color claro para resaltar en fondo oscuro */
+.label {
+    -fx-text-fill: #CBCCC6;
+    -fx-font-size: 28px;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Texto de bienvenida */
+.text {
+    -fx-font-size: 16px;
+    -fx-fill: #CBCCC6;
+    -fx-text-alignment: center;
+    -fx-wrap-text: true;
+    -fx-padding: 0 20 20 20;
+}
+
+/* Botones rectangulares con color naranja */
+.button {
+    -fx-font-size: 16px;
+    -fx-background-color: #FF8F40;
+    -fx-text-fill: #0A0E14;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-pref-width: -1; /* Allow natural width */
+    -fx-pref-height: 50px; /* Increased height */
+    -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.4), 15, 0, 0, 0);
+    -fx-padding: 10 20 10 20; /* Added vertical padding */
+    -fx-alignment: center;
+}
+
+/* Apply same button style to simple buttons */
+.simple-button {
+    -fx-font-size: 16px;
+    -fx-background-color: #FF8F40;
+    -fx-text-fill: #0A0E14;
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-cursor: hand;
+    -fx-pref-width: -1;
+    -fx-pref-height: 50px;
+    -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.4), 15, 0, 0, 0);
+    -fx-padding: 10 20 10 20;
+    -fx-alignment: center;
+}
+
+/* Efecto hover: naranja claro */
+.button:hover {
+    -fx-background-color: #FFA76B;
+}
+
+/* Último botón (Cerrar sesión): rojo suave */
+.button:last-of-type {
+    -fx-background-color: #F07178;
+}
+
+.button:last-of-type:hover {
+    -fx-background-color: #922b21;
+}
