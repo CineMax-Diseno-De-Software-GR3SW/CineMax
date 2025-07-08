@@ -47,7 +47,6 @@ package salas {
         - estado: EstadoButaca
         - numeroColumna: String
         - fila: String
-        - tipo: TipoButaca
         - idSala : int
         + getInfoButaca(): String
         + setInfoButaca(numero: String, fila: String): void

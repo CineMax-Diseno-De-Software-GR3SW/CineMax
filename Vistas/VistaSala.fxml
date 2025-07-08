@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="Controladores.ControladorSalas">
+    <top>
+        <Label text="Gestión de Salas" style="-fx-font-size: 20px; -fx-padding: 10;"/>
+    </top>
+    <center>
+        <VBox spacing="10" padding="10">
+            <GridPane hgap="10" vgap="10">
+                <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Capacidad:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtCapacidad" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Tipo:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cmbTipo" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="Estado:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cmbEstado" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+            </GridPane>
+            <HBox spacing="10">
+                <Button text="Crear" onAction="#crearSala"/>
+                <Button text="Actualizar" onAction="#actualizarSala"/>
+                <Button text="Eliminar" onAction="#eliminarSala"/>
+                <Button text="Limpiar" onAction="#limpiarCampos"/>
+            </HBox>
+            <TableView fx:id="tablaSalas" prefHeight="200">
+                <columns>
+                    <TableColumn text="ID" prefWidth="50" fx:id="colId"/>
+                    <TableColumn text="Nombre" prefWidth="120" fx:id="colNombre"/>
+                    <TableColumn text="Capacidad" prefWidth="80" fx:id="colCapacidad"/>
+                    <TableColumn text="Tipo" prefWidth="100" fx:id="colTipo"/>
+                    <TableColumn text="Estado" prefWidth="100" fx:id="colEstado"/>
+                </columns>
+            </TableView>
+        </VBox>
+    </center>
+</BorderPane>
