@@ -1,5 +1,4 @@
-@startuml DiagramaDeClases_GestiónDeVentaDeBoletos
-
+@startuml
 title Diagrama de Clases - Gestión de Venta de Boletos
 
 skinparam linetype ortho
@@ -23,7 +22,8 @@ package Controladores {
     }
 
     class ControladorAsignadorButacas {
-        + asignarButacas(controladorDeConsultaSalas: ControladorDeConsultaSalas, funcion: Funcion): List<Butaca>
+        - butacasOcupadas: List<Butaca>
+        + asignarButacas(controladorDeConsultaSalas: ControladorDeConsultaSalas, funcion: Funcion, butacasOcupadas: Map): List<Butaca>
     }
 
     class ControladorBoleto {
@@ -45,7 +45,7 @@ package Controladores {
         - cuerpo: String
         + especificarAsunto(asunto: String): void
         + especificarCuerpo(cuerpo: String): void
-        + enviar(correo: String, adjunto: PDF, ): void
+        + enviar(correo: String, adjunto: PDF): void
     }
 }
 
@@ -96,18 +96,12 @@ package Modelos {
         - codigoFactura: String
         - fecha: LocalDateTime
         - cliente: Cliente
-        - productos: List<ItemFactura>
+        - productos: List<Producto>
         - subtotal: double
         - total: double
         + calcularSubTotal(): double
         + calcularTotal(): double
         + generarCodigo(): String
-    }
-
-    class ItemFactura {
-        - producto: Producto
-        - subtotal: double
-        + calcularSubtotal(): double
     }
 
     interface CalculadorImpuesto {
@@ -120,9 +114,9 @@ package Modelos {
     }
 
     class Cliente {
+        - cedula: long
         - nombre: String
         - apellido: String
-        - cedula: long
         - correo: String
     }
 }
@@ -138,7 +132,7 @@ ControladorVentaBoletos --> ControladorAsignadorButacas
 ControladorVentaBoletos --> ControladorBoleto
 ControladorVentaBoletos --> ControladorFacturacion
 
-ControladorVentaBoletos ..> ServicioGeneradorArchivo 
+ControladorVentaBoletos --> ServicioGeneradorArchivo 
 ''ControladorVentaBoletos ..>ControladorGeneradorArchivo
 ControladorVentaBoletos ..> ControladorEnvios
 
@@ -155,9 +149,7 @@ ServicioFacturacion ..left> Cliente
 
 Boleto --up|> Producto
 
-ItemFactura "1... n" --> "1" Producto
-
-Factura "1" --> "1..*" ItemFactura
+Factura "1" --> "1..*" Producto
 Factura "1... *"--> "1" Cliente
 Factura ..> CalculadorImpuesto
 
@@ -166,5 +158,4 @@ CalculadorIVA ..up|> CalculadorImpuesto
 ControladorEnvios ..> ServicioEnvio
 
 ServicioCorreo ..up|> ServicioEnvio
-
 @enduml
