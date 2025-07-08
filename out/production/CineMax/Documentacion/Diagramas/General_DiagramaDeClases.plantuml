@@ -59,8 +59,7 @@ package salas {
         + crearSala()
         + eliminarSala()
         + listarSalas()
-        + reservarButaca()
-        + cancelarReserva()
+        +actualizarSala()
     }
 
     class ControladorButacas {

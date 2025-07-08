@@ -59,6 +59,7 @@ package salas {
         + crearSala()
         + eliminarSala()
         + listarSalas()
+        +actualizarSala()
     }
 
     class ControladorButacas {
