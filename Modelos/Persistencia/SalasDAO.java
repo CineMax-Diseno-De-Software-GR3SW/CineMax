@@ -1,11 +1,13 @@
 package Modelos.Persistencia;
 
 import Modelos.Entidades.Sala;
+import Modelos.Entidades.TipoSala;
+import Modelos.Entidades.EstadoSala;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SalaDAO {
+public class SalasDAO {
 
     public void crearSala(Sala sala) throws SQLException {
         String sql = "INSERT INTO Sala (nombre, capacidad, tipo, estado) VALUES (?, ?, ?, ?)";
@@ -13,8 +15,8 @@ public class SalaDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sala.getNombre());
             stmt.setInt(2, sala.getCapacidad());
-            stmt.setString(3, sala.getTipo());
-            stmt.setString(4, sala.getEstado());
+            stmt.setString(3, sala.getTipo().name());
+            stmt.setString(4, sala.getEstado().name());
             stmt.executeUpdate();
         }
     }
@@ -30,8 +32,8 @@ public class SalaDAO {
                         rs.getInt("id"),
                         rs.getString("nombre"),
                         rs.getInt("capacidad"),
-                        rs.getString("tipo"),
-                        rs.getString("estado")
+                        TipoSala.valueOf(rs.getString("tipo")),
+                        EstadoSala.valueOf(rs.getString("estado"))
                 );
             }
         }
@@ -49,8 +51,8 @@ public class SalaDAO {
                         rs.getInt("id"),
                         rs.getString("nombre"),
                         rs.getInt("capacidad"),
-                        rs.getString("tipo"),
-                        rs.getString("estado")
+                        TipoSala.valueOf(rs.getString("tipo")),
+                        EstadoSala.valueOf(rs.getString("estado"))
                 ));
             }
         }
@@ -63,8 +65,8 @@ public class SalaDAO {
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sala.getNombre());
             stmt.setInt(2, sala.getCapacidad());
-            stmt.setString(3, sala.getTipo());
-            stmt.setString(4, sala.getEstado());
+            stmt.setString(3, sala.getTipo().name());
+            stmt.setString(4, sala.getEstado().name());
             stmt.setInt(5, sala.getId());
             stmt.executeUpdate();
         }
