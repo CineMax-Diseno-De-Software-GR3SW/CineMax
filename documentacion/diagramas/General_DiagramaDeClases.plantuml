@@ -13,6 +13,7 @@ package salas {
     ' Enumeraciones
     enum EstadoSala {
         DISPONIBLE
+        OCUPADA
         MANTENIMIENTO
     }
 
@@ -28,7 +29,11 @@ package salas {
         INHABILITADA
     }
 
-
+    enum TipoButaca {
+        NORMAL
+        RECLINABLE
+        VIP
+    }
 
     ' Clases principales
     class Sala {
@@ -77,8 +82,15 @@ package salas {
         + consultarMapaDeButacas(sala: Sala): List<Butaca>
     }
 
+    class InterfazAdministradorDeSalasYButacas {
+        - controladorSalas: ControladorSalas
+        - controladorButacas: ControladorButacas
+        + presentarOpcionesDeAdministración(): void
+    }
 
     ' Relaciones
+    InterfazAdministradorDeSalasYButacas --> ControladorSalas : gestiona salas
+    InterfazAdministradorDeSalasYButacas --> ControladorButacas : gestiona butacas
 
     ControladorSalas --> Sala : gestiona
     ControladorButacas --> Butaca : gestiona
@@ -90,6 +102,7 @@ package salas {
     Sala --> "1..*" Butaca : mapaDeButacas
 
     Butaca --> EstadoButaca : tiene estado
+    Butaca --> TipoButaca : tiene tipo
 }
 
 package venta-boletos {
