@@ -9,7 +9,7 @@
             stylesheets="@ayu-theme.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.cinemax.empleados.Controlador.ControladorGestionUsuarios">
+            fx:controller="com.cinemax.empleados.controlador.ControladorGestionUsuarios">
 
     <!-- ░░░ TOP BAR ░░░ -->
     <top>

@@ -6,7 +6,7 @@
 
 <!-- stylesheets = "@ayu-theme.css" -->
 
-<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.Controlador.ControladorLogin">
+<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controlador.ControladorLogin">
 
     <Label text="CineMAX">
         <font>

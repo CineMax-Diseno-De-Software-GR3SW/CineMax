@@ -1,4 +1,4 @@
-package com.cinemax.empleados.Servicios;
+package com.cinemax.empleados.servicios;
 
 import java.util.regex.Pattern;
 

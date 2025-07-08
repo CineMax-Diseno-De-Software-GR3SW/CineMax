@@ -1,12 +1,12 @@
-package com.cinemax.empleados.Controlador;
+package com.cinemax.empleados.controlador;
 
-import com.cinemax.empleados.Servicios.ServicioRoles;
-import com.cinemax.empleados.Servicios.GestorSesionSingleton;
-import com.cinemax.empleados.Modelo.Entidades.Usuario;
-import com.cinemax.empleados.Modelo.Entidades.*;
+import com.cinemax.empleados.servicios.ServicioRoles;
+import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+import com.cinemax.empleados.modelo.Entidades.Usuario;
+import com.cinemax.empleados.modelo.Entidades.*;
 
 
-import com.cinemax.empleados.Servicios.ServicioUsuarios;
+import com.cinemax.empleados.servicios.ServicioUsuarios;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -44,7 +44,7 @@ public class ControladorGestionUsuarios {
     private ServicioUsuarios servicioUsuarios;
 
     private ServicioRoles servicioRoles;
-    private GestorSesionSingleton gestorSesion;
+    private ServicioSesionSingleton gestorSesion;
 
 
     @FXML
@@ -54,7 +54,7 @@ public class ControladorGestionUsuarios {
         servicioRoles = new ServicioRoles();
 
 
-        gestorSesion = GestorSesionSingleton.getInstancia();
+        gestorSesion = ServicioSesionSingleton.getInstancia();
         Usuario use = gestorSesion.getUsuarioActivo();
         lblNombreUsuario.setText(use.getNombreCompleto());
         lblRolUsuario.setText(use.getDescripcionRol());

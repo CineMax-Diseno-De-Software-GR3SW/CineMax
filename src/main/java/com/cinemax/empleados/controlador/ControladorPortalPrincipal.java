@@ -1,7 +1,7 @@
-package com.cinemax.empleados.Controlador;
+package com.cinemax.empleados.controlador;
 
-import com.cinemax.empleados.Servicios.GestorSesionSingleton;
-import com.cinemax.empleados.Modelo.Entidades.*;
+import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+import com.cinemax.empleados.modelo.Entidades.*;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,7 +41,7 @@ public class ControladorPortalPrincipal {
 
     @FXML private HBox headerBar;
 
-        private GestorSesionSingleton gestorSesion;
+        private ServicioSesionSingleton gestorSesion;
 
         /**
          * Método para inicializar el controlador con el usuario activo.
@@ -49,7 +49,7 @@ public class ControladorPortalPrincipal {
          */
         @FXML
         public void initialize() {
-            gestorSesion = GestorSesionSingleton.getInstancia();
+            gestorSesion = ServicioSesionSingleton.getInstancia();
 //            cargarDatos();
          Usuario u = gestorSesion.getUsuarioActivo();
          lblNombreUsuario.setText(u.getNombreCompleto());

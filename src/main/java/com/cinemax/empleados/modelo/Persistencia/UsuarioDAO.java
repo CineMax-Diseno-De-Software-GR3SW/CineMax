@@ -1,8 +1,8 @@
-package com.cinemax.empleados.Modelo.Persistencia;
+package com.cinemax.empleados.modelo.Persistencia;
 
-import com.cinemax.empleados.Comun.ConexionBaseSingleton;
-import com.cinemax.empleados.Modelo.Entidades.Usuario;
-import com.cinemax.empleados.Modelo.Entidades.Rol;
+import com.cinemax.empleados.comun.ConexionBaseSingleton;
+import com.cinemax.empleados.modelo.Entidades.Usuario;
+import com.cinemax.empleados.modelo.Entidades.Rol;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -35,7 +35,8 @@ public class UsuarioDAO {
                 u.getFechaUltimaModificacion().format(formatter)
         );
 
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+//        db.insertarModificarEliminar(sql);
     }
 
     public void actualizarUsuario(Usuario u) throws Exception {
@@ -59,7 +60,9 @@ public class UsuarioDAO {
                 u.getId()
         );
 
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 
     /* ======================= BÚSQUEDAS ======================= */
@@ -72,9 +75,19 @@ public class UsuarioDAO {
             WHERE u.IDUSUARIO = %d
             """.formatted(id);
 
-        db.consultarBase(sql);
-        ResultSet rs = db.getResultado();
-        return rs.next() ? mapear(rs) : null;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? mapear(rs) : null;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? mapear(rs) : null;
     }
 
     public Usuario buscarPorNombreUsuario(String nombre) throws Exception {
@@ -85,9 +98,19 @@ public class UsuarioDAO {
             WHERE u.NOMBREUSUARIO = '%s'
             """.formatted(nombre);
 
-        db.consultarBase(sql);
-        ResultSet rs = db.getResultado();
-        return rs.next() ? mapear(rs) : null;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? mapear(rs) : null;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? mapear(rs) : null;
     }
 
     public Usuario buscarPorCorreo(String correo) throws Exception {
@@ -98,9 +121,19 @@ public class UsuarioDAO {
             WHERE u.CORREO = '%s'
             """.formatted(correo);
 
-        db.consultarBase(sql);
-        ResultSet rs = db.getResultado();
-        return rs.next() ? mapear(rs) : null;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? mapear(rs) : null;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? mapear(rs) : null;
     }
 
     /* ======================= LISTADOS ======================= */
@@ -113,8 +146,17 @@ public class UsuarioDAO {
             ORDER BY u.NOMBREUSUARIO
             """;
 
-        db.consultarBase(sql);
-        return mapearLista(db.getResultado());
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return mapearLista(rs);
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+//        db.consultarBase(sql);
+//        return mapearLista(db.getResultado());
     }
 
     public List<Usuario> listarActivos() throws Exception {
@@ -126,8 +168,18 @@ public class UsuarioDAO {
             ORDER BY u.NOMBREUSUARIO
             """;
 
-        db.consultarBase(sql);
-        return mapearLista(db.getResultado());
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return mapearLista(rs);
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        return mapearLista(db.getResultado());
     }
 
     /* ======================= ESTADO ======================= */
@@ -142,32 +194,47 @@ public class UsuarioDAO {
 
     public void eliminarUsuario(Long id) throws Exception {
         String sql = "DELETE FROM USUARIO WHERE IDUSUARIO = " + id;
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 
     /* ======================= UTIL ======================= */
 
     public Long obtenerSiguienteId() throws Exception {
         String sql = "SELECT ISNULL(MAX(IDUSUARIO),0)+1 AS SIGUIENTE_ID FROM USUARIO";
-        db.consultarBase(sql);
 
-        ResultSet rs = db.getResultado();
-        return rs.next() ? rs.getLong("SIGUIENTE_ID") : 1L;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? rs.getLong("SIGUIENTE_ID") : 1L;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+//
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? rs.getLong("SIGUIENTE_ID") : 1L;
     }
 
     /* ===================================================== */
 
     public void cambiarEstado(Long id, boolean activo) throws Exception {
         String sql = """
-            UPDATE USUARIO SET ACTIVO = %d,
+            UPDATE USUARIO SET ACTIVO = %b,
                 FECHAULTIMAMODIFICACION = '%s'
             WHERE IDUSUARIO = %d
             """.formatted(
-                activo ? 1 : 0,
+//                activo ? 1 : 0,
+                activo,
                 LocalDateTime.now().format(formatter),
                 id
         );
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 
     private List<Usuario> mapearLista(ResultSet rs) throws SQLException {
@@ -217,6 +284,8 @@ public class UsuarioDAO {
                 LocalDateTime.now().format(formatter),
                 idUsuario
         );
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 }
