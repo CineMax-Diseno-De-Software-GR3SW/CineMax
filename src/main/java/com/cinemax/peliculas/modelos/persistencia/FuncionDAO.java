@@ -1,0 +1,79 @@
+package com.cinemax.peliculas.modelos.persistencia;
+
+import com.cinemax.comun.modelos.persistencia.GestorDB;
+import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
+import com.cinemax.peliculas.modelos.entidades.TipoEstreno;
+import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.salas.modelos.persistencia.SalaDAO;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FuncionDAO {
+
+    private GestorDB gestorDB;
+
+    public FuncionDAO() {
+        this.gestorDB = GestorDB.obtenerInstancia();
+    }
+
+    public void guardar(Funcion funcion) throws SQLException {
+        String sql = "INSERT INTO funcion (id_pelicula, id_sala, fecha_hora_inicio, fecha_hora_fin, formato, tipo_estreno) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection conn = gestorDB.obtenerConexion();
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setInt(1, funcion.getPelicula().getId());
+            stmt.setInt(2, funcion.getSala().getId());
+            stmt.setTimestamp(3, Timestamp.valueOf(funcion.getFechaHoraInicio()));
+            stmt.setTimestamp(4, Timestamp.valueOf(funcion.getFechaHoraFin()));
+            stmt.setString(5, funcion.getFormato().toString()); 
+            stmt.setString(6, funcion.getTipoEstreno().name());
+
+            stmt.executeUpdate();
+
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    funcion.setId(generatedKeys.getInt(1));
+                    System.out.println("Función guardada con ID: " + funcion.getId());
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al guardar función: " + e.getMessage(), e);
+        }
+    }
+
+    public List<Funcion> listarTodas() {
+        List<Funcion> funciones = new ArrayList<>();
+        String sql = "SELECT * FROM funcion";
+        PeliculaDAO peliculaDAO = new PeliculaDAO();
+        SalaDAO salaDAO = new SalaDAO();
+
+        try (Connection conn = gestorDB.obtenerConexion();
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                int peliculaId = rs.getInt("id_pelicula");
+                int salaId = rs.getInt("id_sala");
+                Pelicula pelicula = peliculaDAO.buscarPorId(peliculaId);
+                Sala sala = salaDAO.buscarPorId(salaId);
+
+                Funcion funcion = new Funcion(
+                        rs.getInt("id_funcion"),
+                        pelicula,
+                        sala,
+                        rs.getTimestamp("fecha_hora_inicio").toLocalDateTime(),
+                        rs.getTimestamp("fecha_hora_fin").toLocalDateTime(),
+                        FormatoFuncion.fromString(rs.getString("formato")),
+                        TipoEstreno.valueOf(rs.getString("tipo_estreno")));
+                funciones.add(funcion);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar funciones: " + e.getMessage(), e);
+        }
+        return funciones;
+    }
+}
