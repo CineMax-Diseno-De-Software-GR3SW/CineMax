@@ -1,6 +1,183 @@
 @startuml General_DiagramaDeClases
 
 package empleados {
+' ============================== MODELO DE DOMINIO ==============================
+package modelo {
+package entidades{
+class Usuario {
+  - id: Long
+  - nombreUsuario: String
+  - correo: String
+  - clave: String
+  - nombreCompleto: String
+  - cedula: String
+  - celular: String
+  - activo: boolean
+  - fechaCreacion: DateTime
+  - fechaUltimaModificacion: DateTime
+  --
+  + actualizarContacto(nuevoCorreo: String, nuevoCelular: String): void
+  + actualizarRol(nuevoRol: Rol): void
+  + activar(): void
+  + desactivar(): void
+  + verificarClave(ingresada: String): boolean
+}
+
+class Rol {
+  - id: Long
+  - nombre: String
+  - descripcion: String
+  - activo: boolean
+  - permisos: Set<Permiso>
+
+  + activar(): void
+  + desactivar(): void
+  + tienePermiso(permiso: Permiso): boolean
+  + agregarPermiso(permiso: Permiso): void
+  + removerPermiso(permiso: Permiso): void
+
+}
+
+
+ enum Permiso {
+    GESTIONAR_USUARIO
+    VENDER_BOLETO
+    GESTIONAR_SALA
+    GESTIONAR_FUNCION
+    GESTIONAR_REPORTES
+}
+}
+
+}
+
+Usuario  *-- "1" Rol
+
+' ============================== SERVICIOS / CONTROLADORES ==============================
+
+package servicios{
+
+
+
+ class ValidadorUsuario {
+   + validarCorreo(correo: String): boolean
+   + validarClave(clave: String): boolean
+ }
+
+class ServicioSesionSingleton {
+  - {static} servicioSesion: servicioSesionSingleton
+  - usuarioActivo: Usuario
+  + {static} getInstancia()
+  + iniciarSesion(nombreUsuario: String, clave: String): Usuario
+  + cerrarSesion(): Usuario
+  + getUsuarioActivo(): Usuario
+  + estaAutenticado(): boolean
+  + tienePermiso(permiso: Permiso): boolean
+
+}
+
+
+
+class ServicioUsuarios {
+  + crearUsuario(usuario: Usuario): void
+  + buscarUsuarioPorCorreo(correo: String): Usuario
+  + buscarUsuarioPorNombreUsuario(nombreUsuario: String): Usuario
+  + listarUsuarios(): List<Usuario>
+  + activarUsuario(usuario: Usuario): void
+  + desactivarUsuario(usuario: Usuario): void
+  + actualizarEstado(usuario: Usuario, esstado:Boolean): void
+  + actualizarRolUsuario(usuario: Usuario, rol:Rol): void
+
+}
+
+class ServicioPerfilUsuario {
+  + puedeActualizarPerfil(usuario: Usuario, id: Long): boolean
+  + cambiarClave(usuario: Usuario, antigua: String, nueva: String): boolean
+  + obtenerPerfil(id: Long): Usuario
+  + actualizarPerfil(usuario: Usuario, correo: String, celular: String): void
+}
+
+
+class ServicioRoles {
+  + crearRol(rol:Rol): void
+  + listarRoles(): List<Rol>
+  + actualizarRol(rol: Rol): void
+  + activarRol(idRol: Long): void
+  + desactivarRol(idRol: Long): void
+  + obtenerPermisosDelRol(idRol: Long): Set<Permiso>
+'  + asignarPermisoARol(Long, permiso: Permiso): void
+'  + eliminarPermisoDelRol(idRol: Long, permiso: Permiso): void
+'  + obtenerRolesConPermiso(permiso: Permiso): List<Rol>
+  + obtenerRolPorIdUsuario(idUsuario: Long): Rol
+
+}
+
+' Relaciones
+
+}
+
+' ============================== RELACIONES DE DEPENDENCIA NECESARIAS ==============================
+
+
+ServicioUsuarios .> ValidadorUsuario
+ServicioPerfilUsuario .> ValidadorUsuario
+
+ServicioPerfilUsuario .> Usuario
+ServicioUsuarios ..> Usuario
+
+' Sesión
+ServicioSesionSingleton ---> Usuario
+ServicioRoles ...> Rol
+
+
+
+
+
+package controladores {
+
+' ================================
+' ControladorGestionUsuarios
+' ================================
+class ControladorGestionUsuarios {
+  + agregarUsuario(nombreUsuario:String, correo:String,nombreCompleto:String,cedula:String,celular:String): void
+  + cambiarRolUsuario(usuario: Usuario, rol:Rol): void
+  + activarUsuario(usuario: Usuario): void
+  + desactivarUsuario(usuario: Usuario): void
+  + listarUsuarios(): List<Modelo.Usuario>
+}
+
+' ================================
+' ControladorLogin
+' ================================
+class ControladorLogin {
+  + iniciarSesion(): boolean
+}
+
+' ================================
+' ControladorPortalPrincipal
+' ================================
+class ControladorPortalPrincipal {
+  + habilitarOpcionSiTienePermiso(permiso: Permiso):void
+  + cerrarSesion(): void
+}
+
+
+  class ControladorPerfilUsuario {
+    + actualizarPerfil(usuario: Usuario, nuevoCorreo: String, nuevoCelular: String): void
+    + cambiarClave(usuario: Usuario, claveActual: String, nuevaClave: String): boolean
+  }
+
+
+}
+
+' Relaciones
+ControladorLogin .> ServicioSesionSingleton
+ControladorPortalPrincipal .> ServicioSesionSingleton
+ControladorGestionUsuarios .> ServicioUsuarios
+ControladorGestionUsuarios .> ServicioRoles
+ControladorPerfilUsuario ..> ServicioPerfilUsuario
+
+
+
 
 }
 
