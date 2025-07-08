@@ -185,7 +185,40 @@ public class ControladorGestionUsuarios {
     public void onBackAction(ActionEvent actionEvent) {
     }
 
-    public void onAgregarUsuario(ActionEvent actionEvent) {
+    public void onAgregarUsuario(ActionEvent event) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml"));
+        try {
+            Parent root = loader.load();
+
+            // Obtener el Stage actual desde el botón o cualquier nodo
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Registrar nuevo empleado");
+            stage.setScene(new Scene(root));
+            stage.show();
+//        try {
+//            URL fxmlLocation = getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml");
+//
+//            if (fxmlLocation == null) {
+//                throw new IOException("No se pudo encontrar el archivo FXML: /Vista/empleados/PantallaRegistrarUsuario.fxml");
+//            }
+//
+//            FXMLLoader loader = new FXMLLoader(fxmlLocation);
+//            Parent root = loader.load();
+//
+//            Stage stage = new Stage();
+//            stage.setTitle("Registrar Nuevo Empleado");
+//            stage.setScene(new Scene(root));
+//            stage.initModality(Modality.APPLICATION_MODAL);
+//            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de Carga");
+            alert.setHeaderText("No se pudo abrir la ventana de registro.");
+            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     @FXML
