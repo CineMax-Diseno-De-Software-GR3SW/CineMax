@@ -1,6 +1,6 @@
 package com.cinemax.empleados.modelos.persistencia;
 
-import com.cinemax.empleados.comun.ConexionBaseSingleton;
+import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import com.cinemax.empleados.modelos.entidades.Rol;
 

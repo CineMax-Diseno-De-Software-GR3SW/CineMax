@@ -7,6 +7,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import com.cinemax.comun.GestorDB;
+
 
 public class Main extends Application {
 
@@ -27,6 +29,9 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         // You can add any pre-launch logic here if needed
+        //GestorDB gestorDB = GestorDB.obtenerInstancia();
+
+        //gestorDB.probarConexion();
         launch();
     }
 }
