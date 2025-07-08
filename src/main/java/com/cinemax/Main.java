@@ -2,6 +2,7 @@ package com.cinemax;
 
 import com.cinemax.comun.controladores.ControladorCineMax;
 import com.cinemax.comun.modelos.entidades.CineMax;
+// import com.cinemax.comun.modelos.persistencia.GestorDB;
 import com.cinemax.comun.vistas.VistaCineMax;
 
 
@@ -19,6 +20,14 @@ public class Main{
             e.printStackTrace();
         }
         
-        System.out.println("\nGracias por usar CineMax!");
+    //     System.out.println("\nGracias por usar CineMax!");
+    //  GestorDB gestorDB = GestorDB.obtenerInstancia();
+    //     boolean exito = gestorDB.probarConexion();
+    //     if (exito) {
+    //         System.out.println("¡Conexión exitosa a la base de datos!");
+    //     } else {
+    //         System.out.println("No se pudo conectar a la base de datos.");
+    //     }
+    //     gestorDB.cerrarConexion();
     }
 }
