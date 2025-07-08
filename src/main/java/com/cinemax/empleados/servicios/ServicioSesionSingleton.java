@@ -7,7 +7,7 @@ import com.cinemax.empleados.modelo.Persistencia.UsuarioDAO;
 import com.cinemax.empleados.modelo.Entidades.Rol;
 
 public class ServicioSesionSingleton {
-    private static ServicioSesionSingleton gestorSesion;
+    private static ServicioSesionSingleton servicioSesion;
     private Usuario usuarioActivo;
     private UsuarioDAO usuarioDAO;
     private ServicioRoles servicioRoles;
@@ -18,10 +18,10 @@ public class ServicioSesionSingleton {
     }
 
     public static synchronized ServicioSesionSingleton getInstancia() {
-        if (gestorSesion == null) {
-            gestorSesion = new ServicioSesionSingleton();
+        if (servicioSesion == null) {
+            servicioSesion = new ServicioSesionSingleton();
         }
-        return gestorSesion;
+        return servicioSesion;
     }
 
     
@@ -47,7 +47,7 @@ public class ServicioSesionSingleton {
         return false;
     }
     
-    public void logout() {
+    public void cerrarSesion() {
         this.usuarioActivo = null;
     }
     

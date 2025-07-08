@@ -68,10 +68,10 @@ public class ControladorPortalPrincipal {
 //            btnVentaBoleto.setVisible(gestorSesion.tienePermiso(Permiso.VENDER_BOLETO));
 //        }
 
-    ocultarSiNo(btnGestionUsuarios,   Permiso.GESTIONAR_USUARIO);
-    ocultarSiNo(btnVerReportes,   Permiso.GESTIONAR_REPORTES);
-    ocultarSiNo(btnConfiguracion,     Permiso.GESTIONAR_SALA);
-    ocultarSiNo(btnVentaBoleto,     Permiso.VENDER_BOLETO);
+    habilitarOpcionSiTienePermiso(btnGestionUsuarios,   Permiso.GESTIONAR_USUARIO);
+    habilitarOpcionSiTienePermiso(btnVerReportes,   Permiso.GESTIONAR_REPORTES);
+    habilitarOpcionSiTienePermiso(btnConfiguracion,     Permiso.GESTIONAR_SALA);
+    habilitarOpcionSiTienePermiso(btnVentaBoleto,     Permiso.VENDER_BOLETO);
 }
 
     // // --- Control dinámico de permisos ---
@@ -82,7 +82,7 @@ public class ControladorPortalPrincipal {
 //     }
 
     /* Simplifica: si no tiene alguno de los permisos, oculta (sin dejar hueco) */
-    private void ocultarSiNo(Node nodo, Permiso permiso) {
+    private void habilitarOpcionSiTienePermiso(Node nodo, Permiso permiso) {
         boolean visible = gestorSesion.tienePermiso(permiso);
         nodo.setVisible(visible);
         nodo.setManaged(visible);           // evita huecos
