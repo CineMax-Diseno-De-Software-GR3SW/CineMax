@@ -1,0 +1,158 @@
+@startuml DiagramaDeClases_GestiónDeVentaDeBoletos
+
+title Diagrama de Clases - Gestión de Venta de Boletos
+
+skinparam linetype ortho
+
+' ------------------ CONTROLADORES ------------------
+package Controladores {
+
+    class ControladorVentaBoletos {
+        '- controladorPeliculaYFunciones: ControladorAsignadorFuncion
+        '- controladorSalas: ControladorSalas
+        + realizarVenta(): void
+    }
+
+    class ControladorAsignadorFuncion {
+        + asignarFuncion(controladorCartelera: ControladorCartelera): Funcion
+    }
+
+    class ControladorAsignadorButacas {
+        + asignarButacas(controladorDeConsultaSalas: ControladorDeConsultaSalas, funcion: Funcion): List<Butaca>
+    }
+
+    class ControladorBoleto {
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    class ControladorFacturacion {
+        + generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+    }
+
+    class ControladorGeneradorArchivo {
+        + generarArchivo(factura: Factura, servicioGeneradorArchivo: ServicioGeneradorArchivo): void
+    }
+
+    class ControladorEnvios {
+        - asunto: String
+        - cuerpo: String
+        + especificarAsunto(asunto: String): void
+        + especificarCuerpo(cuerpo: String): void
+        + enviar(correo: String, adjunto: PDF, ): void
+    }
+}
+
+' ------------------ SERVICIOS ------------------
+package Servicios{
+    interface ServicioEnvio {
+        + enviarCorreo(correo: String, asunto: String, cuerpo: String, adjunto: PDF): void
+    }
+
+    class ServicioCorreo {
+    }
+
+    class ServicioFacturacion {
+        generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+    }
+
+    class ServicioGeneradorBoleto{
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    interface ServicioGeneradorArchivo {
+        + generar(factura: Factura): void
+    }
+
+    class GeneradorArchivoPDF {
+        '+ generar(factura: Factura): void
+    }
+}
+
+' ------------------ MODELOS ------------------
+package Modelos {
+
+    abstract class Producto {
+        + {abstract} calcularPrecio(): double
+    }
+
+    class Boleto {
+        - funcion: Funcion
+        - butaca: Butaca
+        + setFuncion(funcion: Funcion): void
+        + setButaca(butaca: Butaca): void
+        + calcularPrecio(): double
+    }
+
+    class Factura {
+        - codigoFactura: String
+        - fecha: Date
+        - cliente: Cliente
+        - items: List<ItemFactura>
+        - subtotal: double
+        - total: double
+        + calcularSubTotal(): double
+        + calcularTotal(): double
+        + generarCodigo(): String
+    }
+
+    class ItemFactura {
+        - producto: Producto
+        - subtotal: double
+        + calcularSubtotal(): double
+    }
+
+    interface CalculadorImpuesto {
+        + calcular(subtotal: double): double
+    }
+
+    class CalculadorIVA {
+        - {static} PORCENTAJE: double
+        '+ calcular(subtotal: double): double
+    }
+
+    class Cliente {
+        - nombre: String
+        - apellido: String
+        - cedula: long
+        - correo: String
+    }
+}
+
+
+' ------------------ RELACIONES ------------------
+GeneradorArchivoPDF ..up|> ServicioGeneradorArchivo
+
+ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
+
+ControladorVentaBoletos ..> ControladorAsignadorFuncion
+ControladorVentaBoletos ..> ControladorAsignadorButacas
+ControladorVentaBoletos ..> ControladorBoleto
+ControladorVentaBoletos ..> ControladorFacturacion
+
+ControladorVentaBoletos ..> ControladorGeneradorArchivo
+ControladorVentaBoletos ..> ControladorEnvios
+
+ControladorBoleto ..> ServicioGeneradorBoleto
+
+ServicioGeneradorBoleto ..> Boleto
+
+ControladorFacturacion ..> ServicioFacturacion
+
+ServicioFacturacion ..> Factura
+ServicioFacturacion ..left> Cliente
+
+Boleto --up|> Producto
+
+ItemFactura "1... n" --> "1" Producto
+
+Factura "1" --> "1..*" ItemFactura
+Factura "1... *"--> "1" Cliente
+Factura ..> CalculadorImpuesto
+
+CalculadorIVA ..up|> CalculadorImpuesto
+
+ControladorEnvios ..> ServicioEnvio
+
+ServicioCorreo ..up|> ServicioEnvio
+
+@enduml

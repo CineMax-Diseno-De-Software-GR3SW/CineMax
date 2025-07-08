@@ -10,7 +10,7 @@ import java.util.List;
 public class SalasDAO {
 
     public void crearSala(Sala sala) throws SQLException {
-        String sql = "INSERT INTO Sala (nombre, capacidad, tipo, estado) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Sala (nombre, capacidad, tipo, estado) VALUES (?, ?, ?::tipo_sala, ?::estado_sala)";
         Connection conn = GestorDB.obtenerInstancia().obtenerConexion();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sala.getNombre());
@@ -60,7 +60,7 @@ public class SalasDAO {
     }
 
     public void actualizarSala(Sala sala) throws SQLException {
-        String sql = "UPDATE Sala SET nombre=?, capacidad=?, tipo=?, estado=? WHERE id=?";
+        String sql = "UPDATE Sala SET nombre=?, capacidad=?, tipo=?::tipo_sala, estado=?::estado_sala WHERE id=?";
         Connection conn = GestorDB.obtenerInstancia().obtenerConexion();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sala.getNombre());
