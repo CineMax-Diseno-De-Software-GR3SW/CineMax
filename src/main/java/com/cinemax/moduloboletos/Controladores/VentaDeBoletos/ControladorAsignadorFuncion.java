@@ -2,9 +2,12 @@ package com.cinemax.moduloboletos.Controladores.VentaDeBoletos;
 
 public class ControladorAsignadorFuncion {
     public String asignarFuncion(String controladorCartelera) {
-        /*
-         * LÓGICA GRUPO A
-         */
+        
+        // List<String> funciones = controladorCartelera.mostrarFunciones();
+            // imprimir funciones disponibles asociadas a una película
+            // La jerarquía es:
+            // formato funcion -> tipo de sala -> tipo(Estreno)??? -> horario
+            // Al final se selecciona una funcion y se la retorna
         return "funcion de ejemplo";
     }
 }

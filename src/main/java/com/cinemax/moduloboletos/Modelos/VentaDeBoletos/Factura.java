@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Factura {
     private String codigoFactura;
+    // private LocalDateTime fecha;
     private String fecha;
     private Cliente cliente;
     private List<Producto> productos;

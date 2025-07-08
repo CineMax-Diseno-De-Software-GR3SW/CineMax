@@ -12,7 +12,7 @@ import com.cinemax.moduloboletos.Modelos.VentaDeBoletos.Producto;
 
 public class ServicioFacturacion {
 
-    CalculadorImpuesto calculadorImpuesto;
+    CalculadorImpuesto calculadorImpuesto; //TODO: No debería ser un atributo de la clase, sino un parámetro del método generarFactura
 
     public ServicioFacturacion() {
         this.calculadorImpuesto = new CalculadorIVA();

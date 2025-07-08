@@ -8,6 +8,11 @@ skinparam linetype ortho
 package Controladores {
 
     class ControladorVentaBoletos {
+        - controladorAsignadorButacas: ControladorAsignadorButacas
+        - controladorAsignadorFuncion: ControladorAsignadorFuncion
+        - controladorBoleto: ControladorBoleto
+        - controladorFacturacion: ControladorFacturacion
+        - servicioGeneradorArchivo: ServicioGeneradorArchivo
         '- controladorPeliculaYFunciones: ControladorAsignadorFuncion
         '- controladorSalas: ControladorSalas
         + realizarVenta(): void
@@ -22,16 +27,18 @@ package Controladores {
     }
 
     class ControladorBoleto {
+        - servicioGeneradorBoleto: ServicioGeneradorBoleto
         + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
     }
 
     class ControladorFacturacion {
+        - servicioFacturacion: ServicioFacturacion
         + generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
     }
 
-    class ControladorGeneradorArchivo {
-        + generarArchivo(factura: Factura, servicioGeneradorArchivo: ServicioGeneradorArchivo): void
-    }
+    ''class ControladorGeneradorArchivo {
+    ''    + generarArchivo(factura: Factura, servicioGeneradorArchivo: ServicioGeneradorArchivo): void
+    ''}
 
     class ControladorEnvios {
         - asunto: String
@@ -72,10 +79,12 @@ package Servicios{
 package Modelos {
 
     abstract class Producto {
+        - precio: double
         + {abstract} calcularPrecio(): double
     }
 
     class Boleto {
+        - id???: int
         - funcion: Funcion
         - butaca: Butaca
         + setFuncion(funcion: Funcion): void
@@ -85,9 +94,9 @@ package Modelos {
 
     class Factura {
         - codigoFactura: String
-        - fecha: Date
+        - fecha: LocalDateTime
         - cliente: Cliente
-        - items: List<ItemFactura>
+        - productos: List<ItemFactura>
         - subtotal: double
         - total: double
         + calcularSubTotal(): double
@@ -106,7 +115,7 @@ package Modelos {
     }
 
     class CalculadorIVA {
-        - {static} PORCENTAJE: double
+        - {static} IVA_TASA: double
         '+ calcular(subtotal: double): double
     }
 
@@ -122,21 +131,24 @@ package Modelos {
 ' ------------------ RELACIONES ------------------
 GeneradorArchivoPDF ..up|> ServicioGeneradorArchivo
 
-ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
+''ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
 
-ControladorVentaBoletos ..> ControladorAsignadorFuncion
-ControladorVentaBoletos ..> ControladorAsignadorButacas
-ControladorVentaBoletos ..> ControladorBoleto
-ControladorVentaBoletos ..> ControladorFacturacion
+ControladorVentaBoletos --> ControladorAsignadorFuncion
+ControladorVentaBoletos --> ControladorAsignadorButacas
+ControladorVentaBoletos --> ControladorBoleto
+ControladorVentaBoletos --> ControladorFacturacion
 
-ControladorVentaBoletos ..> ControladorGeneradorArchivo
+ControladorVentaBoletos ..> ServicioGeneradorArchivo 
+''ControladorVentaBoletos ..>ControladorGeneradorArchivo
 ControladorVentaBoletos ..> ControladorEnvios
 
-ControladorBoleto ..> ServicioGeneradorBoleto
+ControladorBoleto --> ServicioGeneradorBoleto
+''ControladorBoleto ..> ServicioGeneradorBoleto
 
 ServicioGeneradorBoleto ..> Boleto
 
-ControladorFacturacion ..> ServicioFacturacion
+ControladorFacturacion --> ServicioFacturacion
+''ControladorFacturacion ..> ServicioFacturacion
 
 ServicioFacturacion ..> Factura
 ServicioFacturacion ..left> Cliente
