@@ -1,6 +1,6 @@
 package Controladores;
 
-import Modelos.CineMax;
+import Modelos.Entidades.CineMax;
 import Vistas.VistaCineMax;
 import Servicios.ServicioCineMax;
 

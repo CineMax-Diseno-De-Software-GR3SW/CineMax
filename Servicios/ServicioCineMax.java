@@ -2,7 +2,7 @@ package Servicios;
 
 import java.util.List;
 
-import Modelos.CineMax;
+import Modelos.Entidades.CineMax;
 import Vistas.VistaCineMax;
 
 public class ServicioCineMax {

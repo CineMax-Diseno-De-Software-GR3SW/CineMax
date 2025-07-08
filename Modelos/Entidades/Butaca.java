@@ -1,5 +1,5 @@
 // ====== modelo/Butaca.java ======
-package Modelos;
+package Modelos.Entidades;
 
 public class Butaca {
     private int id;

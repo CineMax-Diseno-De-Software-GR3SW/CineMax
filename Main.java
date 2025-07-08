@@ -1,4 +1,4 @@
-import Modelos.CineMax;
+import Modelos.Entidades.CineMax;
 import Controladores.ControladorCineMax;
 import Vistas.VistaCineMax;
 
