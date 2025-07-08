@@ -1,8 +1,6 @@
 package com.cinemax.salas.modelos.entidades;
 
 import com.cinemax.salas.modelos.Butaca;
-import com.cinemax.salas.modelos.EstadoSala;
-import com.cinemax.salas.modelos.TipoSala;
 
 public class Sala {
     private int id;

@@ -62,79 +62,22 @@ public class ControladorFunciones {
     }
 
     private void programarNuevaFuncion() throws SQLException {
-        //Crear metodos para realizar validaciones
-        //definir horario de trabajo (validacion)
+        Pelicula pelicula = seleccionarPelicula();
+        if (pelicula == null)
+            return;
 
-        // Seleccionar película
-        List<Pelicula> peliculas = servicioPelicula.listarTodasLasPeliculas();
-        if (peliculas.isEmpty()) {
-            System.out.println("No hay películas disponibles.");
+        Sala sala = seleccionarSala();
+        if (sala == null)
             return;
-        }
-        System.out.println("Seleccione una película:");
-        for (int i = 0; i < peliculas.size(); i++) {
-            System.out.println((i + 1) + ". " + peliculas.get(i).getTitulo());
-        }
-        System.out.print("Opción: ");
-        int peliculaIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (peliculaIdx < 0 || peliculaIdx >= peliculas.size()) {
-            System.out.println("Selección inválida.");
-            return;
-        }
-        Pelicula pelicula = peliculas.get(peliculaIdx);
 
-        // Seleccionar sala
-        List<Sala> salas = servicioSala.listarTodasLasSalas();
-        if (salas.isEmpty()) {
-            System.out.println("No hay salas disponibles.");
-            return;
-        }
-        System.out.println("Seleccione una sala:");
-        for (int i = 0; i < salas.size(); i++) {
-            System.out.println((i + 1) + ". " + salas.get(i).getId());
-        }
-        System.out.print("Opción: ");
-        int salaIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (salaIdx < 0 || salaIdx >= salas.size()) {
-            System.out.println("Selección inválida.");
-            return;
-        }
-        Sala sala = salas.get(salaIdx);
-
-        // Fecha y hora de inicio
         System.out.print("Ingrese la fecha y hora de inicio (yyyy-MM-dd HH:mm): ");
         String fechaHoraInicioStr = scanner.nextLine().trim();
         LocalDateTime fechaHoraInicio = LocalDateTime.parse(fechaHoraInicioStr,
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
-        // Formato
-        System.out.println("Seleccione el formato:");
-        for (FormatoFuncion formato : FormatoFuncion.values()) {
-            System.out.println((formato.ordinal() + 1) + ". " + formato.toString());
-        }
-        System.out.print("Opción: ");
-        int formatoIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (formatoIdx < 0 || formatoIdx >= FormatoFuncion.values().length) {
-            System.out.println("Selección inválida.");
-            return;
-        }
-        FormatoFuncion formato = FormatoFuncion.values()[formatoIdx];
+        FormatoFuncion formato = seleccionarFormato();
+        TipoEstreno tipoEstreno = seleccionarTipoEstreno();
 
-        // Tipo de estreno
-        System.out.println("Seleccione el tipo de estreno:");
-        for (TipoEstreno tipo : TipoEstreno.values()) {
-            System.out.println((tipo.ordinal() + 1) + ". " + tipo.toString());
-        }
-        System.out.print("Opción: ");
-        int tipoIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
-        if (tipoIdx < 0 || tipoIdx >= TipoEstreno.values().length) {
-            System.out.println("Selección inválida.");
-            return;
-        }
-        TipoEstreno tipoEstreno = TipoEstreno.values()[tipoIdx];
-
-        // Llama al servicio para crear y validar la función (la duración es fija de 3
-        // horas)
         Funcion nuevaFuncion = servicioFuncion.programarNuevaFuncion(
                 pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
 
@@ -143,7 +86,175 @@ public class ControladorFunciones {
         } else {
             System.out.println("No se pudo programar la función. Verifique disponibilidad de la sala.");
         }
+    }
 
+    // private void programarNuevaFuncion() throws SQLException {
+    // // Crear metodos para realizar validaciones
+    // // definir horario de trabajo (validacion)
+
+    // // Seleccionar película
+    // List<Pelicula> peliculas = servicioPelicula.listarTodasLasPeliculas();
+    // if (peliculas.isEmpty()) {
+    // System.out.println("No hay películas disponibles.");
+    // return;
+    // }
+    // System.out.println("Seleccione una película:");
+    // for (int i = 0; i < peliculas.size(); i++) {
+    // System.out.println((i + 1) + ". " + peliculas.get(i).getTitulo());
+    // }
+    // System.out.print("Opción: ");
+    // int peliculaIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+    // if (peliculaIdx < 0 || peliculaIdx >= peliculas.size()) {
+    // System.out.println("Selección inválida.");
+    // return;
+    // }
+    // Pelicula pelicula = peliculas.get(peliculaIdx);
+
+    // // Seleccionar sala
+    // List<Sala> salas = servicioSala.listarTodasLasSalas();
+    // if (salas.isEmpty()) {
+    // System.out.println("No hay salas disponibles.");
+    // return;
+    // }
+    // System.out.println("Seleccione una sala:");
+    // for (int i = 0; i < salas.size(); i++) {
+    // System.out.println((i + 1) + ". " + salas.get(i).getId());
+    // }
+    // System.out.print("Opción: ");
+    // int salaIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+    // if (salaIdx < 0 || salaIdx >= salas.size()) {
+    // System.out.println("Selección inválida.");
+    // return;
+    // }
+    // Sala sala = salas.get(salaIdx);
+
+    // // Fecha y hora de inicio
+    // System.out.print("Ingrese la fecha y hora de inicio (yyyy-MM-dd HH:mm): ");
+    // String fechaHoraInicioStr = scanner.nextLine().trim();
+    // LocalDateTime fechaHoraInicio = LocalDateTime.parse(fechaHoraInicioStr,
+    // DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+    // // Formato
+    // System.out.println("Seleccione el formato:");
+    // for (FormatoFuncion formato : FormatoFuncion.values()) {
+    // System.out.println((formato.ordinal() + 1) + ". " + formato.toString());
+    // }
+    // System.out.print("Opción: ");
+    // int formatoIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+    // if (formatoIdx < 0 || formatoIdx >= FormatoFuncion.values().length) {
+    // System.out.println("Selección inválida.");
+    // return;
+    // }
+    // FormatoFuncion formato = FormatoFuncion.values()[formatoIdx];
+
+    // // Tipo de estreno
+    // System.out.println("Seleccione el tipo de estreno:");
+    // for (TipoEstreno tipo : TipoEstreno.values()) {
+    // System.out.println((tipo.ordinal() + 1) + ". " + tipo.toString());
+    // }
+    // System.out.print("Opción: ");
+    // int tipoIdx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+    // if (tipoIdx < 0 || tipoIdx >= TipoEstreno.values().length) {
+    // System.out.println("Selección inválida.");
+    // return;
+    // }
+    // TipoEstreno tipoEstreno = TipoEstreno.values()[tipoIdx];
+
+    // // Llama al servicio para crear y validar la función (la duración es fija de
+    // 3
+    // // horas)
+    // Funcion nuevaFuncion = servicioFuncion.programarNuevaFuncion(
+    // pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
+
+    // if (nuevaFuncion != null) {
+    // System.out.println("¡Función programada exitosamente!");
+    // } else {
+    // System.out.println("No se pudo programar la función. Verifique disponibilidad
+    // de la sala.");
+    // }
+
+    // }
+
+    private Pelicula seleccionarPelicula() throws SQLException {
+        List<Pelicula> peliculas = servicioPelicula.listarTodasLasPeliculas();
+        if (peliculas.isEmpty()) {
+            System.out.println("No hay películas disponibles.");
+            return null;
+        }
+        System.out.println("Seleccione una película:");
+        for (int i = 0; i < peliculas.size(); i++) {
+            System.out.println((i + 1) + ". " + peliculas.get(i).getTitulo());
+        }
+        while (true) {
+            System.out.print("Opción: ");
+            try {
+                int idx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+                if (idx >= 0 && idx < peliculas.size()) {
+                    return peliculas.get(idx);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            System.out.println("Selección inválida. Intente nuevamente.");
+        }
+    }
+
+    private Sala seleccionarSala() throws SQLException {
+        List<Sala> salas = servicioSala.listarTodasLasSalas();
+        if (salas.isEmpty()) {
+            System.out.println("No hay salas disponibles.");
+            return null;
+        }
+        System.out.println("Seleccione una sala:");
+        for (int i = 0; i < salas.size(); i++) {
+            System.out.println((i + 1) + ". " + salas.get(i).getId());
+        }
+        while (true) {
+            System.out.print("Opción: ");
+            try {
+                int idx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+                if (idx >= 0 && idx < salas.size()) {
+                    return salas.get(idx);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            System.out.println("Selección inválida. Intente nuevamente.");
+        }
+    }
+
+    private FormatoFuncion seleccionarFormato() {
+        System.out.println("Seleccione el formato:");
+        for (FormatoFuncion formato : FormatoFuncion.values()) {
+            System.out.println((formato.ordinal() + 1) + ". " + formato.toString());
+        }
+        while (true) {
+            System.out.print("Opción: ");
+            try {
+                int idx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+                if (idx >= 0 && idx < FormatoFuncion.values().length) {
+                    return FormatoFuncion.values()[idx];
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            System.out.println("Selección inválida. Intente nuevamente.");
+        }
+    }
+
+    private TipoEstreno seleccionarTipoEstreno() {
+        System.out.println("Seleccione el tipo de estreno:");
+        for (TipoEstreno tipo : TipoEstreno.values()) {
+            System.out.println((tipo.ordinal() + 1) + ". " + tipo.toString());
+        }
+        while (true) {
+            System.out.print("Opción: ");
+            try {
+                int idx = Integer.parseInt(scanner.nextLine().trim()) - 1;
+                if (idx >= 0 && idx < TipoEstreno.values().length) {
+                    return TipoEstreno.values()[idx];
+                }
+            } catch (NumberFormatException ignored) {
+            }
+            System.out.println("Selección inválida. Intente nuevamente.");
+        }
     }
 
     public void cerrar() {

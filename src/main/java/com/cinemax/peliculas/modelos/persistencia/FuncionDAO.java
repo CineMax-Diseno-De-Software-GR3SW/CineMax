@@ -29,7 +29,7 @@ public class FuncionDAO {
             stmt.setInt(2, funcion.getSala().getId());
             stmt.setTimestamp(3, Timestamp.valueOf(funcion.getFechaHoraInicio()));
             stmt.setTimestamp(4, Timestamp.valueOf(funcion.getFechaHoraFin()));
-            stmt.setString(5, funcion.getFormato().toString()); 
+            stmt.setString(5, funcion.getFormato().toString());
             stmt.setString(6, funcion.getTipoEstreno().name());
 
             stmt.executeUpdate();
@@ -73,6 +73,38 @@ public class FuncionDAO {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error al listar funciones: " + e.getMessage(), e);
+        }
+        return funciones;
+    }
+
+    public List<Funcion> listarPorSala(int salaId) {
+        List<Funcion> funciones = new ArrayList<>();
+        String sql = "SELECT * FROM funcion WHERE id_sala = ?";
+        PeliculaDAO peliculaDAO = new PeliculaDAO();
+        SalaDAO salaDAO = new SalaDAO();
+
+        try (Connection conn = gestorDB.obtenerConexion();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, salaId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    int peliculaId = rs.getInt("id_pelicula");
+                    Pelicula pelicula = peliculaDAO.buscarPorId(peliculaId);
+                    Sala sala = salaDAO.buscarPorId(salaId);
+
+                    Funcion funcion = new Funcion(
+                            rs.getInt("id_funcion"),
+                            pelicula,
+                            sala,
+                            rs.getTimestamp("fecha_hora_inicio").toLocalDateTime(),
+                            rs.getTimestamp("fecha_hora_fin").toLocalDateTime(),
+                            FormatoFuncion.fromString(rs.getString("formato")),
+                            TipoEstreno.valueOf(rs.getString("tipo_estreno")));
+                    funciones.add(funcion);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar funciones por sala: " + e.getMessage(), e);
         }
         return funciones;
     }
