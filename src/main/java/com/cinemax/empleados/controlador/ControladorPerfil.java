@@ -1,0 +1,90 @@
+package com.cinemax.empleados.controlador;
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+import com.cinemax.empleados.modelo.Entidades.Usuario;
+import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.stage.Stage;
+
+public class ControladorPerfil implements Initializable {
+
+    @FXML
+    private Label lblNombreCompleto;
+
+    @FXML
+    private Label lblCedula;
+
+    @FXML
+    private Label lblUsuario;
+
+    @FXML
+    private Label lblRol;
+
+    @FXML
+    private Label lblEmail;
+
+    @FXML
+    private Label lblTelefono;
+
+    @FXML
+    private Button btnEditarPerfil;
+
+    @FXML
+    private Button btnCambiarContrasena;
+
+    private ServicioSesionSingleton sesionSingleton;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        sesionSingleton = ServicioSesionSingleton.getInstancia();
+        cargarDatosUsuario();
+    }
+
+    private void cargarDatosUsuario() {
+        Usuario usuarioActual = sesionSingleton.getUsuarioActivo();
+        if (usuarioActual != null) {
+            lblNombreCompleto.setText(usuarioActual.getNombreCompleto());
+            lblCedula.setText(usuarioActual.getCedula());
+            lblUsuario.setText(usuarioActual.getNombreUsuario());
+            lblRol.setText(usuarioActual.getRol().getNombre());
+            // lblEmail.setText(usuarioActual.getEmail());
+            // lblTelefono.setText(usuarioActual.getTelefono());
+        }
+    }
+
+    @FXML
+    private void onVolver(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void onEditarPerfil(ActionEvent event) {
+        // Implementar funcionalidad para editar perfil
+        System.out.println("Editar perfil clicked");
+    }
+
+    @FXML
+    private void onCambiarContrasena(ActionEvent event) {
+        // Implementar funcionalidad para cambiar contraseña
+        System.out.println("Cambiar contraseña clicked");
+    }
+}

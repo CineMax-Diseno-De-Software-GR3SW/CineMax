@@ -22,8 +22,8 @@ public class Usuario {
         this.activo = true;
     }
 
-    public Usuario(String nombreUsuario, String correo, String clave, String nombreCompleto, 
-                   String cedula, String celular, Rol rol) {
+    public Usuario(String nombreUsuario, String correo, String clave, String nombreCompleto,
+            String cedula, String celular, Rol rol) {
         this();
         this.nombreUsuario = nombreUsuario;
         this.correo = correo;
@@ -152,7 +152,13 @@ public class Usuario {
         return rol.getNombre();
     }
 
-    public  String toString(){
-       return "Persona " + nombreCompleto + " cedula='" + cedula + '\'' + ", celular='" + celular + '\'' + ", activo=" + activo + ", fechaCreacion=" + fechaCreacion;
+    public String toString() {
+        return "Persona " + nombreCompleto + " cedula='" + cedula + '\'' + ", celular='" + celular + '\'' + ", activo="
+                + activo + ", fechaCreacion=" + fechaCreacion;
+    }
+
+    public String getTelefono() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getTelefono'");
     }
 }
