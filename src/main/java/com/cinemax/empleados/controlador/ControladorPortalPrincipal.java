@@ -1,7 +1,11 @@
 package com.cinemax.empleados.controlador;
 
+import java.io.IOException;
+import java.net.URL;
+
+import com.cinemax.empleados.modelo.Entidades.Permiso;
+import com.cinemax.empleados.modelo.Entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-import com.cinemax.empleados.modelo.Entidades.*;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,23 +13,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.net.URL;
-
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-
 public class ControladorPortalPrincipal {
 
+    @FXML
+    private Button btnGestionUsuarios;
 
-        @FXML
-        private Button btnGestionUsuarios;
-
-        @FXML
-        private Button btnVerReportes;
+    @FXML
+    private Button btnVerReportes;
 
         @FXML
         private Button btnConfiguracion;
@@ -149,10 +148,17 @@ public class ControladorPortalPrincipal {
             // stage.close();
         }
 
-
-    public void onMiPerfil() {
-        System.out.println("Navegar a Mi Perfil");
-        // TODO: Implementar navegación a la pantalla de mi perfil, para gestion de datos
+    @FXML
+    private void onMiPerfil(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPerfil.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
 
