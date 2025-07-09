@@ -1,0 +1,108 @@
+@startuml
+'https://plantuml.com/class-diagram
+package salas {
+package modelos {
+    enum EstadoSala {
+        DISPONIBLE
+        MANTENIMIENTO
+    }
+
+    enum TipoSala {
+        NORMAL
+        VIP
+    }
+
+    enum EstadoButaca {
+        DISPONIBLE
+        RESERVADA
+        OCUPADA
+        INHABILITADA
+    }
+
+    class Sala {
+        - id: int
+        - nombre: String
+        - capacidad: String [fila][numeroColumna]
+        - mapaDeButacas: List<Butaca>
+        - estado: EstadoSala
+        - tipo: TipoSala
+        + getInfoSala(): String
+        + setInfoSala(nombre: String, capacidad: int, tipo: TipoSala): void
+    }
+
+    class Butaca {
+        - id: int
+        - estado: EstadoButaca
+        - numeroColumna: String
+        - fila: String
+        + getInfoButaca(): String
+        + setInfoButaca(numero: String, fila: String): void
+    }
+}
+
+package servicios {
+    class ServicioSalas {
+        + crearSala(sala: Sala): void
+        + eliminarSala(id: int): void
+        + listarSalas(): List<Sala>
+        + actualizarSala(sala: Sala): void
+        + buscarSalaPorId(id: int): Sala
+    }
+
+    class ServicioButacas {
+        + crearButaca(butaca: Butaca): void
+        + eliminarButaca(id: int): void
+        + listarButacas(sala: Sala): List<Butaca>
+        + reservarButaca(id: int): void
+        + cancelarReserva(id: int): void
+    }
+}
+
+package Controladores {
+    class ControladorSalas {
+        - Salas: List<Sala>
+        + crearSala()
+        + eliminarSala()
+        + listarSalas()
+    }
+
+    class ControladorButacas {
+        - Butacas: List<Butaca>
+        + crearButaca()
+        + eliminarButaca()
+        + listarButacas()
+        + reservarButaca()
+        + cancelarReserva()
+    }
+
+    class ControladorDeConsultaSalas {
+        - Salas: List<Sala>
+        + consultarSalasDisponibles(): List<Sala>
+        + consultarMapaDeButacas(sala: Sala): List<Butaca>
+    }
+}
+
+' Relaciones de controladores a servicios
+ControladorSalas ..> ServicioSalas
+ControladorButacas ..> ServicioButacas
+ControladorDeConsultaSalas ..> ServicioSalas
+ControladorDeConsultaSalas ..> ServicioButacas
+
+' Relaciones de servicios a modelos
+ServicioSalas ..> Sala
+ServicioButacas ..> Butaca
+
+' Relaciones existentes
+ControladorSalas --> Sala : gestiona
+ControladorButacas --> Butaca : gestiona
+ControladorDeConsultaSalas --> Sala : consulta
+ControladorDeConsultaSalas --> Butaca : consulta
+
+Sala --> EstadoSala : tiene estado
+Sala --> TipoSala : tiene tipo
+Sala --> "1..*" Butaca : mapaDeButacas
+
+Butaca --> EstadoButaca : tiene estado
+}
+
+@enduml
