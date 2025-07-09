@@ -15,6 +15,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 public class ControladorPerfil implements Initializable {
@@ -32,10 +33,10 @@ public class ControladorPerfil implements Initializable {
     private Label lblRol;
 
     @FXML
-    private Label lblEmail;
+    private TextField txtEmail;
 
     @FXML
-    private Label lblTelefono;
+    private TextField txtTelefono;
 
     @FXML
     private Button btnEditarPerfil;
@@ -44,6 +45,10 @@ public class ControladorPerfil implements Initializable {
     private Button btnCambiarContrasena;
 
     private ServicioSesionSingleton sesionSingleton;
+
+    private boolean editandoEmail = false;
+
+    private boolean editandoTelefono = false;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -60,6 +65,8 @@ public class ControladorPerfil implements Initializable {
             lblRol.setText(usuarioActual.getRol().getNombre());
             // lblEmail.setText(usuarioActual.getEmail());
             // lblTelefono.setText(usuarioActual.getTelefono());
+            txtEmail.setText(usuarioActual.getCorreo());
+            txtTelefono.setText(usuarioActual.getCelular());
         }
     }
 
@@ -85,6 +92,49 @@ public class ControladorPerfil implements Initializable {
     @FXML
     private void onCambiarContrasena(ActionEvent event) {
         // Implementar funcionalidad para cambiar contraseña
-        System.out.println("Cambiar contraseña clicked");
+        //System.out.println("Cambiar contraseña clicked");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PopUpCambiarContrasena.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            // Aplicar hoja de estilos
+            scene.getStylesheets().add(getClass().getResource("/Vista/empleados/ayu-theme.css").toExternalForm());
+
+            // Crear stage
+            Stage stage = new Stage();
+            stage.setTitle("Cambiar Contraseña");
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.initOwner(((Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow()));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void onEditarEmail() {
+        editandoEmail = !editandoEmail;
+        txtEmail.setEditable(editandoEmail);
+
+        if (!editandoEmail) {
+            String nuevoEmail = txtEmail.getText();
+            // Aquí podrías guardar el email a base de datos o backend
+            System.out.println("Nuevo email guardado: " + nuevoEmail);
+        }
+    }
+
+    @FXML
+    private void onEditarTelefono() {
+        editandoTelefono = !editandoTelefono;
+        txtTelefono.setEditable(editandoTelefono);
+
+        if (!editandoTelefono) {
+            String nuevoTelefono = txtTelefono.getText();
+            // Aquí podrías guardar el teléfono a base de datos o backend
+            System.out.println("Nuevo teléfono guardado: " + nuevoTelefono);
+        }
     }
 }

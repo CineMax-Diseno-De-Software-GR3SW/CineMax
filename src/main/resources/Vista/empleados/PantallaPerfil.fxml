@@ -69,20 +69,30 @@
                     </font>
                 </Label>
                 <Label fx:id="lblRol" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                
+
                 <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
                 </Label>
-                <Label fx:id="lblEmail" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                
+                <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                    <children>
+                        <TextField fx:id="txtEmail" promptText="Correo electrónico" editable="false" />
+                        <Button text="✎" onAction="#onEditarEmail" />
+                    </children>
+                </HBox>
+
                 <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="5">
                     <font>
                         <Font name="System Bold" size="14.0" />
                     </font>
                 </Label>
-                <Label fx:id="lblTelefono" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                    <children>
+                        <TextField fx:id="txtTelefono" promptText="Teléfono" editable="false" />
+                        <Button text="✎" onAction="#onEditarTelefono" />
+                    </children>
+                </HBox>
             </GridPane>
             
             <HBox spacing="15.0" alignment="CENTER">
