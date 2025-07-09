@@ -108,4 +108,51 @@ public class FuncionDAO {
         }
         return funciones;
     }
+
+    public void editar(Funcion funcion) throws SQLException {
+        String sql = "UPDATE funcion SET id_pelicula = ?, id_sala = ?, fecha_hora_inicio = ?, fecha_hora_fin = ?, formato = ?, tipo_estreno = ? WHERE id_funcion = ?";
+        try (Connection conn = gestorDB.obtenerConexion();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, funcion.getPelicula().getId());
+            stmt.setInt(2, funcion.getSala().getId());
+            stmt.setTimestamp(3, Timestamp.valueOf(funcion.getFechaHoraInicio()));
+            stmt.setTimestamp(4, Timestamp.valueOf(funcion.getFechaHoraFin()));
+            stmt.setString(5, funcion.getFormato().toString());
+            stmt.setString(6, funcion.getTipoEstreno().name());
+            stmt.setInt(7, funcion.getId());
+
+            int filas = stmt.executeUpdate();
+            if (filas == 0) {
+                throw new SQLException("No se encontró la función a editar.");
+            }
+        }
+    }
+
+    public Funcion buscarPorId(int id) throws SQLException {
+        String sql = "SELECT * FROM funcion WHERE id_funcion = ?";
+        try (Connection conn = gestorDB.obtenerConexion();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Aquí debes reconstruir el objeto Funcion como en listarTodas()
+                    // Suponiendo que tienes PeliculaDAO y SalaDAO disponibles:
+                    PeliculaDAO peliculaDAO = new PeliculaDAO();
+                    SalaDAO salaDAO = new SalaDAO();
+                    Pelicula pelicula = peliculaDAO.buscarPorId(rs.getInt("id_pelicula"));
+                    Sala sala = salaDAO.buscarPorId(rs.getInt("id_sala"));
+                    return new Funcion(
+                            rs.getInt("id_funcion"),
+                            pelicula,
+                            sala,
+                            rs.getTimestamp("fecha_hora_inicio").toLocalDateTime(),
+                            rs.getTimestamp("fecha_hora_fin").toLocalDateTime(),
+                            FormatoFuncion.fromString(rs.getString("formato")),
+                            TipoEstreno.valueOf(rs.getString("tipo_estreno")));
+                }
+            }
+        }
+        return null;
+    }
 }

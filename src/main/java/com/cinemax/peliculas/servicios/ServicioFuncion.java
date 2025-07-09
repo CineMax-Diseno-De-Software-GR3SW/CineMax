@@ -21,32 +21,8 @@ public class ServicioFuncion {
         this.funcionDAO = new FuncionDAO();
     }
 
-    // private List<Funcion> funciones = new ArrayList<>();
-
-    // public Funcion programarNuevaFuncion(Pelicula pelicula, Sala sala,
-    // LocalDateTime fechaHoraInicio,
-    // FormatoFuncion formato, TipoEstreno tipoEstreno) throws
-    // IllegalArgumentException, SQLException {
-
-    // LocalDateTime fechaHoraFin = fechaHoraInicio.plusHours(3);
-
-    // // Validar traslapes consultando la BD
-    // List<Funcion> funcionesSala = funcionDAO.listarTodas(); // Mejor: crear un
-    // método listarPorSala(salaId)
-    // for (Funcion f : funcionesSala) {
-    // if (f.getSala().getId() == sala.getId()) {
-    // if (fechaHoraInicio.isBefore(f.getFechaHoraFin()) &&
-    // fechaHoraFin.isAfter(f.getFechaHoraInicio())) {
-    // return null;
-    // }
-    // }
-    // }
-
-    // Funcion funcion = new Funcion(0, pelicula, sala, fechaHoraInicio,
-    // fechaHoraFin, formato, tipoEstreno);
-    // funcionDAO.guardar(funcion);
-    // return funcion;
-    // }
+    // EDITAR
+    // ELIMINAR
 
     public Funcion programarNuevaFuncion(Pelicula pelicula, Sala sala, LocalDateTime fechaHoraInicio,
             FormatoFuncion formato, TipoEstreno tipoEstreno)
@@ -73,9 +49,10 @@ public class ServicioFuncion {
         if (sala == null) {
             throw new IllegalArgumentException("Debe seleccionar una sala válida.");
         }
-         if (sala.getEstadoSala() != null && sala.getEstadoSala() != EstadoSala.DISPONIBLE) {
-        throw new IllegalArgumentException("La sala seleccionada no está disponible (actualmente está " + sala.getEstadoSala().name().toLowerCase() + ").");
-    }
+        if (sala.getEstadoSala() != null && sala.getEstadoSala() != EstadoSala.DISPONIBLE) {
+            throw new IllegalArgumentException("La sala seleccionada no está disponible (actualmente está "
+                    + sala.getEstadoSala().name().toLowerCase() + ").");
+        }
         if (fechaHoraInicio == null) {
             throw new IllegalArgumentException("Debe ingresar una fecha y hora de inicio válida.");
         }
@@ -110,7 +87,37 @@ public class ServicioFuncion {
         }
     }
 
+    public void editarFuncion(int id, Pelicula pelicula, Sala sala, LocalDateTime fechaHoraInicio,
+            FormatoFuncion formato, TipoEstreno tipoEstreno) throws SQLException {
+        Funcion funcionExistente = funcionDAO.buscarPorId(id);
+        if (funcionExistente == null) {
+            throw new IllegalArgumentException("No se encontró la función con ID: " + id);
+        }
+
+        validarDatosFuncion(pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
+        LocalDateTime fechaHoraFin = fechaHoraInicio.plusHours(3);
+        validarHorarioTrabajo(fechaHoraInicio, fechaHoraFin);
+        validarTraslapeFunciones(sala, fechaHoraInicio, fechaHoraFin);
+
+        funcionExistente.setPelicula(pelicula);
+        funcionExistente.setSala(sala);
+        funcionExistente.setFechaHoraInicio(fechaHoraInicio);
+        funcionExistente.setFechaHoraFin(fechaHoraFin);
+        funcionExistente.setFormato(formato);
+        funcionExistente.setTipoEstreno(tipoEstreno);
+
+        funcionDAO.editar(funcionExistente);
+    }
+
     public List<Funcion> listarTodasLasFunciones() {
         return funcionDAO.listarTodas();
+    }
+
+    public Funcion buscarPorId(int id) throws SQLException {
+        return funcionDAO.buscarPorId(id);
+    }
+
+    public List<Funcion> listarFuncionesPorSala(int salaId) throws SQLException {
+        return funcionDAO.listarPorSala(salaId);
     }
 }

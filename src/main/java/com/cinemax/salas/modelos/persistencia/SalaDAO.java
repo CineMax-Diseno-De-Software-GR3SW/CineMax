@@ -1,10 +1,7 @@
 package com.cinemax.salas.modelos.persistencia;
 
 import com.cinemax.comun.modelos.persistencia.GestorDB;
-import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.modelos.TipoSala;
-import com.cinemax.salas.modelos.EstadoSala;
-
+import com.cinemax.salas.modelos.entidades.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

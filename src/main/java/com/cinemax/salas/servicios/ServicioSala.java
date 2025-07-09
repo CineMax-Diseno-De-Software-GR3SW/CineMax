@@ -1,8 +1,7 @@
 package com.cinemax.salas.servicios;
 
-import com.cinemax.salas.modelos.EstadoSala;
-import com.cinemax.salas.modelos.TipoSala;
-import com.cinemax.salas.modelos.entidades.Sala;
+
+import com.cinemax.salas.modelos.entidades.*;
 import com.cinemax.salas.modelos.persistencia.SalaDAO;
 
 import java.util.ArrayList;
