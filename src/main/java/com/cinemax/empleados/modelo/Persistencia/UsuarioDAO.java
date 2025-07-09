@@ -213,7 +213,7 @@ public class UsuarioDAO {
         } finally {
             ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
         }
-//
+
 //        db.consultarBase(sql);
 //        ResultSet rs = db.getResultado();
 //        return rs.next() ? rs.getLong("SIGUIENTE_ID") : 1L;

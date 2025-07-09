@@ -182,7 +182,16 @@ public class ControladorGestionUsuarios {
         // abrir diálogo / escena de edición
     }
 
-    public void onBackAction(ActionEvent actionEvent) {
+    public void onBackAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void onAgregarUsuario(ActionEvent actionEvent) {
