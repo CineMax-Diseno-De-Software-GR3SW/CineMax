@@ -207,7 +207,7 @@ package modelos {
     class Sala {
         - id: int
         - nombre: String
-        - capacidad: int 
+        - capacidad: String 
         ''[fila][numeroColumna]
         - mapaDeButacas: List<Butaca>
         - estado: EstadoSala
@@ -505,6 +505,7 @@ package peliculas {
     controladores.ControladorCartelera..> servicios.ServicioFuncion
     controladores.ControladorPelicula..> servicios.ServicioPelicula
     controladores.ControladorFuncion..> servicios.ServicioPelicula
+    ControladorFuncion ..> ControladorSalas
 
     Funcion "1" --> "1" Pelicula : proyecta
     Funcion "1" --> "1" Sala : ocurre en
@@ -785,7 +786,7 @@ package "Reportes"{
     ' ===== CONTROLADOR (REPORTES) =====
     package "Controlador" {
 
-        class ReportesControlador {
+        class ControladorReportes {
             -ReportesView vista
             -Reporte modelo
             -ServicioReportes servicio
@@ -802,10 +803,10 @@ package "Reportes"{
             +ejecutarReportesPendientes(): void
         }
 
-        ReportesControlador --> Reporte : usa
-        ReportesControlador -left-> DatosGrafica: usa
-        ReportesControlador --> ServicioReportes : usa
-        ReportesControlador --> ServicioProgramacionReportes : usa
+        ControladorReportes --> Reporte : usa
+        ControladorReportes -left-> DatosGrafica: usa
+        ControladorReportes --> ServicioReportes : usa
+        ControladorReportes --> ServicioProgramacionReportes : usa
     }
 }
 
@@ -818,5 +819,6 @@ ControladorPortalPrincipal ..> ControladorPelicula
 ControladorPortalPrincipal ..> ControladorFuncion
 ControladorPortalPrincipal ..> ControladorSalas
 ControladorPortalPrincipal ..> ControladorButacas
-ControladorPortalPrincipal ..> ReportesControlador
+ControladorPortalPrincipal ..> ControladorReportes
+ControladorReportes ..> ControladorVentaBoletos 
 @enduml
