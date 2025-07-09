@@ -457,9 +457,6 @@ ServicioCorreo ..up|> ServicioEnvio
 
 }
 
-package reportes {
-
-}
 
 ' ============================== RELACIONES GENERALES ==============================
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
@@ -921,17 +918,139 @@ ControladorAsignadorButacas ..> ControladorDeConsultaSalas
 
        }
 
-       package reportes {
-
-       }
+       package "Reportes"{
+        ' ===== MODELO (REPORTES) =====
+        package "Modelo" {
+        
+            class Reporte {
+                -int idReporte
+                -String tipoReporte
+                -Long intervaloEjecucion
+                -Date proximaEjecucion
+                -String contenido
+                -String formato
+                -String rutaArchivo
+            
+                +setFormatoDeContenido()
+                +guardarLocalmente(): boolean
+                +generar(IGeneradorReporte): void
+            }
+        
+            interface IVentas {
+                +obtenertotalVentas()
+                +obtenertotalBoletos()
+            }
+            
+        
+            class ReporteProgramado {
+                -String nombre
+                -String tipoReporte
+                -FrecuenciaReporte frecuencia
+                -Date fechaInicio
+                -Date fechaFin
+                -Time horaEjecucion
+                -boolean activo
+                ''-Date ultimaEjecucion
+                ''-Date proximaEjecucion
+                -String rutaAlmacenamiento
+                +programarProximaEjecucion(): void
+                +validarConfiguracion(): boolean
+            }
+        
+            enum FrecuenciaReporte  {
+                DIARIO
+                SEMANAL
+                MENSUAL
+                ANUAL
+                +calcularProximaFecha(fechaBase: Date): Date
+            }
+            
+            class DatosGrafica {
+                -label String[]
+                -data: double[]
+                -metricName: String
+            }
+            
+             interface IGeneradorReporte {
+               +generarFormato(reporte: Reporte): String
+            }
+        
+            class GeneradorPDF implements IGeneradorReporte {
+               +generarFormato(reporte: Reporte): String
+            }
+        
+            class GeneradorCSV implements IGeneradorReporte {
+               +generarFormato(reporte: Reporte): String
+            }
+            
+        
+            ServicioFacturacion .up.|> IVentas
+            Reporte --> IVentas
+            ReporteProgramado -left-> FrecuenciaReporte : tiene
+            ReporteProgramado --|> Reporte
+            Reporte -left-> IGeneradorReporte
+            
+            
+            }
+        
+                ' ===== SERVICIOS (REPORTES) =====
+                package "Servicios" {
+                
+                    class ServicioReportes  {
+                        - datos: Map<String, Object>
+                        +generarReporteVentas(fechaInicio: Date, fechaFin: Date): Reporte
+                        +guardarReporteLocalmente(reporte: Reporte, ruta: String): boolean
+                        +obtenerDatosVentas(fechaInicio: Date, fechaFin: Date): Map<String, Object>
+                    }
+                
+                    class ServicioProgramacionReportes {
+                        +crearReporteProgramado(r: ReporteProgramado): ReporteProgramado
+                        +actualizarReporteProgramado(reporteProgramado: ReporteProgramado): boolean
+                        +eliminarReporteProgramado(idReporte: int): boolean
+                        +listarReportesProgramados(): List<ReporteProgramado>
+                        +obtenerReportesPendientes(): List<ReporteProgramado>
+                        +ejecutarReporteProgramado(reporteProgramado: ReporteProgramado): boolean
+                        +calcularProximaEjecucion(reporteProgramado: ReporteProgramado): Date
+                        +verificarReportesPendientes(): void
+                    }
+                
+                    ServicioReportes --> IVentas : obtiene_datos
+                    ServicioReportes --> Reporte
+                    ServicioProgramacionReportes -right-> ReporteProgramado
+                }
+                
+                
+                ' ===== CONTROLADOR (REPORTES) =====
+                package "Controlador" {
+                
+                    class ReportesController {
+                        -ReportesView vista
+                        -Reporte modelo
+                        -ServicioReportes servicio
+                        -ServicioProgramacionReportes servicioProgramacion
+                        +inicializar(): void
+                        +generarReporte(): void
+                        +mostrarReporte(): void
+                        +exportarReporte(formato: String): void
+                        +generarGrafico(): void
+                        +programarReporte(): void
+                        +editarReporteProgramado(): void
+                        +eliminarReporteProgramado(): void
+                        +cargarReportesProgramados(): void
+                        +ejecutarReportesPendientes(): void
+                    }
+                
+                    ReportesController --> Reporte : usa
+                    ReportesController -left-> DatosGrafica: usa
+                    ReportesController --> ServicioReportes : usa
+                    ReportesController --> ServicioProgramacionReportes : usa
+                }
+        }
 
        ' ============================== RELACIONES GENERALES ==============================
        ControladorAsignadorButacas ..> ControladorDeConsultaSalas
        @enduml
 
-package reportes {
-
-}
 
 ' ============================== RELACIONES GENERALES ==============================
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
