@@ -26,11 +26,11 @@ public class UsuarioDAO {
             INSERT INTO USUARIO (IDUSUARIO, IDROL, NOMBREUSUARIO, CORREO, CLAVE,
                                  NOMBRECOMPLETO, CEDULA, CELULAR, ACTIVO,
                                  FECHACREACION, FECHAULTIMAMODIFICACION)
-            VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s')
+            VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %b, '%s', '%s')
             """.formatted(
                 u.getId(), u.getRol().getId(), u.getNombreUsuario(), u.getCorreo(),
                 u.getClave(), u.getNombreCompleto(), u.getCedula(), u.getCelular(),
-                u.isActivo() ? 1 : 0,
+                u.isActivo(),
                 u.getFechaCreacion().format(formatter),
                 u.getFechaUltimaModificacion().format(formatter)
         );
@@ -49,13 +49,13 @@ public class UsuarioDAO {
                 NOMBRECOMPLETO = '%s',
                 CEDULA = '%s',
                 CELULAR = '%s',
-                ACTIVO = %d,
+                ACTIVO = %b,
                 FECHAULTIMAMODIFICACION = '%s'
             WHERE IDUSUARIO = %d
             """.formatted(
                 u.getRol().getId(), u.getNombreUsuario(), u.getCorreo(), u.getClave(),
                 u.getNombreCompleto(), u.getCedula(), u.getCelular(),
-                u.isActivo() ? 1 : 0,
+                u.isActivo(),
                 LocalDateTime.now().format(formatter),
                 u.getId()
         );
@@ -202,7 +202,7 @@ public class UsuarioDAO {
     /* ======================= UTIL ======================= */
 
     public Long obtenerSiguienteId() throws Exception {
-        String sql = "SELECT ISNULL(MAX(IDUSUARIO),0)+1 AS SIGUIENTE_ID FROM USUARIO";
+        String sql = "SELECT COALESCE(MAX(IDUSUARIO),0)+1 AS SIGUIENTE_ID FROM USUARIO";
 
         // SELECT
         ResultSet rs = null;
