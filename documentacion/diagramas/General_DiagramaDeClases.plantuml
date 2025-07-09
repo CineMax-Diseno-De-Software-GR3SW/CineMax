@@ -182,16 +182,13 @@ ControladorPerfilUsuario ..> ServicioPerfilUsuario
 
 }
 
-package peliculas {
 
-}
+
 
 package salas {
-
-    ' Enumeraciones
+package modelos {
     enum EstadoSala {
         DISPONIBLE
-        OCUPADA
         MANTENIMIENTO
     }
 
@@ -207,17 +204,11 @@ package salas {
         INHABILITADA
     }
 
-    enum TipoButaca {
-        NORMAL
-        RECLINABLE
-        VIP
-    }
-
-    ' Clases principales
     class Sala {
         - id: int
         - nombre: String
-        - capacidad: String [fila][numeroColumna]
+        - capacidad: String 
+        ''[fila][numeroColumna]
         - mapaDeButacas: List<Butaca>
         - estado: EstadoSala
         - tipo: TipoSala
@@ -230,19 +221,35 @@ package salas {
         - estado: EstadoButaca
         - numeroColumna: String
         - fila: String
-        - tipo: TipoButaca
         + getInfoButaca(): String
         + setInfoButaca(numero: String, fila: String): void
     }
+}
 
-    ' Controladores
+package servicios {
+    class ServicioSalas {
+        + crearSala(sala: Sala): void
+        + eliminarSala(id: int): void
+        + listarSalas(): List<Sala>
+        + actualizarSala(sala: Sala): void
+        + buscarSalaPorId(id: int): Sala
+    }
+
+    class ServicioButacas {
+        + crearButaca(butaca: Butaca): void
+        + eliminarButaca(id: int): void
+        + listarButacas(sala: Sala): List<Butaca>
+        + reservarButaca(id: int): void
+        + cancelarReserva(id: int): void
+    }
+}
+
+package Controladores {
     class ControladorSalas {
         - Salas: List<Sala>
         + crearSala()
         + eliminarSala()
         + listarSalas()
-        + reservarButaca()
-        + cancelarReserva()
     }
 
     class ControladorButacas {
@@ -250,8 +257,6 @@ package salas {
         + crearButaca()
         + eliminarButaca()
         + listarButacas()
-        + reservarButaca()
-        + cancelarReserva()
     }
 
     class ControladorDeConsultaSalas {
@@ -259,28 +264,264 @@ package salas {
         + consultarSalasDisponibles(): List<Sala>
         + consultarMapaDeButacas(sala: Sala): List<Butaca>
     }
+}
 
-    class InterfazAdministradorDeSalasYButacas {
-        - controladorSalas: ControladorSalas
-        - controladorButacas: ControladorButacas
-        + presentarOpcionesDeAdministración(): void
+' Relaciones de controladores a servicios
+ControladorSalas ..> ServicioSalas
+ControladorButacas ..> ServicioButacas
+ControladorDeConsultaSalas ..> ServicioSalas
+ControladorDeConsultaSalas ..> ServicioButacas
+
+' Relaciones de servicios a modelos
+ServicioSalas ..> Sala
+ServicioButacas ..> Butaca
+
+' Relaciones existentes
+ControladorSalas --> Sala 
+'': gestiona
+ControladorButacas --> Butaca
+'': gestiona
+ControladorDeConsultaSalas --> Sala 
+'': consulta
+ControladorDeConsultaSalas --> Butaca 
+'': consulta
+
+Sala --> EstadoSala 
+'': tiene estado
+Sala --> TipoSala 
+'': tiene tipo
+Sala --> "1..*" Butaca 
+'': mapaDeButacas
+
+Butaca --> EstadoButaca 
+'': tiene estado
+}
+
+package peliculas {
+    ' ==================== PAQUETE: MODELO ====================
+    package modelos {
+        package entidades{
+
+        class Pelicula {
+        - id: int
+        - titulo: String
+        - sinopsis: String
+        - duracionMinutos: int
+        - anio: int
+        - idioma: Idioma
+        - genero: String
+        - imagenUrl: String
+        + getId(): int
+        + getTitulo(): String
+        + getSinopsis(): String
+        + getDuracionMinutos(): int
+        + getAnio(): int
+        + getIdioma(): Idioma
+        + getGenero(): String
+        + getImagenUrl(): String
+        + setId(id: int): void
+        + setTitulo(titulo: String): void
+        + setSinopsis(sinopsis: String): void
+        + setDuracionMinutos(duracionMinutos: int): void
+        + setAnio(anio: int): void
+        + setIdioma(idioma: Idioma): void
+        + setGenero(genero: String): void
+        + setImagenUrl(imagenUrl: String): void
+        + setIdiomaPorCodigo(codigoIdioma: String): void
+        }
+
+        class Funcion {
+            - id: int
+            - pelicula: Pelicula
+            - sala: Sala
+            - fechaHoraInicio: LocalDateTime
+            - fechaHoraFin: LocalDateTime
+            - formato: FormatoFuncion
+            - tipoEstreno: TipoEstreno
+            + getId(): int
+            + getPelicula(): Pelicula
+            + getSala(): Sala
+            + getFechaHoraInicio(): LocalDateTime
+            + getFechaHoraFin(): LocalDateTime
+            + getFormato(): FormatoFuncion
+            + getTipoEstreno(): TipoEstreno
+            + setId(id: int): void
+            + setPelicula(pelicula: Pelicula): void
+            + setSala(sala: Sala): void
+            + setFechaHoraInicio(fechaHoraInicio: LocalDateTime): void
+            + setFechaHoraFin(fechaHoraFin: LocalDateTime): void
+            + setFormato(formato: FormatoFuncion): void
+            + setTipoEstreno(tipoEstreno: TipoEstreno): void
+        }
+
+        ' class Sala {
+        '     - id: int
+        '     - nombre: String
+        '     - capacidad: int
+        '     - tipo: String
+        ' }
+
+        class Cartelera {
+            - id: int
+            - peliculas: List<Pelicula>
+            + getId(): int
+            + getPeliculas(): List<Pelicula>
+            + setId(id: int): void
+            + setPeliculas(peliculas: List<Pelicula>): void
+        }
+
+        enum Idioma {
+            ESPANOL("Español", "es")
+            INGLES("Ingles", "en")
+            CHINO("Chino", "zh")
+            - nombre: String {f}
+            - codigo: String {f}
+            + getNombre(): String
+            + getCodigo(): String
+            + porCodigo(codigo: String): Idioma {static}
+            + porNombre(nombre: String): Idioma {static}
+        }
+
+        enum Genero {
+            ACCION("Acción")
+            COMEDIA("Comedia")
+            DRAMA("Drama")
+            TERROR("Terror")
+            CIENCIA_FICCION("Ciencia Ficción")
+            ANIMACION("Animación")
+            - nombre: String {f}
+            + getNombre(): String
+            + porNombre(nombre: String): Genero {static}
+            + validarGeneros(generos: String): boolean {static}
+            + normalizarGeneros(generos: String): String {static}
+            + obtenerTodosLosGeneros(): String {static}
+        }
+
+        enum TipoEstreno{
+            ESTRENO
+            PREESTRENO
+        }
+
+        enum FormatoFuncion{
+            DOS_D
+            TRES_D
+            + fromString(value: String): FormatoFuncion {static}
+        }
+
+        }
     }
 
-    ' Relaciones
-    InterfazAdministradorDeSalasYButacas --> ControladorSalas : gestiona salas
-    InterfazAdministradorDeSalasYButacas --> ControladorButacas : gestiona butacas
+    ' ==================== PAQUETE: CONTROLADORES ====================
+    package controladores {
+        class ControladorPelicula {
+            - servicioPelicula: ServicioPelicula
+            + iniciar(): void
+            - mostrarMenu(): void
+            - leerOpcion(): int
+            - crearNuevaPelicula(): void
+            - listarTodasLasPeliculas(): void
+            - buscarPeliculaPorId(): void
+            - buscarPeliculasPorTitulo(): void
+            - actualizarPelicula(): void
+            - eliminarPelicula(): void
+            - mostrarEstadisticas(): void
+            - verificarDuplicados(): void
+            - seleccionarIdioma(): Idioma
+            - seleccionarGeneros(): String
+            - mostrarDetallePelicula(pelicula: Pelicula): void
+            - truncarTexto(texto: String, longitud: int): String
+            - esperarEnter(): void
+            + cerrar(): void
+        }
 
-    ControladorSalas --> Sala : gestiona
-    ControladorButacas --> Butaca : gestiona
-    ControladorDeConsultaSalas --> Sala : consulta
-    ControladorDeConsultaSalas --> Butaca : consulta
+        class ControladorFuncion {
+            - servicioFuncion: ServicioFuncion
+            - servicioPelicula: ServicioPelicula
+            - servicioSala: ServicioSala
+            + iniciar(): void
+            - mostrarMenu(): void
+            - esperarEnter(): void
+            - leerOpcion(): int
+            - programarNuevaFuncion(): void
+            - seleccionarPelicula(): Pelicula
+            - seleccionarSala(): Sala
+            - seleccionarFormato(): FormatoFuncion
+            - seleccionarTipoEstreno(): TipoEstreno
+            - listarTodasLasFunciones(): void
+            - editarFuncion(): void
+            - mostrarDetalleFuncion(funcionExistente: Funcion): void
+            - mostrarDetalleFuncion(): void
+            - mostrarFuncionesDeSala(sala: Sala): void
+            - mostrarFuncionesDeSala(): void
+            - eliminarFuncion(): void
+            + cerrar(): void
+        }
 
-    Sala --> EstadoSala : tiene estado
-    Sala --> TipoSala : tiene tipo
-    Sala --> "1..*" Butaca : mapaDeButacas
+        class ControladorCartelera {
+            - servicioCartelera: ServicioCartelera
+            + iniciar(): void
+            - mostrarMenu(): void
+            - leerOpcion(): int
+            - agregarFuncionACartelera(): void
+            - eliminarFuncionDeCartelera(): void
+            - listarFuncionesDeCartelera(): void
+            - filtrarCartelera(): void
+            - mostrarDetalleFuncion(): void
+            + cerrar(): void
+        }
+    }
 
-    Butaca --> EstadoButaca : tiene estado
-    Butaca --> TipoButaca : tiene tipo
+    ' ==================== PAQUETE: SERVICIOS ====================
+    package servicios {
+        class ServicioPelicula {
+        - peliculaDAO: PeliculaDAO
+        + crearPelicula(titulo: String, sinopsis: String, duracionMinutos: int, anio: int, idioma: Idioma, genero: String, imagenUrl: String): Pelicula
+        + actualizarPelicula(id: int, titulo: String, sinopsis: String, duracionMinutos: int, anio: int, idioma: Idioma, genero: String, imagenUrl: String): void
+        + eliminarPelicula(id: int): void
+        + buscarPeliculaPorId(id: int): Pelicula
+        + listarTodasLasPeliculas(): List<Pelicula>
+        + buscarPeliculasPorTitulo(titulo: String): List<Pelicula>
+        + existePeliculaDuplicada(titulo: String, anio: int): boolean
+        + obtenerEstadisticas(): String
+        - validarDatosPelicula(titulo: String, sinopsis: String, duracionMinutos: int, anio: int, genero: String): void
+        }
+
+        class ServicioFuncion {
+            + programarNuevaFuncion(pelicula: Pelicula, sala: Sala, fechaHoraInicio: LocalDateTime, formato: FormatoFuncion, tipoEstreno: TipoEstreno): Funcion
+            - validarDatosFuncion(pelicula: Pelicula, sala: Sala, fechaHoraInicio: LocalDateTime, formato: FormatoFuncion, tipoEstreno: TipoEstreno): void
+            - validarHorarioTrabajo(inicio: LocalDateTime, fin: LocalDateTime): void
+            - validarTraslapeFunciones(sala: Sala, inicio: LocalDateTime, fin: LocalDateTime): void
+            + editarFuncion(id: int, pelicula: Pelicula, sala: Sala, fechaHoraInicio: LocalDateTime, formato: FormatoFuncion, tipoEstreno: TipoEstreno): void
+            + listarTodasLasFunciones(): List<Funcion>
+            + buscarPorId(id:int): Funcion
+            + listarFuncionesPorSala(salaId: int): List<Funcion>
+            + eliminarFuncion(id: int): void
+        }
+    }
+
+    ' ==================== RELACIONES ====================
+
+    controladores.ControladorFuncion..> servicios.ServicioFuncion
+    controladores.ControladorCartelera..> servicios.ServicioFuncion
+    controladores.ControladorPelicula..> servicios.ServicioPelicula
+    controladores.ControladorFuncion..> servicios.ServicioPelicula
+    ControladorFuncion ..> ControladorSalas
+
+    Funcion "1" --> "1" Pelicula : proyecta
+    Funcion "1" --> "1" Sala : ocurre en
+    Cartelera "1" --> "0..*" Pelicula : muestra
+
+    ServicioFuncion ..> Funcion
+    ServicioFuncion ..> Cartelera
+    ServicioPelicula ..> Pelicula
+
+    Pelicula --> Idioma
+    Pelicula --> Genero
+
+    Funcion --> FormatoFuncion
+    Funcion --> TipoEstreno
+
+
 }
 
 package venta-boletos {
@@ -288,11 +529,6 @@ package venta-boletos {
 package Controladores {
 
     class ControladorVentaBoletos {
-        - controladorAsignadorButacas: ControladorAsignadorButacas
-        - controladorAsignadorFuncion: ControladorAsignadorFuncion
-        - controladorBoleto: ControladorBoleto
-        - controladorFacturacion: ControladorFacturacion
-        - servicioGeneradorArchivo: ServicioGeneradorArchivo
         '- controladorPeliculaYFunciones: ControladorAsignadorFuncion
         '- controladorSalas: ControladorSalas
         + realizarVenta(): void
@@ -308,12 +544,12 @@ package Controladores {
     }
 
     class ControladorBoleto {
-        - servicioGeneradorBoleto: ServicioGeneradorBoleto
+        ''- servicioGeneradorBoleto: ServicioGeneradorBoleto
         + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
     }
 
     class ControladorFacturacion {
-        - servicioFacturacion: ServicioFacturacion
+        ''- servicioFacturacion: ServicioFacturacion
         + generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
     }
 
@@ -408,21 +644,20 @@ GeneradorArchivoPDF ..up|> ServicioGeneradorArchivo
 
 ''ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
 
-ControladorVentaBoletos --> ControladorAsignadorFuncion
-ControladorVentaBoletos --> ControladorAsignadorButacas
-ControladorVentaBoletos --> ControladorBoleto
-ControladorVentaBoletos --> ControladorFacturacion
+ControladorVentaBoletos ..> ControladorAsignadorFuncion
+ControladorVentaBoletos ..> ControladorAsignadorButacas
+ControladorVentaBoletos ..> ControladorBoleto
+ControladorVentaBoletos ..> ControladorFacturacion
 
-ControladorVentaBoletos --> ServicioGeneradorArchivo 
-''ControladorVentaBoletos ..>ControladorGeneradorArchivo
+ControladorVentaBoletos ..> ServicioGeneradorArchivo
 ControladorVentaBoletos ..> ControladorEnvios
 
-ControladorBoleto --> ServicioGeneradorBoleto
+ControladorBoleto ..> ServicioGeneradorBoleto
 ''ControladorBoleto ..> ServicioGeneradorBoleto
 
 ServicioGeneradorBoleto ..> Boleto
 
-ControladorFacturacion --> ServicioFacturacion
+ControladorFacturacion ..> ServicioFacturacion
 ''ControladorFacturacion ..> ServicioFacturacion
 
 ServicioFacturacion ..> Factura
@@ -442,10 +677,148 @@ ServicioCorreo ..up|> ServicioEnvio
 
 }
 
-package reportes {
+package "Reportes"{
+    ' ===== MODELO (REPORTES) =====
+    package "Modelo" {
 
+        class Reporte {
+            -int idReporte
+            -String tipoReporte
+            -Long intervaloEjecucion
+            -Date proximaEjecucion
+            -String contenido
+            -String formato
+            -String rutaArchivo
+        
+            +setFormatoDeContenido()
+            +guardarLocalmente(): boolean
+            +generar(IGeneradorReporte): void
+        }
+
+        interface IVentas {
+            +obtenertotalVentas()
+            +obtenertotalBoletos()
+        }
+        
+        class ServicioFacturacion {
+        
+        }
+        
+
+        class ReporteProgramado {
+            -String nombre
+            -String tipoReporte
+            -FrecuenciaReporte frecuencia
+            -Date fechaInicio
+            -Date fechaFin
+            -Time horaEjecucion
+            -boolean activo
+            ''-Date ultimaEjecucion
+            ''-Date proximaEjecucion
+            -String rutaAlmacenamiento
+            +programarProximaEjecucion(): void
+            +validarConfiguracion(): boolean
+        }
+
+        enum FrecuenciaReporte  {
+            DIARIO
+            SEMANAL
+            MENSUAL
+            ANUAL
+            +calcularProximaFecha(fechaBase: Date): Date
+        }
+        
+        class DatosGrafica {
+            -label String[]
+            -data: double[]
+            -metricName: String
+        }
+        
+        interface IGeneradorReporte {
+        +generarFormato(reporte: Reporte): String
+        }
+
+        class GeneradorPDF implements IGeneradorReporte {
+        +generarFormato(reporte: Reporte): String
+        }
+
+        class GeneradorCSV implements IGeneradorReporte {
+        +generarFormato(reporte: Reporte): String
+        }
+        
+
+        ServicioFacturacion .up.|> IVentas
+        Reporte --> IVentas
+        ReporteProgramado -left-> FrecuenciaReporte : tiene
+        ReporteProgramado --|> Reporte
+        Reporte -left-> IGeneradorReporte
+        
+        
+    }
+
+    ' ===== SERVICIOS (REPORTES) =====
+    package "Servicios" {
+
+        class ServicioReportes  {
+            - datos: Map<String, Object>
+            +generarReporteVentas(fechaInicio: Date, fechaFin: Date): Reporte
+            +guardarReporteLocalmente(reporte: Reporte, ruta: String): boolean
+            +obtenerDatosVentas(fechaInicio: Date, fechaFin: Date): Map<String, Object>
+        }
+
+        class ServicioProgramacionReportes {
+            +crearReporteProgramado(r: ReporteProgramado): ReporteProgramado
+            +actualizarReporteProgramado(reporteProgramado: ReporteProgramado): boolean
+            +eliminarReporteProgramado(idReporte: int): boolean
+            +listarReportesProgramados(): List<ReporteProgramado>
+            +obtenerReportesPendientes(): List<ReporteProgramado>
+            +ejecutarReporteProgramado(reporteProgramado: ReporteProgramado): boolean
+            +calcularProximaEjecucion(reporteProgramado: ReporteProgramado): Date
+            +verificarReportesPendientes(): void
+        }
+
+        ServicioReportes --> IVentas : obtiene_datos
+        ServicioReportes --> Reporte
+        ServicioProgramacionReportes -right-> ReporteProgramado
+    }
+
+
+    ' ===== CONTROLADOR (REPORTES) =====
+    package "Controlador" {
+
+        class ControladorReportes {
+            -ReportesView vista
+            -Reporte modelo
+            -ServicioReportes servicio
+            -ServicioProgramacionReportes servicioProgramacion
+            +inicializar(): void
+            +generarReporte(): void
+            +mostrarReporte(): void
+            +exportarReporte(formato: String): void
+            +generarGrafico(): void
+            +programarReporte(): void
+            +editarReporteProgramado(): void
+            +eliminarReporteProgramado(): void
+            +cargarReportesProgramados(): void
+            +ejecutarReportesPendientes(): void
+        }
+
+        ControladorReportes --> Reporte : usa
+        ControladorReportes -left-> DatosGrafica: usa
+        ControladorReportes --> ServicioReportes : usa
+        ControladorReportes --> ServicioProgramacionReportes : usa
+    }
 }
 
 ' ============================== RELACIONES GENERALES ==============================
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
+ControladorAsignadorFuncion ..> ControladorCartelera
+
+ControladorPortalPrincipal ..> ControladorVentaBoletos
+ControladorPortalPrincipal ..> ControladorPelicula
+ControladorPortalPrincipal ..> ControladorFuncion
+ControladorPortalPrincipal ..> ControladorSalas
+ControladorPortalPrincipal ..> ControladorButacas
+ControladorPortalPrincipal ..> ControladorReportes
+ControladorReportes ..> ControladorVentaBoletos 
 @enduml
