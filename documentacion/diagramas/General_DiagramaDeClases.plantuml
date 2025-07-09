@@ -47,6 +47,7 @@ class Rol {
     GESTIONAR_FUNCION
     GESTIONAR_REPORTES
 }
+Permiso<- Rol
 }
 
 }
@@ -126,7 +127,7 @@ ServicioPerfilUsuario .> Usuario
 ServicioUsuarios ..> Usuario
 
 ' Sesión
-ServicioSesionSingleton ---> Usuario
+ServicioSesionSingleton ---> "1" Usuario
 ServicioRoles ...> Rol
 
 
@@ -277,16 +278,24 @@ ServicioSalas ..> Sala
 ServicioButacas ..> Butaca
 
 ' Relaciones existentes
-ControladorSalas --> Sala : gestiona
-ControladorButacas --> Butaca : gestiona
-ControladorDeConsultaSalas --> Sala : consulta
-ControladorDeConsultaSalas --> Butaca : consulta
+ControladorSalas --> Sala
+': gestiona
+ControladorButacas --> Butaca
+': gestiona
+ControladorDeConsultaSalas --> Sala
+' : consulta
+ControladorDeConsultaSalas --> Butaca
+': consulta
 
-Sala --> EstadoSala : tiene estado
-Sala --> TipoSala : tiene tipo
-Sala --> "1..*" Butaca : mapaDeButacas
+Sala --> EstadoSala
+': tiene estado
+Sala --> TipoSala
+': tiene tipo
+Sala --> "1..*" Butaca
+': mapaDeButacas
 
-Butaca --> EstadoButaca : tiene estado
+Butaca --> EstadoButaca
+': tiene estado
 }
 
 package venta-boletos {
@@ -419,7 +428,7 @@ ControladorVentaBoletos --> ControladorAsignadorButacas
 ControladorVentaBoletos --> ControladorBoleto
 ControladorVentaBoletos --> ControladorFacturacion
 
-ControladorVentaBoletos --> ServicioGeneradorArchivo 
+ControladorVentaBoletos --> ServicioGeneradorArchivo
 ''ControladorVentaBoletos ..>ControladorGeneradorArchivo
 ControladorVentaBoletos ..> ControladorEnvios
 
@@ -454,4 +463,468 @@ package reportes {
 
 ' ============================== RELACIONES GENERALES ==============================
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
-@enduml
+@enduml@startuml General_DiagramaDeClases
+       skinparam linetype ortho
+
+       package empleados {
+       ' ============================== MODELO DE DOMINIO ==============================
+       package modelo {
+       package entidades{
+       class Usuario {
+         - id: Long
+         - nombreUsuario: String
+         - correo: String
+         - clave: String
+         - nombreCompleto: String
+         - cedula: String
+         - celular: String
+         - activo: boolean
+         - fechaCreacion: DateTime
+         - fechaUltimaModificacion: DateTime
+         --
+         + actualizarContacto(nuevoCorreo: String, nuevoCelular: String): void
+         + actualizarRol(nuevoRol: Rol): void
+         + activar(): void
+         + desactivar(): void
+         + verificarClave(ingresada: String): boolean
+       }
+
+       class Rol {
+         - id: Long
+         - nombre: String
+         - descripcion: String
+         - activo: boolean
+         - permisos: Set<Permiso>
+
+         + activar(): void
+         + desactivar(): void
+         + tienePermiso(permiso: Permiso): boolean
+         + agregarPermiso(permiso: Permiso): void
+         + removerPermiso(permiso: Permiso): void
+
+       }
+
+
+        enum Permiso {
+           GESTIONAR_USUARIO
+           VENDER_BOLETO
+           GESTIONAR_SALA
+           GESTIONAR_FUNCION
+           GESTIONAR_REPORTES
+       }
+       }
+
+       }
+
+       Usuario  *-- "1" Rol
+
+       ' ============================== SERVICIOS / CONTROLADORES ==============================
+
+       package servicios{
+
+
+
+        class ValidadorUsuario {
+          + validarCorreo(correo: String): boolean
+          + validarClave(clave: String): boolean
+        }
+
+       class ServicioSesionSingleton {
+         - {static} servicioSesion: servicioSesionSingleton
+         - usuarioActivo: Usuario
+         + {static} getInstancia()
+         + iniciarSesion(nombreUsuario: String, clave: String): Usuario
+         + cerrarSesion(): Usuario
+         + getUsuarioActivo(): Usuario
+         + estaAutenticado(): boolean
+         + tienePermiso(permiso: Permiso): boolean
+
+       }
+
+
+
+       class ServicioUsuarios {
+         + crearUsuario(usuario: Usuario): void
+         + buscarUsuarioPorCorreo(correo: String): Usuario
+         + buscarUsuarioPorNombreUsuario(nombreUsuario: String): Usuario
+         + listarUsuarios(): List<Usuario>
+         + activarUsuario(usuario: Usuario): void
+         + desactivarUsuario(usuario: Usuario): void
+         + actualizarEstado(usuario: Usuario, esstado:Boolean): void
+         + actualizarRolUsuario(usuario: Usuario, rol:Rol): void
+
+       }
+
+       class ServicioPerfilUsuario {
+         + puedeActualizarPerfil(usuario: Usuario, id: Long): boolean
+         + cambiarClave(usuario: Usuario, antigua: String, nueva: String): boolean
+         + obtenerPerfil(id: Long): Usuario
+         + actualizarPerfil(usuario: Usuario, correo: String, celular: String): void
+       }
+
+
+       class ServicioRoles {
+         + crearRol(rol:Rol): void
+         + listarRoles(): List<Rol>
+         + actualizarRol(rol: Rol): void
+         + activarRol(idRol: Long): void
+         + desactivarRol(idRol: Long): void
+         + obtenerPermisosDelRol(idRol: Long): Set<Permiso>
+       '  + asignarPermisoARol(Long, permiso: Permiso): void
+       '  + eliminarPermisoDelRol(idRol: Long, permiso: Permiso): void
+       '  + obtenerRolesConPermiso(permiso: Permiso): List<Rol>
+         + obtenerRolPorIdUsuario(idUsuario: Long): Rol
+
+       }
+
+       ' Relaciones
+
+       }
+
+       ' ============================== RELACIONES DE DEPENDENCIA NECESARIAS ==============================
+
+
+       ServicioUsuarios .> ValidadorUsuario
+       ServicioPerfilUsuario .> ValidadorUsuario
+
+       ServicioPerfilUsuario .> Usuario
+       ServicioUsuarios ..> Usuario
+
+       ' Sesión
+       ServicioSesionSingleton ---> Usuario
+       ServicioRoles ...> Rol
+
+
+
+
+
+       package controladores {
+
+       ' ================================
+       ' ControladorGestionUsuarios
+       ' ================================
+       class ControladorGestionUsuarios {
+         + agregarUsuario(nombreUsuario:String, correo:String,nombreCompleto:String,cedula:String,celular:String): void
+         + cambiarRolUsuario(usuario: Usuario, rol:Rol): void
+         + activarUsuario(usuario: Usuario): void
+         + desactivarUsuario(usuario: Usuario): void
+         + listarUsuarios(): List<Modelo.Usuario>
+       }
+
+       ' ================================
+       ' ControladorLogin
+       ' ================================
+       class ControladorLogin {
+         + iniciarSesion(): boolean
+       }
+
+       ' ================================
+       ' ControladorPortalPrincipal
+       ' ================================
+       class ControladorPortalPrincipal {
+         + habilitarOpcionSiTienePermiso(permiso: Permiso):void
+         + cerrarSesion(): void
+       }
+
+
+         class ControladorPerfilUsuario {
+           + actualizarPerfil(usuario: Usuario, nuevoCorreo: String, nuevoCelular: String): void
+           + cambiarClave(usuario: Usuario, claveActual: String, nuevaClave: String): boolean
+         }
+
+
+       }
+
+       ' Relaciones
+       ControladorLogin .> ServicioSesionSingleton
+       ControladorPortalPrincipal .> ServicioSesionSingleton
+       ControladorGestionUsuarios .> ServicioUsuarios
+       ControladorGestionUsuarios .> ServicioRoles
+       ControladorPerfilUsuario ..> ServicioPerfilUsuario
+
+
+
+
+       }
+
+       package peliculas {
+
+       }
+
+       package salas {
+       package modelos {
+           enum EstadoSala {
+               DISPONIBLE
+               MANTENIMIENTO
+           }
+
+           enum TipoSala {
+               NORMAL
+               VIP
+           }
+
+           enum EstadoButaca {
+               DISPONIBLE
+               RESERVADA
+               OCUPADA
+               INHABILITADA
+           }
+
+           class Sala {
+               - id: int
+               - nombre: String
+               - capacidad: String [fila][numeroColumna]
+               - mapaDeButacas: List<Butaca>
+               - estado: EstadoSala
+               - tipo: TipoSala
+               + getInfoSala(): String
+               + setInfoSala(nombre: String, capacidad: int, tipo: TipoSala): void
+           }
+
+           class Butaca {
+               - id: int
+               - estado: EstadoButaca
+               - numeroColumna: String
+               - fila: String
+               + getInfoButaca(): String
+               + setInfoButaca(numero: String, fila: String): void
+           }
+       }
+
+       package servicios {
+           class ServicioSalas {
+               + crearSala(sala: Sala): void
+               + eliminarSala(id: int): void
+               + listarSalas(): List<Sala>
+               + actualizarSala(sala: Sala): void
+               + buscarSalaPorId(id: int): Sala
+           }
+
+           class ServicioButacas {
+               + crearButaca(butaca: Butaca): void
+               + eliminarButaca(id: int): void
+               + listarButacas(sala: Sala): List<Butaca>
+               + reservarButaca(id: int): void
+               + cancelarReserva(id: int): void
+           }
+       }
+
+       package Controladores {
+           class ControladorSalas {
+               - Salas: List<Sala>
+               + crearSala()
+               + eliminarSala()
+               + listarSalas()
+           }
+
+           class ControladorButacas {
+               - Butacas: List<Butaca>
+               + crearButaca()
+               + eliminarButaca()
+               + listarButacas()
+           }
+
+           class ControladorDeConsultaSalas {
+               - Salas: List<Sala>
+               + consultarSalasDisponibles(): List<Sala>
+               + consultarMapaDeButacas(sala: Sala): List<Butaca>
+           }
+       }
+
+       ' Relaciones de controladores a servicios
+       ControladorSalas ..> ServicioSalas
+       ControladorButacas ..> ServicioButacas
+       ControladorDeConsultaSalas ..> ServicioSalas
+       ControladorDeConsultaSalas ..> ServicioButacas
+
+       ' Relaciones de servicios a modelos
+       ServicioSalas ..> Sala
+       ServicioButacas ..> Butaca
+
+       ' Relaciones existentes
+       ControladorSalas --> Sala
+'       : gestiona
+       ControladorButacas --> Butaca
+'       : gestiona
+       ControladorDeConsultaSalas --> Sala
+'       : consulta
+       ControladorDeConsultaSalas --> Butaca
+'       : consulta
+
+       Sala --> EstadoSala
+'       : tiene estado
+       Sala --> TipoSala
+'       : tiene tipo
+       Sala --> "1..*" Butaca
+'       : mapaDeButacas
+
+       Butaca --> EstadoButaca
+'       : tiene estado
+       }
+
+       package venta-boletos {
+           ' ------------------ CONTROLADORES ------------------
+       package Controladores {
+
+           class ControladorVentaBoletos {
+               - controladorAsignadorButacas: ControladorAsignadorButacas
+               - controladorAsignadorFuncion: ControladorAsignadorFuncion
+               - controladorBoleto: ControladorBoleto
+               - controladorFacturacion: ControladorFacturacion
+               - servicioGeneradorArchivo: ServicioGeneradorArchivo
+               '- controladorPeliculaYFunciones: ControladorAsignadorFuncion
+               '- controladorSalas: ControladorSalas
+               + realizarVenta(): void
+           }
+
+           class ControladorAsignadorFuncion {
+               + asignarFuncion(controladorCartelera: ControladorCartelera): Funcion
+           }
+
+           class ControladorAsignadorButacas {
+               - butacasOcupadas: List<Butaca>
+               + asignarButacas(controladorDeConsultaSalas: ControladorDeConsultaSalas, funcion: Funcion, butacasOcupadas: Map): List<Butaca>
+           }
+
+           class ControladorBoleto {
+               - servicioGeneradorBoleto: ServicioGeneradorBoleto
+               + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+           }
+
+           class ControladorFacturacion {
+               - servicioFacturacion: ServicioFacturacion
+               + generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+           }
+
+           ''class ControladorGeneradorArchivo {
+           ''    + generarArchivo(factura: Factura, servicioGeneradorArchivo: ServicioGeneradorArchivo): void
+           ''}
+
+           class ControladorEnvios {
+               - asunto: String
+               - cuerpo: String
+               + especificarAsunto(asunto: String): void
+               + especificarCuerpo(cuerpo: String): void
+               + enviar(correo: String, adjunto: PDF): void
+           }
+       }
+
+       ' ------------------ SERVICIOS ------------------
+       package Servicios{
+           interface ServicioEnvio {
+               + enviarCorreo(correo: String, asunto: String, cuerpo: String, adjunto: PDF): void
+           }
+
+           class ServicioCorreo {
+           }
+
+           class ServicioFacturacion {
+               generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+           }
+
+           class ServicioGeneradorBoleto{
+               + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+           }
+
+           interface ServicioGeneradorArchivo {
+               + generar(factura: Factura): void
+           }
+
+           class GeneradorArchivoPDF {
+               '+ generar(factura: Factura): void
+           }
+       }
+
+       ' ------------------ MODELOS ------------------
+       package Modelos {
+
+           abstract class Producto {
+               - precio: double
+               + {abstract} calcularPrecio(): double
+           }
+
+           class Boleto {
+               - id: int
+               - funcion: Funcion
+               - butaca: Butaca
+               + setFuncion(funcion: Funcion): void
+               + setButaca(butaca: Butaca): void
+               + calcularPrecio(): double
+           }
+
+           class Factura {
+               - codigoFactura: String
+               - fecha: LocalDateTime
+               - cliente: Cliente
+               - productos: List<Producto>
+               - subtotal: double
+               - total: double
+               + calcularSubTotal(): double
+               + calcularTotal(): double
+               + generarCodigo(): String
+           }
+
+           interface CalculadorImpuesto {
+               + calcular(subtotal: double): double
+           }
+
+           class CalculadorIVA {
+               - {static} IVA_TASA: double
+               '+ calcular(subtotal: double): double
+           }
+
+           class Cliente {
+               - cedula: long
+               - nombre: String
+               - apellido: String
+               - correo: String
+           }
+       }
+
+
+       ' ------------------ RELACIONES ------------------
+       GeneradorArchivoPDF ..up|> ServicioGeneradorArchivo
+
+       ''ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
+
+       ControladorVentaBoletos --> ControladorAsignadorFuncion
+       ControladorVentaBoletos --> ControladorAsignadorButacas
+       ControladorVentaBoletos --> ControladorBoleto
+       ControladorVentaBoletos --> ControladorFacturacion
+
+       ControladorVentaBoletos --> ServicioGeneradorArchivo
+       ''ControladorVentaBoletos ..>ControladorGeneradorArchivo
+       ControladorVentaBoletos ..> ControladorEnvios
+
+       ControladorBoleto --> ServicioGeneradorBoleto
+       ''ControladorBoleto ..> ServicioGeneradorBoleto
+
+       ServicioGeneradorBoleto ..> Boleto
+
+       ControladorFacturacion --> ServicioFacturacion
+       ''ControladorFacturacion ..> ServicioFacturacion
+
+       ServicioFacturacion ..> Factura
+       ServicioFacturacion ..left> Cliente
+
+       Boleto --up|> Producto
+
+       Factura "1" --> "1..*" Producto
+       Factura "1... *"--> "1" Cliente
+       Factura ..> CalculadorImpuesto
+
+       CalculadorIVA ..up|> CalculadorImpuesto
+
+       ControladorEnvios ..> ServicioEnvio
+
+       ServicioCorreo ..up|> ServicioEnvio
+
+       }
+
+       package reportes {
+
+       }
+
+       ' ============================== RELACIONES GENERALES ==============================
+       ControladorAsignadorButacas ..> ControladorDeConsultaSalas
+       @enduml
