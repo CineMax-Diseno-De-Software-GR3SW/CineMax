@@ -32,14 +32,9 @@ public class ControladorFunciones {
         boolean continuar = true;
         while (continuar) {
             System.out.println("\n=== GESTIÓN DE FUNCIONES ===");
-            System.out.println("1. Programar nueva función");
-            System.out.println("2. Listar todas las funciones programadas");
-            System.out.println("3. Editar funcion");
-            System.out.println("4. Eliminar funcion");
-            System.out.println("5. Consultar funciones de una sala");
-            System.out.println("6. Consultar detalles de una función");
-            System.out.println("0. Salir");
-            System.out.print("Seleccione una opción: ");
+
+            mostrarMenu(); 
+
             int opcion = leerOpcion();
             try {
                 switch (opcion) {
@@ -70,8 +65,29 @@ public class ControladorFunciones {
             } catch (Exception e) {
                 System.err.println("Error: " + e.getMessage());
             }
+
+            if (continuar) {
+                esperarEnter();
+            }
         }
     }
+
+    private void mostrarMenu() {
+          System.out.println("1. Programar nueva función");
+            System.out.println("2. Listar todas las funciones programadas");
+            System.out.println("3. Editar funcion");
+            System.out.println("4. Eliminar funcion");
+            System.out.println("5. Consultar funciones de una sala");
+            System.out.println("6. Consultar detalles de una función");
+            System.out.println("0. Salir");
+            System.out.print("Seleccione una opción: ");
+    }
+
+    private void esperarEnter() {
+        System.out.print("\nPresione Enter para continuar...");
+        scanner.nextLine();
+    }
+    
 
     private int leerOpcion() {
         try {
@@ -240,7 +256,7 @@ public class ControladorFunciones {
         System.out.println("Función actual:");
         mostrarDetalleFuncion(funcionExistente);
 
-        System.out.println("\nIngrese los nuevos datos (presione Enter para mantener el valor actual):");
+        System.out.println("\nIngrese los nuevos datos:");
 
         Pelicula pelicula = seleccionarPelicula();
         if (pelicula == null)
