@@ -62,6 +62,7 @@ package Controladores {
     class ControladorSalas {
         - Salas: List<Sala>
         + crearSala()
+        + actualizarSala()
         + eliminarSala()
         + listarSalas()
     }
@@ -69,10 +70,10 @@ package Controladores {
     class ControladorButacas {
         - Butacas: List<Butaca>
         + crearButaca()
+        + actualizarButaca()
         + eliminarButaca()
         + listarButacas()
-        + reservarButaca()
-        + cancelarReserva()
+
     }
 
     class ControladorDeConsultaSalas {

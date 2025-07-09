@@ -15,6 +15,9 @@ public class Sala {
         this.estado = estado;
     }
 
+    public Sala() {
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

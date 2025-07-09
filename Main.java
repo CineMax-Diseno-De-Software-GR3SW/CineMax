@@ -1,16 +1,18 @@
-import Modelos.Entidades.CineMax;
-import Controladores.ControladorCineMax;
-import Vistas.VistaCineMax;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.scene.Parent;
 
-public class Main{
+public class Main extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(new java.io.File("C:/ProyectoDiseño/CineMax/Vistas/VistaSala.fxml").toURI().toURL());        primaryStage.setTitle("Gestión de Salas");
+        primaryStage.setScene(new Scene(root));
+        primaryStage.show();
+    }
+
     public static void main(String[] args) {
-        VistaCineMax vistaCineMax = new VistaCineMax();
-
-        CineMax cineMax = new CineMax();
-        
-        ControladorCineMax controladorCineMax = new ControladorCineMax(cineMax, vistaCineMax);
-        
-        controladorCineMax.mostrarPaginaPrincipal();
-        //cineMax.iniciar();
+        launch(args);
     }
 }

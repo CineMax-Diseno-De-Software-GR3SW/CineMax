@@ -10,14 +10,17 @@ import java.util.List;
 public class SalasDAO {
 
     public void crearSala(Sala sala) throws SQLException {
-        String sql = "INSERT INTO Sala (nombre, capacidad, tipo, estado) VALUES (?, ?, ?::tipo_sala, ?::estado_sala)";
+        String sql = "INSERT INTO Sala (nombre, capacidad, tipo, estado) VALUES (?, ?, ?::tipo_sala, ?::estado_sala) RETURNING id";
         Connection conn = GestorDB.obtenerInstancia().obtenerConexion();
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sala.getNombre());
             stmt.setInt(2, sala.getCapacidad());
             stmt.setString(3, sala.getTipo().name());
             stmt.setString(4, sala.getEstado().name());
-            stmt.executeUpdate();
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                sala.setId(rs.getInt(1));
+            }
         }
     }
 
