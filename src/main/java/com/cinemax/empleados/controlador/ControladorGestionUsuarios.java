@@ -1,11 +1,9 @@
 package com.cinemax.empleados.controlador;
 
+import com.cinemax.empleados.modelo.entidades.Rol;
+import com.cinemax.empleados.modelo.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-import com.cinemax.empleados.modelo.entidades.Usuario;
-import com.cinemax.empleados.modelo.entidades.*;
-
-
 import com.cinemax.empleados.servicios.ServicioUsuarios;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,241 +17,223 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.util.List;
 
-import javafx.util.StringConverter;
-
 public class ControladorGestionUsuarios {
 
-    public Button btnAgregarUsuario;
-    public Button btnBack;
-    public Label lblNombreUsuario;
-    public Label lblRolUsuario;
+    @FXML private Button btnAgregarUsuario;
+    @FXML private Button btnBack;
+    @FXML private Label lblNombreUsuario;
+    @FXML private Label lblRolUsuario;
+
     @FXML private TableView<Usuario> tableUsuarios;
     @FXML private TableColumn<Usuario, Boolean> colActivo;
     @FXML private TableColumn<Usuario, Long> colUsuario;
     @FXML private TableColumn<Usuario, String> colNombre;
     @FXML private TableColumn<Usuario, String> colEmail;
     @FXML private TableColumn<Usuario, Rol> colRol;
-//    @FXML private TableColumn<Usuario, Void> colEditar;
 
-    private ObservableList<Rol> rolesObservable;      // lista para el combo
-
+    private ObservableList<Rol> rolesObservable;
     private ServicioUsuarios servicioUsuarios;
-
     private ServicioRoles servicioRoles;
     private ServicioSesionSingleton gestorSesion;
 
-
     @FXML
     public void initialize() {
-        // Configurar columnas…
         servicioUsuarios = new ServicioUsuarios();
         servicioRoles = new ServicioRoles();
-
-
         gestorSesion = ServicioSesionSingleton.getInstancia();
-        Usuario use = gestorSesion.getUsuarioActivo();
-        lblNombreUsuario.setText(use.getNombreCompleto());
-        lblRolUsuario.setText(use.getDescripcionRol());
+
+        Usuario usuarioActual = gestorSesion.getUsuarioActivo();
+        lblNombreUsuario.setText(usuarioActual.getNombreCompleto());
+        lblRolUsuario.setText(usuarioActual.getDescripcionRol());
+
         colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
         colUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("correo"));
-        colRol.setCellValueFactory(new PropertyValueFactory<>("nombreRol"));
+        colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
 
+        configurarColumnaActivo();
+        configurarColumnaRol();
 
-        // Columna de botones de edición
-//        colEditar.setCellFactory(tc -> new TableCell<>() {
-//            private final Button btn = new Button("✎");
-//            {
-//                btn.getStyleClass().add("icon-button");
-//                btn.setOnAction(e -> editarUsuario(getTableView().getItems().get(getIndex())));
-//            }
-//            @Override protected void updateItem(Void itm, boolean empty) {
-//                super.updateItem(itm, empty);
-//                setGraphic(empty ? null : btn);
-//            }
-//        });
+        cargarUsuarios();
+    }
 
-        // Cargar datos…
-        try {
-            // 1.  Usuario logeado (lo obtienes de tu singleton de sesión)
-            Usuario usuarioActual = gestorSesion.getUsuarioActivo();
-
-            // 2.  Filtras la lista que viene de la BD
-            List<Usuario> soloOtros = servicioUsuarios.listarUsuarios()
-                    .stream()
-                    .filter(u -> !u.getId().equals(usuarioActual.getId())) // ≠ usuario conectado
-                    .toList();                                             // Java 16+; o collect(Collectors.toList())
-
-            // 3.  Cargas la tabla con la lista filtrada
-            tableUsuarios.setItems(FXCollections.observableArrayList(soloOtros));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
+    private void configurarColumnaActivo() {
         colActivo.setCellFactory(tc -> new TableCell<>() {
-
             private final ToggleButton toggle = new ToggleButton();
 
             {
-                // ‑‑‑ estilos opcionales
-                toggle.getStyleClass().add("switch");   // pon tu estilo en CSS
+                toggle.getStyleClass().add("switch");
                 toggle.setMinWidth(70);
-
-                // Cuando el usuario haga clic, actualiza el modelo y persiste
                 toggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
                     Usuario u = getTableRow().getItem();
                     if (u != null) {
-                        u.setActivo(newVal);            // actualiza el POJO
-
-                        // ⇣  Si manejas BD o servicio, persiste aquí
+                        u.setActivo(newVal);
                         try {
                             servicioUsuarios.actualizarEstado(u.getId(), newVal);
                         } catch (Exception e) {
-                            throw new RuntimeException(e);
+                            mostrarError("Error al actualizar estado", e.getMessage());
                         }
                     }
-                    // Texto opcional
-                    toggle.setText(newVal ? "ON  " : "  OFF");
+                    toggle.setText(newVal ? "ON" : "OFF");
                 });
             }
 
             @Override
             protected void updateItem(Boolean activo, boolean empty) {
                 super.updateItem(activo, empty);
-
                 if (empty || activo == null) {
                     setGraphic(null);
                 } else {
                     toggle.setSelected(activo);
-                    toggle.setText(activo ? "ON  " : "  OFF");
+                    toggle.setText(activo ? "ON" : "OFF");
                     setGraphic(toggle);
                 }
             }
         });
+    }
 
-        /* ----- 1. cargar roles una sola vez ----- */
+    private void configurarColumnaRol() {
         try {
             rolesObservable = FXCollections.observableArrayList(servicioRoles.listarRoles());
         } catch (Exception e) {
-            e.printStackTrace();
             rolesObservable = FXCollections.observableArrayList();
+            mostrarError("Error al cargar roles", e.getMessage());
         }
 
-        /* ----- 2. value factory: muestra el rol actual ----- */
-        colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
-
-        /* ----- 3. cell factory: ComboBox editable ----- */
         colRol.setCellFactory(col -> {
-            ComboBoxTableCell<Usuario, Rol> cell =
-                    new ComboBoxTableCell<>(new StringConverter<>() {
-                        @Override public String toString(Rol r)   { return r == null ? "" : r.getNombre(); }
-                        @Override public Rol fromString(String s) { return rolesObservable.stream()
-                                .filter(r -> r.getNombre().equals(s))
-                                .findFirst().orElse(null); }
-                    }, rolesObservable);
+            ComboBoxTableCell<Usuario, Rol> cell = new ComboBoxTableCell<>(
+                    new StringConverter<>() {
+                        @Override public String toString(Rol r) { return r == null ? "" : r.getNombre(); }
+                        @Override public Rol fromString(String s) {
+                            return rolesObservable.stream()
+                                    .filter(r -> r.getNombre().equals(s))
+                                    .findFirst().orElse(null);
+                        }
+                    },
+                    rolesObservable
+            );
 
-
-//            /* al confirmar la edición */
             colRol.setOnEditCommit(evt -> {
                 Usuario u = evt.getRowValue();
-                Rol nuevo   = evt.getNewValue();
+                Rol nuevo = evt.getNewValue();
                 if (nuevo != null && !nuevo.equals(u.getRol())) {
-                    u.setRol(nuevo);                         // 1) actualiza modelo
+                    u.setRol(nuevo);
                     try {
-                        servicioUsuarios.actualizarRolUsuario(u.getId(), nuevo); // 2) guarda en BD
+                        servicioUsuarios.actualizarRolUsuario(u.getId(), nuevo);
+                        tableUsuarios.refresh();
                     } catch (Exception e) {
-                        throw new RuntimeException(e);
+                        mostrarError("Error al actualizar rol", e.getMessage());
                     }
-                    tableUsuarios.refresh();                 // refresca por si hay renderizado
                 }
             });
+
             return cell;
         });
-        tableUsuarios.setEditable(true);  // imprescindible para ComboBoxTableCell
+
+        tableUsuarios.setEditable(true);
     }
 
-
-    private void editarUsuario(Usuario u) {
-        // abrir diálogo / escena de edición
-    }
-
-    public void onBackAction(ActionEvent event) {
+    private void cargarUsuarios() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void onAgregarUsuario(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml"));
-        try {
-            Parent root = loader.load();
-
-            // Obtener el Stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Registrar nuevo empleado");
-            stage.setScene(new Scene(root));
-            stage.show();
-//        try {
-//            URL fxmlLocation = getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml");
-//
-//            if (fxmlLocation == null) {
-//                throw new IOException("No se pudo encontrar el archivo FXML: /Vista/empleados/PantallaRegistrarUsuario.fxml");
-//            }
-//
-//            FXMLLoader loader = new FXMLLoader(fxmlLocation);
-//            Parent root = loader.load();
-//
-//            Stage stage = new Stage();
-//            stage.setTitle("Registrar Nuevo Empleado");
-//            stage.setScene(new Scene(root));
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error de Carga");
-            alert.setHeaderText("No se pudo abrir la ventana de registro.");
-            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
-            alert.showAndWait();
+            Usuario actual = gestorSesion.getUsuarioActivo();
+            List<Usuario> otrosUsuarios = servicioUsuarios.listarUsuarios().stream()
+                    .filter(u -> !u.getId().equals(actual.getId()))
+                    .toList();
+            tableUsuarios.setItems(FXCollections.observableArrayList(otrosUsuarios));
+        } catch (Exception e) {
+            mostrarError("Error al cargar usuarios", e.getMessage());
         }
     }
 
     @FXML
-    private void onCerrarSesion(ActionEvent event) {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaLogin.fxml"));
+    public void onBackAction(ActionEvent event) {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
-
-            // Obtener el Stage actual desde el botón o cualquier nodo
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Portal del Administrador");
             stage.setScene(new Scene(root));
             stage.show();
-
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            mostrarError("Error al volver al portal principal", e.getMessage());
         }
-        // Ejemplo de cerrar ventana actual (si fuera necesario)
-        // Stage stage = (Stage) txtBienvenida.getScene().getWindow();
-        // stage.close();
-
-
     }
 
+    @FXML
+    public void onAgregarUsuario(ActionEvent event) {
+        // Aquí iría un formulario emergente o diálogo para ingresar datos de nuevo usuario
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Nuevo Usuario");
+        dialog.setHeaderText("Ingrese los datos del nuevo usuario (formato: usuario,correo,nombre,cedula,celular,rol_id):");
+        dialog.setContentText("Datos:");
+
+        dialog.showAndWait().ifPresent(input -> {
+            try {
+                String[] datos = input.split(",");
+                if (datos.length != 6) {
+                    throw new IllegalArgumentException("Debe ingresar exactamente 6 valores.");
+                }
+
+                String nombreUsuario = datos[0].trim();
+                String correo = datos[1].trim();
+                String nombreCompleto = datos[2].trim();
+                String cedula = datos[3].trim();
+                String celular = datos[4].trim();
+                Long idRol = Long.parseLong(datos[5].trim());
+
+                Rol rol = rolesObservable.stream()
+                        .filter(r -> r.getId().equals(idRol))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Rol no encontrado."));
+
+                Usuario nuevo = servicioUsuarios.crearUsuario(nombreUsuario, correo, nombreCompleto, cedula, celular, rol);
+                servicioUsuarios.crearUsuario(nuevo); // persistir
+
+                tableUsuarios.getItems().add(nuevo);
+                mostrarInfo("Usuario creado", "Contraseña temporal: " + nuevo.getClave());
+
+            } catch (Exception ex) {
+                mostrarError("Error al crear usuario", ex.getMessage());
+            }
+        });
+    }
+
+    @FXML
+    private void onCerrarSesion(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaLogin.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Portal del Administrador");
+            stage.show();
+        } catch (IOException e) {
+            mostrarError("Error al cerrar sesión", e.getMessage());
+        }
+    }
+
+    private void mostrarError(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
+
+    private void mostrarInfo(String titulo, String mensaje) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
+    }
 }
+
 //
 //package com.cinemax.empleados.Controlador;
 //
