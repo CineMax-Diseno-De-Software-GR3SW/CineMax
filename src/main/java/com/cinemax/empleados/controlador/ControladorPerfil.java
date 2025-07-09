@@ -92,7 +92,26 @@ public class ControladorPerfil implements Initializable {
     @FXML
     private void onCambiarContrasena(ActionEvent event) {
         // Implementar funcionalidad para cambiar contraseña
-        System.out.println("Cambiar contraseña clicked");
+        //System.out.println("Cambiar contraseña clicked");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PopUpCambiarContrasena.fxml"));
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+            // Aplicar hoja de estilos
+            scene.getStylesheets().add(getClass().getResource("/Vista/empleados/ayu-theme.css").toExternalForm());
+
+            // Crear stage
+            Stage stage = new Stage();
+            stage.setTitle("Cambiar Contraseña");
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.initOwner(((Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow()));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
