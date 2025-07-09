@@ -4,14 +4,10 @@ title Diagrama de Clases - Gestión de Venta de Boletos
 skinparam linetype ortho
 
 ' ------------------ CONTROLADORES ------------------
+
 package Controladores {
 
     class ControladorVentaBoletos {
-        - controladorAsignadorButacas: ControladorAsignadorButacas
-        - controladorAsignadorFuncion: ControladorAsignadorFuncion
-        - controladorBoleto: ControladorBoleto
-        - controladorFacturacion: ControladorFacturacion
-        - servicioGeneradorArchivo: ServicioGeneradorArchivo
         '- controladorPeliculaYFunciones: ControladorAsignadorFuncion
         '- controladorSalas: ControladorSalas
         + realizarVenta(): void
@@ -27,12 +23,12 @@ package Controladores {
     }
 
     class ControladorBoleto {
-        - servicioGeneradorBoleto: ServicioGeneradorBoleto
+        ''- servicioGeneradorBoleto: ServicioGeneradorBoleto
         + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
     }
 
     class ControladorFacturacion {
-        - servicioFacturacion: ServicioFacturacion
+        ''- servicioFacturacion: ServicioFacturacion
         + generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
     }
 
@@ -84,7 +80,7 @@ package Modelos {
     }
 
     class Boleto {
-        - id???: int
+        - id: int
         - funcion: Funcion
         - butaca: Butaca
         + setFuncion(funcion: Funcion): void
@@ -127,21 +123,20 @@ GeneradorArchivoPDF ..up|> ServicioGeneradorArchivo
 
 ''ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
 
-ControladorVentaBoletos --> ControladorAsignadorFuncion
-ControladorVentaBoletos --> ControladorAsignadorButacas
-ControladorVentaBoletos --> ControladorBoleto
-ControladorVentaBoletos --> ControladorFacturacion
+ControladorVentaBoletos ..> ControladorAsignadorFuncion
+ControladorVentaBoletos ..> ControladorAsignadorButacas
+ControladorVentaBoletos ..> ControladorBoleto
+ControladorVentaBoletos ..> ControladorFacturacion
 
-ControladorVentaBoletos --> ServicioGeneradorArchivo 
-''ControladorVentaBoletos ..>ControladorGeneradorArchivo
+ControladorVentaBoletos ..> ServicioGeneradorArchivo
 ControladorVentaBoletos ..> ControladorEnvios
 
-ControladorBoleto --> ServicioGeneradorBoleto
+ControladorBoleto ..> ServicioGeneradorBoleto
 ''ControladorBoleto ..> ServicioGeneradorBoleto
 
 ServicioGeneradorBoleto ..> Boleto
 
-ControladorFacturacion --> ServicioFacturacion
+ControladorFacturacion ..> ServicioFacturacion
 ''ControladorFacturacion ..> ServicioFacturacion
 
 ServicioFacturacion ..> Factura
@@ -158,4 +153,5 @@ CalculadorIVA ..up|> CalculadorImpuesto
 ControladorEnvios ..> ServicioEnvio
 
 ServicioCorreo ..up|> ServicioEnvio
+
 @enduml
