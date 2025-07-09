@@ -1,4 +1,4 @@
-package com.cinemax.empleados.modelo.Entidades;
+package com.cinemax.empleados.modelo.entidades;
 
 import java.time.LocalDateTime;
 

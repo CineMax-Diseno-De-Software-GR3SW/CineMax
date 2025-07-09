@@ -1,7 +1,7 @@
 package com.cinemax.empleados.servicios;
 
-import com.cinemax.empleados.modelo.Entidades.*;
-import com.cinemax.empleados.modelo.Persistencia.UsuarioDAO;
+import com.cinemax.empleados.modelo.entidades.*;
+import com.cinemax.empleados.modelo.persistencia.UsuarioDAO;
 import java.util.List;
 
 public class ServicioUsuarios {

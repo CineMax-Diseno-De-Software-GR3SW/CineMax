@@ -1,8 +1,8 @@
-package com.cinemax.empleados.modelo.Persistencia;
+package com.cinemax.empleados.modelo.persistencia;
 
-import com.cinemax.empleados.comun.ConexionBaseSingleton;
-import com.cinemax.empleados.modelo.Entidades.Rol;
-import com.cinemax.empleados.modelo.Entidades.Permiso;
+import com.cinemax.comun.ConexionBaseSingleton;
+import com.cinemax.empleados.modelo.entidades.Rol;
+import com.cinemax.empleados.modelo.entidades.Permiso;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashSet;

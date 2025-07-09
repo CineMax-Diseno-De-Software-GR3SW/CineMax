@@ -1,14 +1,12 @@
 package com.cinemax.empleados;
 
-import com.cinemax.empleados.comun.ConexionBaseSingleton;
+import com.cinemax.comun.ConexionBaseSingleton;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 
 public class Main extends Application {

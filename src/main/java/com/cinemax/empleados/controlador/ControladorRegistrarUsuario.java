@@ -1,8 +1,8 @@
 package com.cinemax.empleados.controlador;
 
 
-import com.cinemax.empleados.modelo.Entidades.Rol;
-import com.cinemax.empleados.modelo.Entidades.Usuario;
+import com.cinemax.empleados.modelo.entidades.Rol;
+import com.cinemax.empleados.modelo.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
 
@@ -18,7 +18,6 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
 import javafx.stage.Stage;
 
 import java.net.URL;

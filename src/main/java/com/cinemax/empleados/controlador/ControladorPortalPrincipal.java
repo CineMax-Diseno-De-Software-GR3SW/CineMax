@@ -3,8 +3,8 @@ package com.cinemax.empleados.controlador;
 import java.io.IOException;
 import java.net.URL;
 
-import com.cinemax.empleados.modelo.Entidades.Permiso;
-import com.cinemax.empleados.modelo.Entidades.Usuario;
+import com.cinemax.empleados.modelo.entidades.Permiso;
+import com.cinemax.empleados.modelo.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
 import javafx.event.ActionEvent;

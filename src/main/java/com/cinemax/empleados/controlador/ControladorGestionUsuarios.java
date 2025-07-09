@@ -2,8 +2,8 @@ package com.cinemax.empleados.controlador;
 
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-import com.cinemax.empleados.modelo.Entidades.Usuario;
-import com.cinemax.empleados.modelo.Entidades.*;
+import com.cinemax.empleados.modelo.entidades.Usuario;
+import com.cinemax.empleados.modelo.entidades.*;
 
 
 import com.cinemax.empleados.servicios.ServicioUsuarios;

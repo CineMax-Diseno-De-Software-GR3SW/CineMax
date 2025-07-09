@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.cinemax.empleados.modelo.Entidades.Usuario;
+import com.cinemax.empleados.modelo.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
 import javafx.event.ActionEvent;

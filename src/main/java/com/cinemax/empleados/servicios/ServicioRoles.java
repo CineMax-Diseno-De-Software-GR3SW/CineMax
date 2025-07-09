@@ -1,8 +1,8 @@
 package com.cinemax.empleados.servicios;
 
-import com.cinemax.empleados.modelo.Entidades.Rol;
-import com.cinemax.empleados.modelo.Entidades.Permiso;
-import com.cinemax.empleados.modelo.Persistencia.RolDAO;
+import com.cinemax.empleados.modelo.entidades.Rol;
+import com.cinemax.empleados.modelo.entidades.Permiso;
+import com.cinemax.empleados.modelo.persistencia.RolDAO;
 import java.util.List;
 import java.util.Set;
 
