@@ -208,7 +208,7 @@ package modelos {
     class Sala {
         - id: int
         - nombre: String
-        - capacidad: String [fila][numeroColumna]
+        - capacidad: int
         - mapaDeButacas: List<Butaca>
         - estado: EstadoSala
         - tipo: TipoSala
