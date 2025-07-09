@@ -53,12 +53,12 @@ public class ControladorFunciones {
                         editarFuncion();
                         break;
                     case 4:
-                        // eliminarFuncion();
+                        eliminarFuncion();
                         break;
                     case 5:
                         mostrarFuncionesDeSala();
                         break;
-                     case 6:
+                    case 6:
                         mostrarDetalleFuncion();
                         break;
                     case 0:
@@ -337,6 +337,37 @@ public class ControladorFunciones {
                     funcion.getFormato(),
                     funcion.getTipoEstreno());
         }
+    }
+
+    private void eliminarFuncion() throws SQLException {
+        System.out.println("\nELIMINAR FUNCIÓN");
+        System.out.println("-".repeat(25));
+
+        listarTodasLasFunciones();
+
+        System.out.print("Ingrese el ID de la función a eliminar: ");
+        int id = Integer.parseInt(scanner.nextLine().trim());
+
+        Funcion funcionExistente = servicioFuncion.buscarPorId(id);
+
+        if (funcionExistente == null) {
+            System.out.println("No se encontró ninguna función con ID: " + id);
+            return;
+        }
+
+        System.out.println("Función actual:");
+        mostrarDetalleFuncion(funcionExistente);
+
+        System.out.print("\n¿Está seguro que desea eliminar esta función? (s/N): ");
+        String confirmacion = scanner.nextLine().trim().toLowerCase();
+
+        if (confirmacion.equals("s") || confirmacion.equals("si")) {
+            servicioFuncion.eliminarFuncion(id);
+            System.out.println("Funcion eliminada exitosamente.");
+        } else {
+            System.out.println("Operación cancelada.");
+        }
+
     }
 
     public void cerrar() {

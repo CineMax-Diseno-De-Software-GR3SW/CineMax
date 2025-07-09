@@ -120,4 +120,14 @@ public class ServicioFuncion {
     public List<Funcion> listarFuncionesPorSala(int salaId) throws SQLException {
         return funcionDAO.listarPorSala(salaId);
     }
+
+    public void eliminarFuncion(int id) throws SQLException {
+        // Verificar que existe antes de eliminar
+        Funcion funcion = funcionDAO.buscarPorId(id);
+        if (funcion == null) {
+            throw new IllegalArgumentException("No existe una película con ID: " + id);
+        }
+
+        funcionDAO.eliminar(id);
+    }
 }

@@ -155,4 +155,26 @@ public class FuncionDAO {
         }
         return null;
     }
+
+    public void eliminar(int id) throws SQLException {
+
+        String sql = "DELETE FROM funcion WHERE id_funcion = ?";
+
+        try (Connection conn = gestorDB.obtenerConexion();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, id);
+            int filasAfectadas = stmt.executeUpdate();
+
+            if (filasAfectadas == 0) {
+                throw new SQLException("No se encontró la función con ID: " + id);
+            } else {
+                System.out.println("Película eliminada correctamente con ID: " + id);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al eliminar película: " + e.getMessage());
+            throw e;
+        }
+    }
 }
