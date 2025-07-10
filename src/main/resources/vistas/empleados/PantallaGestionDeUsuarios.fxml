@@ -6,7 +6,7 @@
 <?import javafx.scene.text.*?>
 
 <BorderPane prefWidth="800" prefHeight="550"
-            stylesheets="@../temas/ayu-theme.css"
+            stylesheets="@../temas/styles.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cinemax.empleados.controladores.ControladorGestionUsuarios">
