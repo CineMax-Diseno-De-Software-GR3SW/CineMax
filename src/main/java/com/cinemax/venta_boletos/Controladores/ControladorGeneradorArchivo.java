@@ -1,3 +1,4 @@
+package com.cinemax.venta_boletos.Controladores;
 // package com.cinemax.moduloboletos.Controladores.VentaDeBoletos;
 
 // import com.cinemax.moduloboletos.Modelos.VentaDeBoletos.Factura;

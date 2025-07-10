@@ -1,8 +1,8 @@
-package com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos;
+package com.cinemax.venta_boletos.Controladores.UI;
 
 import com.cinemax.venta_boletos.Controladores.UI.Shared.ControllerAlert;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Producto;
-import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioGeneradorBoleto;
+import com.cinemax.venta_boletos.Modelos.Producto;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
 import com.cinemax.venta_boletos.Util.ThemeManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -87,7 +87,7 @@ public class ControllerBoleto {
 
         double total = 0;
         // Se usa un boleto temporal para obtener el precio base del modelo.
-        double precioUnitario = new com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Boleto("", "").getPrecio();
+        double precioUnitario = new com.cinemax.venta_boletos.Modelos.Boleto("", "").getPrecio();
 
         if (vipTickets > 0) {
             total += vipTickets * precioUnitario;

@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos;
+package com.cinemax.venta_boletos.Controladores.UI;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

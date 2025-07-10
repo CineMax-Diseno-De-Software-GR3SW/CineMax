@@ -1,9 +1,9 @@
-package com.cinemax.venta_boletos.Controladores.VentaDeBoletos;
+package com.cinemax.venta_boletos.Controladores;
 
 import java.util.List;
 
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Producto;
-import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioGeneradorBoleto;
+import com.cinemax.venta_boletos.Modelos.Producto;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
 
 public class ControladorBoleto {
 

@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores.VentaDeBoletos;
+package com.cinemax.venta_boletos.Controladores;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Modelos.VentaDeBoletos;
+package com.cinemax.venta_boletos.Modelos;
 
 public class Boleto extends Producto {
     private String funcion;

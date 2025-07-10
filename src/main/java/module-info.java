@@ -15,9 +15,9 @@ module com.cinemax.empleados {
     opens com.cinemax.venta_boletos to javafx.fxml;
 
     exports com.cinemax.venta_boletos;
-    exports com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos;
+    exports com.cinemax.venta_boletos.Controladores.UI;
 
-    opens com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos to javafx.fxml;
+    opens com.cinemax.venta_boletos.Controladores.UI to javafx.fxml;
 
     exports com.cinemax.venta_boletos.Util;
 

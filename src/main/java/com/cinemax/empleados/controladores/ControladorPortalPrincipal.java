@@ -6,6 +6,7 @@ import java.net.URL;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+import com.cinemax.venta_boletos.Util.ThemeManager;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -122,8 +123,21 @@ public class ControladorPortalPrincipal {
 
         @FXML
         private void onVenderBoleto(ActionEvent event) {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/cartelera-view.fxml"));
+            try {
+                Parent root = loader.load();
+
+                // Obtener el Stage actual desde el botón o cualquier nodo
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setTitle("CineMax - Cartelera");
+                stage.setScene(new Scene(root));
+                stage.show();
+
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
             System.out.println("Navegar a Vender Boleto");
-            // TODO: Implementar navegación a la pantalla de venta de boletos
+            
         }
 
         @FXML

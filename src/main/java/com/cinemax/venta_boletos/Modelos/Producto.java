@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Modelos.VentaDeBoletos;
+package com.cinemax.venta_boletos.Modelos;
 
 public abstract class Producto {
     private double precio;

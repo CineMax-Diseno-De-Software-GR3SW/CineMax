@@ -1,14 +1,14 @@
-package com.cinemax.venta_boletos.Servicios.VentaDeBoletos;
+package com.cinemax.venta_boletos.Servicios;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.CalculadorIVA;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.CalculadorImpuesto;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Cliente;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Factura;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Producto;
+import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
+import com.cinemax.venta_boletos.Modelos.CalculadorImpuesto;
+import com.cinemax.venta_boletos.Modelos.Cliente;
+import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.Modelos.Producto;
 
 public class ServicioFacturacion {
 

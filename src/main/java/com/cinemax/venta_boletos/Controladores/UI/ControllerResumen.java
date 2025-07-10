@@ -1,7 +1,11 @@
-package com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos;
+package com.cinemax.venta_boletos.Controladores.UI;
 
 import com.cinemax.venta_boletos.Controladores.UI.Shared.ControllerAlert;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.*;
+import com.cinemax.venta_boletos.Modelos.Boleto;
+import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
+import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.Modelos.Producto;
+import com.cinemax.venta_boletos.Modelos.*;
 import com.cinemax.venta_boletos.Util.ThemeManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

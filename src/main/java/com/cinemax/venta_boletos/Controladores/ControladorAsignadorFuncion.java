@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores.VentaDeBoletos;
+package com.cinemax.venta_boletos.Controladores;
 
 public class ControladorAsignadorFuncion {
     public String asignarFuncion(String controladorCartelera) {

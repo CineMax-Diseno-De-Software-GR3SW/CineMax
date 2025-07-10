@@ -1,6 +1,9 @@
-package com.cinemax.venta_boletos.Servicios.VentaDeBoletos;
+package com.cinemax.venta_boletos.Servicios;
 
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.*;
+import com.cinemax.venta_boletos.Modelos.Boleto;
+import com.cinemax.venta_boletos.Modelos.Cliente;
+import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.Modelos.Producto;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;

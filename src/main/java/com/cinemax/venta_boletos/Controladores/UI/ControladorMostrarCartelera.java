@@ -1,5 +1,5 @@
 
-package com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos;
+package com.cinemax.venta_boletos.Controladores.UI;
 
 import java.lang.classfile.instruction.ConstantInstruction.LoadConstantInstruction;
 

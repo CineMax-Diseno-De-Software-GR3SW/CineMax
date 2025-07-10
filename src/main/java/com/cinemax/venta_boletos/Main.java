@@ -3,19 +3,17 @@ package com.cinemax.venta_boletos;
 import java.io.IOException;
 import java.util.List;
 
-import com.cinemax.venta_boletos.Controladores.ControladorCineMax;
-import com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos.ControllerBoleto;
-import com.cinemax.venta_boletos.Modelos.CineMax;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Boleto;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.CalculadorIVA;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.CalculadorImpuesto;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Cliente;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Factura;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Producto;
-import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.GeneradorArchivoPDF;
-import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioFacturacion;
-import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioGeneradorArchivo;
-import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioGeneradorBoleto;
+import com.cinemax.venta_boletos.Controladores.UI.ControllerBoleto;
+import com.cinemax.venta_boletos.Modelos.Boleto;
+import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
+import com.cinemax.venta_boletos.Modelos.CalculadorImpuesto;
+import com.cinemax.venta_boletos.Modelos.Cliente;
+import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.Modelos.Producto;
+import com.cinemax.venta_boletos.Servicios.GeneradorArchivoPDF;
+import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorArchivo;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
 import com.cinemax.venta_boletos.Util.ThemeManager;
 
 import javafx.application.Application;
@@ -94,11 +92,7 @@ public class Main extends Application {
         // pruebaGeneracionPDFs(); // Llama a la prueba de generación de PDFs
 
         // Inicia la lógica de la aplicación de consola.
-        VistaCineMax vistaCineMax = new VistaCineMax();
-        CineMax cineMax = new CineMax();
-        ControladorCineMax controladorCineMax = new ControladorCineMax(cineMax, vistaCineMax);
 
-        controladorCineMax.mostrarPaginaPrincipal();
     }
 
     private static void pruebaGeneracionPDFs() {

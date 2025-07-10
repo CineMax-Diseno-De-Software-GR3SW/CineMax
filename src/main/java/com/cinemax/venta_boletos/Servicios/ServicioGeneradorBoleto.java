@@ -1,10 +1,10 @@
-package com.cinemax.venta_boletos.Servicios.VentaDeBoletos;
+package com.cinemax.venta_boletos.Servicios;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Boleto;
-import com.cinemax.venta_boletos.Modelos.VentaDeBoletos.Producto;
+import com.cinemax.venta_boletos.Modelos.Boleto;
+import com.cinemax.venta_boletos.Modelos.Producto;
 
 public class ServicioGeneradorBoleto {
 
