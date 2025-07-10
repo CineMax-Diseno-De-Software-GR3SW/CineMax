@@ -1,4 +1,4 @@
-package com.cinemax.empleados.controlador;
+package com.cinemax.empleados.controladores;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.PasswordField;

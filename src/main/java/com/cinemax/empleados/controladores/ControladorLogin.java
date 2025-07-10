@@ -1,4 +1,4 @@
-package com.cinemax.empleados.controlador;
+package com.cinemax.empleados.controladores;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -47,7 +47,7 @@ public class ControladorLogin {
         
 
             //FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cinemax/moduloboletos/vistas/VentaDeBoletos/datos-cliente-view.fxml"));
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             try {
                 Parent root = loader.load();
 

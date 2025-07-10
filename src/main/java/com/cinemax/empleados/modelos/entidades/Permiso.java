@@ -1,4 +1,4 @@
-package com.cinemax.empleados.modelo.entidades;
+package com.cinemax.empleados.modelos.entidades;
 
 public enum Permiso {
     GESTIONAR_USUARIO,

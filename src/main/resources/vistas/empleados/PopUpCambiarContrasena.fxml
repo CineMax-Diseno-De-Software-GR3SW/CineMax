@@ -7,7 +7,7 @@
 <VBox fx:id="root" spacing="15.0" alignment="CENTER" styleClass="dialog-box"
       xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.cinemax.empleados.controlador.ControladorCambiarContrasena">
+      fx:controller="com.cinemax.empleados.controladores.ControladorCambiarContrasena">
 
 <padding>
         <Insets top="10" right="20" bottom="20" left="20"/>

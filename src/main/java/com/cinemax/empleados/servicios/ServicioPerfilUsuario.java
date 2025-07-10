@@ -1,7 +1,7 @@
 package com.cinemax.empleados.servicios;
 
-import com.cinemax.empleados.modelo.entidades.Usuario;
-import com.cinemax.empleados.modelo.persistencia.UsuarioDAO;
+import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
 public class ServicioPerfilUsuario {
     private ValidadorUsuario validador;

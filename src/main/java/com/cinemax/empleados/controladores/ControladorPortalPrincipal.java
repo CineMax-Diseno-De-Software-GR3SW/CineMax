@@ -1,10 +1,10 @@
-package com.cinemax.empleados.controlador;
+package com.cinemax.empleados.controladores;
 
 import java.io.IOException;
 import java.net.URL;
 
-import com.cinemax.empleados.modelo.entidades.Permiso;
-import com.cinemax.empleados.modelo.entidades.Usuario;
+import com.cinemax.empleados.modelos.entidades.Permiso;
+import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
 import javafx.event.ActionEvent;
@@ -21,24 +21,21 @@ import javafx.stage.Stage;
 public class ControladorPortalPrincipal {
 
     @FXML
+    public Button btnConfiguracionSalas;
+    @FXML
     private Button btnGestionUsuarios;
-
     @FXML
     private Button btnVerReportes;
-
-        @FXML
-        private Button btnConfiguracion;
-
-         @FXML
-         private Button btnVentaBoleto;
-
-        @FXML 
-        private Label lblNombreUsuario;
-        @FXML 
-        private Label lblRolUsuario;
-
-
-    @FXML private HBox headerBar;
+    @FXML
+    private Button btnConfiguracionFunciones;
+    @FXML
+    private Button btnVentaBoleto;
+    @FXML
+    private Label lblNombreUsuario;
+    @FXML
+    private Label lblRolUsuario;
+    @FXML
+    private HBox headerBar;
 
         private ServicioSesionSingleton gestorSesion;
 
@@ -69,9 +66,11 @@ public class ControladorPortalPrincipal {
 
     habilitarOpcionSiTienePermiso(btnGestionUsuarios,   Permiso.GESTIONAR_USUARIO);
     habilitarOpcionSiTienePermiso(btnVerReportes,   Permiso.GESTIONAR_REPORTES);
-    habilitarOpcionSiTienePermiso(btnConfiguracion,     Permiso.GESTIONAR_SALA);
+    habilitarOpcionSiTienePermiso(btnConfiguracionFunciones,     Permiso.GESTIONAR_FUNCION);
+    habilitarOpcionSiTienePermiso(btnConfiguracionSalas,     Permiso.GESTIONAR_SALA);
     habilitarOpcionSiTienePermiso(btnVentaBoleto,     Permiso.VENDER_BOLETO);
-}
+
+        }
 
     // // --- Control dinámico de permisos ---
 
@@ -91,7 +90,7 @@ public class ControladorPortalPrincipal {
         private void onGestionUsuarios(ActionEvent event) {
             System.out.println("Navegar a Gestión de Usuarios");
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaGestionDeUsuarios.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaGestionUsuarios.fxml"));
             try {
                 Parent root = loader.load();
 
@@ -103,22 +102,26 @@ public class ControladorPortalPrincipal {
 
             } catch (IOException e) {
                 System.out.println(e.getMessage());
-            }        }
+            }
+        }
 
         @FXML
-        private void onVerReportes() {
+        private void onVerReportes(ActionEvent event) {
             System.out.println("Navegar a Ver Reportes");
             // TODO: Implementar navegación a la pantalla de reportes
         }
 
         @FXML
-        private void onConfiguracion() {
+        private void onConfiguracionFunciones(ActionEvent event) {
             System.out.println("Navegar a Configuración");
             // TODO: Implementar navegación a la pantalla de configuración
         }
 
+        public void onConfiguracionSalas(ActionEvent event) {
+        }
+
         @FXML
-        private void onVenderBoleto() {
+        private void onVenderBoleto(ActionEvent event) {
             System.out.println("Navegar a Vender Boleto");
             // TODO: Implementar navegación a la pantalla de venta de boletos
         }
@@ -127,10 +130,10 @@ public class ControladorPortalPrincipal {
         private void onCerrarSesion(ActionEvent event) {
             System.out.println("Cerrar sesión y volver al login");
             // TODO: Implementar cerrar sesión y volver a la pantalla de login
-            URL url = getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml");
+            URL url = getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml");
             System.out.println(url); // Si imprime null, el archivo no se encuentra
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaLogin.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
             try {
                 Parent root = loader.load();
 
@@ -151,7 +154,7 @@ public class ControladorPortalPrincipal {
     @FXML
     private void onMiPerfil(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPerfil.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPerfil.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -160,6 +163,8 @@ public class ControladorPortalPrincipal {
             e.printStackTrace();
         }
     }
+
+
 }
 
 

@@ -1,9 +1,9 @@
-package com.cinemax.empleados.controlador;
+package com.cinemax.empleados.controladores;
 
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-import com.cinemax.empleados.modelo.entidades.Usuario;
-import com.cinemax.empleados.modelo.entidades.*;
+import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.modelos.entidades.*;
 
 
 import com.cinemax.empleados.servicios.ServicioUsuarios;
@@ -184,7 +184,7 @@ public class ControladorGestionUsuarios {
 
     public void onBackAction(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -195,7 +195,7 @@ public class ControladorGestionUsuarios {
     }
 
     public void onAgregarUsuario(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRegistrarUsuario.fxml"));
         try {
             Parent root = loader.load();
 
@@ -233,7 +233,7 @@ public class ControladorGestionUsuarios {
     @FXML
     private void onCerrarSesion(ActionEvent event) {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaLogin.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
         try {
             Parent root = loader.load();
 

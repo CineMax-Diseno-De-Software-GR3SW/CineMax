@@ -1,10 +1,10 @@
-package com.cinemax.empleados.controlador;
+package com.cinemax.empleados.controladores;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.cinemax.empleados.modelo.entidades.Usuario;
+import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
 import javafx.event.ActionEvent;
@@ -73,7 +73,7 @@ public class ControladorPerfil implements Initializable {
     @FXML
     private void onVolver(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -94,12 +94,12 @@ public class ControladorPerfil implements Initializable {
         // Implementar funcionalidad para cambiar contraseña
         //System.out.println("Cambiar contraseña clicked");
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PopUpCambiarContrasena.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PopUpCambiarContrasena.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root);
             // Aplicar hoja de estilos
-            scene.getStylesheets().add(getClass().getResource("/Vista/empleados/ayu-theme.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/vistas/temas/ayu-theme.css").toExternalForm());
 
             // Crear stage
             Stage stage = new Stage();

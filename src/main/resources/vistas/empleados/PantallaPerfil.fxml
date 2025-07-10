@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" stylesheets="@ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controlador.ControladorPerfil">
+<BorderPane prefHeight="550.0" prefWidth="800.0" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorPerfil">
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>

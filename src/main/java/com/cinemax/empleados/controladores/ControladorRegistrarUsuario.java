@@ -1,8 +1,8 @@
-package com.cinemax.empleados.controlador;
+package com.cinemax.empleados.controladores;
 
 
-import com.cinemax.empleados.modelo.entidades.Rol;
-import com.cinemax.empleados.modelo.entidades.Usuario;
+import com.cinemax.empleados.modelos.entidades.Rol;
+import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
 
