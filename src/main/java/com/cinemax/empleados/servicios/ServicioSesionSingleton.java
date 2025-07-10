@@ -1,26 +1,27 @@
 package com.cinemax.empleados.servicios;
 
 import com.cinemax.empleados.modelos.entidades.Permiso;
-import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
-public class GestorSesionSingleton {
-    private static GestorSesionSingleton gestorSesion;
+import com.cinemax.empleados.modelos.entidades.Rol;
+
+public class ServicioSesionSingleton {
+    private static ServicioSesionSingleton servicioSesion;
     private Usuario usuarioActivo;
     private UsuarioDAO usuarioDAO;
     private ServicioRoles servicioRoles;
 
-    private GestorSesionSingleton() {
+    private ServicioSesionSingleton() {
         this.usuarioDAO = new UsuarioDAO();
         this.servicioRoles = new ServicioRoles();
     }
 
-    public static synchronized GestorSesionSingleton getInstancia() {
-        if (gestorSesion == null) {
-            gestorSesion = new GestorSesionSingleton();
+    public static synchronized ServicioSesionSingleton getInstancia() {
+        if (servicioSesion == null) {
+            servicioSesion = new ServicioSesionSingleton();
         }
-        return gestorSesion;
+        return servicioSesion;
     }
 
     
@@ -46,7 +47,7 @@ public class GestorSesionSingleton {
         return false;
     }
     
-    public void logout() {
+    public void cerrarSesion() {
         this.usuarioActivo = null;
     }
     

@@ -1,7 +1,5 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.empleados.servicios.GestorSesionSingleton;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -15,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
 public class ControladorLogin {
 
@@ -30,12 +29,12 @@ public class ControladorLogin {
     @FXML
     private Button btnIngresar;
 
-    private GestorSesionSingleton gestorSesionSingleton;
+    private ServicioSesionSingleton servicioSesionSingleton;
 
 
     @FXML
     private void initialize() {
-        gestorSesionSingleton = GestorSesionSingleton.getInstancia();
+        servicioSesionSingleton = ServicioSesionSingleton.getInstancia();
         lblError.setVisible(false);
     }
 
@@ -48,7 +47,7 @@ public class ControladorLogin {
         
 
             //FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cinemax/moduloboletos/vistas/VentaDeBoletos/datos-cliente-view.fxml"));
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaPortalPrincipal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             try {
                 Parent root = loader.load();
 
@@ -82,7 +81,7 @@ e.printStackTrace();            }
         }
 
         try {
-            return gestorSesionSingleton.iniciarSesion(nomUsuario, password);
+            return servicioSesionSingleton.iniciarSesion(nomUsuario, password);
         } catch (Exception e) {
             return false;
         }

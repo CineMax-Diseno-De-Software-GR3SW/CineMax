@@ -7,7 +7,7 @@
 
 <!-- prefHeight="40" -->
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorPortalPrincipal">
+<BorderPane prefHeight="550.0" prefWidth="800.0" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorPortalPrincipal">
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
@@ -44,11 +44,16 @@
             </GridPane>
              <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" text=" Gestión de Usuarios" />
 
-             <Button fx:id="btnVerReportes" onAction="#onVerReportes" text=" Reportes" />
+             <Button fx:id="btnVerReportes" onAction="#onVerReportes" text="Reportes" />
 
-             <Button fx:id="btnConfiguracion" onAction="#onConfiguracion" text="Configuración de funciones" />
+             <Button fx:id="btnConfiguracionFunciones" onAction="#onConfiguracionFunciones" text="Configuración de Funciones" />
 
-             <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" text="Venta de boletos" />
+            <Button fx:id="btnConfiguracionSalas" onAction="#onConfiguracionSalas" text="Configuración de Salas" />
+
+            <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" text="Venta de Boletos" />
+
+
+
         </VBox>
     </center>
 

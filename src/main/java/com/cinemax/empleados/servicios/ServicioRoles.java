@@ -1,11 +1,10 @@
 package com.cinemax.empleados.servicios;
 
+import com.cinemax.empleados.modelos.entidades.Rol;
+import com.cinemax.empleados.modelos.entidades.Permiso;
+import com.cinemax.empleados.modelos.persistencia.RolDAO;
 import java.util.List;
 import java.util.Set;
-
-import com.cinemax.empleados.modelos.entidades.Permiso;
-import com.cinemax.empleados.modelos.entidades.Rol;
-import com.cinemax.empleados.modelos.persistencia.RolDAO;
 
 public class ServicioRoles {
     private RolDAO rolDAO;
