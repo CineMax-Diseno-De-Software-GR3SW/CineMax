@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.paint.Color?>
+
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos.ControllerBoleto">
+    <top>
+        <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Label styleClass="section-title" text="Selecciona tus Boletos" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button onAction="#onThemeToggleAction" styleClass="icon-button, theme-button" text="🎨" />
+                <Button onAction="#onCloseAction" styleClass="icon-button, close-button" text="✕" />
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane">
+            <content>
+                <!-- CORRECCIÓN: Se añade la clase de estilo para que el fondo sea visible -->
+                <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="content-pane">
+                    <padding>
+                        <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+                    </padding>
+                    <VBox spacing="10.0">
+                        <children>
+                            <Label styleClass="section-title" text="VIP" />
+                            <VBox styleClass="ticket-card" spacing="10">
+                                <Label styleClass="ticket-price" text="Boleto 2D VIP" />
+                                <Label text="Precio: 6.00" />
+                                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                    <Button fx:id="vipMinusButton" onAction="#onVipMinus" styleClass="stepper-button" text="-" />
+                                    <Label fx:id="vipCountLabel" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                    <Button fx:id="vipPlusButton" onAction="#onVipPlus" styleClass="stepper-button" text="+" />
+                                </HBox>
+                            </VBox>
+                        </children>
+                    </VBox>
+                    <VBox spacing="10.0">
+                        <children>
+                            <Label styleClass="section-title" text="Normal" />
+                            <VBox styleClass="ticket-card" spacing="10">
+                                <Label styleClass="ticket-price" text="Boleto 2D Normal" />
+                                <Label text="Precio: 6.00" />
+                                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                                    <Button fx:id="normalMinusButton" onAction="#onNormalMinus" styleClass="stepper-button" text="-" />
+                                    <Label fx:id="normalCountLabel" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                    <Button fx:id="normalPlusButton" onAction="#onNormalPlus" styleClass="stepper-button" text="+" />
+                                </HBox>
+                            </VBox>
+                        </children>
+                    </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+    <right>
+        <VBox styleClass="summary-pane" spacing="15.0" minWidth="280" maxWidth="280">
+            <HBox alignment="CENTER">
+                <Rectangle arcHeight="15" arcWidth="15" height="150.0" stroke="TRANSPARENT" strokeType="INSIDE" width="240.0">
+                    <fill><Color red="0.3" green="0.3" blue="0.3" /></fill>
+                </Rectangle>
+            </HBox>
+            <Label fx:id="peliculaLabel" styleClass="summary-title" text="[Nombre Película]" />
+            <Label fx:id="salaLabel" styleClass="summary-details" text="[Sala y Horario]" />
+            <Separator />
+            <Text fx:id="tusBoletosTitle" style="-fx-font-weight: bold;" text="TUS BOLETOS" />
+            <VBox fx:id="ticketSummaryContainer" spacing="8.0" />
+            <HBox>
+                <Label text="Total:" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="totalLabel" text="0.00" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
+            </HBox>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button fx:id="continueButton" onAction="#onContinuarAction" styleClass="primary-button" text="Continuar" maxWidth="Infinity"/>
+        </VBox>
+    </right>
+</BorderPane>

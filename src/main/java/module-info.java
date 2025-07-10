@@ -1,20 +1,20 @@
-module com.cinemax.moduloboletos {
+module com.cinemax.venta_boletos {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.apache.pdfbox;
 
-    opens com.cinemax.moduloboletos to javafx.fxml;
+    opens com.cinemax.venta_boletos to javafx.fxml;
 
-    exports com.cinemax.moduloboletos;
-    exports com.cinemax.moduloboletos.Controladores.UI.VentaDeBoletos;
+    exports com.cinemax.venta_boletos;
+    exports com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos;
 
-    opens com.cinemax.moduloboletos.Controladores.UI.VentaDeBoletos to javafx.fxml;
+    opens com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos to javafx.fxml;
 
-    exports com.cinemax.moduloboletos.Util;
+    exports com.cinemax.venta_boletos.Util;
 
-    opens com.cinemax.moduloboletos.Util to javafx.fxml;
+    opens com.cinemax.venta_boletos.Util to javafx.fxml;
 
-    exports com.cinemax.moduloboletos.Controladores.UI.Shared;
+    exports com.cinemax.venta_boletos.Controladores.UI.Shared;
 
-    opens com.cinemax.moduloboletos.Controladores.UI.Shared to javafx.fxml;
+    opens com.cinemax.venta_boletos.Controladores.UI.Shared to javafx.fxml;
 }
