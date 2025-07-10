@@ -1,0 +1,70 @@
+/* --- ESTILOS GENERALES (TEMA OSCURO CLÁSICO) --- */
+.root, .content-pane {
+    -fx-background-color: #1E1E1E; /* Fondo principal oscuro */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.label {
+    -fx-text-fill: #EAEAEA; /* Texto principal casi blanco */
+    -fx-font-size: 14px;
+}
+
+/* --- SCROLLPANE --- */
+.scroll-pane { -fx-background-color: transparent; }
+.scroll-pane .viewport { -fx-background-color: transparent; }
+.scroll-bar:vertical .thumb { -fx-background-color: #F25F00; -fx-background-radius: 10px; }
+.scroll-bar:vertical .track { -fx-background-color: #4A4A4A; -fx-background-radius: 10px; }
+
+
+/* --- CABECERA Y NAVEGACIÓN --- */
+.header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #4A4A4A; -fx-border-width: 0 0 1px 0; }
+.icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
+.icon-button:hover { -fx-background-color: #4A4A4A; }
+.icon-button .text { -fx-font-size: 20px; -fx-fill: white; -fx-font-weight: bold; }
+.close-button:hover { -fx-background-color: #E81123; }
+.close-button:hover .text { -fx-fill: white; }
+.theme-button .text { -fx-font-size: 16px; }
+
+/* --- PANELES Y TARJETAS --- */
+.ticket-card, .financial-summary-pane, .alert-pane, .summary-pane {
+    -fx-background-color: #2B2B2B; /* Gris oscuro para paneles */
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 5);
+}
+.ticket-details-card { -fx-background-color: transparent; -fx-border-color: #4A4A4A; -fx-border-width: 0 0 1px 0; -fx-padding: 0 0 15px 0; }
+.summary-pane > .hbox { -fx-alignment: center; }
+
+/* --- TEXTOS ESPECÍFICOS --- */
+.section-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.ticket-price, .summary-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.summary-details { -fx-font-size: 14px; -fx-text-fill: #B0B0B0; }
+
+/* --- BOTONES --- */
+.stepper-button { -fx-background-color: #F25F00; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50em; -fx-alignment: CENTER; -fx-padding: 4px 12px; }
+.stepper-button:hover { -fx-background-color: #D85600; }
+.primary-button { -fx-background-color: #02487B; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-pref-height: 45px; }
+.primary-button:hover { -fx-background-color: #035a9a; }
+.link-button { -fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-underline: true; }
+.link-button:hover { -fx-text-fill: white; }
+
+/* --- FORMULARIOS --- */
+.text-field { -fx-background-color: #2B2B2B; -fx-text-fill: #EAEAEA; -fx-prompt-text-fill: #888888; -fx-background-radius: 8px; -fx-border-color: #4A4A4A; -fx-border-radius: 8px; -fx-font-size: 14px; -fx-padding: 8px; }
+.text-field:focused { -fx-border-color: #F25F00; }
+.combo-box { -fx-background-color: #2B2B2B; -fx-border-color: #4A4A4A; -fx-border-radius: 8px; -fx-background-radius: 8px; }
+.combo-box .list-cell { -fx-text-fill: white; -fx-background-color: #2B2B2B; }
+.combo-box-popup .list-view { -fx-background-color: #2B2B2B; -fx-border-color: #4A4A4A; }
+.combo-box-popup .list-view .list-cell:hover { -fx-background-color: #4A4A4A; }
+.combo-box-popup .list-view .list-cell:filled:selected { -fx-background-color: #F25F00; }
+.confirmation-checkbox .box { -fx-background-color: transparent; -fx-border-color: #888888; -fx-border-radius: 4px; }
+.confirmation-checkbox:selected .box .mark { -fx-background-color: #F25F00; }
+
+/* --- ALERTA PERSONALIZADA --- */
+.alert-pane { -fx-background-color: #2B2B2B; -fx-border-color: #4A4A4A; -fx-border-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0, 0, 10); }
+.alert-title { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; }
+.alert-message { -fx-font-size: 14px; -fx-text-fill: #EAEAEA; -fx-text-alignment: center; }
+
+/* --- Iconos y Contadores --- */
+.summary-ticket-count { -fx-background-color: #4A4A4A; -fx-text-fill: white; }
+.summary-price { -fx-text-fill: white; }

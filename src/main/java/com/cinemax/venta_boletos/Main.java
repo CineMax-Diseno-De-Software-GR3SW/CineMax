@@ -17,7 +17,6 @@ import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioFacturacion;
 import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioGeneradorArchivo;
 import com.cinemax.venta_boletos.Servicios.VentaDeBoletos.ServicioGeneradorBoleto;
 import com.cinemax.venta_boletos.Util.ThemeManager;
-import com.cinemax.venta_boletos.Vistas.VistaCineMax;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
