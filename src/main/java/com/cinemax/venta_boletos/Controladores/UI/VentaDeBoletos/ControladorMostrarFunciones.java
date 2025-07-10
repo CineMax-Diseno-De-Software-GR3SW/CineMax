@@ -81,7 +81,7 @@ public class ControladorMostrarFunciones {
 
                 // Cargamos la vista de boleto
                 FXMLLoader fxmlLoader = new FXMLLoader(
-                        getClass().getResource("\"/vistas/venta_boletos/boleto-view.fxml"));
+                        getClass().getResource("/vistas/venta_boletos/boleto-view.fxml"));
                 Parent root = fxmlLoader.load(); // Cargamos el FXML
 
                 // Obtenemos el controlador de la vista de boleto

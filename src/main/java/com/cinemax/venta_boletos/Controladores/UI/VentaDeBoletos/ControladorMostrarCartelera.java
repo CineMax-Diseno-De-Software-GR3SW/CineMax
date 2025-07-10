@@ -1,6 +1,8 @@
 
 package com.cinemax.venta_boletos.Controladores.UI.VentaDeBoletos;
 
+import java.lang.classfile.instruction.ConstantInstruction.LoadConstantInstruction;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Alert;
@@ -40,9 +42,16 @@ public class ControladorMostrarCartelera {
                         "/vistas/venta_boletos/cartelera-view.fxml"));
                 Parent root = loader.load();
 
+                //ControladorMostrarCartelera controller1 = loader.getController();
+
                 // Pasar la película seleccionada al controlador de funciones
+                loader = new FXMLLoader(getClass().getResource(
+                        "/vistas/venta_boletos/funciones-view.fxml"));
+                root = loader.load();
                 ControladorMostrarFunciones controller = loader.getController();
+                
                 controller.setPelicula(peliculaSeleccionada);
+                
 
                 // Cambiar de escena
                 Stage stage = (Stage) listViewPeliculas.getScene().getWindow();
