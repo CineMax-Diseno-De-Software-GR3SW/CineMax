@@ -21,7 +21,7 @@ public class ControladorCineMax {
         servicioCineMax.manejarInicio(cineMax, vistaPaginaPrincipal, this);
     }
 
-    public void iniciarModuloVentaBoletos(){
+    public void iniciarModuloVentaBoletos() {
         // En un futuro, estos datos vendrán de los otros módulos
         String peliculaSeleccionada = "Como entrenar a tu Dragon";
         String salaSeleccionada = "Sala 7 - Dom 29 - 13:40";

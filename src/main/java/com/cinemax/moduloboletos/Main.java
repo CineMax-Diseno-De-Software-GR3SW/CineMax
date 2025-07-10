@@ -32,42 +32,68 @@ public class Main extends Application {
     private static String initialFuncion;
 
     // --- PARTE DE JAVAFX ---
+    // @Override
+    // public void start(Stage stage) throws IOException {
+    // stage.initStyle(StageStyle.UNDECORATED);
+
+    // // CORRECCIÓN: La ruta debe ser absoluta desde la raíz de los recursos.
+    // FXMLLoader fxmlLoader = new FXMLLoader(
+    // Main.class.getResource("/com/cinemax/moduloboletos/Vistas/VentaDeBoletos/boleto-view.fxml"));
+    // Scene scene = new Scene(fxmlLoader.load());
+
+    // // Pasar los datos guardados al primer controlador de la GUI
+    // ControllerBoleto controller = fxmlLoader.getController();
+    // controller.initData(initialPelicula, initialFuncion);
+
+    // ThemeManager.getInstance().applyTheme(scene);
+
+    // stage.setTitle("CINE MAX - Venta de Boletos");
+    // stage.setScene(scene);
+    // stage.setResizable(true);
+    // stage.show();
+    // }
+
+    // /**
+    // * Este es el nuevo método que llamará el ControladorCineMax.
+    // * Guarda los datos y luego lanza la aplicación.
+    // */
+    // public static void launchWithData(String pelicula, String funcion) {
+    // initialPelicula = pelicula;
+    // initialFuncion = funcion;
+    // // Llama al método launch() de Application, que eventualmente llamará a
+    // start()
+    // launch();
+    // }
+
     @Override
-    public void start(Stage stage) throws IOException {
-        stage.initStyle(StageStyle.UNDECORATED);
+    public void start(Stage primaryStage) throws IOException {
+        primaryStage.initStyle(StageStyle.UNDECORATED);
 
-        // CORRECCIÓN: La ruta debe ser absoluta desde la raíz de los recursos.
-        FXMLLoader fxmlLoader = new FXMLLoader(
-                Main.class.getResource("/com/cinemax/moduloboletos/Vistas/VentaDeBoletos/boleto-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load());
+        // Cargar primero la pantalla de cartelera
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                "/com/cinemax/moduloboletos/vistas/VentaDeBoletos/cartelera-view.fxml"));
 
-        // Pasar los datos guardados al primer controlador de la GUI
-        ControllerBoleto controller = fxmlLoader.getController();
-        controller.initData(initialPelicula, initialFuncion);
-
+        Scene scene = new Scene(loader.load());
         ThemeManager.getInstance().applyTheme(scene);
 
-        stage.setTitle("CINE MAX - Venta de Boletos");
-        stage.setScene(scene);
-        stage.setResizable(true);
-        stage.show();
+        primaryStage.setTitle("CineMax - Cartelera");
+        primaryStage.setScene(scene);
+        primaryStage.show();
     }
 
     /**
-     * Este es el nuevo método que llamará el ControladorCineMax.
-     * Guarda los datos y luego lanza la aplicación.
+     * 
+     * 
      */
     public static void launchWithData(String pelicula, String funcion) {
-        initialPelicula = pelicula;
-        initialFuncion = funcion;
-        // Llama al método launch() de Application, que eventualmente llamará a start()
+        // Este método sigue igual para compatibilidad
         launch();
     }
 
     // --- PARTE DE LA CONSOLA ---
     // Este es el punto de entrada principal de TODA la aplicación.
     public static void main(String[] args) {
-        pruebaGeneracionPDFs(); // Llama a la prueba de generación de PDFs
+        // pruebaGeneracionPDFs(); // Llama a la prueba de generación de PDFs
 
         // Inicia la lógica de la aplicación de consola.
         VistaCineMax vistaCineMax = new VistaCineMax();
