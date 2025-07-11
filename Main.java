@@ -7,7 +7,9 @@ import javafx.scene.Parent;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Parent root = FXMLLoader.load(new java.io.File("C:/ProyectoDiseño/CineMax/Vistas/VistaSala.fxml").toURI().toURL());        primaryStage.setTitle("Gestión de Salas");
+        Parent root = FXMLLoader.load(new java.io.File("C:/ProyectoDiseño/CineMax/Vistas/VistaSala.fxml").toURI().toURL());        
+        primaryStage.setTitle("Gestión de Salas");
+        primaryStage.setTitle("Gestión de Butacas");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
     }
