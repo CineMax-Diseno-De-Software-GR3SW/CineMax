@@ -107,8 +107,23 @@ public class ControladorPortalPrincipal {
 
         @FXML
         private void onVerReportes(ActionEvent event) {
-            System.out.println("Navegar a Ver Reportes");
             // TODO: Implementar navegación a la pantalla de reportes
+            System.out.println("Navegar a Ver Reportes");
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaModuloReportesPrincipal.fxml"));
+            try {
+                Parent root = loader.load();
+                
+                // Obtener el stage actual desde el botón o cualquier nodo
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setTitle("Módulo de Reportes");
+                stage.setScene(new Scene(root));
+                stage.show();
+
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+            }
+
         }
 
         @FXML
