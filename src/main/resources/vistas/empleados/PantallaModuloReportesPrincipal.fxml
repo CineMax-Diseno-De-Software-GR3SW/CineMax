@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="550" prefWidth="800" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorGestionUsuarios">
+<BorderPane prefHeight="550" prefWidth="800" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorReportesPrincipal">
 
     <!-- ░░░ TOP BAR ░░░ -->
     <top>
@@ -36,7 +36,7 @@
             <HBox alignment="CENTER_RIGHT" />
 
             <VBox maxWidth="620" prefWidth="620" spacing="12">
-            <Label styleClass="section-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Grafica Reporte de Ventas" />
+            <Label styleClass="section-title" stylesheets="@../temas/ayu-theme.css" text="Grafica Reporte de Ventas" />
             <Label prefHeight="15.0" prefWidth="75.0" text="Filtro de Visualizacion" />
             <ChoiceBox accessibleText="Ingresa un filtro" prefWidth="150.0" />
             <BarChart prefHeight="422.0" prefWidth="532.0">
