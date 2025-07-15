@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,23 +22,11 @@ public class PeliculaDAO {
     
     // Método para guardar una nueva película
     public void guardar(Pelicula pelicula) throws SQLException {
-        if (pelicula == null) {
-            throw new IllegalArgumentException("La película no puede ser null");
-        }
-        
-        // Verificar duplicados antes de insertar
-        if (existeDuplicado(pelicula.getTitulo(), pelicula.getAnio())) {
-            throw new SQLException("Ya existe una película con el mismo título y año");
-        }
-        
-        String sql = """
-            INSERT INTO pelicula (titulo, sinopsis, duracion_minutos, anio, idioma, genero, imagen_url)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """;
-        
+        String sql = "SELECT guardar_pelicula(?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = conexionBaseSingleton.getConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, pelicula.getTitulo());
             stmt.setString(2, pelicula.getSinopsis());
             stmt.setInt(3, pelicula.getDuracionMinutos());
@@ -47,122 +34,88 @@ public class PeliculaDAO {
             stmt.setString(5, pelicula.getIdioma() != null ? pelicula.getIdioma().getCodigo() : null);
             stmt.setString(6, pelicula.getGenerosComoString());
             stmt.setString(7, pelicula.getImagenUrl());
-            
-            int filasAfectadas = stmt.executeUpdate();
-            
-            if (filasAfectadas > 0) {
-                // Obtener el ID generado y asignarlo a la película
-                try (ResultSet rs = stmt.getGeneratedKeys()) {
-                    if (rs.next()) {
-                        pelicula.setId(rs.getInt(1));
-                        System.out.println("Película guardada con ID: " + pelicula.getId());
-                    }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    pelicula.setId(rs.getInt(1));
+                    System.out.println("Película guardada con ID: " + pelicula.getId());
                 }
-            } else {
-                throw new SQLException("Error al guardar la película: no se insertó ninguna fila");
             }
-            
+
         } catch (SQLException e) {
-            System.err.println("Error al guardar película: " + e.getMessage());
+            System.err.println("Error al guardar película (SP): " + e.getMessage());
             throw e;
         }
     }
+
     
     // Método para actualizar una película existente
     public void actualizar(Pelicula pelicula) throws SQLException {
-        if (pelicula == null || pelicula.getId() <= 0) {
-            throw new IllegalArgumentException("La película debe tener un ID válido para actualizar");
-        }
-        
-        String sql = """
-            UPDATE pelicula 
-            SET titulo = ?, sinopsis = ?, duracion_minutos = ?, anio = ?, idioma = ?, 
-                genero = ?, imagen_url = ?
-            WHERE id = ?
-            """;
-        
+        String sql = "CALL actualizar_pelicula(?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = conexionBaseSingleton.getConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, pelicula.getTitulo());
-            stmt.setString(2, pelicula.getSinopsis());
-            stmt.setInt(3, pelicula.getDuracionMinutos());
-            stmt.setInt(4, pelicula.getAnio());
-            stmt.setString(5, pelicula.getIdioma() != null ? pelicula.getIdioma().getCodigo() : null);
-            stmt.setString(6, pelicula.getGenerosComoString());
-            stmt.setString(7, pelicula.getImagenUrl());
-            stmt.setInt(8, pelicula.getId());
-            
-            int filasAfectadas = stmt.executeUpdate();
-            
-            if (filasAfectadas == 0) {
-                throw new SQLException("No se encontró la película con ID: " + pelicula.getId());
-            } else {
-                System.out.println("Película actualizada correctamente: " + pelicula.getTitulo());
-            }
-            
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, pelicula.getId());
+            stmt.setString(2, pelicula.getTitulo());
+            stmt.setString(3, pelicula.getSinopsis());
+            stmt.setInt(4, pelicula.getDuracionMinutos());
+            stmt.setInt(5, pelicula.getAnio());
+            stmt.setString(6, pelicula.getIdioma() != null ? pelicula.getIdioma().getCodigo() : null);
+            stmt.setString(7, pelicula.getGenerosComoString());
+            stmt.setString(8, pelicula.getImagenUrl());
+
+            stmt.execute();
+
+            System.out.println("Película actualizada con ID: " + pelicula.getId());
+
         } catch (SQLException e) {
-            System.err.println("Error al actualizar película: " + e.getMessage());
+            System.err.println("Error al actualizar película (SP): " + e.getMessage());
             throw e;
         }
     }
+
     
     // Método para eliminar una película por ID
     public void eliminar(int id) throws SQLException {
-        if (id <= 0) {
-            throw new IllegalArgumentException("El ID debe ser mayor a 0");
-        }
-        
-        String sql = "DELETE FROM pelicula WHERE id = ?";
-        
+        String sql = "CALL eliminar_pelicula(?)";
+
         try (Connection conn = conexionBaseSingleton.getConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
-            int filasAfectadas = stmt.executeUpdate();
-            
-            if (filasAfectadas == 0) {
-                throw new SQLException("No se encontró la película con ID: " + id);
-            } else {
-                System.out.println("Película eliminada correctamente con ID: " + id);
-            }
-            
+            stmt.execute();
+
+            System.out.println("Película eliminada con ID: " + id);
+
         } catch (SQLException e) {
-            System.err.println("Error al eliminar película: " + e.getMessage());
+            System.err.println("Error al eliminar película (SP): " + e.getMessage());
             throw e;
         }
     }
-    
+
     // Método para buscar una película por ID
     public Pelicula buscarPorId(int id) throws SQLException {
-        if (id <= 0) {
-            throw new IllegalArgumentException("El ID debe ser mayor a 0");
-        }
-        
-        String sql = """
-            SELECT id, titulo, sinopsis, duracion_minutos, anio, idioma, 
-                   genero, imagen_url
-            FROM pelicula WHERE id = ?
-            """;
-        
+        String sql = "SELECT * FROM buscar_pelicula_por_id(?)";
+
         try (Connection conn = conexionBaseSingleton.getConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
-            
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     return mapearResultSetAPelicula(rs);
-                } else {
-                    return null; // No se encontró la película
                 }
             }
-            
+
+            return null;
+
         } catch (SQLException e) {
-            System.err.println("Error al buscar película por ID: " + e.getMessage());
+            System.err.println("Error al buscar película por ID (SP): " + e.getMessage());
             throw e;
         }
     }
+
     
     // Método para verificar si existe una película duplicada
     public boolean existeDuplicado(String titulo, int anio) throws SQLException {
@@ -194,66 +147,48 @@ public class PeliculaDAO {
     // Método para obtener todas las películas
     public List<Pelicula> obtenerTodas() throws SQLException {
         List<Pelicula> peliculas = new ArrayList<>();
-        
-        String sql = """
-            SELECT id, titulo, sinopsis, duracion_minutos, anio, idioma, 
-                   genero, imagen_url
-            FROM pelicula 
-            ORDER BY id DESC
-            """;
-        
+        String sql = "SELECT * FROM obtener_todas_peliculas()";
+
         try (Connection conn = conexionBaseSingleton.getConexion();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery()) {
+
             while (rs.next()) {
                 peliculas.add(mapearResultSetAPelicula(rs));
             }
-            
-            System.out.println("Se encontraron " + peliculas.size() + " películas");
+
             return peliculas;
-            
+
         } catch (SQLException e) {
-            System.err.println("Error al obtener todas las películas: " + e.getMessage());
+            System.err.println("Error al obtener todas las películas (SP): " + e.getMessage());
             throw e;
         }
     }
+
     
     // Método adicional: buscar por título (búsqueda parcial)
     public List<Pelicula> buscarPorTitulo(String titulo) throws SQLException {
-        if (titulo == null || titulo.trim().isEmpty()) {
-            throw new IllegalArgumentException("El título de búsqueda no puede estar vacío");
-        }
-        
         List<Pelicula> peliculas = new ArrayList<>();
-        
-        String sql = """
-            SELECT id, titulo, sinopsis, duracion_minutos, anio, idioma, 
-                   genero, imagen_url
-            FROM pelicula 
-            WHERE LOWER(titulo) LIKE LOWER(?)
-            ORDER BY titulo
-            """;
-        
+        String sql = "SELECT * FROM buscar_peliculas_por_titulo(?)";
+
         try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setString(1, "%" + titulo.trim() + "%");
-            
+
+            stmt.setString(1, titulo);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     peliculas.add(mapearResultSetAPelicula(rs));
                 }
             }
-            
-            System.out.println("Se encontraron " + peliculas.size() + " películas con título similar a: " + titulo);
+
             return peliculas;
-            
+
         } catch (SQLException e) {
-            System.err.println("Error al buscar películas por título: " + e.getMessage());
+            System.err.println("Error al buscar películas por título (SP): " + e.getMessage());
             throw e;
         }
     }
+
     
     // Método privado para mapear ResultSet a objeto Pelicula
     private Pelicula mapearResultSetAPelicula(ResultSet rs) throws SQLException {
