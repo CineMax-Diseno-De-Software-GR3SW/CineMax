@@ -20,8 +20,8 @@ public class PeliculaDAO {
         this.conexionBaseSingleton = ConexionBaseSingleton.getInstancia();
     }
     
-    // Método para guardar una nueva película
-    public void guardar(Pelicula pelicula) throws SQLException {
+    // Método para crear una nueva película
+    public void crear(Pelicula pelicula) throws SQLException {
         String sql = "SELECT guardar_pelicula(?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = conexionBaseSingleton.getConexion();
@@ -145,7 +145,7 @@ public class PeliculaDAO {
     }
     
     // Método para obtener todas las películas
-    public List<Pelicula> obtenerTodas() throws SQLException {
+    public List<Pelicula> listarTodas() throws SQLException {
         List<Pelicula> peliculas = new ArrayList<>();
         String sql = "SELECT * FROM obtener_todas_peliculas()";
 

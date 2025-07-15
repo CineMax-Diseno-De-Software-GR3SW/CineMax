@@ -35,7 +35,7 @@ public class ServicioPelicula {
         nuevaPelicula.setGenerosPorString(genero.trim());
         
         // Guardar en base de datos
-        peliculaDAO.guardar(nuevaPelicula);
+        peliculaDAO.crear(nuevaPelicula);
         
         return nuevaPelicula;
     }
@@ -102,7 +102,7 @@ public class ServicioPelicula {
      * Obtiene todas las películas
      */
     public List<Pelicula> listarTodasLasPeliculas() throws SQLException {
-        return peliculaDAO.obtenerTodas();
+        return peliculaDAO.listarTodas();
     }
     
     /**
