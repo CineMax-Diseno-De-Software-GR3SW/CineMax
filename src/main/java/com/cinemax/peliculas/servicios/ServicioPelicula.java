@@ -29,7 +29,7 @@ public class ServicioPelicula {
         // Crear objeto película
         Pelicula nuevaPelicula = new Pelicula(titulo.trim(), sinopsis.trim(), 
                                             duracionMinutos, anio, idioma, 
-                                            genero.trim(), imagenUrl);
+                                            genero.trim(), imagenUrl); // Por defecto activo
         
         // Guardar en base de datos
         peliculaDAO.guardar(nuevaPelicula);

@@ -1,12 +1,13 @@
-/*module com.cinemax.empleados {
+module com.cinemax.peliculas {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
-
-
-opens com.cinemax.empleados to javafx.fxml;
-opens com.cinemax.empleados.modelos.entidades to javafx.base;
-exports com.cinemax.empleados;
-opens com.cinemax.empleados.controladores to javafx.fxml;
-exports com.cinemax.empleados.controladores;
-}*/
+    
+    opens com.cinemax.peliculas to javafx.fxml;
+    opens com.cinemax.peliculas.controladores to javafx.fxml;
+    opens com.cinemax.peliculas.modelos.entidades to javafx.base;
+    
+    exports com.cinemax.peliculas;
+    exports com.cinemax.peliculas.controladores;
+    exports com.cinemax.peliculas.modelos.entidades;
+}
