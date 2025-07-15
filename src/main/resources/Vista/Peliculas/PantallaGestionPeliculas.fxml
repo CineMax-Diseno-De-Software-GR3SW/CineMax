@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Label text="Gestión de Películas">
+                    <font>
+                        <Font name="Arial Black" size="24" />
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnNuevaPelicula" onAction="#onNuevaPelicula" styleClass="primary-button" text="+ Nueva Película" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
+            </padding>
+            
+            <!-- Sección de búsqueda y filtros -->
+            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <children>
+                    <Label text="Buscar:" />
+                    <TextField fx:id="txtBuscar" promptText="Título, género..." prefWidth="300.0" />
+                    <Button fx:id="btnBuscar" onAction="#onBuscar" text="Buscar" />
+                    <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <ComboBox fx:id="cmbFiltroGenero" promptText="Filtrar por género" prefWidth="150.0" />
+                </children>
+            </HBox>
+
+            <!-- Tabla de películas -->
+            <TableView fx:id="tablaPeliculas" prefHeight="400.0">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="250.0" />
+                    <TableColumn fx:id="colAnio" text="Año" prefWidth="80.0" />
+                    <TableColumn fx:id="colGenero" text="Género" prefWidth="120.0" />
+                    <TableColumn fx:id="colDuracion" text="Duración (min)" prefWidth="120.0" />
+                    <TableColumn fx:id="colIdioma" text="Idioma" prefWidth="100.0" />
+                </columns>
+            </TableView>
+
+            <!-- Botones de acción -->
+            <HBox spacing="15.0" alignment="CENTER">
+                <children>
+                    <Button fx:id="btnEditar" onAction="#onEditarPelicula" text="Editar" disable="true" />
+                    <Button fx:id="btnEliminar" onAction="#onEliminarPelicula" text="Eliminar" disable="true" styleClass="danger-button" />
+                    <Button fx:id="btnVerDetalles" onAction="#onVerDetalles" text="Ver Detalles" disable="true" />
+                </children>
+            </HBox>
+
+            <!-- Información adicional -->
+            <HBox spacing="20.0" alignment="CENTER_LEFT">
+                <children>
+                    <Label fx:id="lblTotalPeliculas" text="Total de películas: 0" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="lblEstadisticas" text="Cargando..." />
+                </children>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>
