@@ -8,16 +8,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cinemax.comun.modelos.persistencia.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
-import com.cinemax.peliculas.modelos.entidades.Pelicula; 
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
 
 public class PeliculaDAO {
     
-    private GestorDB gestorDB;
+    private ConexionBaseSingleton conexionBaseSingleton;
     
     // Constructor
     public PeliculaDAO() {
-        this.gestorDB = GestorDB.obtenerInstancia();
+        this.conexionBaseSingleton = ConexionBaseSingleton.getInstancia();
     }
     
     // Método para guardar una nueva película
@@ -32,11 +33,11 @@ public class PeliculaDAO {
         }
         
         String sql = """
-            INSERT INTO peliculas (titulo, sinopsis, duracion_minutos, anio, idioma, genero, imagen_url)
+            INSERT INTO pelicula (titulo, sinopsis, duracion_minutos, anio, idioma, genero, imagen_url)
             VALUES (?, ?, ?, ?, ?, ?, ?)
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             stmt.setString(1, pelicula.getTitulo());
@@ -44,7 +45,7 @@ public class PeliculaDAO {
             stmt.setInt(3, pelicula.getDuracionMinutos());
             stmt.setInt(4, pelicula.getAnio());
             stmt.setString(5, pelicula.getIdioma() != null ? pelicula.getIdioma().getCodigo() : null);
-            stmt.setString(6, pelicula.getGenero());
+            stmt.setString(6, pelicula.getGenerosComoString());
             stmt.setString(7, pelicula.getImagenUrl());
             
             int filasAfectadas = stmt.executeUpdate();
@@ -74,13 +75,13 @@ public class PeliculaDAO {
         }
         
         String sql = """
-            UPDATE peliculas 
+            UPDATE pelicula 
             SET titulo = ?, sinopsis = ?, duracion_minutos = ?, anio = ?, idioma = ?, 
                 genero = ?, imagen_url = ?
             WHERE id = ?
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, pelicula.getTitulo());
@@ -88,7 +89,7 @@ public class PeliculaDAO {
             stmt.setInt(3, pelicula.getDuracionMinutos());
             stmt.setInt(4, pelicula.getAnio());
             stmt.setString(5, pelicula.getIdioma() != null ? pelicula.getIdioma().getCodigo() : null);
-            stmt.setString(6, pelicula.getGenero());
+            stmt.setString(6, pelicula.getGenerosComoString());
             stmt.setString(7, pelicula.getImagenUrl());
             stmt.setInt(8, pelicula.getId());
             
@@ -112,9 +113,9 @@ public class PeliculaDAO {
             throw new IllegalArgumentException("El ID debe ser mayor a 0");
         }
         
-        String sql = "DELETE FROM peliculas WHERE id = ?";
+        String sql = "DELETE FROM pelicula WHERE id = ?";
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setInt(1, id);
@@ -141,10 +142,10 @@ public class PeliculaDAO {
         String sql = """
             SELECT id, titulo, sinopsis, duracion_minutos, anio, idioma, 
                    genero, imagen_url
-            FROM peliculas WHERE id = ?
+            FROM pelicula WHERE id = ?
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setInt(1, id);
@@ -169,9 +170,9 @@ public class PeliculaDAO {
             throw new IllegalArgumentException("El título no puede estar vacío");
         }
         
-        String sql = "SELECT COUNT(*) FROM peliculas WHERE LOWER(titulo) = LOWER(?) AND anio = ?";
+        String sql = "SELECT COUNT(*) FROM pelicula WHERE LOWER(titulo) = LOWER(?) AND anio = ?";
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, titulo.trim());
@@ -197,11 +198,11 @@ public class PeliculaDAO {
         String sql = """
             SELECT id, titulo, sinopsis, duracion_minutos, anio, idioma, 
                    genero, imagen_url
-            FROM peliculas 
+            FROM pelicula 
             ORDER BY id DESC
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
@@ -229,12 +230,12 @@ public class PeliculaDAO {
         String sql = """
             SELECT id, titulo, sinopsis, duracion_minutos, anio, idioma, 
                    genero, imagen_url
-            FROM peliculas 
+            FROM pelicula 
             WHERE LOWER(titulo) LIKE LOWER(?)
             ORDER BY titulo
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, "%" + titulo.trim() + "%");
@@ -276,7 +277,7 @@ public class PeliculaDAO {
         }
         
         
-        pelicula.setGenero(rs.getString("genero"));
+        pelicula.setGenerosPorString(rs.getString("genero"));
         pelicula.setImagenUrl(rs.getString("imagen_url"));
         
         return pelicula;

@@ -1,9 +1,13 @@
 package com.cinemax.peliculas.controladores;
 
 import java.net.URL;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
@@ -13,10 +17,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ButtonBar;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.util.StringConverter;
@@ -381,7 +396,14 @@ public class ControladorPelicula implements Initializable {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colAnio.setCellValueFactory(new PropertyValueFactory<>("anio"));
-        colGenero.setCellValueFactory(new PropertyValueFactory<>("genero"));
+        
+        // Para el género, necesitamos un cellValueFactory personalizado
+        colGenero.setCellValueFactory(cellData -> {
+            return new javafx.beans.property.SimpleStringProperty(
+                cellData.getValue().getGenerosComoString()
+            );
+        });
+        
         colDuracion.setCellValueFactory(new PropertyValueFactory<>("duracionMinutos"));
         
         // Para el idioma, necesitamos un cellValueFactory personalizado
@@ -431,14 +453,10 @@ public class ControladorPelicula implements Initializable {
         // Obtener géneros únicos de las películas
         Set<String> generosUnicos = new HashSet<>();
         for (Pelicula pelicula : listaPeliculas) {
-            if (pelicula.getGenero() != null && !pelicula.getGenero().trim().isEmpty()) {
-                // Separar géneros múltiples por comas
-                String[] generos = pelicula.getGenero().split(",");
-                for (String genero : generos) {
-                    String generoLimpio = genero.trim();
-                    if (!generoLimpio.isEmpty()) {
-                        generosUnicos.add(generoLimpio);
-                    }
+            if (!pelicula.getGeneros().isEmpty()) {
+                // Agregar todos los géneros de la película
+                for (com.cinemax.peliculas.modelos.entidades.Genero genero : pelicula.getGeneros()) {
+                    generosUnicos.add(genero.getNombre());
                 }
             }
         }
@@ -481,9 +499,9 @@ public class ControladorPelicula implements Initializable {
         for (Pelicula pelicula : listaPeliculas) {
             boolean coincideTexto = textoBusqueda.isEmpty() || 
                 pelicula.getTitulo().toLowerCase().contains(textoBusqueda) ||
-                pelicula.getGenero().toLowerCase().contains(textoBusqueda);
+                pelicula.getGenerosComoString().toLowerCase().contains(textoBusqueda);
                 
-            boolean coincideGenero = coincideConGenero(pelicula.getGenero(), generoSeleccionado);
+            boolean coincideGenero = coincideConGenero(pelicula.getGenerosComoString(), generoSeleccionado);
                 
             if (coincideTexto && coincideGenero) {
                 peliculasFiltradas.add(pelicula);
@@ -549,7 +567,7 @@ public class ControladorPelicula implements Initializable {
         StringBuilder contenido = new StringBuilder();
         contenido.append("ID: ").append(pelicula.getId()).append("\n");
         contenido.append("Año: ").append(pelicula.getAnio()).append("\n");
-        contenido.append("Género: ").append(pelicula.getGenero()).append("\n");
+        contenido.append("Género: ").append(pelicula.getGenerosComoString()).append("\n");
         contenido.append("Duración: ").append(pelicula.getDuracionMinutos()).append(" minutos\n");
         if (pelicula.getIdioma() != null) {
             contenido.append("Idioma: ").append(pelicula.getIdioma().getNombre()).append("\n");

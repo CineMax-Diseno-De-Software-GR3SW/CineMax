@@ -6,7 +6,8 @@ public enum Genero {
     DRAMA("Drama"),
     TERROR("Terror"),
     CIENCIA_FICCION("Ciencia Ficción"),
-    ANIMACION("Animación");
+    ANIMACION("Animación"),
+    ROMANCE("Romance");
     
     private final String nombre;
     

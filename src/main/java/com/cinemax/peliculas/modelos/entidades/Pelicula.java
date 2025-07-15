@@ -1,5 +1,8 @@
 package com.cinemax.peliculas.modelos.entidades;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pelicula {
     private int id;
     private String titulo;
@@ -7,35 +10,36 @@ public class Pelicula {
     private int duracionMinutos;
     private int anio;
     private Idioma idioma;
-    private String genero;
+    private List<Genero> generos;
     private String imagenUrl;
     
     // Constructor vacío
     public Pelicula() {
+        this.generos = new ArrayList<>();
     }
     
     // Constructor con parámetros
     public Pelicula(int id, String titulo, String sinopsis, int duracionMinutos, 
-                   int anio, Idioma idioma, String genero,  String imagenUrl) {
+                   int anio, Idioma idioma, List<Genero> generos, String imagenUrl) {
         this.id = id;
         this.titulo = titulo;
         this.sinopsis = sinopsis;
         this.duracionMinutos = duracionMinutos;
         this.anio = anio;
         this.idioma = idioma;
-        this.genero = genero;
+        this.generos = generos != null ? new ArrayList<>(generos) : new ArrayList<>();
         this.imagenUrl = imagenUrl;
     }
 
     // Constructor sin ID, para crear una nueva película en persistencia
     public Pelicula(String titulo, String sinopsis, int duracionMinutos, 
-                   int anio, Idioma idioma, String genero,  String imagenUrl) {
+                   int anio, Idioma idioma, List<Genero> generos, String imagenUrl) {
         this.titulo = titulo;
         this.sinopsis = sinopsis;
         this.duracionMinutos = duracionMinutos;
         this.anio = anio;
         this.idioma = idioma;
-        this.genero = genero;
+        this.generos = generos != null ? new ArrayList<>(generos) : new ArrayList<>();
         this.imagenUrl = imagenUrl;
     }
     
@@ -64,8 +68,8 @@ public class Pelicula {
         return idioma;
     }
     
-    public String getGenero() {
-        return genero;
+    public List<Genero> getGeneros() {
+        return new ArrayList<>(generos);
     }
     
     public String getImagenUrl() {
@@ -114,11 +118,11 @@ public class Pelicula {
         }
     }
     
-    public void setGenero(String genero) {
-        if (genero != null && !genero.trim().isEmpty()) {
-            this.genero = genero.trim();
+    public void setGeneros(List<Genero> generos) {
+        if (generos != null) {
+            this.generos = new ArrayList<>(generos);
         } else {
-            throw new IllegalArgumentException("El género no puede estar vacío");
+            this.generos = new ArrayList<>();
         }
     }
     
@@ -135,6 +139,50 @@ public class Pelicula {
             throw new IllegalArgumentException("El código del idioma no puede estar vacío");
         }
     }
+    
+    // Método para agregar un género a la lista
+    public void agregarGenero(Genero genero) {
+        if (genero != null && !this.generos.contains(genero)) {
+            this.generos.add(genero);
+        }
+    }
+    
+    // Método para remover un género de la lista
+    public void removerGenero(Genero genero) {
+        this.generos.remove(genero);
+    }
+    
+    // Método para obtener los géneros como String separados por comas
+    public String getGenerosComoString() {
+        if (generos.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < generos.size(); i++) {
+            if (i > 0) {
+                sb.append(", ");
+            }
+            sb.append(generos.get(i).getNombre());
+        }
+        return sb.toString();
+    }
+    
+    // Método para establecer géneros desde un String separado por comas
+    public void setGenerosPorString(String generosString) {
+        this.generos.clear();
+        if (generosString != null && !generosString.trim().isEmpty()) {
+            String[] generosArray = generosString.split(",");
+            for (String generoNombre : generosArray) {
+                try {
+                    Genero genero = Genero.porNombre(generoNombre.trim());
+                    this.generos.add(genero);
+                } catch (IllegalArgumentException e) {
+                    // Ignorar géneros inválidos o lanzar excepción según la lógica de negocio
+                    System.err.println("Género inválido: " + generoNombre.trim());
+                }
+            }
+        }
+    }
 
 
     
@@ -148,7 +196,7 @@ public class Pelicula {
                 ", duracionMinutos=" + duracionMinutos +
                 ", anio=" + anio +
                 ", idioma=" + (idioma != null ? idioma.getNombre() : "null") +
-                ", genero='" + genero + '\'' +
+                ", generos=" + generos +
                 ", imagenUrl='" + imagenUrl + '\'' +
                 '}';
     }

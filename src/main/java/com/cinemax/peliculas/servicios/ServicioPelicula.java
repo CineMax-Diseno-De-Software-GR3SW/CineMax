@@ -29,7 +29,10 @@ public class ServicioPelicula {
         // Crear objeto película
         Pelicula nuevaPelicula = new Pelicula(titulo.trim(), sinopsis.trim(), 
                                             duracionMinutos, anio, idioma, 
-                                            genero.trim(), imagenUrl); // Por defecto activo
+                                            new java.util.ArrayList<>(), imagenUrl); // Lista vacía por defecto
+        
+        // Establecer géneros desde string
+        nuevaPelicula.setGenerosPorString(genero.trim());
         
         // Guardar en base de datos
         peliculaDAO.guardar(nuevaPelicula);
@@ -60,7 +63,7 @@ public class ServicioPelicula {
         peliculaExistente.setDuracionMinutos(duracionMinutos);
         peliculaExistente.setAnio(anio);
         peliculaExistente.setIdioma(idioma);
-        peliculaExistente.setGenero(genero.trim());
+        peliculaExistente.setGenerosPorString(genero.trim());
         peliculaExistente.setImagenUrl(imagenUrl);
         
         // Guardar cambios
@@ -123,47 +126,6 @@ public class ServicioPelicula {
         }
         
         return peliculaDAO.existeDuplicado(titulo, anio);
-    }
-    
-    /**
-     * Obtiene estadísticas básicas de películas
-     */
-    public String obtenerEstadisticas() throws SQLException {
-        List<Pelicula> todasLasPeliculas = peliculaDAO.obtenerTodas();
-        
-        if (todasLasPeliculas.isEmpty()) {
-            return "No hay películas registradas en el sistema.";
-        }
-        
-        int totalPeliculas = todasLasPeliculas.size();
-        int duracionTotal = 0;
-        int anioMasAntiguo = Integer.MAX_VALUE;
-        int anioMasReciente = Integer.MIN_VALUE;
-        
-        for (Pelicula pelicula : todasLasPeliculas) {
-            duracionTotal += pelicula.getDuracionMinutos();
-            
-            if (pelicula.getAnio() < anioMasAntiguo) {
-                anioMasAntiguo = pelicula.getAnio();
-            }
-            
-            if (pelicula.getAnio() > anioMasReciente) {
-                anioMasReciente = pelicula.getAnio();
-            }
-        }
-        
-        double duracionPromedio = (double) duracionTotal / totalPeliculas;
-        
-        return String.format(
-            "Estadísticas del catálogo:\n" +
-            "- Total de películas: %d\n" +
-            "- Duración promedio: %.1f minutos\n" +
-            "- Año más antiguo: %d\n" +
-            "- Año más reciente: %d\n" +
-            "- Duración total: %d minutos (%.1f horas)",
-            totalPeliculas, duracionPromedio, anioMasAntiguo, 
-            anioMasReciente, duracionTotal, duracionTotal / 60.0
-        );
     }
     
     /**

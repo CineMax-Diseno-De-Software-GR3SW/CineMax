@@ -1,6 +1,6 @@
 package com.cinemax.salas.modelos.persistencia;
 
-import com.cinemax.peliculas.modelos.persistencia.GestorDB;
+import com.cinemax.comun.modelos.persistencia.ConexionBaseSingleton;
 import com.cinemax.salas.modelos.entidades.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,11 +12,11 @@ import java.util.List;
 
 public class SalaDAO {
     
-    private GestorDB gestorDB;
+    private ConexionBaseSingleton conexionBaseSingleton;;
     
     // Constructor
     public SalaDAO() {
-        this.gestorDB = GestorDB.obtenerInstancia();
+        this.conexionBaseSingleton = ConexionBaseSingleton.getInstancia();
     }
     
     // Método para guardar una nueva sala
@@ -35,7 +35,7 @@ public class SalaDAO {
             VALUES (?, ?, ?, ?)
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             
             stmt.setString(1, sala.getNombre());
@@ -75,7 +75,7 @@ public class SalaDAO {
             WHERE id = ?
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, sala.getNombre());
@@ -106,7 +106,7 @@ public class SalaDAO {
         
         String sql = "DELETE FROM sala WHERE id = ?";
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setInt(1, id);
@@ -130,7 +130,7 @@ public class SalaDAO {
         }
         
         String sql = "SELECT id, nombre, capacidad, tipo, estado FROM sala WHERE id = ?";
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
@@ -155,7 +155,7 @@ public class SalaDAO {
         
         String sql = "SELECT COUNT(*) FROM sala WHERE LOWER(nombre) = LOWER(?)";
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, nombre.trim());
@@ -182,7 +182,7 @@ public class SalaDAO {
             ORDER BY id DESC
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             
@@ -214,7 +214,7 @@ public class SalaDAO {
             ORDER BY nombre
             """;
         
-        try (Connection conn = gestorDB.obtenerConexion();
+        try (Connection conn = conexionBaseSingleton.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
             stmt.setString(1, "%" + nombre.trim() + "%");
