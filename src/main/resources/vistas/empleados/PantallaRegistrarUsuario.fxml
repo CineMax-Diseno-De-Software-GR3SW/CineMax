@@ -17,7 +17,7 @@
 <?import javafx.scene.control.Separator?>
 
 
-<VBox alignment="CENTER" prefHeight="650.0" prefWidth="700.0" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorRegistrarUsuario">
+<VBox alignment="CENTER" prefHeight="650.0" prefWidth="700.0" stylesheets="@../temas/styles.css" spacing="20.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorRegistrarUsuario">
 
     <fx:define>
         <ToggleGroup fx:id="grupoEstado" />

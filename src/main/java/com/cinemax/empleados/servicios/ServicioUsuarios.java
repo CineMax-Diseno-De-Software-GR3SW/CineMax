@@ -90,23 +90,25 @@ public class ServicioUsuarios {
         return usuarioDAO.listarTodos();
     }
 
-    public List<Usuario> listarUsuariosActivos() throws Exception {
-        return usuarioDAO.listarActivos();
-    }
+//    public List<Usuario> listarUsuariosActivos() throws Exception {
+//        return usuarioDAO.listarActivos();
+//    }
 
-    public void activarUsuario(Usuario usuario) throws Exception {
-        if (usuario != null) {
-            usuario.activar();
-            usuarioDAO.activarUsuario(usuario.getId());
-        }
-    }
-
-    public void desactivarUsuario(Usuario usuario) throws Exception {
-        if (usuario != null) {
-            usuario.desactivar();
-            usuarioDAO.desactivarUsuario(usuario.getId());
-        }
-    }
+//    public void activarUsuario(Usuario usuario) throws Exception {
+//        if (usuario != null) {
+//            usuario.activar();
+//            usuarioDAO.cambiarEstado(usuario.getId(), true);
+////            usuarioDAO.activarUsuario(usuario.getId());
+//        }
+//    }
+//
+//    public void desactivarUsuario(Usuario usuario) throws Exception {
+//        if (usuario != null) {
+//            usuario.desactivar();
+//            usuarioDAO.cambiarEstado(usuario.getId(), false);
+////            usuarioDAO.desactivarUsuario(usuario.getId());
+//        }
+//    }
 
     public void eliminarUsuario(Long id) throws Exception {
         if (id != null) {

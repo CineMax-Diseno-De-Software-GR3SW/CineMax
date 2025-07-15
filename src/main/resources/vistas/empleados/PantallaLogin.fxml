@@ -6,19 +6,20 @@
 
 <!-- stylesheets = "@ayu-theme.css" -->
 
-<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
+<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
 
-    <Label text="CineMAX">
+    <Label styleClass="title" text="CineMAX">
         <font>
-            <Font size="60" />
+            <Font size="700.0" />
         </font>
     </Label>
+
 
     <TextField fx:id="txtUsuario" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Usuario" />
 
     <PasswordField fx:id="txtPassword" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Contraseña" />
 
-    <Button onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Log In">
+    <Button styleClass="primary-button" onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Log In">
       <font>
          <Font size="18.0" />
       </font></Button>
