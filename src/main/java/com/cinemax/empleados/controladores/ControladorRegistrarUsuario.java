@@ -10,7 +10,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -19,7 +22,10 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -48,6 +54,23 @@ public class ControladorRegistrarUsuario implements Initializable {
         try {
             ObservableList<Rol> roles = FXCollections.observableArrayList(servicioRoles.listarRoles());
             comboBoxRol.setItems(roles);
+
+            // Agregar un StringConverter para mostrar solo el nombre del rol
+            comboBoxRol.setConverter(new StringConverter<Rol>() {
+                @Override
+                public String toString(Rol rol) {
+                    return (rol == null) ? "" : rol.getNombre();
+                }
+
+                @Override
+                public Rol fromString(String nombre) {
+                    return roles.stream()
+                            .filter(r -> r.getNombre().equals(nombre))
+                            .findFirst()
+                            .orElse(null);
+                }
+            });
+
             if (!roles.isEmpty()) {
                 comboBoxRol.getSelectionModel().selectFirst();
             }
@@ -83,6 +106,7 @@ public class ControladorRegistrarUsuario implements Initializable {
             return;
         }
 
+        //TODO: NO, Hacerlo desde el servicio
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setNombreCompleto(nombres + " " + apellidos);
         nuevoUsuario.setCedula(cedula);
@@ -98,9 +122,15 @@ public class ControladorRegistrarUsuario implements Initializable {
 
             mostrarAlerta(AlertType.INFORMATION, "Registro Exitoso", "Empleado Registrado", "El empleado " + nuevoUsuario.getNombreCompleto() + " ha sido registrado correctamente.");
             limpiarCampos();
-            Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            stage.close();
-
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+                Parent root = loader.load();
+                Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } catch (IllegalArgumentException e) {
             mostrarAlerta(AlertType.WARNING, "Error de Validación", "Datos Incorrectos", e.getMessage());
         } catch (Exception e) {
@@ -111,8 +141,15 @@ public class ControladorRegistrarUsuario implements Initializable {
 
     @FXML
     private void handleCancelar(ActionEvent event) {
-        Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-        stage.close();
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void limpiarCampos() {

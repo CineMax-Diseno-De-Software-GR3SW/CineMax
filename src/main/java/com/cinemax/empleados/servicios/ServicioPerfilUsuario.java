@@ -3,6 +3,8 @@ package com.cinemax.empleados.servicios;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
+import java.sql.SQLException;
+
 public class ServicioPerfilUsuario {
     private ValidadorUsuario validador;
     private UsuarioDAO usuarioDAO;
@@ -69,4 +71,9 @@ public class ServicioPerfilUsuario {
         // Un usuario solo puede actualizar su propio perfil
         return usuarioActual != null && usuarioActual.getId().equals(idUsuarioPerfil);
     }
-} 
+
+    public void actualizarCorreo(Usuario usuarioActivo, String nuevoEmail) throws SQLException {
+        usuarioActivo.actualizarCorreo(nuevoEmail);
+        usuarioDAO.actualizarCorreo(usuarioActivo.getId(),nuevoEmail);
+    }
+}

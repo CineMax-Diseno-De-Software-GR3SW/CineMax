@@ -254,4 +254,28 @@ public class UsuarioDAO {
 
 //        db.insertarModificarEliminar(sql);
     }
+
+    public void actualizarCorreo(Long idUsuario, String nuevoEmail) throws SQLException {
+        String sql = """
+                CALL actualizar_correo_usuario(%d,'%s')
+                """.formatted(
+                idUsuario,
+                nuevoEmail
+        );
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
+    }
+
+    public void actualizarCelular(Long idUsuario, String nuevoCelular) throws SQLException {
+        String sql = """
+                CALL actualizar_celular_usuario(%d,'%s')
+                """.formatted(
+                idUsuario,
+                nuevoCelular
+        );
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
+    }
 }

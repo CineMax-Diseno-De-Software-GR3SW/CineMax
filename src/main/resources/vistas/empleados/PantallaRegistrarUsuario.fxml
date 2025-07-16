@@ -94,8 +94,8 @@
     </HBox>
 
     <HBox alignment="CENTER" spacing="30.0">
-        <Button onAction="#handleCancelar" text="Cancelar" style="-fx-background-color: #696969; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20 8 20;"/>
-        <Button onAction="#handleRegistrarUsuario" text="Registrar" style="-fx-background-color: #FFA500; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 20 8 20;"/>
+        <Button onAction="#handleCancelar" text="Cancelar" styleClass="stepper-button"/>
+        <Button onAction="#handleRegistrarUsuario" text="Registrar" styleClass="primary-button"/>
         <VBox.margin>
             <Insets bottom="20.0" top="10.0" />
         </VBox.margin>
