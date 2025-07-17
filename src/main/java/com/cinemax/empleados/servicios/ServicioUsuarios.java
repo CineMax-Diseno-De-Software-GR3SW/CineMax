@@ -23,7 +23,7 @@ public class ServicioUsuarios {
         }
 
         if (!validador.validarClave(usuario.getClave())) {
-            throw new IllegalArgumentException("La clave no cumple con los requisitos de seguridad");
+            throw new IllegalArgumentException("La clave no cumple con los requisitos de seguridad: una Mayúscula, una minúscula, un número y un caracter especial.");
         }
 
         // Verificar que el nombre de usuario no exista
