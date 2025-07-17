@@ -1,12 +1,11 @@
 package com.cinemax.venta_boletos.Modelos.Persistencia;
 
 import java.math.BigDecimal;
-import java.security.Timestamp;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +27,7 @@ public class FacturaDAO {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, factura.getCliente().getCedula());
-            ps.setDate(2, java.sql.Date.valueOf(LocalDate.now()));
+            ps.setTimestamp(2, java.sql.Timestamp.valueOf(factura.getFecha()));
             ps.setBigDecimal(3, BigDecimal.valueOf(factura.getSubTotal()));
             ps.setBigDecimal(4, BigDecimal.valueOf(factura.getTotal()));
 
@@ -43,7 +42,7 @@ public class FacturaDAO {
 
             ps.setLong(1, Long.parseLong(factura.getCodigoFactura()));
             ps.setString(2, factura.getCliente().getCedula());
-            ps.setDate(3, java.sql.Date.valueOf(factura.getFecha()));
+            ps.setTimestamp(3, java.sql.Timestamp.valueOf(factura.getFecha()));
             ps.setBigDecimal(4, BigDecimal.valueOf(factura.getSubTotal()));
             ps.setBigDecimal(5, BigDecimal.valueOf(factura.getTotal()));
 
@@ -90,7 +89,7 @@ public class FacturaDAO {
 
                 return new Factura(
                         String.valueOf(rs.getLong("idfactura")),
-                        rs.getTimestamp("fecha").toLocalDateTime().toLocalDate().toString(),
+                        rs.getTimestamp("fecha").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                         cliente,
                         rs.getBigDecimal("subtotal").doubleValue(),
                         rs.getBigDecimal("total").doubleValue()
@@ -129,7 +128,7 @@ public class FacturaDAO {
 
                 Factura factura = new Factura(
                         String.valueOf(rs.getLong("idfactura")),
-                        rs.getTimestamp("fecha").toLocalDateTime().toLocalDate().toString(),
+                        rs.getTimestamp("fecha").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                         cliente,
                         rs.getBigDecimal("subtotal").doubleValue(),
                         rs.getBigDecimal("total").doubleValue()
