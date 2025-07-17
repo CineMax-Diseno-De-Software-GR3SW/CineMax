@@ -22,6 +22,15 @@ public class Factura {
         // this.total = total;
     }
 
+    public Factura(String numeroFactura, String fechaEmision, Cliente cliente, double subTotal, double total) {
+        this.codigoFactura = numeroFactura;
+        this.fecha = fechaEmision;
+        this.cliente = cliente;
+        this.subTotal = subTotal;
+        this.total = total;
+        // this.total = total;
+    }
+
     public String getCodigoFactura() {
         return codigoFactura;
     }
