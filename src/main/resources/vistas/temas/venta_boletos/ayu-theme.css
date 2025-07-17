@@ -1,0 +1,88 @@
+/* --- ESTILOS GENERALES (TEMA OSCURO - VERSIÓN "AYU DARK" + BLUR) --- */
+.root, .content-pane {
+    -fx-background-color: #0A0E14; /* Fondo principal de Ayu Dark */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.label {
+    -fx-text-fill: #CBCCC6; /* Color de texto principal de Ayu */
+    -fx-font-size: 14px;
+}
+
+/* --- SCROLLPANE --- */
+.scroll-pane { -fx-background-color: transparent; }
+.scroll-pane .viewport { -fx-background-color: transparent; }
+.scroll-bar:vertical .thumb { -fx-background-color: #FF8F40; -fx-background-radius: 10px; } /* Naranja Ayu para el thumb */
+.scroll-bar:vertical .track { -fx-background-color: #1F2430; -fx-background-radius: 10px; }
+
+/* --- CABECERA Y NAVEGACIÓN --- */
+.header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #1F2430; -fx-border-width: 0 0 1px 0; }
+.icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
+.icon-button:hover { -fx-background-color: #1F2430; }
+.icon-button .text { -fx-font-size: 20px; -fx-fill: #CBCCC6; -fx-font-weight: bold; }
+.close-button:hover { -fx-background-color: #F07178; } /* Rojo suave de Ayu */
+.close-button:hover .text { -fx-fill: white; }
+.theme-button .text { -fx-font-size: 16px; }
+
+/* --- PANELES Y TARJETAS --- */
+.ticket-card, .financial-summary-pane, .alert-pane, .summary-pane {
+    -fx-background-color: #0D121A; /* Un tono ligeramente más claro para los paneles */
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-border-color: #1F2430;
+    -fx-border-width: 1px;
+    /* EFECTO BLUR: Sombra de color naranja suave para un efecto de brillo */
+    -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.1), 20, 0, 0, 0);
+}
+.ticket-details-card { -fx-background-color: transparent; -fx-border-color: #1F2430; -fx-border-width: 0 0 1px 0; -fx-padding: 0 0 15px 0; }
+.summary-pane > .hbox { -fx-alignment: center; }
+
+/* --- TEXTOS ESPECÍFICOS --- */
+/* Los títulos usan el verde de Ayu para un acento natural */
+.section-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #AAD94C; }
+.ticket-price, .summary-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.summary-details { -fx-font-size: 14px; -fx-text-fill: #6C7079; } /* Gris suave para detalles */
+
+/* --- BOTONES --- */
+.stepper-button { -fx-background-color: #363B48; -fx-text-fill: #CBCCC6; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50em; -fx-alignment: CENTER; -fx-padding: 4px 12px; }
+.stepper-button:hover { -fx-background-color: #4A505F; }
+
+/* El botón principal usa el naranja de Ayu, el color de acción más fuerte */
+.primary-button {
+    -fx-background-color: #FF8F40;
+    -fx-text-fill: #0A0E14;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8px;
+    -fx-pref-height: 45px;
+    /* EFECTO BLUR: Sombra naranja intensa para dar sensación de brillo */
+    -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.4), 15, 0, 0, 0);
+}
+.primary-button:hover { -fx-background-color: #FFA76B; }
+.link-button { -fx-background-color: transparent; -fx-text-fill: #6C7079; -fx-underline: true; }
+.link-button:hover { -fx-text-fill: #CBCCC6; }
+
+/* --- FORMULARIOS --- */
+.text-field { -fx-background-color: #0D121A; -fx-text-fill: #CBCCC6; -fx-prompt-text-fill: #6C7079; -fx-background-radius: 8px; -fx-border-color: #1F2430; -fx-border-radius: 8px; -fx-font-size: 14px; -fx-padding: 8px; }
+.text-field:focused {
+    -fx-border-color: #FF8F40;
+    /* EFECTO BLUR: Brillo exterior al seleccionar un campo de texto */
+    -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.6), 12, 0, 0, 0);
+}
+
+.combo-box { -fx-background-color: #0D121A; -fx-border-color: #1F2430; -fx-border-radius: 8px; -fx-background-radius: 8px; }
+.combo-box .list-cell { -fx-text-fill: #CBCCC6; -fx-background-color: #0D121A; }
+.combo-box-popup .list-view { -fx-background-color: #0D121A; -fx-border-color: #1F2430; }
+.combo-box-popup .list-view .list-cell:hover { -fx-background-color: #1F2430; }
+.combo-box-popup .list-view .list-cell:filled:selected { -fx-background-color: #FF8F40; -fx-text-fill: #0A0E14; }
+.confirmation-checkbox .box { -fx-background-color: transparent; -fx-border-color: #6C7079; -fx-border-radius: 4px; }
+.confirmation-checkbox:selected .box .mark { -fx-background-color: #AAD94C; } /* Verde para confirmación */
+
+/* --- ALERTA PERSONALIZADA --- */
+.alert-pane { -fx-border-color: #1F2430; }
+.alert-title { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #FF8F40; } /* Naranja para títulos de alerta */
+.alert-message { -fx-font-size: 14px; -fx-text-fill: #CBCCC6; -fx-text-alignment: center; }
+
+/* --- Iconos y Contadores --- */
+.summary-ticket-count { -fx-background-color: #363B48; -fx-text-fill: #CBCCC6; }
+.summary-price { -fx-text-fill: #CBCCC6; -fx-font-weight: bold; }

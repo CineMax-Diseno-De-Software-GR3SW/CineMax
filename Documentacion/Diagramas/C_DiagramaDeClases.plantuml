@@ -1,0 +1,157 @@
+@startuml
+title Diagrama de Clases - Gestión de Venta de Boletos
+
+skinparam linetype ortho
+
+' ------------------ CONTROLADORES ------------------
+
+package Controladores {
+
+    class ControladorVentaBoletos {
+        '- controladorPeliculaYFunciones: ControladorAsignadorFuncion
+        '- controladorSalas: ControladorSalas
+        + realizarVenta(): void
+    }
+
+    class ControladorAsignadorFuncion {
+        + asignarFuncion(controladorCartelera: ControladorCartelera): Funcion
+    }
+
+    class ControladorAsignadorButacas {
+        - butacasOcupadas: List<Butaca>
+        + asignarButacas(controladorDeConsultaSalas: ControladorDeConsultaSalas, funcion: Funcion, butacasOcupadas: Map): List<Butaca>
+    }
+
+    class ControladorBoleto {
+        ''- servicioGeneradorBoleto: ServicioGeneradorBoleto
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    class ControladorFacturacion {
+        ''- servicioFacturacion: ServicioFacturacion
+        + generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+    }
+
+    ''class ControladorGeneradorArchivo {
+    ''    + generarArchivo(factura: Factura, servicioGeneradorArchivo: ServicioGeneradorArchivo): void
+    ''}
+
+    class ControladorEnvios {
+        - asunto: String
+        - cuerpo: String
+        + especificarAsunto(asunto: String): void
+        + especificarCuerpo(cuerpo: String): void
+        + enviar(correo: String, adjunto: PDF): void
+    }
+}
+
+' ------------------ SERVICIOS ------------------
+package Servicios{
+    interface ServicioEnvio {
+        + enviarCorreo(correo: String, asunto: String, cuerpo: String, adjunto: PDF): void
+    }
+
+    class ServicioCorreo {
+    }
+
+    class ServicioFacturacion {
+        generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+    }
+
+    class ServicioGeneradorBoleto{
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    interface ServicioGeneradorArchivo {
+        + generar(factura: Factura): void
+    }
+
+    class GeneradorArchivoPDF {
+        '+ generar(factura: Factura): void
+    }
+}
+
+' ------------------ MODELOS ------------------
+package Modelos {
+
+    abstract class Producto {
+        - precio: double
+        + {abstract} calcularPrecio(): double
+    }
+
+    class Boleto {
+        - id: int
+        - funcion: Funcion
+        - butaca: Butaca
+        + setFuncion(funcion: Funcion): void
+        + setButaca(butaca: Butaca): void
+        + calcularPrecio(): double
+    }
+
+    class Factura {
+        - codigoFactura: String
+        - fecha: LocalDateTime
+        - cliente: Cliente
+        - productos: List<Producto>
+        - subtotal: double
+        - total: double
+        + calcularSubTotal(): double
+        + calcularTotal(): double
+        + generarCodigo(): String
+    }
+
+    interface CalculadorImpuesto {
+        + calcular(subtotal: double): double
+    }
+
+    class CalculadorIVA {
+        - {static} IVA_TASA: double
+        '+ calcular(subtotal: double): double
+    }
+
+    class Cliente {
+        - cedula: long
+        - nombre: String
+        - apellido: String
+        - correo: String
+    }
+}
+
+
+' ------------------ RELACIONES ------------------
+GeneradorArchivoPDF ..up|> ServicioGeneradorArchivo
+
+''ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
+
+ControladorVentaBoletos ..> ControladorAsignadorFuncion
+ControladorVentaBoletos ..> ControladorAsignadorButacas
+ControladorVentaBoletos ..> ControladorBoleto
+ControladorVentaBoletos ..> ControladorFacturacion
+
+ControladorVentaBoletos ..> ServicioGeneradorArchivo
+ControladorVentaBoletos ..> ControladorEnvios
+
+ControladorBoleto ..> ServicioGeneradorBoleto
+''ControladorBoleto ..> ServicioGeneradorBoleto
+
+ServicioGeneradorBoleto ..> Boleto
+
+ControladorFacturacion ..> ServicioFacturacion
+''ControladorFacturacion ..> ServicioFacturacion
+
+ServicioFacturacion ..> Factura
+ServicioFacturacion ..left> Cliente
+
+Boleto --up|> Producto
+
+Factura "1" --> "1..*" Producto
+Factura "1... *"--> "1" Cliente
+Factura ..> CalculadorImpuesto
+
+CalculadorIVA ..up|> CalculadorImpuesto
+
+ControladorEnvios ..> ServicioEnvio
+
+ServicioCorreo ..up|> ServicioEnvio
+
+@enduml

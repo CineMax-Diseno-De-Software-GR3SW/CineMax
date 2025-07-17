@@ -1,0 +1,92 @@
+/* --- ESTILOS GENERALES (TEMA OSCURO - VERSIÓN "SYNTHWAVE SUNSET") --- */
+.root, .content-pane {
+    -fx-background-color: #1A1A2E; /* Azul noche muy oscuro, casi negro */
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+}
+
+.label {
+    -fx-text-fill: #E0E0E0; /* Texto principal en un blanco suave */
+    -fx-font-size: 14px;
+}
+
+/* --- SCROLLPANE --- */
+.scroll-pane { -fx-background-color: transparent; }
+.scroll-pane .viewport { -fx-background-color: transparent; }
+.scroll-bar:vertical .thumb { -fx-background-color: #F25F00; -fx-background-radius: 10px; } /* Thumb en naranja */
+.scroll-bar:vertical .track { -fx-background-color: #162447; -fx-background-radius: 10px; }
+
+/* --- CABECERA Y NAVEGACIÓN --- */
+.header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #1F4068; -fx-border-width: 0 0 1px 0; }
+.icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
+.icon-button:hover { -fx-background-color: #1F4068; }
+.icon-button .text { -fx-fill: #E0E0E0; -fx-font-size: 20px; -fx-font-weight: bold; }
+.close-button:hover { -fx-background-color: #E53E3E; }
+.close-button:hover .text { -fx-fill: white; }
+.theme-button .text { -fx-font-size: 16px; }
+
+/* --- PANELES Y TARJETAS --- */
+.ticket-card, .financial-summary-pane, .alert-pane, .summary-pane {
+    -fx-background-color: #162447; /* Azul profundo para paneles */
+    -fx-background-radius: 12px;
+    -fx-padding: 20px;
+    -fx-border-color: #1F4068;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 15, 0, 0, 5);
+}
+.ticket-details-card { -fx-background-color: transparent; -fx-border-color: #1F4068; -fx-border-width: 0 0 1px 0; -fx-padding: 0 0 15px 0; }
+.summary-pane > .hbox { -fx-alignment: center; }
+
+/* --- TEXTOS ESPECÍFICOS --- */
+/* Los títulos usan el cian eléctrico para un acento vibrante */
+.section-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1EE6D6; }
+.ticket-price, .summary-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.summary-details { -fx-font-size: 14px; -fx-text-fill: #BABADC; }
+
+/* --- BOTONES --- */
+/* Los botones de +/- usan el cian eléctrico */
+.stepper-button {
+    -fx-background-color: #1EE6D6;
+    -fx-text-fill: #1A1A2E;
+    -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50em; -fx-alignment: CENTER; -fx-padding: 4px 12px;
+}
+.stepper-button:hover { -fx-background-color: #45F0E1; }
+
+/* El botón de acción principal es el NARANJA como protagonista */
+.primary-button {
+    -fx-background-color: #F25F00;
+    -fx-text-fill: white;
+    -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-pref-height: 45px;
+    -fx-effect: dropshadow(gaussian, rgba(242, 95, 0, 0.4), 15, 0, 0, 3);
+}
+.primary-button:hover { -fx-background-color: #DD6B20; }
+.link-button { -fx-background-color: transparent; -fx-text-fill: #BABADC; -fx-underline: true; }
+.link-button:hover { -fx-text-fill: #E0E0E0; }
+
+/* --- FORMULARIOS --- */
+.text-field {
+    -fx-background-color: #1A1A2E;
+    -fx-text-fill: #E0E0E0; -fx-prompt-text-fill: #6B728E;
+    -fx-background-radius: 8px; -fx-border-color: #1F4068; -fx-border-radius: 8px; -fx-font-size: 14px; -fx-padding: 8px;
+}
+/* El acento al seleccionar es el naranja */
+.text-field:focused {
+    -fx-border-color: #F25F00;
+    -fx-effect: dropshadow(gaussian, rgba(242, 95, 0, 0.6), 10, 0, 0, 0);
+}
+
+.combo-box { -fx-background-color: #162447; -fx-border-color: #1F4068; -fx-border-radius: 8px; -fx-background-radius: 8px; }
+.combo-box .list-cell { -fx-text-fill: #E0E0E0; -fx-background-color: #162447; }
+.combo-box-popup .list-view { -fx-background-color: #162447; -fx-border-color: #1F4068; }
+.combo-box-popup .list-view .list-cell:hover { -fx-background-color: #1F4068; }
+.combo-box-popup .list-view .list-cell:filled:selected { -fx-background-color: #F25F00; }
+.confirmation-checkbox .box { -fx-background-color: transparent; -fx-border-color: #BABADC; -fx-border-radius: 4px; }
+.confirmation-checkbox:selected .box .mark { -fx-background-color: #F25F00; }
+
+/* --- ALERTA PERSONALIZADA --- */
+.alert-pane { -fx-border-color: #F25F00; }
+.alert-title { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #F25F00; }
+.alert-message { -fx-font-size: 14px; -fx-text-fill: #E0E0E0; -fx-text-alignment: center; }
+
+/* --- Iconos y Contadores --- */
+.summary-ticket-count { -fx-background-color: #1F4068; -fx-text-fill: white; }
+.summary-price { -fx-text-fill: #E0E0E0; }

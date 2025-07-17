@@ -1,0 +1,52 @@
+/* --- ESTILOS GENERALES (TEMA OSCURO - VERSIÓN "SYNTHWAVE") --- */
+.root { -fx-background-color: #1a101f; /* Púrpura muy oscuro de fondo */ -fx-font-family: "Segoe UI", Arial, sans-serif; }
+.label { -fx-text-fill: #e0d8e8; -fx-font-size: 14px; }
+
+/* --- CONTENIDO Y SCROLL --- */
+.content-pane { -fx-background-color: #1a101f; } /* Fondo del panel de contenido */
+.scroll-pane { -fx-background-color: transparent; }
+.scroll-pane .viewport { -fx-background-color: transparent; }
+.scroll-bar:vertical .thumb { -fx-background-color: #ff00ff; -fx-background-radius: 10px; }
+.scroll-bar:vertical .track { -fx-background-color: #2a1a3a; -fx-background-radius: 10px; }
+
+/* --- CABECERA Y NAVEGACIÓN --- */
+.header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #2a1a3a; -fx-border-width: 0 0 1px 0; }
+.icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
+.icon-button:hover { -fx-background-color: #4a3a5a; }
+.icon-button .text { -fx-fill: #e0d8e8; -fx-font-size: 20px; -fx-font-weight: bold; }
+.close-button:hover { -fx-background-color: #E53E3E; }
+.close-button:hover .text { -fx-fill: white; }
+.theme-button .text { -fx-font-size: 16px; }
+
+/* --- PANELES Y TARJETAS --- */
+.ticket-card, .financial-summary-pane, .alert-pane, .summary-pane { -fx-background-color: #2a1a3a; -fx-background-radius: 12px; -fx-padding: 20px; -fx-border-color: transparent; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 15, 0, 0, 5); }
+.ticket-details-card { -fx-background-color: transparent; -fx-border-color: #4a3a5a; -fx-border-width: 0 0 1px 0; -fx-padding: 0 0 15px 0; }
+.summary-pane > .hbox { -fx-alignment: center; }
+
+/* --- TEXTOS ESPECÍFICOS --- */
+.section-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.ticket-price, .summary-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
+.summary-details { -fx-font-size: 14px; -fx-text-fill: #b0a8b8; }
+
+/* --- BOTONES --- */
+.stepper-button { -fx-background-color: #00ffff; -fx-text-fill: #1a101f; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50em; -fx-alignment: CENTER; -fx-padding: 4px 12px; }
+.stepper-button:hover { -fx-background-color: #33ffff; }
+.primary-button { -fx-background-color: #ff00ff; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-pref-height: 45px; -fx-effect: dropshadow(gaussian, rgba(255, 0, 255, 0.4), 10, 0, 0, 3); }
+.primary-button:hover { -fx-background-color: #ff33ff; }
+.link-button { -fx-background-color: transparent; -fx-text-fill: #b0a8b8; -fx-underline: true; }
+.link-button:hover { -fx-text-fill: #e0d8e8; }
+
+/* --- FORMULARIOS --- */
+.text-field { -fx-background-color: #1a101f; -fx-text-fill: #e0d8e8; -fx-prompt-text-fill: #7a6a8a; -fx-background-radius: 8px; -fx-border-color: #4a3a5a; -fx-border-radius: 8px; -fx-font-size: 14px; -fx-padding: 8px; }
+.text-field:focused { -fx-border-color: #ff00ff; -fx-effect: dropshadow(gaussian, rgba(255, 0, 255, 0.5), 8, 0, 0, 0); }
+.combo-box { -fx-background-color: #2a1a3a; -fx-border-color: #4a3a5a; -fx-border-radius: 8px; -fx-background-radius: 8px; }
+.combo-box .list-cell { -fx-text-fill: #e0d8e8; -fx-background-color: #2a1a3a; }
+.combo-box-popup .list-view { -fx-background-color: #2a1a3a; -fx-border-color: #4a3a5a; }
+.combo-box-popup .list-view .list-cell:hover { -fx-background-color: #4a3a5a; }
+.combo-box-popup .list-view .list-cell:filled:selected { -fx-background-color: #ff00ff; }
+.confirmation-checkbox .box { -fx-background-color: transparent; -fx-border-color: #b0a8b8; -fx-border-radius: 4px; }
+.confirmation-checkbox:selected .box .mark { -fx-background-color: #ff00ff; }
+
+/* --- Iconos y Contadores --- */
+.summary-ticket-count { -fx-background-color: #4a3a5a; -fx-text-fill: white; }
+.summary-price { -fx-text-fill: white; }
