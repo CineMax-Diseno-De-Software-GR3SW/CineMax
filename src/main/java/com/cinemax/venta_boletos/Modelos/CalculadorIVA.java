@@ -9,4 +9,8 @@ public class CalculadorIVA implements CalculadorImpuesto {
         return subTotal*IVA_TASA; // Calcula el IVA sobre el total de los productos
     }
 
+    public static double getIVA_TASA() {
+        return IVA_TASA; // Método para obtener la tasa del IVA
+    }
+
 }

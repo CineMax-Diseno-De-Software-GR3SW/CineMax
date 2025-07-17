@@ -1,5 +1,6 @@
 package com.cinemax.venta_boletos.Modelos;
 
+
 public class Boleto extends Producto {
     private String funcion;
     private String butaca;
@@ -27,13 +28,13 @@ public class Boleto extends Producto {
     }
 
     @Override
-    public void calcularPrecio() {
-        double precioBase = 10.0; // Precio base por boleto
+    public void calcularPrecio() {        
+        //double precioBase = 10.0; // Precio base por boleto
         double precioTipoDeSala = 1.0;
         double precioFormatoFuncion = 1.0;
         double precioTipoFuncion = 1.0;
         double precioHorario = 1.0;
-        setPrecio(precioBase + precioTipoDeSala + precioFormatoFuncion + precioTipoFuncion + precioHorario);
+        setPrecio(precioTipoDeSala + precioFormatoFuncion + precioTipoFuncion + precioHorario);
     }
 
     @Override

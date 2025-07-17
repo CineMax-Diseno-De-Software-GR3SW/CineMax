@@ -1,11 +1,11 @@
-package com.cinemax.venta_boletos.Controladores.UI;
+package com.cinemax.venta_boletos.Controladores;
 
-import com.cinemax.venta_boletos.Controladores.UI.Shared.ControllerAlert;
 import com.cinemax.venta_boletos.Modelos.Boleto;
-import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
-import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
-import com.cinemax.venta_boletos.Modelos.*;
+import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
+//import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.Modelos.Producto;
+//import com.cinemax.venta_boletos.Modelos.*;
 import com.cinemax.venta_boletos.Util.ThemeManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +27,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ControllerResumen {
+public class ControladorResumen {
 
     @FXML private HBox headerBar;
     @FXML private VBox ticketDetailsContainer;
@@ -44,6 +44,10 @@ public class ControllerResumen {
     private double xOffset = 0;
     private double yOffset = 0;
 
+    private double subtotal = 0.0;
+    private double total = 0.0;
+    private double impuesto = 0.0;
+
     public void setPreviousScene(Scene scene) { this.previousScene = scene; }
 
     @FXML
@@ -52,20 +56,26 @@ public class ControllerResumen {
         headerBar.setOnMouseDragged(event -> { ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset); ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset); });
     }
 
-    public void initData(String pelicula, String sala, List<Producto> boletos) {
+    public void initData(String pelicula, String sala, List<Producto> boletos, double subtotal) {
         this.pelicula = pelicula;
         this.sala = sala;
         this.boletos = boletos;
+        this.subtotal = subtotal;
 
-        Factura facturaTemporal = new Factura();
-        facturaTemporal.setProductos(this.boletos);
-        facturaTemporal.calcularSubTotal();
-        facturaTemporal.calcularTotal(new CalculadorIVA());
+        //Factura facturaTemporal = new Factura();
+        //facturaTemporal.setProductos(this.boletos);
+        //facturaTemporal.calcularSubTotal();
+        //facturaTemporal.calcularTotal(new CalculadorIVA());
+        impuesto = subtotal * CalculadorIVA.getIVA_TASA();
+        total = subtotal + impuesto;
 
         DecimalFormat df = new DecimalFormat("$ #,##0.00");
-        subtotalLabel.setText(df.format(facturaTemporal.getSubTotal()));
-        impuestosLabel.setText(df.format(facturaTemporal.getTotal() - facturaTemporal.getSubTotal()));
-        totalLabel.setText(df.format(facturaTemporal.getTotal()));
+        //subtotalLabel.setText(df.format(facturaTemporal.getSubTotal()));
+        //impuestosLabel.setText(df.format(facturaTemporal.getTotal() - facturaTemporal.getSubTotal()));
+        //totalLabel.setText(df.format(facturaTemporal.getTotal()));
+        subtotalLabel.setText(df.format(subtotal));
+        impuestosLabel.setText(df.format(impuesto));
+        totalLabel.setText(df.format(total));
 
         construirDetalleTickets();
     }
@@ -105,9 +115,9 @@ public class ControllerResumen {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
             Parent root = loader.load();
-            ControllerDatosCliente controllerDatosCliente = loader.getController();
+            ControladorDatosCliente controllerDatosCliente = loader.getController();
 
-            controllerDatosCliente.initData(this.pelicula, this.sala, this.boletos);
+            controllerDatosCliente.initData(this.pelicula, this.sala, this.boletos, this.subtotal, this.total, this.impuesto);
             controllerDatosCliente.setPreviousScene(continueButton.getScene());
 
             Stage stage = (Stage) continueButton.getScene().getWindow();

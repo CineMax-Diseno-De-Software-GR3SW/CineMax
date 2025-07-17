@@ -123,8 +123,10 @@ public class ControladorPortalPrincipal {
 
         @FXML
         private void onVenderBoleto(ActionEvent event) {
+            //System.out.println(":D Navegar a Vender Boleto");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/cartelera-view.fxml"));
             try {
+                //System.out.println("Navegar a Cartelera");
                 Parent root = loader.load();
 
                 // Obtener el Stage actual desde el botón o cualquier nodo
@@ -132,6 +134,7 @@ public class ControladorPortalPrincipal {
                 stage.setTitle("CineMax - Cartelera");
                 stage.setScene(new Scene(root));
                 stage.show();
+               
 
             } catch (IOException e) {
                 System.out.println(e.getMessage());

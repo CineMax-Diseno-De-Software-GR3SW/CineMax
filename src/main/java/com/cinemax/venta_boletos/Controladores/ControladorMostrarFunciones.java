@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores.UI;
+package com.cinemax.venta_boletos.Controladores;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -85,11 +85,11 @@ public class ControladorMostrarFunciones {
                 Parent root = fxmlLoader.load(); // Cargamos el FXML
 
                 // Obtenemos el controlador de la vista de boleto
-                ControllerBoleto controllerBoleto = fxmlLoader.getController();
+                ControladorBoleto controllerBoleto = fxmlLoader.getController();
 
                 // Pasamos la película y la función al controlador del boleto
                 String funcionTexto = funcionSeleccionada.getHora() + " - " + funcionSeleccionada.getSala();
-                controllerBoleto.initData(peliculaTituloLabel.toString(), funcionTexto); // Usamos el nombre de película
+                controllerBoleto.initData(peliculaTituloLabel.getText(), funcionTexto); // Usamos el nombre de película
                                                                                          // guardado
 
                 // Creamos una nueva escena con la vista cargada

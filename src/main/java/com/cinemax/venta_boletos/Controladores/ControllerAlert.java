@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores.UI.Shared;
+package com.cinemax.venta_boletos.Controladores;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;

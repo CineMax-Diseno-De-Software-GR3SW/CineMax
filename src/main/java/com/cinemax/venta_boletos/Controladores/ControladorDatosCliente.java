@@ -1,11 +1,8 @@
-package com.cinemax.venta_boletos.Controladores.UI;
+package com.cinemax.venta_boletos.Controladores;
 
-import com.cinemax.venta_boletos.Controladores.UI.Shared.ControllerAlert;
-import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
-import com.cinemax.venta_boletos.Modelos.*;
 import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.Util.ThemeManager;
 import javafx.collections.FXCollections;
@@ -26,7 +23,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 
-public class ControllerDatosCliente {
+public class ControladorDatosCliente {
 
     // --- Lógica de Negocio ---
     private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
@@ -61,23 +58,24 @@ public class ControllerDatosCliente {
         headerBar.setOnMouseDragged(event -> { ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset); ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset); });
     }
 
-    public void initData(String pelicula, String sala, List<Producto> boletos) {
+    public void initData(String pelicula, String sala, List<Producto> boletos, double subtotal, double total, double impuestos) {
         this.pelicula = pelicula;
         this.sala = sala;
         this.boletos = boletos;
 
         // Crear una instancia de Factura para usar su lógica de cálculo
-        Factura facturaTemporal = new Factura();
-        facturaTemporal.setProductos(this.boletos);
-        facturaTemporal.calcularSubTotal();
-        facturaTemporal.calcularTotal(new CalculadorIVA());
+        //Factura facturaTemporal = new Factura();
+        //facturaTemporal.setProductos(this.boletos);
+        //facturaTemporal.calcularSubTotal();
+        //facturaTemporal.calcularTotal(new CalculadorIVA());
 
         DecimalFormat df = new DecimalFormat("$ #,##0.00");
 
-        // CORRECCIÓN: Ahora usamos los getters del modelo Factura. ¡Mucho más limpio!
-        subtotalLabel.setText(df.format(facturaTemporal.getSubTotal()));
-        impuestosLabel.setText(df.format(facturaTemporal.getTotal() - facturaTemporal.getSubTotal()));
-        totalLabel.setText(df.format(facturaTemporal.getTotal()));
+        subtotalLabel.setText(df.format(subtotal));
+        impuestosLabel.setText(df.format(impuestos));
+        totalLabel.setText(df.format(total));
+
+        
     }
 
     @FXML
@@ -95,8 +93,11 @@ public class ControllerDatosCliente {
                 correoField.getText()
         );
 
+        // TODO: dao debe guardar el cliente
+
         // 2. Usar tu servicio para generar la factura final
         Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
+        //TODO: Dao debe guardar la factura
 
         // 3. Mostrar un mensaje de éxito y cerrar
         showAlert("Compra Exitosa", "Se ha generado la factura: " + facturaFinal.getCodigoFactura());
@@ -106,6 +107,7 @@ public class ControllerDatosCliente {
 
         Stage stage = (Stage) finalizarButton.getScene().getWindow();
         stage.close();
+        // TODO: En vez de cerrar, redirigir a una vista de cartelera
     }
 
     @FXML protected void onBackAction() { if (previousScene != null) { ((Stage) finalizarButton.getScene().getWindow()).setScene(previousScene); } }

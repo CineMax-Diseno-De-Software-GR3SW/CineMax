@@ -12,19 +12,15 @@ module com.cinemax.empleados {
 
     requires org.apache.pdfbox; 
 
-    opens com.cinemax.venta_boletos to javafx.fxml;
 
-    exports com.cinemax.venta_boletos;
-    exports com.cinemax.venta_boletos.Controladores.UI;
 
-    opens com.cinemax.venta_boletos.Controladores.UI to javafx.fxml;
+    exports com.cinemax.venta_boletos.Controladores;
+    opens com.cinemax.venta_boletos.Controladores to javafx.fxml;
 
     exports com.cinemax.venta_boletos.Util;
 
     opens com.cinemax.venta_boletos.Util to javafx.fxml;
 
-    exports com.cinemax.venta_boletos.Controladores.UI.Shared;
 
-opens com.cinemax.venta_boletos.Controladores.UI.Shared to javafx.fxml;
 
 }

@@ -1,7 +1,6 @@
 
-package com.cinemax.venta_boletos.Controladores.UI;
+package com.cinemax.venta_boletos.Controladores;
 
-import java.lang.classfile.instruction.ConstantInstruction.LoadConstantInstruction;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
