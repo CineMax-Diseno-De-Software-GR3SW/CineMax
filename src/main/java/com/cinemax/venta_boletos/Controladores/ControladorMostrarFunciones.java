@@ -9,13 +9,17 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.DialogPane;
 
 import java.io.IOException;
-
-import com.cinemax.venta_boletos.Util.ThemeManager;
+import javafx.scene.Node;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 
 public class ControladorMostrarFunciones {
 
@@ -68,6 +72,25 @@ public class ControladorMostrarFunciones {
 
         ObservableList<Funcion> funciones = FXCollections.observableArrayList(FUNCIONES);
         tableViewFunciones.setItems(funciones);
+
+        // Estilo para selección
+        tableViewFunciones.setStyle("-fx-selection-bar: #2a9df4; -fx-selection-bar-non-focused: #d0e6f5;");
+    }
+
+    @FXML
+    public void handleRegresar(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/venta_boletos/cartelera-view.fxml")); // Ruta corregida
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene newScene = new Scene(root, 800, 600);
+            stage.setScene(newScene);
+            stage.centerOnScreen();
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @FXML
@@ -81,42 +104,44 @@ public class ControladorMostrarFunciones {
 
                 // Cargamos la vista de boleto
                 FXMLLoader fxmlLoader = new FXMLLoader(
-                        getClass().getResource("/vistas/venta_boletos/boleto-view.fxml"));
-                Parent root = fxmlLoader.load(); // Cargamos el FXML
+                        getClass().getResource("/vistas/venta_boletos/boleto-view.fxml")); // Ruta corregida
+                Parent root = fxmlLoader.load();
 
                 // Obtenemos el controlador de la vista de boleto
                 ControladorBoleto controllerBoleto = fxmlLoader.getController();
 
                 // Pasamos la película y la función al controlador del boleto
                 String funcionTexto = funcionSeleccionada.getHora() + " - " + funcionSeleccionada.getSala();
-                controllerBoleto.initData(peliculaTituloLabel.getText(), funcionTexto); // Usamos el nombre de película
-                                                                                         // guardado
+                controllerBoleto.initData(peliculaTituloLabel.getText(), funcionTexto);
 
-                // Creamos una nueva escena con la vista cargada
-                Scene scene = new Scene(root);
-
-                // Opcional: Aplicar tema si tienes un ThemeManager
-                ThemeManager.getInstance().applyTheme(scene);
-
-                // Establecemos la nueva escena en el Stage
-                stage.setScene(scene);
-                stage.setTitle("CINE MAX - Seleccionar Boletos"); // Puedes cambiar el título
-                stage.show(); // Mostramos la nueva escena
-
+                Scene newScene = new Scene(root, 800, 600);
+                stage.setScene(newScene);
+                stage.centerOnScreen();
             } catch (IOException e) {
                 mostrarError("Error al cargar la pantalla de boletos: " + e.getMessage());
-                e.printStackTrace(); // Imprime el stack trace para depuración
+                e.printStackTrace();
             } catch (Exception e) {
                 mostrarError("Error inesperado al cargar la pantalla de boletos: " + e.getMessage());
                 e.printStackTrace();
             }
 
         } else {
-            mostrarError("Seleccione una función");
+            mostrarError("Por favor seleccione una función");
         }
     }
 
     private void mostrarError(String mensaje) {
-        // Implementación similar a la del controlador anterior
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+
+        // Estilo para la alerta
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.getStylesheets().add(
+                getClass().getResource("/vistas/temas/styles.css").toExternalForm());
+        dialogPane.getStyleClass().add("dialog-pane");
+
+        alert.showAndWait();
     }
 }
