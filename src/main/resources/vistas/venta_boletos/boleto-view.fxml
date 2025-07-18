@@ -13,7 +13,10 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.paint.Color?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorBoleto">
+<BorderPane prefWidth="800" prefHeight="550" stylesheets="@../temas/ayu-theme.css" styleClass="root"
+            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cinemax.venta_boletos.Controladores.ControladorBoleto">
+
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
