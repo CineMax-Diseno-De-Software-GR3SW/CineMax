@@ -1,6 +1,4 @@
-package com.cinemax.empleados.controladores;
-
-import java.io.IOException;
+package com.cinemax.reportes.controladores;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -10,6 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
+import java.io.IOException;
 
 public class ControladorReportesPrincipal {
 
@@ -17,11 +16,11 @@ public class ControladorReportesPrincipal {
     private Button btnBack;
 
     @FXML
-    void onBackAction(ActionEvent event) {
+    private void onBackAction(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
@@ -30,20 +29,29 @@ public class ControladorReportesPrincipal {
     }
 
     @FXML
-    void onCerrarSesion(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
+    private void goToReporteProgramado(ActionEvent event) {
         try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/reportes/ModuloReportesProgramados.fxml"));
             Parent root = loader.load();
-
-            // Obtener el Stage actual desde el botón o cualquier nodo
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Portal del Administrador");
             stage.setScene(new Scene(root));
             stage.show();
-
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 
+    @FXML
+    private void onCerrarSesion(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Login");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
