@@ -115,7 +115,7 @@ public class ControladorResumen {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
             Parent root = loader.load();
-            ControladorDatosCliente controllerDatosCliente = loader.getController();
+            ControladorFacturacion controllerDatosCliente = loader.getController();
 
             controllerDatosCliente.initData(this.pelicula, this.sala, this.boletos, this.subtotal, this.total, this.impuesto);
             controllerDatosCliente.setPreviousScene(continueButton.getScene());
