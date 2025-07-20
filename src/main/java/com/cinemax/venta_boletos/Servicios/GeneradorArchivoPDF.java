@@ -39,7 +39,7 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
                 Cliente cliente = factura.getCliente();
                 contentStream.showText("Cliente: " + cliente.getNombre() + " " + cliente.getApellido());
                 contentStream.newLineAtOffset(0, -20);
-                contentStream.showText("Cédula: " + cliente.getCedula());
+                contentStream.showText("Cédula: " + cliente.getIdCliente());
                 contentStream.newLineAtOffset(0, -30);
 
                 // Detalle de boletos

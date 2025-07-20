@@ -32,8 +32,8 @@ public class ServicioFacturacion {
     /**
      * Genera un código único para la factura
      */
-    private String generarCodigoFactura() {
-        return "FAC-" + System.currentTimeMillis();
+    private long generarCodigoFactura() {
+        return System.currentTimeMillis();  // Solo el número
     }
 
     /**
