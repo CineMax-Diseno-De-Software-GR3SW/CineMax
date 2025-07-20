@@ -25,7 +25,7 @@ public class ClienteDAO {
         try (Connection conn = conexionBase.conectar();
              CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setString(1, cliente.getCedula());          
+            cs.setLong(1, cliente.getIdCliente());          
             cs.setString(2, cliente.getNombre());          
             cs.setString(3, cliente.getApellido());        
             cs.setString(4, cliente.getCorreoElectronico());
@@ -41,7 +41,7 @@ public class ClienteDAO {
         try (Connection conn = conexionBase.conectar();
              CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setString(1, cliente.getCedula());
+            cs.setLong(1, cliente.getIdCliente());
             cs.setString(2, cliente.getNombre());
             cs.setString(3, cliente.getApellido());
             cs.setString(4, cliente.getCorreoElectronico());
@@ -78,7 +78,7 @@ public class ClienteDAO {
                 return new Cliente(
                         rs.getString("nombre"),
                         rs.getString("apellido"),
-                        rs.getString("idcliente"),
+                        rs.getLong("idcliente"),
                         rs.getString("correo")
                 );
             }
@@ -106,7 +106,7 @@ public class ClienteDAO {
                 Cliente cliente = new Cliente(
                     rs.getString("nombre"),
                     rs.getString("apellido"),
-                    rs.getString("idcliente"),
+                    rs.getLong("idcliente"),
                     rs.getString("correo")
                 );
                 lista.add(cliente);

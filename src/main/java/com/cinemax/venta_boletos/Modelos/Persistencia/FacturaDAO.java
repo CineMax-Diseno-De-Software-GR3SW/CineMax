@@ -26,7 +26,7 @@ public class FacturaDAO {
         try (Connection conn = conexionBase.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, factura.getCliente().getCedula());
+            ps.setLong(1, factura.getCliente().getIdCliente());
             ps.setTimestamp(2, java.sql.Timestamp.valueOf(factura.getFecha()));
             ps.setBigDecimal(3, BigDecimal.valueOf(factura.getSubTotal()));
             ps.setBigDecimal(4, BigDecimal.valueOf(factura.getTotal()));
@@ -40,8 +40,8 @@ public class FacturaDAO {
         try (Connection conn = conexionBase.conectar();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setLong(1, Long.parseLong(factura.getCodigoFactura()));
-            ps.setString(2, factura.getCliente().getCedula());
+            ps.setLong(1, factura.getCodigoFactura());
+            ps.setLong(2, factura.getCliente().getIdCliente());
             ps.setTimestamp(3, java.sql.Timestamp.valueOf(factura.getFecha()));
             ps.setBigDecimal(4, BigDecimal.valueOf(factura.getSubTotal()));
             ps.setBigDecimal(5, BigDecimal.valueOf(factura.getTotal()));
@@ -81,18 +81,18 @@ public class FacturaDAO {
                         cliente = new Cliente(
                             rsCliente.getString("nombre"),
                             rsCliente.getString("apellido"),
-                            rsCliente.getString("idcliente"),
+                            rsCliente.getLong("idcliente"),
                             rsCliente.getString("correo")
                         );
                     }
                 }
 
                 return new Factura(
-                        String.valueOf(rs.getLong("idfactura")),
-                        rs.getTimestamp("fecha").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                        cliente,
-                        rs.getBigDecimal("subtotal").doubleValue(),
-                        rs.getBigDecimal("total").doubleValue()
+                    rs.getLong("idfactura"),
+                    rs.getTimestamp("fecha").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                    cliente,
+                    rs.getBigDecimal("subtotal").doubleValue(),
+                    rs.getBigDecimal("total").doubleValue()
                 );
             }
             return null;
@@ -120,14 +120,14 @@ public class FacturaDAO {
                         cliente = new Cliente(
                             rsCliente.getString("nombre"),
                             rsCliente.getString("apellido"),
-                            rsCliente.getString("idcliente"),
+                            rsCliente.getLong("idcliente"),
                             rsCliente.getString("correo")
                         );
                     }
                 }
 
                 Factura factura = new Factura(
-                        String.valueOf(rs.getLong("idfactura")),
+                        rs.getLong("idfactura"),
                         rs.getTimestamp("fecha").toLocalDateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                         cliente,
                         rs.getBigDecimal("subtotal").doubleValue(),

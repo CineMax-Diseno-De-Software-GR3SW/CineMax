@@ -52,8 +52,8 @@ public class ControladorDatosCliente {
 
     @FXML
     public void initialize() {
-        tipoDocumentoBox.setItems(FXCollections.observableArrayList("Cédula de Identidad", "Pasaporte", "RUC"));
-        tipoDocumentoBox.setValue("Cédula de Identidad");
+        tipoDocumentoBox.setItems(FXCollections.observableArrayList("Cédula", "Pasaporte", "RUC"));
+        tipoDocumentoBox.setValue("Cédula");
         headerBar.setOnMousePressed(event -> { xOffset = event.getSceneX(); yOffset = event.getSceneY(); });
         headerBar.setOnMouseDragged(event -> { ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset); ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset); });
     }
@@ -89,7 +89,7 @@ public class ControladorDatosCliente {
         Cliente cliente = new Cliente(
                 nombreField.getText(),
                 apellidoField.getText(),
-                documentoField.getText(),
+                Long.parseLong(documentoField.getText()),
                 correoField.getText()
         );
 

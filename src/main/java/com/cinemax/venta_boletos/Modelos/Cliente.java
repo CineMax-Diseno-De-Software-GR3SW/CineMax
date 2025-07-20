@@ -3,13 +3,13 @@ package com.cinemax.venta_boletos.Modelos;
 public class Cliente {
     private String nombre;
     private String apellido;
-    private String cedula;
+    private long idCliente;
     private String correoElectronico;
 
-    public Cliente(String nombre, String apellido, String cedula, String correoElectronico) {
+    public Cliente(String nombre, String apellido, long idCliente, String correoElectronico) {
         this.nombre = nombre;
         this.apellido = apellido;
-        this.cedula = cedula;
+        this.idCliente = idCliente;
         this.correoElectronico = correoElectronico;
     }
 
@@ -18,7 +18,7 @@ public class Cliente {
         return "Cliente{" +
                 "nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
-                ", cedula='" + cedula + '\'' +
+                ", idCliente='" + idCliente + '\'' +
                 ", correoElectronico='" + correoElectronico + '\'' +
                 '}';
     }
@@ -39,12 +39,12 @@ public class Cliente {
         this.apellido = apellido;
     }
 
-    public String getCedula() {
-        return cedula;
+    public long getIdCliente() {
+        return idCliente;
     }
 
-    public void setCedula(String cedula) {
-        this.cedula = cedula;
+    public void setIdCliente(long idCliente) {
+        this.idCliente = idCliente;
     }
 
     public String getCorreoElectronico() {

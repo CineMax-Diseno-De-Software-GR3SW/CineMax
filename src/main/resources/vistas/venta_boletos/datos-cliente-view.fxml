@@ -10,9 +10,10 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorDatosCliente">
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorDatosCliente">
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
@@ -31,28 +32,35 @@
             <padding>
                 <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
             </padding>
-            <Label styleClass="section-title" text="Personal Information" />
+            <Label styleClass="section-title" text="Información de facturación" />
             <GridPane hgap="10.0" vgap="15.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
                 </columnConstraints>
-                <Label text="Name" GridPane.rowIndex="0" />
-                <TextField fx:id="nombreField" promptText="Name" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Label text="Last name" GridPane.rowIndex="1" />
-                <TextField fx:id="apellidoField" promptText="Last name" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Document type" GridPane.rowIndex="2" />
+                <Label text="Nombre" GridPane.rowIndex="0" />
+                <TextField fx:id="nombreField" promptText="Nombre" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label text="Apellido" GridPane.rowIndex="1" />
+                <TextField fx:id="apellidoField" promptText="Apellido" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label text="Tipo de documento" GridPane.rowIndex="2" />
                 <ComboBox fx:id="tipoDocumentoBox" prefWidth="Infinity" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Document number" GridPane.rowIndex="3" />
-                <TextField fx:id="documentoField" promptText="Document number" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Label text="Email address" GridPane.rowIndex="4" />
-                <TextField fx:id="correoField" promptText="example@email.com" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <Label text="Documento" GridPane.rowIndex="3" />
+                <TextField fx:id="documentoField" promptText="Documento" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                <Label text="Correo electrónico" GridPane.rowIndex="4" />
+                <TextField fx:id="correoField" promptText="ejemplo@email.com" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
             </GridPane>
         </VBox>
     </center>
 
     <right>
-        <VBox styleClass="financial-summary-pane" spacing="15.0" minWidth="280" maxWidth="280">
+        <VBox maxWidth="280" minWidth="280" spacing="15.0" styleClass="financial-summary-pane">
             <!-- ... contenido del panel financiero ... -->
             <GridPane hgap="10.0" vgap="10.0">
                 <columnConstraints>
@@ -63,12 +71,17 @@
                 <Label fx:id="subtotalLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="0" />
                 <Label text="Impuestos (15%):" GridPane.rowIndex="1" />
                 <Label fx:id="impuestosLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Total del pedido:" style="-fx-font-weight: bold; -fx-font-size: 16px;" GridPane.rowIndex="2" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Total del pedido:" GridPane.rowIndex="2" />
                 <Label fx:id="totalLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-font-size: 16px;" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
             </GridPane>
-            <Button onAction="#onVerDetalle" styleClass="link-button" text="See order detail" />
+            <Button onAction="#onVerDetalle" styleClass="link-button" text="Ver detalle de orden" />
             <Region VBox.vgrow="ALWAYS" />
-            <Button fx:id="finalizarButton" onAction="#onFinalizarAction" maxWidth="Infinity" styleClass="primary-button" text="Pay" />
+            <Button fx:id="finalizarButton" maxWidth="Infinity" onAction="#onFinalizarAction" styleClass="primary-button" text="Pagar" />
         </VBox>
     </right>
 </BorderPane>

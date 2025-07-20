@@ -3,7 +3,7 @@ package com.cinemax.venta_boletos.Modelos;
 import java.util.List;
 
 public class Factura {
-    private String codigoFactura;
+    private long codigoFactura;
     // private LocalDateTime fecha;
     private String fecha;
     private Cliente cliente;
@@ -15,7 +15,7 @@ public class Factura {
 
     }
 
-    public Factura(String numeroFactura, String fechaEmision, Cliente cliente) {
+    public Factura(long numeroFactura, String fechaEmision, Cliente cliente) {
         this.codigoFactura = numeroFactura;
         this.fecha = fechaEmision;
         this.cliente = cliente;
@@ -29,7 +29,7 @@ public class Factura {
         this.total = total;
     }
 
-    public Factura(String numeroFactura, String fechaEmision, Cliente cliente, double subTotal, double total) {
+    public Factura(long numeroFactura, String fechaEmision, Cliente cliente, double subTotal, double total) {
         this.codigoFactura = numeroFactura;
         this.fecha = fechaEmision;
         this.cliente = cliente;
@@ -37,7 +37,7 @@ public class Factura {
         this.total = total;
     }
 
-    public String getCodigoFactura() {
+    public long getCodigoFactura() {
         return codigoFactura;
     }
 
