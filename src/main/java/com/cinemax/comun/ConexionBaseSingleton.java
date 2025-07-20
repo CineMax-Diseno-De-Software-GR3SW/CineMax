@@ -1,4 +1,4 @@
-package com.cinemax.comun;
+package src.main.java.com.cinemax.comun;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

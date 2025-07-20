@@ -1,6 +1,6 @@
-package com.cinemax.empleados;
+package com.cinemax.salas;
 
-import com.cinemax.comun.ConexionBaseSingleton;
+import src.main.java.com.cinemax.comun.ConexionBaseSingleton;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,7 +15,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/empleados/PantallaLogin.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/salas/VistaGSalas.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 500);
 
 
