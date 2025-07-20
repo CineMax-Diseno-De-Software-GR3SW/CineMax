@@ -60,9 +60,14 @@
             </padding>
             <Label styleClass="section-title" text="Información de facturación" />
          <Label styleClass="section-title" text="Buscar cliente" />
-         <TextField fx:id="identificacionField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="202.0" promptText="Ingrese el número de identificación" />
-         <Text fx:id="mensajeBusquedaCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
-         <Button mnemonicParsing="false" onAction="#onBuscarCliente" text="Buscar" textAlignment="CENTER" />
+         
+         <HBox spacing="10.0">
+            <TextField fx:id="identificacionField" prefWidth="300.0" promptText="Ingrese el número de identificación" />
+            <Button onAction="#onBuscarCliente" text="Buscar" styleClass="primary-button" />
+        </HBox>
+        <Text fx:id="mensajeBusquedaCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="300.0" />
+
+            
             <GridPane hgap="10.0" vgap="15.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
@@ -87,7 +92,7 @@
             </rowConstraints>
             </GridPane>
          <Text fx:id="mensajeActualizacionCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
-         <Button mnemonicParsing="false" onAction="#onActualizarCliente" text="Actualizar" textAlignment="CENTER" />
+         <Button onAction="#onActualizarCliente" text="Actualizar" styleClass="primary-button" />
         </VBox>
    </center>
 </BorderPane>
