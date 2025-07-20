@@ -9,6 +9,7 @@ import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.modelos.persistencia.SalaDAO;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -177,4 +178,22 @@ public class FuncionDAO {
             throw e;
         }
     }
+
+    public List<Integer> listarIdsPeliculasDeFuncionesFuturas() {
+        List<Integer> idsPeliculas = new ArrayList<>();
+        String sql = "SELECT DISTINCT id_pelicula FROM funcion WHERE fecha_hora_inicio > ?";
+        try (Connection conn = gestorDB.getConexion();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    idsPeliculas.add(rs.getInt("id_pelicula"));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error al listar IDs de películas de funciones futuras: " + e.getMessage(), e);
+        }
+        return idsPeliculas;
+    }
+
 }
