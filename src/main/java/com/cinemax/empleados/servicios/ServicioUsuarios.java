@@ -13,18 +13,19 @@ public class ServicioUsuarios {
         this.usuarioDAO = new UsuarioDAO();
     }
 
+    //TODO: Pasar atributos para crear el usuario
     public void crearUsuario(Usuario usuario) throws Exception {
-        if (usuario == null) {
-            throw new IllegalArgumentException("El usuario no puede ser null");
-        }
+//        if (usuario == null) {
+//            throw new IllegalArgumentException("El usuario no puede ser null");
+//        }
 
         if (!validador.validarCorreo(usuario.getCorreo())) {
             throw new IllegalArgumentException("El correo electrónico no es válido");
         }
 
-        if (!validador.validarClave(usuario.getClave())) {
-            throw new IllegalArgumentException("La clave no cumple con los requisitos de seguridad: una Mayúscula, una minúscula, un número y un caracter especial.");
-        }
+//        if (!validador.validarClave(usuario.getClave())) {
+//            throw new IllegalArgumentException("La clave no cumple con los requisitos de seguridad: una Mayúscula, una minúscula, un número y un caracter especial.");
+//        }
 
         // Verificar que el nombre de usuario no exista
         if (usuarioDAO.buscarPorNombreUsuario(usuario.getNombreUsuario()) != null) {
@@ -40,6 +41,9 @@ public class ServicioUsuarios {
         if (usuario.getId() == null) {
             usuario.setId(usuarioDAO.obtenerSiguienteId());
         }
+        //TODO: generacion de contrasena (Nuevo.#cedula)
+
+        //TODO: Creacion del usuario
 
         usuarioDAO.crearUsuario(usuario);
     }

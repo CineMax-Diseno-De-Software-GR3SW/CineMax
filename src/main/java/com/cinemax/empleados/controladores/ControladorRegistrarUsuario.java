@@ -37,8 +37,8 @@ public class ControladorRegistrarUsuario implements Initializable {
     @FXML private TextField campoCorreo;
     @FXML private TextField campoCelular;
     @FXML private TextField campoNombreUsuario;
-    @FXML private PasswordField campoContrasena;
-    @FXML private PasswordField campoConfirmar;
+//    @FXML private PasswordField campoContrasena;
+//    @FXML private PasswordField campoConfirmar;
     @FXML private ComboBox<Rol> comboBoxRol;
     @FXML private RadioButton radioActivo;
 
@@ -90,21 +90,21 @@ public class ControladorRegistrarUsuario implements Initializable {
         Rol cargoSeleccionado = comboBoxRol.getSelectionModel().getSelectedItem();
         boolean estadoActivo = radioActivo.isSelected();
         String nombreUsuario = campoNombreUsuario.getText().trim();
-        String contrasena = campoContrasena.getText();
-        String confirmarContrasena = campoConfirmar.getText();
+//        String contrasena = campoContrasena.getText();
+//        String confirmarContrasena = campoConfirmar.getText();
 
         // Validaciones básicas
         if (nombres.isEmpty() || apellidos.isEmpty() || cedula.isEmpty() || correo.isEmpty() ||
                 celular.isEmpty() || nombreUsuario.isEmpty() ||
-                contrasena.isEmpty() || confirmarContrasena.isEmpty() || cargoSeleccionado == null) {
+                 cargoSeleccionado == null) {
             mostrarAlerta(AlertType.ERROR, "Campos Vacíos", "Error de Datos", "Por favor, complete todos los campos obligatorios.");
             return;
         }
 
-        if (!contrasena.equals(confirmarContrasena)) {
-            mostrarAlerta(AlertType.ERROR, "Contraseñas no Coinciden", "Error de Contraseña", "Las contraseñas ingresadas no coinciden. Por favor, verifique.");
-            return;
-        }
+//        if (!contrasena.equals(confirmarContrasena)) {
+//            mostrarAlerta(AlertType.ERROR, "Contraseñas no Coinciden", "Error de Contraseña", "Las contraseñas ingresadas no coinciden. Por favor, verifique.");
+//            return;
+//        }
 
         //TODO: NO, Hacerlo desde el servicio
         Usuario nuevoUsuario = new Usuario();
@@ -114,7 +114,7 @@ public class ControladorRegistrarUsuario implements Initializable {
         nuevoUsuario.setCelular(celular);
         nuevoUsuario.setActivo(estadoActivo);
         nuevoUsuario.setNombreUsuario(nombreUsuario);
-        nuevoUsuario.setClave(contrasena);
+//        nuevoUsuario.setClave(contrasena);
         nuevoUsuario.setRol(cargoSeleccionado);
 
         try {
@@ -159,8 +159,8 @@ public class ControladorRegistrarUsuario implements Initializable {
         campoCorreo.clear();
         campoCelular.clear();
         campoNombreUsuario.clear();
-        campoContrasena.clear();
-        campoConfirmar.clear();
+//        campoContrasena.clear();
+//        campoConfirmar.clear();
         comboBoxRol.getSelectionModel().clearSelection();
         radioActivo.setSelected(true);
     }

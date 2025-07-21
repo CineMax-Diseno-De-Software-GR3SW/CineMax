@@ -74,11 +74,11 @@
             <Label text="Nombre de usuario:" GridPane.rowIndex="7" />
             <TextField fx:id="campoNombreUsuario" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
-            <Label text="Contraseña:" GridPane.rowIndex="8" />
-            <PasswordField fx:id="campoContrasena" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+<!--            <Label text="Contraseña:" GridPane.rowIndex="8" />-->
+<!--            <PasswordField fx:id="campoContrasena" GridPane.columnIndex="1" GridPane.rowIndex="8" />-->
 
-            <Label text="Confirmar:" GridPane.rowIndex="9" />
-            <PasswordField fx:id="campoConfirmar" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+<!--            <Label text="Confirmar:" GridPane.rowIndex="9" />-->
+<!--            <PasswordField fx:id="campoConfirmar" GridPane.columnIndex="1" GridPane.rowIndex="9" />-->
         </GridPane>
         <padding>
             <Insets left="20.0" right="20.0" />
