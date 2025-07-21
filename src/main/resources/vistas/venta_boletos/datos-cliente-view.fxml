@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorFacturacion">
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorFacturacion">
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
@@ -63,7 +63,7 @@
          
          <HBox spacing="10.0">
             <TextField fx:id="identificacionField" prefWidth="300.0" promptText="Ingrese el número de identificación" />
-            <Button onAction="#onBuscarCliente" text="Buscar" styleClass="primary-button" />
+            <Button onAction="#onBuscarCliente" styleClass="primary-button" text="Buscar" />
         </HBox>
         <Text fx:id="mensajeBusquedaCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="300.0" />
 
@@ -91,8 +91,11 @@
                <RowConstraints />
             </rowConstraints>
             </GridPane>
+         <Button onAction="#onActualizarCliente" styleClass="primary-button" text="Actualizar" />
+
+
          <Text fx:id="mensajeActualizacionCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
-         <Button onAction="#onActualizarCliente" text="Actualizar" styleClass="primary-button" />
+        
         </VBox>
    </center>
 </BorderPane>
