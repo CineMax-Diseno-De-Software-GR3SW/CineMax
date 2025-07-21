@@ -50,6 +50,7 @@ public class ControladorButacas {
                 setText(empty || sala == null
                         ? null
                         : String.valueOf(sala.getId()));
+                setStyle("-fx-text-fill: #000000;");
             }
         });
         // Asegura que al colapsar el combo también muestre sólo el ID
@@ -60,6 +61,7 @@ public class ControladorButacas {
                 setText(empty || sala == null
                         ? null
                         : String.valueOf(sala.getId()));
+                setStyle("-fx-text-fill: #ffffff;");
             }
         });
         // —— Configuro las columnas de la tabla ——
