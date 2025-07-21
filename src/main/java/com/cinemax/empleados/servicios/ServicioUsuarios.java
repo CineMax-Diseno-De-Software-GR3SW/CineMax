@@ -41,11 +41,15 @@ public class ServicioUsuarios {
         if (usuario.getId() == null) {
             usuario.setId(usuarioDAO.obtenerSiguienteId());
         }
-        //TODO: generacion de contrasena (Nuevo.#cedula)
+        //TODO: generacion de contrasena (aleatoria con letras numeros y caracteres especiales)
 
         //TODO: Creacion del usuario
 
         usuarioDAO.crearUsuario(usuario);
+
+        // Servicio de correo
+//        ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
+
     }
 
     public void actualizarRolUsuario(Long idUsuario, Rol nuevoRol) throws Exception {

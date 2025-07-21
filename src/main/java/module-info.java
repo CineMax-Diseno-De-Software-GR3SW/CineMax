@@ -3,6 +3,7 @@ module com.cinemax.empleados {
     requires javafx.fxml;
     requires java.sql;
     requires org.postgresql.jdbc;
+    requires jakarta.mail;
 
 
     opens com.cinemax.empleados to javafx.fxml;
