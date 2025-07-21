@@ -27,6 +27,7 @@ public class ControladorSalas {
 
     @FXML
     public void initialize() throws Exception {
+
         cmbTipo.setItems(FXCollections.observableArrayList(TipoSala.values()));
         cmbEstado.setItems(FXCollections.observableArrayList(EstadoSala.values()));
 

@@ -1,137 +1,210 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.cinemax.salas.controladores.ControladorSalas"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.cinemax.salas.controladores.ControladorButacas"
             style="-fx-background-color: linear-gradient(to bottom, #23272e 0%, #181a20 100%);">
+
     <top>
         <VBox>
             <HBox alignment="center" style="-fx-background-color: #181a20;">
-                <Label text="Gestión de Salas"
+                <Label text="Gestión de Butacas"
                        style="-fx-font-family: 'Georgia', 'Times New Roman', serif;
-                  -fx-font-size: 34px;
-                  -fx-font-weight: bold;
-                  -fx-padding: 28 0 28 0;
-                  -fx-text-fill: linear-gradient(to bottom, #FFA726 60%, #FF9800 100%);
-                  -fx-effect: dropshadow(gaussian, #000000cc, 16, 0.4, 0, 4);
-                  -fx-letter-spacing: 2px;"/>
+                              -fx-font-size: 34px;
+                              -fx-font-weight: bold;
+                              -fx-padding: 28 0 28 0;
+                              -fx-text-fill: linear-gradient(to bottom, #FFA726 60%, #FF9800 100%);
+                              -fx-effect: dropshadow(gaussian, #000000cc, 16, 0.4, 0, 4);
+                              -fx-letter-spacing: 2px;"/>
             </HBox>
-            <HBox alignment="CENTER_RIGHT" spacing="10" style="-fx-background-color: #23272e; -fx-padding: 8 32 8 32;">
-                <TextField fx:id="txtBuscarId" promptText="Buscar sala por ID" style="-fx-background-radius: 8; -fx-background-color: #181a20; -fx-text-fill: #fff;"/>
-                <Button text="🔍" style="-fx-font-family: 'Segoe UI Emoji'; -fx-background-radius: 8; -fx-background-color: #FFA726;" onAction="#buscarSalaPorId">
-                    <tooltip>
-                        <Tooltip text="Buscar sala"/>
-                    </tooltip>
+            <HBox alignment="CENTER_RIGHT" spacing="10"
+                  style="-fx-background-color: #23272e; -fx-padding: 8 32 8 32;">
+                <TextField fx:id="txtBuscarIdSala"
+                           promptText="Buscar butacas por ID Sala"
+                           style="-fx-background-radius: 8;
+                                  -fx-background-color: #181a20;
+                                  -fx-text-fill: #fff;"/>
+                <Button text="🔍"
+                        onAction="#listarButacasPorSala"
+                        style="-fx-font-family: 'Segoe UI Emoji';
+                               -fx-background-radius: 8;
+                               -fx-background-color: #FFA726;">
+                    <tooltip><Tooltip text="Buscar butacas"/></tooltip>
+                </Button>
+                <Button text="Listar todas"
+                        onAction="#listarTodasButacas"
+                        style="-fx-background-radius: 8;
+                               -fx-background-color: #FFA726;
+                               -fx-text-fill: #fff;
+                               -fx-font-size: 13px;">
+                    <tooltip><Tooltip text="Listar todas las butacas existentes"/></tooltip>
                 </Button>
             </HBox>
         </VBox>
     </top>
+
     <center>
         <VBox spacing="20" style="-fx-background-color: transparent;">
             <padding>
                 <Insets top="24" right="32" bottom="24" left="32"/>
             </padding>
-            <TitledPane text="Datos de la Sala" expanded="true" style="-fx-font-size: 17px; -fx-text-fill: #FFA726;">
+
+            <TitledPane text="Datos de la Butaca"
+                        expanded="true"
+                        style="-fx-font-size: 17px; -fx-text-fill: #FFA726;">
                 <content>
                     <GridPane hgap="16" vgap="16"
-                              style="-fx-background-color: #23272e; -fx-padding: 24; -fx-background-radius: 18; -fx-effect: dropshadow(gaussian, #00000055, 12, 0.2, 0, 4);">
-                        <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="0"
+                              style="-fx-background-color: #23272e;
+                                     -fx-padding: 24;
+                                     -fx-background-radius: 18;
+                                     -fx-effect: dropshadow(gaussian, #00000055, 12, 0.2, 0, 4);">
+                        <Label text="Fila:" GridPane.rowIndex="0" GridPane.columnIndex="0"
                                style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <TextField fx:id="txtNombre" GridPane.rowIndex="0" GridPane.columnIndex="1"
-                                   style="-fx-background-color: #181a20; -fx-text-fill: #fff; -fx-border-color: #FFA726; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 15px;">
-                            <tooltip>
-                                <Tooltip text="Ingrese el nombre de la sala"/>
-                            </tooltip>
+                        <TextField fx:id="txtFila"
+                                   GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                   style="-fx-background-color: #181a20;
+                                          -fx-text-fill: #fff;
+                                          -fx-border-color: #FFA726;
+                                          -fx-border-radius: 8;
+                                          -fx-background-radius: 8;
+                                          -fx-font-size: 15px;">
+                            <tooltip><Tooltip text="Ingrese la fila"/></tooltip>
                         </TextField>
-                        <Label text="Capacidad:" GridPane.rowIndex="1" GridPane.columnIndex="0"
+
+                        <Label text="Columna:" GridPane.rowIndex="1" GridPane.columnIndex="0"
                                style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <TextField fx:id="txtCapacidad" GridPane.rowIndex="1" GridPane.columnIndex="1"
-                                   style="-fx-background-color: #181a20; -fx-text-fill: #fff; -fx-border-color: #FFA726; -fx-border-radius: 8; -fx-background-radius: 8; -fx-font-size: 15px;">
-                            <tooltip>
-                                <Tooltip text="Ingrese la capacidad máxima"/>
-                            </tooltip>
+                        <TextField fx:id="txtColumna"
+                                   GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                   style="-fx-background-color: #181a20;
+                                          -fx-text-fill: #fff;
+                                          -fx-border-color: #FFA726;
+                                          -fx-border-radius: 8;
+                                          -fx-background-radius: 8;
+                                          -fx-font-size: 15px;">
+                            <tooltip><Tooltip text="Ingrese la columna"/></tooltip>
                         </TextField>
-                        <Label text="Tipo:" GridPane.rowIndex="2" GridPane.columnIndex="0"
+
+                        <Label text="Estado:" GridPane.rowIndex="2" GridPane.columnIndex="0"
                                style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <ComboBox fx:id="cmbTipo" GridPane.rowIndex="2" GridPane.columnIndex="1"
-                                  style="-fx-background-color: #FFA726; -fx-text-fill: #fff; -fx-border-color: #FFA726; -fx-border-radius: 8; -fx-background-radius: 8;">
-                            <tooltip>
-                                <Tooltip text="Seleccione el tipo de sala"/>
-                            </tooltip>
+                        <ComboBox fx:id="cmbEstado"
+                                  GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                  style="-fx-background-color: #FFA726;
+                                         -fx-text-fill: #fff;
+                                         -fx-border-color: #FFA726;
+                                         -fx-border-radius: 8;
+                                         -fx-background-radius: 8;">
+                            <tooltip><Tooltip text="Seleccione el estado de la butaca"/></tooltip>
                         </ComboBox>
-                        <Label text="Estado:" GridPane.rowIndex="3" GridPane.columnIndex="0"
+
+                        <Label text="Sala:" GridPane.rowIndex="3" GridPane.columnIndex="0"
                                style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <ComboBox fx:id="cmbEstado" GridPane.rowIndex="3" GridPane.columnIndex="1"
-                                  style="-fx-background-color: #FFA726; -fx-text-fill: #fff; -fx-border-color: #FFA726; -fx-border-radius: 8; -fx-background-radius: 8;">
-                            <tooltip>
-                                <Tooltip text="Seleccione el estado de la sala"/>
-                            </tooltip>
+                        <ComboBox fx:id="cmbSala"
+                                  promptText="Seleccione sala"
+                                  GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                  style="-fx-background-color: #181a20;
+                                         -fx-text-fill: #fff;
+                                         -fx-border-color: #FFA726;
+                                         -fx-border-radius: 8;
+                                         -fx-background-radius: 8;
+                                         -fx-font-size: 15px;">
+                            <tooltip><Tooltip text="Selecciona la sala para esta butaca"/></tooltip>
                         </ComboBox>
                     </GridPane>
                 </content>
             </TitledPane>
+
             <HBox spacing="18" alignment="center">
-                <Button text="🆕 Crear" onAction="#crearSala"
+                <Button text="🆕 Crear"
+                        onAction="#crearButaca"
                         graphicTextGap="8"
-                        style="-fx-font-family: 'Segoe UI Emoji'; -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800); -fx-text-fill: #fff; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 28; -fx-font-size: 15px; -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
-                    <tooltip>
-                        <Tooltip text="Crear nueva sala"/>
-                    </tooltip>
+                        style="-fx-font-family: 'Segoe UI Emoji';
+                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
+                               -fx-text-fill: #fff;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-padding: 10 28;
+                               -fx-font-size: 15px;
+                               -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
+                    <tooltip><Tooltip text="Crear nueva butaca"/></tooltip>
                 </Button>
-                <Button text="✏️ Actualizar" onAction="#actualizarSala"
-                        style="-fx-font-family: 'Segoe UI Emoji'; -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800); -fx-text-fill: #fff; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 28; -fx-font-size: 15px; -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
-                    <tooltip>
-                        <Tooltip text="Actualizar sala seleccionada"/>
-                    </tooltip>
+                <Button text="✏️ Actualizar"
+                        onAction="#actualizarButaca"
+                        style="-fx-font-family: 'Segoe UI Emoji';
+                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
+                               -fx-text-fill: #fff;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-padding: 10 28;
+                               -fx-font-size: 15px;
+                               -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
+                    <tooltip><Tooltip text="Actualizar butaca seleccionada"/></tooltip>
                 </Button>
-                <Button text="🗑️ Eliminar" onAction="#eliminarSala"
-                        style="-fx-font-family: 'Segoe UI Emoji'; -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800); -fx-text-fill: #fff; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 28; -fx-font-size: 15px; -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
-                    <tooltip>
-                        <Tooltip text="Eliminar sala seleccionada"/>
-                    </tooltip>
+                <Button text="🗑️ Eliminar"
+                        onAction="#eliminarButaca"
+                        style="-fx-font-family: 'Segoe UI Emoji';
+                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
+                               -fx-text-fill: #fff;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-padding: 10 28;
+                               -fx-font-size: 15px;
+                               -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
+                    <tooltip><Tooltip text="Eliminar butaca seleccionada"/></tooltip>
                 </Button>
-                <Button text="🧹 Limpiar" onAction="#limpiarCampos"
-                        style="-fx-font-family: 'Segoe UI Emoji'; -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800); -fx-text-fill: #fff; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 10 28; -fx-font-size: 15px; -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
-                    <tooltip>
-                        <Tooltip text="Limpiar campos"/>
-                    </tooltip>
+                <Button text="🧹 Limpiar"
+                        onAction="#limpiarCampos"
+                        style="-fx-font-family: 'Segoe UI Emoji';
+                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
+                               -fx-text-fill: #fff;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 10;
+                               -fx-padding: 10 28;
+                               -fx-font-size: 15px;
+                               -fx-effect: dropshadow(gaussian, #FFA72644, 8, 0.2, 0, 2);">
+                    <tooltip><Tooltip text="Limpiar campos"/></tooltip>
                 </Button>
             </HBox>
+
             <Separator style="-fx-background-color: #FFA726;"/>
-            <TableView fx:id="tablaSalas" prefHeight="240"
-                       style="
-            -fx-background-color: #23272e;
-            -fx-background-radius: 14;
-            -fx-border-radius: 14;
-            -fx-border-color: #FFA726;
-            -fx-border-width: 2;
-            -fx-effect: dropshadow(gaussian, #FFA72644, 12, 0.2, 0, 2);
-            -fx-table-cell-border-color: transparent;
-            -fx-control-inner-background: #23272e;
-            -fx-selection-bar: #FFA726;
-            -fx-selection-bar-non-focused: #FF9800;
-        ">
+
+            <TableView fx:id="tablaButacas"
+                       prefHeight="240"
+                       style="-fx-background-color: #23272e;
+                              -fx-background-radius: 14;
+                              -fx-border-radius: 14;
+                              -fx-border-color: #FFA726;
+                              -fx-border-width: 2;
+                              -fx-effect: dropshadow(gaussian, #FFA72644, 12, 0.2, 0, 2);
+                              -fx-table-cell-border-color: transparent;
+                              -fx-control-inner-background: #23272e;
+                              -fx-selection-bar: #FFA726;
+                              -fx-selection-bar-non-focused: #FF9800;">
                 <columns>
                     <TableColumn text="ID" prefWidth="50" fx:id="colId"
                                  style="-fx-text-fill: #FFA726; -fx-font-size: 15px; -fx-font-weight: bold;"/>
-                    <TableColumn text="Nombre" prefWidth="120" fx:id="colNombre"
+                    <TableColumn text="Fila" prefWidth="120" fx:id="colFila"
                                  style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
-                    <TableColumn text="Capacidad" prefWidth="80" fx:id="colCapacidad"
-                                 style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
-                    <TableColumn text="Tipo" prefWidth="100" fx:id="colTipo"
+                    <TableColumn text="Columna" prefWidth="80" fx:id="colColumna"
                                  style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
                     <TableColumn text="Estado" prefWidth="100" fx:id="colEstado"
+                                 style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
+                    <TableColumn text="ID Sala" prefWidth="100" fx:id="colIdSala"
                                  style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
                 </columns>
             </TableView>
         </VBox>
     </center>
+
     <bottom>
-        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #181a20; -fx-padding: 8 32;">
-            <Label text="Estado: " style="-fx-text-fill: #FFA726; -fx-font-size: 13px;"/>
-            <Label fx:id="lblEstado" text="Listo" style="-fx-text-fill: #fff; -fx-font-size: 13px;"/>
+        <HBox alignment="CENTER_LEFT"
+              style="-fx-background-color: #181a20; -fx-padding: 8 32;">
+            <Label text="Estado: "
+                   style="-fx-text-fill: #FFA726; -fx-font-size: 13px;"/>
+            <Label fx:id="lblEstado"
+                   text="Listo"
+                   style="-fx-text-fill: #fff; -fx-font-size: 13px;"/>
         </HBox>
     </bottom>
 </BorderPane>
