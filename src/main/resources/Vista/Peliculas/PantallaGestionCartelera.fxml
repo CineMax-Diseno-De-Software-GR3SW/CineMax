@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorCarteleraFX">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Label text="Gestión de Cartelera">
+                    <font>
+                        <Font name="Arial Black" size="24" />
+                    </font>
+                </Label>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnActualizarCartelera" onAction="#onActualizarCartelera" styleClass="primary-button" text="↻ Actualizar Cartelera" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
+            </padding>
+
+            <!-- Sección de búsqueda -->
+            <VBox spacing="15.0" styleClass="ticket-card">
+                <children>
+                    <Label text="Búsqueda en Cartelera" styleClass="section-title" />
+
+                    <!-- Búsqueda por título -->
+                    <HBox spacing="15.0" alignment="CENTER_LEFT">
+                        <children>
+                            <Label text="Por título:" minWidth="80" />
+                            <TextField fx:id="txtBuscarTitulo" promptText="Ingrese el título o parte del título..." prefWidth="300.0" />
+                            <Button fx:id="btnBuscarTitulo" onAction="#onBuscarTitulo" text="Buscar" />
+                        </children>
+                    </HBox>
+
+                    <!-- Búsqueda por ID -->
+                    <HBox spacing="15.0" alignment="CENTER_LEFT">
+                        <children>
+                            <Label text="Por ID:" minWidth="80" />
+                            <TextField fx:id="txtBuscarId" promptText="Ingrese el ID de la película..." prefWidth="200.0" />
+                            <Button fx:id="btnBuscarId" onAction="#onBuscarId" text="Buscar" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <Button fx:id="btnLimpiarBusqueda" onAction="#onLimpiarBusqueda" text="Limpiar Búsqueda" />
+                        </children>
+                    </HBox>
+                </children>
+                <padding>
+                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                </padding>
+            </VBox>
+
+            <!-- Tabla de películas en cartelera -->
+            <VBox spacing="10.0">
+                <children>
+                    <Label text="Películas en Cartelera" styleClass="section-title" />
+                    <TableView fx:id="tablaCartelera" prefHeight="350.0">
+                        <columns>
+                            <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
+                            <TableColumn fx:id="colTitulo" text="Título" prefWidth="250.0" />
+                            <TableColumn fx:id="colAnio" text="Año" prefWidth="80.0" />
+                            <TableColumn fx:id="colGenero" text="Género" prefWidth="150.0" />
+                            <TableColumn fx:id="colDuracion" text="Duración (min)" prefWidth="120.0" />
+                            <TableColumn fx:id="colIdioma" text="Idioma" prefWidth="100.0" />
+                        </columns>
+                    </TableView>
+                </children>
+            </VBox>
+
+            <!-- Botones de acción -->
+            <HBox spacing="15.0" alignment="CENTER">
+                <children>
+                    <Button fx:id="btnVerDetalles" onAction="#onVerDetalles" text="Ver Detalles" disable="true" />
+                </children>
+            </HBox>
+
+            <!-- Panel de información y estadísticas -->
+            <HBox spacing="20.0" alignment="CENTER_LEFT" styleClass="summary-pane">
+                <children>
+                    <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                        <children>
+                            <Label fx:id="lblTotalPeliculas" text="Películas mostradas: 0 de 0" styleClass="summary-title" />
+                            <Label fx:id="lblEstadoCartelera" text="Cartelera lista para actualizar" styleClass="summary-details" />
+                        </children>
+                    </VBox>
+                </children>
+                <padding>
+                    <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+                </padding>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

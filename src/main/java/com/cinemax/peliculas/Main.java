@@ -3,9 +3,12 @@ package com.cinemax.peliculas;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import com.cinemax.comun.modelos.persistencia.ConexionBaseSingleton;
 
@@ -13,12 +16,44 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionPeliculas.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 900, 650);
+        // Mostrar diálogo de selección de vista
+        Alert seleccion = new Alert(Alert.AlertType.CONFIRMATION);
+        seleccion.setTitle("CineMax - Selección de Vista");
+        seleccion.setHeaderText("Seleccione qué vista desea abrir:");
+        seleccion.setContentText("Elija una de las siguientes opciones:");
 
-        stage.setTitle("CineMax - Gestión de Películas");
-        stage.setScene(scene);
-        stage.show();
+        ButtonType btnPeliculas = new ButtonType("Gestión de Películas");
+        ButtonType btnCartelera = new ButtonType("Gestión de Cartelera");
+        ButtonType btnFunciones = new ButtonType("Gestión de Funciones");
+        ButtonType btnCancelar = new ButtonType("Cancelar");
+
+        seleccion.getButtonTypes().setAll(btnPeliculas, btnCartelera, btnFunciones, btnCancelar);
+
+        Optional<ButtonType> resultado = seleccion.showAndWait();
+
+        if (resultado.isPresent()) {
+            FXMLLoader fxmlLoader;
+            String titulo;
+
+            if (resultado.get() == btnPeliculas) {
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionPeliculas.fxml"));
+                titulo = "CineMax - Gestión de Películas";
+            } else if (resultado.get() == btnCartelera) {
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionCartelera.fxml"));
+                titulo = "CineMax - Gestión de Cartelera";
+            } else if (resultado.get() == btnFunciones) {
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaListaFunciones.fxml"));
+                titulo = "CineMax - Gestión de Funciones";
+            } else {
+                // Usuario canceló
+                return;
+            }
+
+            Scene scene = new Scene(fxmlLoader.load(), 1000, 750);
+            stage.setTitle(titulo);
+            stage.setScene(scene);
+            stage.show();
+        }
     }
 
     @Override
