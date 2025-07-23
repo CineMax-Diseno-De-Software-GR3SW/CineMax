@@ -172,7 +172,7 @@ public class ControladorButacas {
             servicio.eliminarButaca(sel.getId());
             listarButacasPorSala(null);
             limpiarCampos();
-            lblEstado.setText("Butaca eliminada");
+            lblEstado.setText("Butaca eliminada correctamente");
         } catch (Exception ex) {
             mostrarAlerta(Alert.AlertType.ERROR, "No se pudo eliminar", ex.getMessage());
         }

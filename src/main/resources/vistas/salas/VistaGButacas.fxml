@@ -5,7 +5,8 @@
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.cinemax.salas.controladores.ControladorButacas"
-            style="-fx-background-color: linear-gradient(to bottom, #23272e 0%, #181a20 100%);">
+            style="-fx-background-color: linear-gradient(to bottom, #23272e 0%, #181a20 100%);
+                   -fx-font-family: 'Segoe UI Emoji','Segoe UI', Arial, sans-serif;">
 
     <!-- Encabezado -->
     <top>
@@ -22,147 +23,93 @@
     </top>
 
     <center>
-        <VBox spacing="20" style="-fx-background-color: transparent;">
-            <padding>
-                <Insets top="24" right="32" bottom="24" left="32"/>
-            </padding>
+        <SplitPane dividerPositions="0.36">
+            <!-- IZQUIERDA: Formulario + Botones CRUD -->
+            <VBox spacing="18" style="-fx-background-color: #23272e; -fx-background-radius: 12; -fx-padding: 24;">
+                <TitledPane text="Datos de la Butaca" expanded="true"
+                            style="-fx-font-size: 17px; -fx-text-fill: #FFA726;">
+                    <content>
+                        <GridPane hgap="16" vgap="16"
+                                  style="-fx-background-color: #23272e;
+                                         -fx-padding: 16;
+                                         -fx-background-radius: 12;">
+                            <Label text="Fila:" GridPane.rowIndex="0" GridPane.columnIndex="0"
+                                   style="-fx-text-fill: #f5f5f5;"/>
+                            <TextField fx:id="txtFila"
+                                       GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                       prefWidth="120"/>
 
-            <!-- Formulario de datos -->
-            <TitledPane text="Datos de la Butaca" expanded="true"
-                        style="-fx-font-size: 17px; -fx-text-fill: #FFA726;">
-                <content>
-                    <GridPane hgap="16" vgap="16"
-                              style="-fx-background-color: #23272e;
-                                     -fx-padding: 24;
-                                     -fx-background-radius: 18;
-                                     -fx-effect: dropshadow(gaussian, #00000055, 12, 0.2, 0, 4);">
-                        <Label text="Fila:" GridPane.rowIndex="0" GridPane.columnIndex="0"
-                               style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <TextField fx:id="txtFila" GridPane.rowIndex="0" GridPane.columnIndex="1"
-                                   style="-fx-background-color: #181a20; -fx-text-fill: #fff;
-                                          -fx-border-color: #FFA726; -fx-border-radius: 8;
-                                          -fx-background-radius: 8; -fx-font-size: 15px;">
-                            <tooltip><Tooltip text="Ingrese la fila"/></tooltip>
-                        </TextField>
+                            <Label text="Columna:" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                                   style="-fx-text-fill: #f5f5f5;"/>
+                            <TextField fx:id="txtColumna"
+                                       GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                       prefWidth="120"/>
 
-                        <Label text="Columna:" GridPane.rowIndex="1" GridPane.columnIndex="0"
-                               style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <TextField fx:id="txtColumna" GridPane.rowIndex="1" GridPane.columnIndex="1"
-                                   style="-fx-background-color: #181a20; -fx-text-fill: #fff;
-                                          -fx-border-color: #FFA726; -fx-border-radius: 8;
-                                          -fx-background-radius: 8; -fx-font-size: 15px;">
-                            <tooltip><Tooltip text="Ingrese la columna"/></tooltip>
-                        </TextField>
+                            <Label text="Estado:" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                                   style="-fx-text-fill: #f5f5f5;"/>
+                            <ComboBox fx:id="cmbEstado"
+                                      GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                      prefWidth="140"/>
 
-                        <Label text="Estado:" GridPane.rowIndex="2" GridPane.columnIndex="0"
-                               style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <ComboBox fx:id="cmbEstado" GridPane.rowIndex="2" GridPane.columnIndex="1"
-                                  style="-fx-background-color: #FFA726; -fx-text-fill: #fff;
-                                         -fx-border-color: #FFA726; -fx-border-radius: 8;
-                                         -fx-background-radius: 8;">
-                            <tooltip><Tooltip text="Seleccione el estado de la butaca"/></tooltip>
-                        </ComboBox>
+                            <Label text="Sala:" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                                   style="-fx-text-fill: #f5f5f5;"/>
+                            <ComboBox fx:id="cmbSala"
+                                      GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                      prefWidth="140"/>
+                        </GridPane>
+                    </content>
+                </TitledPane>
 
-                        <Label text="Sala:" GridPane.rowIndex="3" GridPane.columnIndex="0"
-                               style="-fx-text-fill: #f5f5f5; -fx-font-size: 15px;"/>
-                        <ComboBox fx:id="cmbSala" promptText="Seleccione sala"
-                                  GridPane.rowIndex="3" GridPane.columnIndex="1"
-                                  style="-fx-background-color: #181a20; -fx-text-fill: #fff;
-                                         -fx-border-color: #FFA726; -fx-border-radius: 8;
-                                         -fx-background-radius: 8; -fx-font-size: 15px;">
-                            <tooltip><Tooltip text="Selecciona la sala para esta butaca"/></tooltip>
-                        </ComboBox>
-                    </GridPane>
-                </content>
-            </TitledPane>
+                <!-- Botones CRUD en dos filas horizontales -->
+                <HBox spacing="16" alignment="CENTER">
+                    <Button text="🆕 Crear"      onAction="#crearButaca"      prefWidth="140"/>
+                    <Button text="✏️ Actualizar" onAction="#actualizarButaca" prefWidth="140"/>
+                </HBox>
+                <HBox spacing="16" alignment="CENTER">
+                    <Button text="🗑️ Eliminar"  onAction="#eliminarButaca"   prefWidth="140"/>
+                    <Button text="🧹 Limpiar"    onAction="#limpiarCampos"    prefWidth="140"/>
+                </HBox>
+            </VBox>
 
-            <!-- Barra de acciones y búsqueda -->
-            <HBox spacing="12" alignment="CENTER" style="-fx-padding: 0 32;">
-                <TextField fx:id="txtBuscarIdSala" promptText="Buscar por ID Sala"
-                           HBox.hgrow="ALWAYS"
-                           style="-fx-background-color: #181a20; -fx-text-fill: #fff;
-                                  -fx-background-radius: 8; -fx-font-size: 14px;"/>
-                <Button text="🔍" onAction="#listarButacasPorSala"
-                        style="-fx-font-family: 'Segoe UI Emoji';
-                               -fx-background-radius: 8;
-                               -fx-background-color: #FFA726;
-                               -fx-padding: 6 12;"/>
-                <Button text="Listar todas" onAction="#listarTodasButacas"
-                        style="-fx-background-radius: 8;
-                               -fx-background-color: #FFA726;
-                               -fx-text-fill: #fff;
-                               -fx-font-size: 14px;
-                               -fx-padding: 6 12;"/>
-                <Region HBox.hgrow="ALWAYS"/>
-                <Button text="🆕 Crear" onAction="#crearButaca"
-                        graphicTextGap="8"
-                        style="-fx-font-family: 'Segoe UI Emoji';
-                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
-                               -fx-text-fill: #fff;
-                               -fx-font-weight: bold;
-                               -fx-background-radius: 10;
-                               -fx-padding: 10 24;
-                               -fx-font-size: 15px;"/>
-                <Button text="✏️ Actualizar" onAction="#actualizarButaca"
-                        style="-fx-font-family: 'Segoe UI Emoji';
-                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
-                               -fx-text-fill: #fff;
-                               -fx-font-weight: bold;
-                               -fx-background-radius: 10;
-                               -fx-padding: 10 24;
-                               -fx-font-size: 15px;"/>
-                <Button text="🗑️ Eliminar" onAction="#eliminarButaca"
-                        style="-fx-font-family: 'Segoe UI Emoji';
-                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
-                               -fx-text-fill: #fff;
-                               -fx-font-weight: bold;
-                               -fx-background-radius: 10;
-                               -fx-padding: 10 24;
-                               -fx-font-size: 15px;"/>
-                <Button text="🧹 Limpiar" onAction="#limpiarCampos"
-                        style="-fx-font-family: 'Segoe UI Emoji';
-                               -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800);
-                               -fx-text-fill: #fff;
-                               -fx-font-weight: bold;
-                               -fx-background-radius: 10;
-                               -fx-padding: 10 24;
-                               -fx-font-size: 15px;"/>
-            </HBox>
+            <!-- DERECHA: Buscador + Tabla -->
+            <VBox spacing="16"
+                  style="-fx-background-color: #23272e; -fx-background-radius: 12; -fx-padding: 0 0 0 16;">
+                <!-- Buscador -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtBuscarIdSala"
+                               promptText="Buscar por ID Sala"
+                               prefWidth="160"/>
+                    <Button text="🔍" onAction="#listarButacasPorSala"/>
+                    <Button text="Listar todas" onAction="#listarTodasButacas"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblEstado" text="Listo"/>
+                </HBox>
 
-            <!-- Tabla de butacas -->
-            <Separator style="-fx-background-color: #FFA726;"/>
-            <TableView fx:id="tablaButacas" prefHeight="240"
-                       style="-fx-background-color: #23272e;
-                              -fx-background-radius: 14;
-                              -fx-border-radius: 14;
-                              -fx-border-color: #FFA726;
-                              -fx-border-width: 2;
-                              -fx-effect: dropshadow(gaussian, #FFA72644, 12, 0.2, 0, 2);
-                              -fx-table-cell-border-color: transparent;
-                              -fx-control-inner-background: #23272e;
-                              -fx-selection-bar: #FFA726;
-                              -fx-selection-bar-non-focused: #FF9800;">
-                <columns>
-                    <TableColumn text="ID" prefWidth="50" fx:id="colId"
-                                 style="-fx-text-fill: #FFA726; -fx-font-size: 15px; -fx-font-weight: bold;"/>
-                    <TableColumn text="Fila" prefWidth="120" fx:id="colFila"
-                                 style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
-                    <TableColumn text="Columna" prefWidth="80" fx:id="colColumna"
-                                 style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
-                    <TableColumn text="Estado" prefWidth="100" fx:id="colEstado"
-                                 style="-fx-text-fill: #fff; -fx-font-size: 15px;"/>
-                    <TableColumn text="ID Sala" prefWidth="100" fx:id="colIdSala"
-                                 style="-fx-text-fill: #cd3232; -fx-font-size: 15px;"/>
-                </columns>
-            </TableView>
-        </VBox>
+                <!-- Tabla -->
+                <TableView fx:id="tablaButacas"
+                           prefHeight="360"
+                           style="-fx-control-inner-background: #23272e;
+                                  -fx-table-cell-border-color: transparent;
+                                  -fx-border-color: #23272e;">
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="50"/>
+                        <TableColumn fx:id="colFila" text="Fila" prefWidth="80"/>
+                        <TableColumn fx:id="colColumna" text="Columna" prefWidth="80"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="100"/>
+                        <TableColumn fx:id="colIdSala" text="ID Sala" prefWidth="100"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
     </center>
 
+    <!-- BOTTOM: barra de estado -->
     <bottom>
-        <HBox alignment="CENTER_LEFT" style="-fx-background-color: #181a20; -fx-padding: 8 32;">
-            <Label text="Estado: " style="-fx-text-fill: #FFA726; -fx-font-size: 13px;"/>
-            <Label fx:id="lblEstado" text="Listo" style="-fx-text-fill: #fff; -fx-font-size: 13px;"/>
+        <HBox alignment="CENTER_LEFT"
+              style="-fx-background-color:#181a20; -fx-padding:8 32;">
+            <Label text="© CineMax" style="-fx-text-fill:#555;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblEstado" text="Listo" style="-fx-text-fill:#FFA726;"/>
         </HBox>
     </bottom>
-
 </BorderPane>
