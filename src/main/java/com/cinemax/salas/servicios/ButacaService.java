@@ -16,7 +16,21 @@ public class ButacaService {
     public List<Butaca> listarButacasPorSala(int idSala) throws Exception {
         return butacasDAO.listarButacasPorSala(idSala);
     }
+    public void generarButacasAutomatica(int salaId) throws Exception {
+        Sala sala = salasDAO.obtenerSalaPorId(salaId);
+        if (sala == null) throw new Exception("Sala no existe: " + salaId);
+        final int FILAS = 6;
+        int columnas;
+        switch (sala.getCapacidad()) {
+            case 36 -> columnas = 6;
+            case 42 -> columnas = 7;
+            case 48 -> columnas = 8;
+            default -> throw new Exception("Capacidad no soportada: " + sala.getCapacidad());
+        }
 
+        // ¡Usamos el método del DAO!
+        butacasDAO.generarButacas(salaId, FILAS, columnas);
+    }
     public void crearButaca(Butaca butaca) throws Exception {
         validarDatosBasicos(butaca);
 
