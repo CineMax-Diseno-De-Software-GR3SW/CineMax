@@ -53,10 +53,8 @@
 
             <!-- Botones de exportación -->
             <HBox spacing="10" alignment="CENTER_RIGHT">
-                <!-- <Button text="Exportar PDF" onAction="#onExportarPDF"/>-->
-                <!--<Button text="Exportar CSV" onAction="#onExportarCSV"/>-->
-                <Button text="Exportar PDF"/>
-                <Button text="Exportar CSV"/>
+                <Button text="Exportar PDF" onAction="#onExportarPDF"/>
+                <Button text="Exportar CSV" onAction="#onExportarCSV"/>
             </HBox>
 
             <!-- Vista previa: Tabla y gráfica -->
