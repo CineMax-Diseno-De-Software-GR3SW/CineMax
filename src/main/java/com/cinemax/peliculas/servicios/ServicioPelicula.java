@@ -106,6 +106,13 @@ public class ServicioPelicula {
     }
     
     /**
+     * Obtiene todas las películas disponibles
+     */
+    public List<Pelicula> obtenerPeliculas() throws SQLException {
+        return peliculaDAO.listarTodas();
+    }
+
+    /**
      * Busca películas por título (búsqueda parcial)
      */
     public List<Pelicula> buscarPeliculasPorTitulo(String titulo) 

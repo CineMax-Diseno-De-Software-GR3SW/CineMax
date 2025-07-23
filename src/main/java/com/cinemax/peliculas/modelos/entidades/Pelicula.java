@@ -76,7 +76,14 @@ public class Pelicula {
         return imagenUrl;
     }
     
-    
+    public String getUrlImagen() {
+        return imagenUrl;
+    }
+
+    public String getGenero() {
+        return getGenerosComoString();
+    }
+
     // Setters
     public void setId(int id) {
         this.id = id;

@@ -1,6 +1,7 @@
 package com.cinemax.peliculas.controladores;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -16,13 +17,15 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 public class ControladorCarteleraFX implements Initializable {
 
@@ -34,13 +37,7 @@ public class ControladorCarteleraFX implements Initializable {
     // Componentes de la interfaz FXML
     @FXML private TextField txtBuscarTitulo;
     @FXML private TextField txtBuscarId;
-    @FXML private TableView<Pelicula> tablaCartelera;
-    @FXML private TableColumn<Pelicula, Integer> colId;
-    @FXML private TableColumn<Pelicula, String> colTitulo;
-    @FXML private TableColumn<Pelicula, Integer> colAnio;
-    @FXML private TableColumn<Pelicula, String> colGenero;
-    @FXML private TableColumn<Pelicula, Integer> colDuracion;
-    @FXML private TableColumn<Pelicula, String> colIdioma;
+    @FXML private GridPane grillaCartelera;
 
     @FXML private Button btnActualizarCartelera;
     @FXML private Button btnBuscarTitulo;
@@ -60,66 +57,20 @@ public class ControladorCarteleraFX implements Initializable {
         this.cartelera = new Cartelera(new ArrayList<>());
         this.funcionDAO = new FuncionDAO();
         this.peliculaDAO = new PeliculaDAO();
+        this.listaPeliculasCartelera = FXCollections.observableArrayList();
+        this.peliculasFiltradas = FXCollections.observableArrayList();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        listaPeliculasCartelera = FXCollections.observableArrayList();
-        peliculasFiltradas = FXCollections.observableArrayList();
-
-        configurarTabla();
-        configurarEventos();
-        actualizarCartelera();
-    }
-
-    private void configurarTabla() {
-        // Configurar las columnas de la tabla
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
-        colAnio.setCellValueFactory(new PropertyValueFactory<>("anio"));
-
-        // Para el género, necesitamos un cellValueFactory personalizado
-        colGenero.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getGenerosComoString()
-            );
-        });
-
-        colDuracion.setCellValueFactory(new PropertyValueFactory<>("duracionMinutos"));
-
-        // Para el idioma, necesitamos un cellValueFactory personalizado
-        colIdioma.setCellValueFactory(cellData -> {
-            var idioma = cellData.getValue().getIdioma();
-            return new javafx.beans.property.SimpleStringProperty(
-                idioma != null ? idioma.getNombre() : "N/A"
-            );
-        });
-
-        // Configurar selección de tabla
-        tablaCartelera.getSelectionModel().selectedItemProperty().addListener(
-            (obs, oldSelection, newSelection) -> {
-                boolean peliculaSeleccionada = newSelection != null;
-                btnVerDetalles.setDisable(!peliculaSeleccionada);
-            }
-        );
-
-        tablaCartelera.setItems(peliculasFiltradas);
-    }
-
-    private void configurarEventos() {
-        // Configurar búsqueda en tiempo real por título
-        txtBuscarTitulo.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtBuscarId.getText().trim().isEmpty()) {
-                buscarPorTitulo();
-            }
-        });
-
-        // Configurar búsqueda en tiempo real por ID
-        txtBuscarId.textProperty().addListener((obs, oldText, newText) -> {
-            if (txtBuscarTitulo.getText().trim().isEmpty()) {
-                buscarPorId();
-            }
-        });
+        try {
+            servicioPelicula = new ServicioPelicula();
+            cartelera = new Cartelera(servicioPelicula.obtenerPeliculas());
+            listaPeliculasCartelera.addAll(cartelera.getPeliculas());
+            actualizarGrilla();
+        } catch (Exception e) {
+            mostrarError("Error al inicializar la cartelera", e.getMessage());
+        }
     }
 
     @FXML
@@ -146,9 +97,66 @@ public class ControladorCarteleraFX implements Initializable {
 
     @FXML
     private void onVerDetalles(ActionEvent event) {
-        Pelicula peliculaSeleccionada = tablaCartelera.getSelectionModel().getSelectedItem();
-        if (peliculaSeleccionada != null) {
-            mostrarDetallesPelicula(peliculaSeleccionada);
+        // Ajustar lógica para manejar selección en grillaCartelera
+        // Implementar lógica adecuada para obtener detalles de la película seleccionada
+    }
+
+    private void actualizarGrilla(List<Pelicula> peliculas) {
+        grillaCartelera.getChildren().clear();
+
+        int row = 0;
+        int col = 0;
+        for (Pelicula pelicula : peliculas) {
+            ImageView imagenPelicula = new ImageView(new Image(pelicula.getUrlImagen()));
+            imagenPelicula.setFitWidth(150); // Ajustar tamaño de las imágenes
+            imagenPelicula.setFitHeight(200);
+
+            Label titulo = new Label(pelicula.getTitulo());
+            Label genero = new Label(pelicula.getGenero());
+            Label anio = new Label(String.valueOf(pelicula.getAnio()));
+
+            VBox item = new VBox(10, imagenPelicula, titulo, genero, anio);
+            item.setAlignment(Pos.CENTER);
+            item.setPrefWidth(200); // Ajustar tamaño de las grillas individuales
+
+            grillaCartelera.add(item, col, row);
+
+            col++;
+            if (col == 3) {
+                col = 0;
+                row++;
+            }
+        }
+    }
+
+    private void actualizarGrilla() {
+        grillaCartelera.getChildren().clear();
+        List<Pelicula> peliculas = cartelera.getPeliculas();
+
+        int row = 0;
+        int col = 0;
+        for (Pelicula pelicula : peliculas) {
+            ImageView imagenPelicula = new ImageView(new Image(pelicula.getUrlImagen()));
+            imagenPelicula.setFitWidth(100);
+            imagenPelicula.setFitHeight(150);
+
+            Label titulo = new Label(pelicula.getTitulo());
+            Label genero = new Label(pelicula.getGenero());
+            Label anio = new Label(String.valueOf(pelicula.getAnio()));
+
+            GridPane item = new GridPane();
+            item.add(imagenPelicula, 0, 0);
+            item.add(titulo, 0, 1);
+            item.add(genero, 0, 2);
+            item.add(anio, 0, 3);
+
+            grillaCartelera.add(item, col, row);
+
+            col++;
+            if (col == 3) {
+                col = 0;
+                row++;
+            }
         }
     }
 
@@ -190,21 +198,19 @@ public class ControladorCarteleraFX implements Initializable {
         }
 
         peliculasFiltradas.clear();
-        List<Pelicula> resultados = new ArrayList<>();
-
-        for (Pelicula p : cartelera.getPeliculas()) {
+        for (Pelicula p : listaPeliculasCartelera) {
             if (p.getTitulo().toLowerCase().contains(titulo)) {
-                resultados.add(p);
+                peliculasFiltradas.add(p);
             }
         }
 
-        peliculasFiltradas.addAll(resultados);
+        actualizarGrilla(peliculasFiltradas);
         actualizarEstadisticas();
 
-        if (resultados.isEmpty()) {
+        if (peliculasFiltradas.isEmpty()) {
             lblEstadoCartelera.setText("No se encontraron películas con ese título en la cartelera");
         } else {
-            lblEstadoCartelera.setText("Resultados de búsqueda por título: " + resultados.size() + " película(s)");
+            lblEstadoCartelera.setText("Resultados de búsqueda por título: " + peliculasFiltradas.size() + " película(s)");
         }
     }
 
@@ -220,18 +226,20 @@ public class ControladorCarteleraFX implements Initializable {
             int id = Integer.parseInt(idTexto);
             peliculasFiltradas.clear();
 
-            for (Pelicula p : cartelera.getPeliculas()) {
+            for (Pelicula p : listaPeliculasCartelera) {
                 if (p.getId() == id) {
                     peliculasFiltradas.add(p);
-                    tablaCartelera.getSelectionModel().select(p);
-                    lblEstadoCartelera.setText("Película encontrada con ID: " + id);
-                    actualizarEstadisticas();
-                    return;
                 }
             }
 
-            lblEstadoCartelera.setText("No se encontró película con ID: " + id + " en la cartelera");
+            actualizarGrilla(peliculasFiltradas);
             actualizarEstadisticas();
+
+            if (peliculasFiltradas.isEmpty()) {
+                lblEstadoCartelera.setText("No se encontró película con ID: " + id + " en la cartelera");
+            } else {
+                lblEstadoCartelera.setText("Película encontrada con ID: " + id);
+            }
 
         } catch (NumberFormatException e) {
             lblEstadoCartelera.setText("Por favor ingrese un ID válido (número entero)");
@@ -239,8 +247,7 @@ public class ControladorCarteleraFX implements Initializable {
     }
 
     private void mostrarTodasLasPeliculas() {
-        peliculasFiltradas.clear();
-        peliculasFiltradas.addAll(listaPeliculasCartelera);
+        actualizarGrilla(listaPeliculasCartelera);
         actualizarEstadisticas();
 
         if (listaPeliculasCartelera.isEmpty()) {

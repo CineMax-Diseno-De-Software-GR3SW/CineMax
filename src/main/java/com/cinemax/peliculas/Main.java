@@ -2,6 +2,7 @@ package com.cinemax.peliculas;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -49,7 +50,12 @@ public class Main extends Application {
                 return;
             }
 
-            Scene scene = new Scene(fxmlLoader.load(), 1000, 750);
+            Parent root = fxmlLoader.load();
+            Scene scene = new Scene(root, 1000, 750);
+
+            // Aplicar estilos base
+            scene.getStylesheets().add(getClass().getResource("/Vista/Peliculas/ayu-theme.css").toExternalForm());
+
             stage.setTitle(titulo);
             stage.setScene(scene);
             stage.show();
