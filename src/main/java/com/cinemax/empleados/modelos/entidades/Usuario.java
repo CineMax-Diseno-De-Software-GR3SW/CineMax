@@ -165,4 +165,7 @@ public class Usuario {
     public void actualizarCorreo(String nuevoEmail) {
         this.correo = nuevoEmail;
     }
+
+    public void actualizarCelular(String nuevoCelular) { this.celular = nuevoCelular; }
+
 }

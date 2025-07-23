@@ -76,4 +76,9 @@ public class ServicioPerfilUsuario {
         usuarioActivo.actualizarCorreo(nuevoEmail);
         usuarioDAO.actualizarCorreo(usuarioActivo.getId(),nuevoEmail);
     }
+
+    public void actualizarCelular(Usuario usuarioActivo, String nuevoCelular) throws SQLException {
+        usuarioActivo.actualizarCelular(nuevoCelular);
+        usuarioDAO.actualizarCelular(usuarioActivo.getId(), nuevoCelular);
+    }
 }

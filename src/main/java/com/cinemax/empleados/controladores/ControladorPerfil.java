@@ -146,9 +146,15 @@ public class ControladorPerfil implements Initializable {
         txtTelefono.setEditable(editandoTelefono);
 
         if (!editandoTelefono) {
-            String nuevoTelefono = txtTelefono.getText();
+            String nuevoCelular = txtTelefono.getText();
             // Aquí podrías guardar el teléfono a base de datos o backend
-            System.out.println("Nuevo teléfono guardado: " + nuevoTelefono);
+            System.out.println("Nuevo teléfono guardado: " + nuevoCelular);
+            try {
+                servicioPerfilUsuario.actualizarCelular(sesionSingleton.getUsuarioActivo(),nuevoCelular);
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Celular Registrado", "Actualizacion", "Celular " + nuevoCelular + " registrado exitosamente");
+            } catch (SQLException e) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el celular", "Error", e.getMessage());
+            }
         }
     }
 
