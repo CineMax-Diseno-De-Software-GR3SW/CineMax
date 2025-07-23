@@ -11,6 +11,8 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TableView?>
 
 <BorderPane prefHeight="550" prefWidth="800" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.reportes.controladores.ControladorReportesPrincipal">
 
@@ -31,25 +33,52 @@
 
     <!-- ░░░ PANEL CENTRAL ░░░ -->
     <center>
-        <VBox spacing="12">
-            <!-- Botón Nuevo Usuario alineado a la derecha -->
-            <HBox alignment="CENTER_RIGHT" />
+        <VBox spacing="16" alignment="TOP_CENTER">
+            <!-- Filtros -->
+            <HBox spacing="10" alignment="CENTER_LEFT">
+                <Label text="Desde:"/>
+                <DatePicker fx:id="dateDesde" styleClass="date-picker" />
+                <Label text="Hasta:"/>
+                <DatePicker fx:id="dateHasta" styleClass="date-picker" />
+                <Label text="Horario:"/>
+                <ChoiceBox fx:id="choiceHorario" prefWidth="100"/>
+                <Label text="Tipo de Boleto:"/>
+                <ChoiceBox fx:id="choiceTipoBoleto" prefWidth="100"/>
+                <Label text="Sala:"/>
+                <ChoiceBox fx:id="choiceSala" prefWidth="100"/>
+                <!--<Button text="Filtrar" onAction="#onFiltrar"/>-->
+                <Button text="Filtrar"/>
 
-            <VBox maxWidth="620" prefWidth="620" spacing="12">
-            <Label styleClass="section-title" stylesheets="@../temas/ayu-theme.css" text="Grafica Reporte de Ventas" />
-            <Label prefHeight="15.0" prefWidth="139.0" text="Filtro de Visualizacion" />
-            <ChoiceBox accessibleText="Ingresa un filtro" prefWidth="150.0" />
-            <BarChart prefHeight="422.0" prefWidth="532.0">
-              <xAxis>
-                <CategoryAxis prefHeight="22.0" prefWidth="496.0" side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis side="LEFT" />
-              </yAxis>
-            </BarChart>
+            </HBox>
+
+            <!-- Botones de exportación -->
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <!-- <Button text="Exportar PDF" onAction="#onExportarPDF"/>-->
+                <!--<Button text="Exportar CSV" onAction="#onExportarCSV"/>-->
+                <Button text="Exportar PDF"/>
+                <Button text="Exportar CSV"/>
+            </HBox>
+
+            <!-- Vista previa: Tabla y gráfica -->
+            <HBox spacing="16" alignment="TOP_CENTER">
+                <VBox spacing="8">
+                    <Label text="Vista previa del reporte"/>
+                    <TableView fx:id="tablaPreview" prefWidth="350" prefHeight="250"/>
+                    <Label fx:id="labelTotales" text="Total: $0.00"/>
+                </VBox>
+                <VBox spacing="8">
+                    <Label text="Gráfica de ventas"/>
+                    <BarChart fx:id="barChart" prefWidth="300" prefHeight="250">
+                        <xAxis>
+                            <CategoryAxis label="Categoría"/>
+                        </xAxis>
+                        <yAxis>
+                            <NumberAxis label="Cantidad"/>
+                        </yAxis>
+                    </BarChart>
+                </VBox>
+            </HBox>
         </VBox>
-
-    </VBox>
     </center>
 
     <!-- ░░░ FRANJA IZQUIERDA CON DATOS DE SESIÓN ░░░ -->

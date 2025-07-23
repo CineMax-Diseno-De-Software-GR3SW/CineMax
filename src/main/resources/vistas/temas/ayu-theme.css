@@ -116,3 +116,10 @@
     -fx-padding: 20px;
     -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.2), 15, 0, 0, 0);
 }
+
+/* Fondo blanco y texto negro para DatePicker */
+.date-picker,
+.date-picker .text-field {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
