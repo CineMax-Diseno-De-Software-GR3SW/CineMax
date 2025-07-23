@@ -14,12 +14,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/salas/VistaGButacas.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 500);
 
+        // Aplica el CSS
+        scene.getStylesheets().add(getClass().getResource("/vistas/temas/ayu-theme.css").toExternalForm());
 
-        stage.setTitle("CineMax - Empleados");
+        stage.setTitle("CineMax - Salas");
         stage.setScene(scene);
         stage.show();
     }
