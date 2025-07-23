@@ -4,9 +4,8 @@ import com.cinemax.venta_boletos.Modelos.Boleto;
 import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
 //import com.cinemax.venta_boletos.Modelos.Factura;
-import com.cinemax.venta_boletos.Modelos.Producto;
 //import com.cinemax.venta_boletos.Modelos.*;
-import com.cinemax.venta_boletos.Util.ThemeManager;
+import com.cinemax.comun.ApuntadorTema;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -122,7 +121,7 @@ public class ControladorResumen {
 
             Stage stage = (Stage) continueButton.getScene().getWindow();
             Scene scene = new Scene(root);
-            ThemeManager.getInstance().applyTheme(scene);
+            ApuntadorTema.getInstance().applyTheme(scene);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
@@ -140,7 +139,7 @@ public class ControladorResumen {
 
     @FXML protected void onBackAction() { if (previousScene != null) { ((Stage) continueButton.getScene().getWindow()).setScene(previousScene); } }
     @FXML protected void onCloseAction() { ((Stage) headerBar.getScene().getWindow()).close(); }
-    @FXML protected void onThemeToggleAction() { ThemeManager.getInstance().toggleTheme(headerBar.getScene()); }
+    @FXML protected void onThemeToggleAction() { ApuntadorTema.getInstance().applyTheme(headerBar.getScene()); }
 
     private void showAlert(String title, String message) {
         try {
@@ -154,7 +153,7 @@ public class ControladorResumen {
             alertStage.initModality(Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root);
             scene.setFill(null);
-            ThemeManager.getInstance().applyTheme(scene);
+            ApuntadorTema.getInstance().applyTheme(scene);
             alertStage.setScene(scene);
             alertStage.showAndWait();
         } catch (IOException e) {

@@ -4,11 +4,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<!-- stylesheets = "@ayu-theme.css" -->
-
 <VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
 
-    <Label text="CineMAX">
+    <Label text="CineMAX" styleClass="title-main">
         <font>
             <Font size="60" />
         </font>

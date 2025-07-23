@@ -15,7 +15,9 @@
 .scroll-bar:vertical .track { -fx-background-color: #1F2430; -fx-background-radius: 10px; }
 
 /* --- CABECERA Y NAVEGACIÓN --- */
-.header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #1F2430; -fx-border-width: 0 0 1px 0; }
+.header-bar {
+    -fx-alignment: center-left;
+    -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #1F2430; -fx-border-width: 0 0 1px 0; }
 .icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
 .icon-button:hover { -fx-background-color: #1F2430; }
 .icon-button .text { -fx-font-size: 20px; -fx-fill: #CBCCC6; -fx-font-weight: bold; }
@@ -85,6 +87,20 @@
 /* --- Iconos y Contadores --- */
 .summary-ticket-count { -fx-background-color: #363B48; -fx-text-fill: #CBCCC6; }
 .summary-price { -fx-text-fill: #CBCCC6; -fx-font-weight: bold; }
+/* --- Estilos para el Resumen Financiero --- */
+.summary-label {
+    -fx-text-fill: #CBCCC6; /* Gris claro para etiquetas como "Subtotal" */
+}
+
+.summary-value {
+    -fx-text-fill: #FFFFFF; /* Blanco para los valores numéricos */
+}
+
+.summary-total-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-text-fill: #AAD94C; /* Verde brillante para el total, para que destaque */
+}
 
 .toggle-button.switch {
     -fx-background-color: #ccc;

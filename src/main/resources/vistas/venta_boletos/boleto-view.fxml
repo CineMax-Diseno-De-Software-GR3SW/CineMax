@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Rectangle?>
-<?import javafx.scene.text.Text?>
-<?import javafx.scene.paint.Color?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane prefWidth="800" prefHeight="550" stylesheets="@../temas/ayu-theme.css" styleClass="root"
-            xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.cinemax.venta_boletos.Controladores.ControladorBoleto">
+<BorderPane prefHeight="550" prefWidth="800" styleClass="root" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorBoleto">
 
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
                 <Label styleClass="section-title" text="Selecciona tus Boletos" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Button onAction="#onThemeToggleAction" styleClass="icon-button, theme-button" text="🎨" />
-                <Button onAction="#onCloseAction" styleClass="icon-button, close-button" text="✕" />
             </children>
         </HBox>
     </top>
@@ -39,12 +29,12 @@
                     <VBox spacing="10.0">
                         <children>
                             <Label styleClass="section-title" text="VIP" />
-                            <VBox styleClass="ticket-card" spacing="10">
+                            <VBox spacing="10" styleClass="ticket-card">
                                 <Label styleClass="ticket-price" text="Sala 2D VIP" />
                                 <Label text="Precio: 7.60" />
                                 <HBox alignment="CENTER_LEFT" spacing="15.0">
                                     <Button fx:id="vipMinusButton" onAction="#onVipMinus" styleClass="stepper-button" text="-" />
-                                    <Label fx:id="vipCountLabel" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                    <Label fx:id="vipCountLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="0" />
                                     <Button fx:id="vipPlusButton" onAction="#onVipPlus" styleClass="stepper-button" text="+" />
                                 </HBox>
                             </VBox>
@@ -53,12 +43,12 @@
                     <VBox spacing="10.0">
                         <children>
                             <Label styleClass="section-title" text="Normal" />
-                            <VBox styleClass="ticket-card" spacing="10">
+                            <VBox spacing="10" styleClass="ticket-card">
                                 <Label styleClass="ticket-price" text="Sala 2D Normal" />
                                 <Label text="Precio: 3.00" />
                                 <HBox alignment="CENTER_LEFT" spacing="15.0">
                                     <Button fx:id="normalMinusButton" onAction="#onNormalMinus" styleClass="stepper-button" text="-" />
-                                    <Label fx:id="normalCountLabel" text="0" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+                                    <Label fx:id="normalCountLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="0" />
                                     <Button fx:id="normalPlusButton" onAction="#onNormalPlus" styleClass="stepper-button" text="+" />
                                 </HBox>
                             </VBox>
@@ -70,7 +60,7 @@
     </center>
 
     <right>
-        <VBox styleClass="summary-pane" spacing="15.0" minWidth="280" maxWidth="280">
+        <VBox maxWidth="280" minWidth="280" spacing="15.0" styleClass="summary-pane">
             <HBox alignment="CENTER">
                 <Rectangle arcHeight="15" arcWidth="15" height="150.0" stroke="TRANSPARENT" strokeType="INSIDE" width="240.0">
                     <fill><Color red="0.3" green="0.3" blue="0.3" /></fill>
@@ -82,12 +72,12 @@
             <Text fx:id="tusBoletosTitle" style="-fx-font-weight: bold;" text="TUS BOLETOS" />
             <VBox fx:id="ticketSummaryContainer" spacing="8.0" />
             <HBox>
-                <Label text="Total:" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
+                <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Total:" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Label fx:id="totalLabel" text="0.00" style="-fx-font-weight: bold; -fx-font-size: 18px;"/>
+                <Label fx:id="totalLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
             </HBox>
             <Region VBox.vgrow="ALWAYS" />
-            <Button fx:id="continueButton" onAction="#onContinuarAction" styleClass="primary-button" text="Continuar" maxWidth="Infinity"/>
+            <Button fx:id="continueButton" maxWidth="Infinity" onAction="#onContinuarAction" styleClass="primary-button" text="Continuar" />
         </VBox>
     </right>
 </BorderPane>

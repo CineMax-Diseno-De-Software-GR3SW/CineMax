@@ -96,7 +96,7 @@ public class ControladorMostrarCartelera {
         // Estilo para la alerta
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.getStylesheets().add(
-                getClass().getResource("/vistas/temas/styles.css").toExternalForm());
+                getClass().getResource("/vistas/temas/ayu-theme.css").toExternalForm());
         dialogPane.getStyleClass().add("dialog-pane");
 
         alert.showAndWait();

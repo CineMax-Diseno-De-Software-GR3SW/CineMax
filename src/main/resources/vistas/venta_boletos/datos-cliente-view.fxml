@@ -1,29 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Text?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorFacturacion">
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorFacturacion">
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
                 <Button onAction="#onBackAction" styleClass="icon-button" text="←" />
-                <Label styleClass="section-title" text="Checkout" />
+                <Label styleClass="section-title" text="Información de facturación" />
                 <Region HBox.hgrow="ALWAYS" />
-                <!-- NUEVO: Botón para cambiar el tema -->
-                <Button onAction="#onThemeToggleAction" styleClass="icon-button, theme-button" text="🎨" />
-                <Button onAction="#onCloseAction" styleClass="icon-button, close-button" text="✕" />
             </children>
         </HBox>
     </top>
@@ -36,19 +24,18 @@
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                 </columnConstraints>
-                <Label text="Subtotal:" GridPane.rowIndex="0" />
+                <Label styleClass="summary-label" text="Subtotal:" GridPane.rowIndex="0" />
                 <Label fx:id="subtotalLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <Label text="Impuestos (15%):" GridPane.rowIndex="1" />
+                <Label styleClass="summary-label" text="Impuestos (15%):" GridPane.rowIndex="1" />
                 <Label fx:id="impuestosLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Total del pedido:" GridPane.rowIndex="2" />
-                <Label fx:id="totalLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-font-size: 16px;" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" styleClass="summary-total-label" text="Total del pedido:" GridPane.rowIndex="2" />
+                <Label fx:id="totalLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-font-size: 16px;" styleClass="summary-total-label" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
             <rowConstraints>
                <RowConstraints />
                <RowConstraints />
                <RowConstraints />
             </rowConstraints>
             </GridPane>
-            <Button onAction="#onVerDetalle" styleClass="link-button" text="Ver detalle de orden" />
             <Region VBox.vgrow="ALWAYS" />
             <Button fx:id="finalizarButton" maxWidth="Infinity" onAction="#onFinalizarAction" styleClass="primary-button" text="Pagar" />
         </VBox>
@@ -58,11 +45,10 @@
             <padding>
                 <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
             </padding>
-            <Label styleClass="section-title" text="Información de facturación" />
          <Label styleClass="section-title" text="Buscar cliente" />
-         <TextField fx:id="identificacionField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="25.0" prefWidth="202.0" promptText="Ingrese el número de identificación" />
-         <Text fx:id="mensajeBusquedaCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
+         <TextField fx:id="identificacionField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="39.0" prefWidth="220.0" promptText="Ingrese el número de identificación" />
          <Button mnemonicParsing="false" onAction="#onBuscarCliente" text="Buscar" textAlignment="CENTER" />
+         <Text fx:id="mensajeBusquedaCliente" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
             <GridPane hgap="10.0" vgap="15.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />

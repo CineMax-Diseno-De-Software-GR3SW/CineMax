@@ -2,7 +2,7 @@ package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
-import com.cinemax.venta_boletos.Util.ThemeManager;
+import com.cinemax.comun.ApuntadorTema;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -160,7 +160,7 @@ public class ControladorBoleto {
 
             Stage stage = (Stage) continueButton.getScene().getWindow();
             Scene scene = new Scene(root);
-            ThemeManager.getInstance().applyTheme(scene);
+            ApuntadorTema.getInstance().applyTheme(scene);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
@@ -169,7 +169,7 @@ public class ControladorBoleto {
     }
 
     @FXML protected void onCloseAction() { ((Stage) headerBar.getScene().getWindow()).close(); }
-    @FXML protected void onThemeToggleAction() { ThemeManager.getInstance().toggleTheme(headerBar.getScene()); }
+    @FXML protected void onThemeToggleAction() { ApuntadorTema.getInstance().applyTheme(headerBar.getScene()); }
 
     // Método de alerta local (hasta que implementes AlertManager)
     private void showAlert(String title, String message) {
@@ -185,7 +185,7 @@ public class ControladorBoleto {
             alertStage.initModality(Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root);
             scene.setFill(null);
-            ThemeManager.getInstance().applyTheme(scene);
+            ApuntadorTema.getInstance().applyTheme(scene);
             alertStage.setScene(scene);
             alertStage.showAndWait();
         } catch (IOException e) {

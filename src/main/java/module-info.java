@@ -17,10 +17,11 @@ module com.cinemax.empleados {
     exports com.cinemax.venta_boletos.Controladores;
     opens com.cinemax.venta_boletos.Controladores to javafx.fxml;
 
-    exports com.cinemax.venta_boletos.Util;
+//    exports com.cinemax.venta_boletos;
 
-    opens com.cinemax.venta_boletos.Util to javafx.fxml;
-
+//    opens com.cinemax.venta_boletos.Util to javafx.fxml;
+    exports com.cinemax.comun;
+    opens com.cinemax.comun to javafx.fxml;
 
 
 }

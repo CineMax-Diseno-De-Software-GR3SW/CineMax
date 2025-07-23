@@ -5,7 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox fx:id="alertPane" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" spacing="15.0" styleClass="alert-pane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControllerAlert">
+<VBox fx:id="alertPane" alignment="CENTER" maxHeight="-Infinity" stylesheets="@../temas/ayu-theme.css" maxWidth="-Infinity" spacing="15.0" styleClass="alert-pane" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControllerAlert">
     <padding>
         <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
     </padding>

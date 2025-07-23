@@ -5,7 +5,7 @@ import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Modelos.Persistencia.ClienteDAO;
 import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
-import com.cinemax.venta_boletos.Util.ThemeManager;
+import com.cinemax.comun.ApuntadorTema;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -187,7 +187,7 @@ public class ControladorFacturacion {
 
     @FXML protected void onBackAction() { if (previousScene != null) { ((Stage) finalizarButton.getScene().getWindow()).setScene(previousScene); } }
     @FXML protected void onCloseAction() { ((Stage) headerBar.getScene().getWindow()).close(); }
-    @FXML protected void onThemeToggleAction() { ThemeManager.getInstance().toggleTheme(headerBar.getScene()); }
+    @FXML protected void onThemeToggleAction() { ApuntadorTema.getInstance().applyTheme(headerBar.getScene()); }
     @FXML protected void onVerDetalle() { System.out.println("Acción para ver detalle del pedido..."); }
 
     private void showAlert(String title, String message) {
@@ -202,7 +202,7 @@ public class ControladorFacturacion {
             alertStage.initModality(Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root);
             scene.setFill(null);
-            ThemeManager.getInstance().applyTheme(scene);
+            ApuntadorTema.getInstance().applyTheme(scene);
             alertStage.setScene(scene);
             alertStage.showAndWait();
         } catch (IOException e) {
