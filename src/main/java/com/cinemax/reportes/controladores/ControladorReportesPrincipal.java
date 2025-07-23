@@ -20,6 +20,9 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import javafx.scene.control.Alert;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ChoiceBox;
+import java.time.LocalDate;
 
 // Interfaz Strategy
 interface ExportStrategy {
@@ -142,6 +145,24 @@ public class ControladorReportesPrincipal {
     @FXML
     private Button btnBack;
 
+    @FXML private DatePicker dateDesde;
+    @FXML private DatePicker dateHasta;
+    @FXML private ChoiceBox<String> choiceHorario;
+    @FXML private ChoiceBox<String> choiceTipoBoleto;
+    @FXML private ChoiceBox<String> choiceSala;
+
+    @FXML
+    private void initialize() {
+        choiceHorario.getItems().addAll("Todos", "Matutino", "Nocturno");
+        choiceHorario.setValue("Todos");
+
+        choiceTipoBoleto.getItems().addAll("Todos", "VIP", "Normal");
+        choiceTipoBoleto.setValue("Todos");
+
+        choiceSala.getItems().addAll("Todas", "Sala A", "Sala B", "Sala C");
+        choiceSala.setValue("Todas");
+    }
+
     @FXML
     private void onBackAction(ActionEvent event) {
         try {
@@ -180,6 +201,21 @@ public class ControladorReportesPrincipal {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @FXML
+    private void onFiltrar(ActionEvent event) {
+        LocalDate desde = dateDesde.getValue();
+        LocalDate hasta = dateHasta.getValue();
+        String horario = choiceHorario.getValue();
+        String tipoBoleto = choiceTipoBoleto.getValue();
+        String sala = choiceSala.getValue();
+
+        // Por ahora, solo imprime los valores seleccionados
+        System.out.println("Desde: " + desde + ", Hasta: " + hasta + ", Horario: " + horario +
+                           ", Tipo de Boleto: " + tipoBoleto + ", Sala: " + sala);
+
+        // Aquí luego llamarás al DAO para obtener los datos filtrados y actualizar la vista previa
     }
 
     // Métodos para exportar PDF y CSV
