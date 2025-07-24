@@ -20,7 +20,7 @@ public class Main extends Application {
         // Mostrar diálogo de selección de vista
         Alert seleccion = new Alert(Alert.AlertType.CONFIRMATION);
         seleccion.setTitle("CineMax - Selección de Vista");
-        seleccion.setHeaderText("Seleccione qué vista desea abrir:");
+        seleccion.setHeaderText("Sel eccione qué vista desea abrir:");
         seleccion.setContentText("Elija una de las siguientes opciones:");
 
         ButtonType btnPeliculas = new ButtonType("Gestión de Películas");

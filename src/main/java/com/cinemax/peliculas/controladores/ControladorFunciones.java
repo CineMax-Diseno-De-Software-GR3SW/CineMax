@@ -20,8 +20,10 @@ import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.SalaService;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -34,14 +36,17 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
-public class ControladorFuncionesFX implements Initializable {
+public class ControladorFunciones implements Initializable {
 
     private ServicioFuncion servicioFuncion;
     private FuncionDAO funcionDAO;
@@ -73,7 +78,11 @@ public class ControladorFuncionesFX implements Initializable {
     private ObservableList<Funcion> listaFunciones;
     private ObservableList<Funcion> funcionesFiltradas;
 
-    public ControladorFuncionesFX() {
+    // Indicador de carga
+    private ProgressIndicator indicadorCarga;
+    private StackPane contenedorPrincipal;
+
+    public ControladorFunciones() {
         this.servicioFuncion = new ServicioFuncion();
         this.funcionDAO = new FuncionDAO();
         this.peliculaDAO = new PeliculaDAO();
@@ -262,7 +271,7 @@ public class ControladorFuncionesFX implements Initializable {
                 }
 
                 // Recargar la tabla
-                cargarFunciones();
+                cargarFuncionesAsync();
 
             } catch (Exception e) {
                 String mensaje = e.getMessage();
@@ -299,7 +308,7 @@ public class ControladorFuncionesFX implements Initializable {
             if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
                 try {
                     funcionDAO.eliminar(funcionSeleccionada.getId());
-                    cargarFunciones();
+                    cargarFuncionesAsync();
                     mostrarInformacion("Éxito", "Función eliminada correctamente");
                 } catch (Exception e) {
                     String mensaje = e.getMessage();
@@ -356,9 +365,180 @@ public class ControladorFuncionesFX implements Initializable {
         funcionesFiltradas = FXCollections.observableArrayList();
 
         configurarTabla();
-        configurarFiltros();
         configurarEventos();
-        cargarFunciones();
+        cargarFuncionesAsync();
+        configurarFiltrosAsync();
+    }
+
+    private void configurarIndicadorCarga() {
+        // Crear indicador de carga si no existe
+        if (indicadorCarga == null) {
+            indicadorCarga = new ProgressIndicator();
+            indicadorCarga.setVisible(false);
+            indicadorCarga.setPrefSize(50, 50);
+            indicadorCarga.setStyle("-fx-progress-color: #4a90e2;");
+        }
+
+        // Enfoque simplificado: solo crear el indicador, no intentar modificar la estructura del layout
+        System.out.println("Indicador de carga creado y configurado");
+    }
+
+    private void mostrarIndicadorCarga(boolean mostrar) {
+        Platform.runLater(() -> {
+            try {
+                // Deshabilitar la tabla durante la carga para dar feedback visual
+                if (tablaFunciones != null) {
+                    tablaFunciones.setDisable(mostrar);
+                    if (mostrar) {
+                        tablaFunciones.setOpacity(0.5);
+                    } else {
+                        tablaFunciones.setOpacity(1.0);
+                    }
+                }
+
+                // Deshabilitar botones durante la carga
+                if (btnNuevaFuncion != null) btnNuevaFuncion.setDisable(mostrar);
+                if (btnBuscar != null) btnBuscar.setDisable(mostrar);
+                if (btnLimpiar != null) btnLimpiar.setDisable(mostrar);
+
+                // Actualizar label de estado para indicar carga
+                if (lblEstadisticas != null && !lblEstadisticas.textProperty().isBound()) {
+                    if (mostrar) {
+                        lblEstadisticas.setText("⏳ Cargando datos...");
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("Error al mostrar indicador de carga: " + e.getMessage());
+            }
+        });
+    }
+
+    private void cargarFuncionesAsync() {
+        Task<List<Funcion>> task = new Task<List<Funcion>>() {
+            @Override
+            protected List<Funcion> call() throws Exception {
+                updateMessage("Cargando funciones...");
+
+                try {
+                    List<Funcion> funciones = funcionDAO.listarTodas();
+                    updateMessage("Procesando datos de funciones...");
+                    updateProgress(1, 1);
+                    return funciones != null ? funciones : List.of();
+                } catch (Exception e) {
+                    updateMessage("Error al cargar funciones: " + e.getMessage());
+                    throw e;
+                }
+            }
+        };
+
+        task.setOnRunning(e -> {
+            mostrarIndicadorCarga(true);
+            // Solo configurar una vez al inicio
+            if (contenedorPrincipal == null) {
+                configurarIndicadorCarga();
+            }
+        });
+
+        task.setOnSucceeded(e -> {
+            List<Funcion> funciones = task.getValue();
+            Platform.runLater(() -> {
+                try {
+                    listaFunciones.clear();
+                    listaFunciones.addAll(funciones);
+                    aplicarFiltros();
+                    mostrarIndicadorCarga(false);
+
+                    // Actualizar estado
+                    if (lblEstadisticas != null) {
+                        lblEstadisticas.textProperty().unbind();
+                        lblEstadisticas.setText("Funciones cargadas: " + funciones.size());
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Error al procesar funciones: " + ex.getMessage());
+                    if (lblEstadisticas != null) {
+                        lblEstadisticas.textProperty().unbind();
+                        lblEstadisticas.setText("Error al procesar funciones");
+                    }
+                }
+            });
+        });
+
+        task.setOnFailed(e -> {
+            Platform.runLater(() -> {
+                try {
+                    mostrarIndicadorCarga(false);
+                    Throwable exception = task.getException();
+                    String mensaje = exception != null ? exception.getMessage() : "Error desconocido";
+
+                    if (lblEstadisticas != null) {
+                        lblEstadisticas.textProperty().unbind();
+                        lblEstadisticas.setText("Error al cargar funciones");
+                    }
+
+                    System.err.println("Error al cargar funciones: " + mensaje);
+                    mostrarError("Error al cargar funciones", mensaje);
+                } catch (Exception ex) {
+                    System.err.println("Error en manejo de fallo: " + ex.getMessage());
+                    if (lblEstadisticas != null) {
+                        lblEstadisticas.setText("Error de carga");
+                    }
+                }
+            });
+        });
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+    private void configurarFiltrosAsync() {
+        // Solo configurar filtros si el ComboBox existe
+        if (cmbFiltroSala == null) {
+            return;
+        }
+
+        Task<List<Sala>> task = new Task<List<Sala>>() {
+            @Override
+            protected List<Sala> call() throws Exception {
+                updateMessage("Cargando salas para filtros...");
+                return salaService.listarSalas();
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            List<Sala> salas = task.getValue();
+            Platform.runLater(() -> {
+                try {
+                    cmbFiltroSala.setItems(FXCollections.observableArrayList(salas));
+                    cmbFiltroSala.setConverter(new StringConverter<Sala>() {
+                        @Override
+                        public String toString(Sala sala) {
+                            return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
+                        }
+
+                        @Override
+                        public Sala fromString(String string) {
+                            return null;
+                        }
+                    });
+
+                    // Configurar evento de cambio en el filtro
+                    cmbFiltroSala.setOnAction(ev -> aplicarFiltros());
+                } catch (Exception ex) {
+                    System.err.println("Error al configurar filtros: " + ex.getMessage());
+                }
+            });
+        });
+
+        task.setOnFailed(e -> {
+            Platform.runLater(() -> {
+                System.err.println("Error al cargar salas para filtros: " + task.getException().getMessage());
+            });
+        });
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true);
+        thread.start();
     }
 
     private void configurarTabla() {
@@ -445,18 +625,6 @@ public class ControladorFuncionesFX implements Initializable {
         txtBuscar.textProperty().addListener((obs, oldText, newText) -> aplicarFiltros());
     }
 
-    private void cargarFunciones() {
-        try {
-            listaFunciones.clear();
-            List<Funcion> funciones = funcionDAO.listarTodas();
-            if (funciones != null) {
-                listaFunciones.addAll(funciones);
-            }
-            aplicarFiltros();
-        } catch (Exception e) {
-            mostrarError("Error al cargar funciones", e.getMessage() != null ? e.getMessage() : "Error desconocido");
-        }
-    }
 
     private void aplicarFiltros() {
         funcionesFiltradas.clear();
