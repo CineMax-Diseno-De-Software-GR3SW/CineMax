@@ -25,6 +25,8 @@ public class ControladorDeConsultaSalas implements Initializable {
     private ComboBox<Sala> comboSalas;
     @FXML
     private VBox vbox;
+    @FXML
+    private Label lblNombreSala;
 
     private final ButacaService butacaService = new ButacaService();
     private final SalaService salaService = new SalaService();
@@ -48,6 +50,8 @@ public class ControladorDeConsultaSalas implements Initializable {
         removeBtnContinuar();
         Sala salaSeleccionada = comboSalas.getValue();
         if (salaSeleccionada == null) return;
+        //Podemos quitar "Sala: "  por que al momento de  visualizar aparece como "Sala: Sala:Sala1"
+        lblNombreSala.setText(salaSeleccionada.getNombre());
         try {
             List<Butaca> butacas = butacaService.listarButacasPorSala(salaSeleccionada.getId());
             for (Butaca butaca : butacas) {

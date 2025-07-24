@@ -32,5 +32,8 @@ public class Sala {
 
     public EstadoSala getEstado() { return estado; }
     public void setEstado(EstadoSala estado) { this.estado = estado; }
-
+    @Override
+    public String toString() {
+        return nombre;
+    }
 }

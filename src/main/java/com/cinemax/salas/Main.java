@@ -14,8 +14,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/salas/VistaGButacas.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 500);
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/salas/MapaButacas.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 1400, 900);
 
         // Aplica el CSS
         scene.getStylesheets().add(getClass().getResource("/vistas/temas/ayu-theme.css").toExternalForm());
