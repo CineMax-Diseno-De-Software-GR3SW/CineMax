@@ -5,16 +5,15 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorSeleccionFuncion">
+<BorderPane prefHeight="700.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorSeleccionFuncion" stylesheets="@../../temas/styles.css" styleClass="root">
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="15.0">
-            <Label text="Selección de Función">
-                <font>
-                    <Font name="Arial Black" size="24" />
-                </font>
-            </Label>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <padding>
+                <Insets bottom="10.0" left="15.0" right="15.0" top="10.0" />
+            </padding>
+            <Label text="Selección de Función" styleClass="section-title" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnActualizarCartelera" onAction="#onActualizarCartelera" text="Actualizar Cartelera" />
+            <Button fx:id="btnActualizarCartelera" onAction="#onActualizarCartelera" text="Actualizar Cartelera" styleClass="primary-button" />
         </HBox>
     </top>
 
@@ -26,16 +25,18 @@
 
             <!-- Panel izquierdo: Películas en cartelera -->
             <VBox spacing="15.0" prefWidth="400.0">
-                <Label text="Películas en Cartelera" styleClass="section-title" />
+                <VBox spacing="10.0" styleClass="ticket-card">
+                    <Label text="Películas en Cartelera" styleClass="section-title" />
 
-                <!-- Búsqueda de películas -->
-                <HBox spacing="10.0" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtBuscarPelicula" promptText="Buscar película..." prefWidth="250.0" />
-                    <Button fx:id="btnLimpiarBusqueda" onAction="#onLimpiarBusqueda" text="Limpiar" />
-                </HBox>
+                    <!-- Búsqueda de películas -->
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <TextField fx:id="txtBuscarPelicula" promptText="Buscar película..." prefWidth="250.0" styleClass="text-field" />
+                        <Button fx:id="btnLimpiarBusqueda" onAction="#onLimpiarBusqueda" text="Limpiar" styleClass="link-button" />
+                    </HBox>
+                </VBox>
 
                 <!-- Lista de películas en cartelera -->
-                <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS">
+                <ScrollPane fitToWidth="true" fitToHeight="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
                     <content>
                         <GridPane fx:id="grillaPeliculas" hgap="10" vgap="10" alignment="TOP_CENTER">
                             <padding>
@@ -45,7 +46,7 @@
                     </content>
                 </ScrollPane>
 
-                <Label fx:id="lblTotalPeliculas" text="Películas mostradas: 0" />
+                <Label fx:id="lblTotalPeliculas" text="Películas mostradas: 0" styleClass="summary-details" />
             </VBox>
 
             <!-- Panel derecho: Funciones de la película seleccionada -->
@@ -53,38 +54,34 @@
                 <Label fx:id="lblPeliculaSeleccionada" text="Seleccione una película" styleClass="section-title" />
 
                 <!-- Filtros para funciones -->
-                <VBox spacing="10.0">
-                    <Label text="Filtros" />
+                <VBox spacing="10.0" styleClass="ticket-card">
+                    <Label text="Filtros" styleClass="ticket-price" />
                     <HBox spacing="15.0" alignment="CENTER_LEFT">
                         <VBox spacing="5.0">
-                            <Label text="Idioma:" />
-                            <ComboBox fx:id="cmbFiltroIdioma" promptText="Todos" prefWidth="120.0" />
-                        </VBox>
-                        <VBox spacing="5.0">
                             <Label text="Formato:" />
-                            <ComboBox fx:id="cmbFiltroFormato" promptText="Todos" prefWidth="120.0" />
+                            <ComboBox fx:id="cmbFiltroFormato" promptText="Todos" prefWidth="120.0" styleClass="combo-box" />
                         </VBox>
                         <VBox spacing="5.0">
                             <Label text="Sala:" />
-                            <ComboBox fx:id="cmbFiltroSala" promptText="Todas" prefWidth="150.0" />
+                            <ComboBox fx:id="cmbFiltroSala" promptText="Todas" prefWidth="150.0" styleClass="combo-box" />
                         </VBox>
                     </HBox>
                 </VBox>
 
                 <!-- Selector de días -->
-                <VBox spacing="10.0">
-                    <Label text="Seleccionar Día" />
+                <VBox spacing="10.0" styleClass="ticket-card">
+                    <Label text="Seleccionar Día" styleClass="ticket-price" />
                     <HBox spacing="10.0" alignment="CENTER_LEFT">
-                        <ToggleButton fx:id="btnDiaHoy" onAction="#onSeleccionarDia" text="Hoy" prefWidth="80.0" />
-                        <ToggleButton fx:id="btnDiaManana" onAction="#onSeleccionarDia" text="Mañana" prefWidth="80.0" />
-                        <ToggleButton fx:id="btnDiaPasado" onAction="#onSeleccionarDia" text="Pasado" prefWidth="80.0" />
+                        <ToggleButton fx:id="btnDiaHoy" onAction="#onSeleccionarDia" text="Hoy" prefWidth="120.0" styleClass="stepper-button" />
+                        <ToggleButton fx:id="btnDiaManana" onAction="#onSeleccionarDia" text="Mañana" prefWidth="120.0" styleClass="stepper-button" />
+                        <ToggleButton fx:id="btnDiaPasado" onAction="#onSeleccionarDia" text="Pasado" prefWidth="120.0" styleClass="stepper-button" />
                     </HBox>
                 </VBox>
 
                 <!-- Área de funciones disponibles -->
                 <VBox spacing="10.0" VBox.vgrow="ALWAYS">
-                    <Label fx:id="lblFechaSeleccionada" text="Funciones disponibles" />
-                    <ScrollPane fitToWidth="true" fitToHeight="true">
+                    <Label fx:id="lblFechaSeleccionada" text="Funciones disponibles" styleClass="ticket-price" />
+                    <ScrollPane fitToWidth="true" fitToHeight="true" styleClass="scroll-pane">
                         <content>
                             <VBox fx:id="contenedorFunciones" spacing="10.0">
                                 <padding>
@@ -96,9 +93,9 @@
                 </VBox>
 
                 <!-- Panel de información -->
-                <VBox spacing="5.0">
-                    <Label fx:id="lblTotalFunciones" text="Total de funciones: 0" />
-                    <Label fx:id="lblEstadoSeleccion" text="Seleccione una película para ver las funciones disponibles" />
+                <VBox spacing="5.0" styleClass="summary-pane">
+                    <Label fx:id="lblTotalFunciones" text="Total de funciones: 0" styleClass="summary-details" />
+                    <Label fx:id="lblEstadoSeleccion" text="Seleccione una película para ver las funciones disponibles" styleClass="summary-details" />
                 </VBox>
             </VBox>
         </HBox>

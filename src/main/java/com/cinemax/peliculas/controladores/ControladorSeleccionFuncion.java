@@ -66,7 +66,6 @@ public class ControladorSeleccionFuncion implements Initializable {
     // Componentes de la interfaz FXML
     @FXML private TextField txtBuscarPelicula;
     @FXML private GridPane grillaPeliculas;
-    @FXML private ComboBox<Idioma> cmbFiltroIdioma;
     @FXML private ComboBox<FormatoFuncion> cmbFiltroFormato;
     @FXML private ComboBox<Sala> cmbFiltroSala;
     @FXML private ToggleButton btnDiaHoy;
@@ -166,6 +165,27 @@ public class ControladorSeleccionFuncion implements Initializable {
     }
 
     private void configurarFiltrosAsync() {
+        // Configurar filtro de formato
+        Platform.runLater(() -> {
+            cmbFiltroFormato.getItems().clear();
+            cmbFiltroFormato.getItems().add(null); // Opción "Todos"
+            for (FormatoFuncion formato : FormatoFuncion.values()) {
+                cmbFiltroFormato.getItems().add(formato);
+            }
+            cmbFiltroFormato.setConverter(new StringConverter<FormatoFuncion>() {
+                @Override
+                public String toString(FormatoFuncion formato) {
+                    return formato != null ? formato.toString() : "Todos";
+                }
+
+                @Override
+                public FormatoFuncion fromString(String string) {
+                    return null;
+                }
+            });
+        });
+
+        // Configurar filtro de sala
         Task<List<Sala>> task = new Task<List<Sala>>() {
             @Override
             protected List<Sala> call() throws Exception {
@@ -337,6 +357,7 @@ public class ControladorSeleccionFuncion implements Initializable {
         Button btnSeleccionar = new Button("Seleccionar");
         btnSeleccionar.setOnAction(e -> seleccionarPelicula(pelicula));
         btnSeleccionar.setPrefWidth(140);
+        btnSeleccionar.getStyleClass().add("primary-button");
 
         tarjeta.getChildren().addAll(imagenPelicula, lblTitulo, lblInfo, btnSeleccionar);
         return tarjeta;
@@ -398,10 +419,6 @@ public class ControladorSeleccionFuncion implements Initializable {
                         // Aplicar filtros
                         boolean pasaFiltros = true;
 
-                        if (cmbFiltroIdioma.getValue() != null) {
-                            pasaFiltros = pasaFiltros && funcion.getPelicula().getIdioma() == cmbFiltroIdioma.getValue();
-                        }
-
                         if (cmbFiltroFormato.getValue() != null) {
                             pasaFiltros = pasaFiltros && funcion.getFormato() == cmbFiltroFormato.getValue();
                         }
@@ -455,62 +472,6 @@ public class ControladorSeleccionFuncion implements Initializable {
         thread.start();
     }
 
-    private void configurarFiltros() {
-        // Configurar filtro de idioma
-        cmbFiltroIdioma.getItems().add(null); // Opción "Todos"
-        for (Idioma idioma : Idioma.values()) {
-            cmbFiltroIdioma.getItems().add(idioma);
-        }
-        cmbFiltroIdioma.setConverter(new StringConverter<Idioma>() {
-            @Override
-            public String toString(Idioma idioma) {
-                return idioma != null ? idioma.getNombre() : "Todos";
-            }
-
-            @Override
-            public Idioma fromString(String string) {
-                return null;
-            }
-        });
-
-        // Configurar filtro de formato
-        cmbFiltroFormato.getItems().add(null); // Opción "Todos"
-        for (FormatoFuncion formato : FormatoFuncion.values()) {
-            cmbFiltroFormato.getItems().add(formato);
-        }
-        cmbFiltroFormato.setConverter(new StringConverter<FormatoFuncion>() {
-            @Override
-            public String toString(FormatoFuncion formato) {
-                return formato != null ? formato.toString() : "Todos";
-            }
-
-            @Override
-            public FormatoFuncion fromString(String string) {
-                return null;
-            }
-        });
-
-        // Configurar filtro de sala
-        try {
-            List<Sala> salas = salaService.listarSalas();
-            cmbFiltroSala.getItems().add(null); // Opción "Todas"
-            cmbFiltroSala.getItems().addAll(salas);
-            cmbFiltroSala.setConverter(new StringConverter<Sala>() {
-                @Override
-                public String toString(Sala sala) {
-                    return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "Todas";
-                }
-
-                @Override
-                public Sala fromString(String string) {
-                    return null;
-                }
-            });
-        } catch (Exception e) {
-            mostrarError("Error", "No se pudieron cargar las salas: " + e.getMessage());
-        }
-    }
-
     private void configurarGrupoFechas() {
         grupoFechas = new ToggleGroup();
         btnDiaHoy.setToggleGroup(grupoFechas);
@@ -531,7 +492,6 @@ public class ControladorSeleccionFuncion implements Initializable {
         txtBuscarPelicula.textProperty().addListener((obs, oldText, newText) -> filtrarPeliculas());
 
         // Filtros
-        cmbFiltroIdioma.setOnAction(e -> cargarFuncionesPeliculaSeleccionadaAsync());
         cmbFiltroFormato.setOnAction(e -> cargarFuncionesPeliculaSeleccionadaAsync());
         cmbFiltroSala.setOnAction(e -> cargarFuncionesPeliculaSeleccionadaAsync());
     }
@@ -544,7 +504,6 @@ public class ControladorSeleccionFuncion implements Initializable {
     @FXML
     private void onLimpiarBusqueda(ActionEvent event) {
         txtBuscarPelicula.clear();
-        cmbFiltroIdioma.setValue(null);
         cmbFiltroFormato.setValue(null);
         cmbFiltroSala.setValue(null);
     }
@@ -670,6 +629,7 @@ public class ControladorSeleccionFuncion implements Initializable {
         Button btnSeleccionar = new Button("Seleccionar");
         btnSeleccionar.setOnAction(e -> seleccionarPelicula(pelicula));
         btnSeleccionar.setPrefWidth(140);
+        btnSeleccionar.getStyleClass().add("primary-button");
 
         tarjeta.getChildren().addAll(imagenPelicula, lblTitulo, lblInfo, btnSeleccionar);
         return tarjeta;
@@ -698,12 +658,9 @@ public class ControladorSeleccionFuncion implements Initializable {
                 if (funcion.getPelicula().getId() == peliculaSeleccionada.getId() &&
                     funcion.getFechaHoraInicio().toLocalDate().equals(fechaSeleccionada)) {
 
-                    // Aplicar filtros
+                    // Aplicar filtros solo para formato y sala
                     boolean pasaFiltros = true;
 
-                    if (cmbFiltroIdioma.getValue() != null) {
-                        pasaFiltros = pasaFiltros && funcion.getPelicula().getIdioma() == cmbFiltroIdioma.getValue();
-                    }
 
                     if (cmbFiltroFormato.getValue() != null) {
                         pasaFiltros = pasaFiltros && funcion.getFormato() == cmbFiltroFormato.getValue();
@@ -773,6 +730,7 @@ public class ControladorSeleccionFuncion implements Initializable {
         // Botón para seleccionar función
         Button btnSeleccionarFuncion = new Button("Seleccionar Función");
         btnSeleccionarFuncion.setOnAction(e -> seleccionarFuncion(funcion));
+        btnSeleccionarFuncion.getStyleClass().add("stepper-button");
 
         HBox.setHgrow(infoFuncion, javafx.scene.layout.Priority.ALWAYS);
         tarjeta.getChildren().addAll(infoFuncion, btnSeleccionarFuncion);

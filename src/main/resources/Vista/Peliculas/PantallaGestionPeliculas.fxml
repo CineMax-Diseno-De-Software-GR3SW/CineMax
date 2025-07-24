@@ -5,16 +5,12 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula">
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula" styleClass="root">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
                 <Button fx:id="btnVolver" text="←" styleClass="icon-button" onAction="#onVolver" />
-                <Label text="Gestor de Películas">
-                    <font>
-                        <Font name="Arial Black" size="32" />
-                    </font>
-                </Label>
+                <Label text="Gestor de Películas" styleClass="section-title" />
                 <Region HBox.hgrow="ALWAYS" />
                 <Button fx:id="btnNuevaPelicula" onAction="#onNuevaPelicula" styleClass="primary-button" text="+ Nueva Película" />
             </children>
@@ -31,25 +27,28 @@
             </padding>
             
             <!-- Sección de búsqueda y filtros -->
-            <HBox spacing="15.0" alignment="CENTER_LEFT">
-                <children>
-                    <Label text="Buscar:" />
-                    <TextField fx:id="txtBuscar" promptText="Título, género..." prefWidth="300.0" />
-                    <Button fx:id="btnBuscar" onAction="#onBuscar" text="Buscar" />
-                    <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" />
-                    <Region HBox.hgrow="ALWAYS" />
-                    <ComboBox fx:id="cmbFiltroGenero" promptText="Filtrar por género" prefWidth="150.0" />
-                </children>
-            </HBox>
+            <VBox spacing="15.0" styleClass="ticket-card">
+                <Label text="Búsqueda y Filtros" styleClass="section-title" />
+                <HBox spacing="15.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Buscar:" />
+                        <TextField fx:id="txtBuscar" promptText="Título, género..." prefWidth="300.0" styleClass="text-field" />
+                        <Button fx:id="btnBuscar" onAction="#onBuscar" text="Buscar" styleClass="stepper-button" />
+                        <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="link-button" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="cmbFiltroGenero" promptText="Filtrar por género" prefWidth="150.0" styleClass="combo-box" />
+                    </children>
+                </HBox>
+            </VBox>
 
             <!-- Tabla de películas -->
-            <TableView fx:id="tablaPeliculas" prefHeight="400.0">
+            <TableView fx:id="tablaPeliculas" prefHeight="400.0" styleClass="table-view">
                 <columns>
                     <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
                     <TableColumn fx:id="colTitulo" text="Título" prefWidth="250.0" />
                     <TableColumn fx:id="colAnio" text="Año" prefWidth="80.0" />
                     <TableColumn fx:id="colGenero" text="Género" prefWidth="120.0" />
-                    <TableColumn fx:id="colDuracion" text="Duración (min)" prefWidth="120.0" />
+                    <TableColumn fx:id="colDuracion" text="Duración" prefWidth="100.0" />
                     <TableColumn fx:id="colIdioma" text="Idioma" prefWidth="100.0" />
                 </columns>
             </TableView>
@@ -57,18 +56,18 @@
             <!-- Botones de acción -->
             <HBox spacing="15.0" alignment="CENTER">
                 <children>
-                    <Button fx:id="btnEditar" onAction="#onEditarPelicula" text="Editar" disable="true" />
-                    <Button fx:id="btnEliminar" onAction="#onEliminarPelicula" text="Eliminar" disable="true" styleClass="danger-button" />
-                    <Button fx:id="btnVerDetalles" onAction="#onVerDetalles" text="Ver Detalles" disable="true" />
+                    <Button fx:id="btnEditar" onAction="#onEditarPelicula" text="Editar" disable="true" styleClass="primary-button" />
+                    <Button fx:id="btnEliminar" onAction="#onEliminarPelicula" text="Eliminar" disable="true" styleClass="stepper-button" />
+                    <Button fx:id="btnVerDetalles" onAction="#onVerDetalles" text="Ver Detalles" disable="true" styleClass="link-button" />
                 </children>
             </HBox>
 
             <!-- Información adicional -->
-            <HBox spacing="20.0" alignment="CENTER_LEFT">
+            <HBox spacing="20.0" alignment="CENTER_LEFT" styleClass="summary-pane">
                 <children>
-                    <Label fx:id="lblTotalPeliculas" text="Total de películas: 0" />
+                    <Label fx:id="lblTotalPeliculas" text="Total de películas: 0" styleClass="summary-details" />
                     <Region HBox.hgrow="ALWAYS" />
-                    <Label fx:id="lblEstadisticas" text="Cargando..." />
+                    <Label fx:id="lblEstadisticas" text="Estadísticas de películas" styleClass="summary-details" />
                 </children>
             </HBox>
         </VBox>

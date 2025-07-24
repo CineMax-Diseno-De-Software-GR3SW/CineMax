@@ -86,12 +86,13 @@ public class ControladorCartelera implements Initializable {
             indicadorCarga = new ProgressIndicator();
             indicadorCarga.setVisible(false);
             indicadorCarga.setPrefSize(50, 50);
-            indicadorCarga.setStyle("-fx-progress-color: #FF8F40;"); // Color naranja del tema Ayu
+            // Usar clase CSS en lugar de estilo inline
+            indicadorCarga.getStyleClass().add("progress-indicator");
         }
 
         // Enfoque simplificado: no modificar la estructura FXML
         // Solo usar el indicador para mostrar estado en los labels
-        System.out.println("Indicador de carga configurado con tema Ayu");
+        System.out.println("Indicador de carga configurado con tema styles.css");
     }
 
     private void mostrarIndicadorCarga(boolean mostrar) {
@@ -304,37 +305,29 @@ public class ControladorCartelera implements Initializable {
                 contenedor.setAlignment(Pos.CENTER);
                 contenedor.setSpacing(5);
                 contenedor.setPrefWidth(180);
-                // Aplicar estilos del tema Ayu Dark
-                contenedor.setStyle("-fx-padding: 15; " +
-                                  "-fx-background-color: #0D121A; " +
-                                  "-fx-background-radius: 12; " +
-                                  "-fx-border-color: #1F2430; " +
-                                  "-fx-border-width: 1; " +
-                                  "-fx-border-radius: 12; " +
-                                  "-fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.1), 20, 0, 0, 0);");
+                // Usar clases CSS del tema styles.css
+                contenedor.getStyleClass().add("ticket-card");
 
                 ImageView imagen = new ImageView();
                 imagen.setFitWidth(150);
                 imagen.setFitHeight(200);
                 imagen.setPreserveRatio(true);
-                imagen.setStyle("-fx-background-radius: 8;");
 
                 // Cargar imagen de forma asíncrona
                 cargarImagenAsync(imagen, pelicula.getUrlImagen());
 
                 Label titulo = new Label(pelicula.getTitulo());
-                titulo.setStyle("-fx-font-weight: bold; " +
-                              "-fx-font-size: 12px; " +
-                              "-fx-text-fill: #CBCCC6;"); // Color de texto principal de Ayu
+                // Usar clase CSS para el título
+                titulo.getStyleClass().add("ticket-price");
                 titulo.setWrapText(true);
 
                 Label genero = new Label(pelicula.getGenero());
-                genero.setStyle("-fx-font-size: 10px; " +
-                              "-fx-text-fill: #6C7079;"); // Gris suave para detalles
+                // Usar clase CSS para detalles
+                genero.getStyleClass().add("summary-details");
 
                 Label anio = new Label("(" + pelicula.getAnio() + ")");
-                anio.setStyle("-fx-font-size: 10px; " +
-                            "-fx-text-fill: #6C7079;"); // Gris suave para detalles
+                // Usar clase CSS para detalles
+                anio.getStyleClass().add("summary-details");
 
                 contenedor.getChildren().addAll(imagen, titulo, genero, anio);
 
@@ -343,14 +336,8 @@ public class ControladorCartelera implements Initializable {
                     // Limpiar selección anterior
                     limpiarSeleccionPrevia();
 
-                    // Marcar como seleccionada con colores del tema Ayu
-                    contenedor.setStyle("-fx-padding: 15; " +
-                                      "-fx-background-color: #0D121A; " +
-                                      "-fx-background-radius: 12; " +
-                                      "-fx-border-color: #FF8F40; " +
-                                      "-fx-border-width: 3; " +
-                                      "-fx-border-radius: 12; " +
-                                      "-fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.6), 15, 0, 0, 0);");
+                    // Marcar como seleccionada - usar borde de color naranja del tema
+                    contenedor.setStyle("-fx-border-color: #F25F00; -fx-border-width: 3px; -fx-border-radius: 12px;");
                     peliculaSeleccionada = pelicula;
 
                     // Habilitar botón de ver detalles
@@ -360,28 +347,16 @@ public class ControladorCartelera implements Initializable {
                     lblEstadoCartelera.setText("Película seleccionada: " + pelicula.getTitulo());
                 });
 
-                // Efecto hover con colores del tema Ayu
+                // Efecto hover - usar borde sutil
                 contenedor.setOnMouseEntered(event -> {
                     if (peliculaSeleccionada != pelicula) {
-                        contenedor.setStyle("-fx-padding: 15; " +
-                                          "-fx-background-color: #0D121A; " +
-                                          "-fx-background-radius: 12; " +
-                                          "-fx-border-color: #4A505F; " +
-                                          "-fx-border-width: 2; " +
-                                          "-fx-border-radius: 12; " +
-                                          "-fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.2), 15, 0, 0, 0);");
+                        contenedor.setStyle("-fx-border-color: #4A4A4A; -fx-border-width: 2px; -fx-border-radius: 12px;");
                     }
                 });
 
                 contenedor.setOnMouseExited(event -> {
                     if (peliculaSeleccionada != pelicula) {
-                        contenedor.setStyle("-fx-padding: 15; " +
-                                          "-fx-background-color: #0D121A; " +
-                                          "-fx-background-radius: 12; " +
-                                          "-fx-border-color: #1F2430; " +
-                                          "-fx-border-width: 1; " +
-                                          "-fx-border-radius: 12; " +
-                                          "-fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.1), 20, 0, 0, 0);");
+                        contenedor.setStyle(""); // Remover estilo hover
                     }
                 });
 
@@ -399,16 +374,10 @@ public class ControladorCartelera implements Initializable {
     }
 
     private void limpiarSeleccionPrevia() {
-        // Restaurar estilo normal a todos los contenedores con tema Ayu
+        // Restaurar estilo normal a todos los contenedores removiendo bordes
         grillaCartelera.getChildren().forEach(node -> {
             if (node instanceof VBox) {
-                node.setStyle("-fx-padding: 15; " +
-                            "-fx-background-color: #0D121A; " +
-                            "-fx-background-radius: 12; " +
-                            "-fx-border-color: #1F2430; " +
-                            "-fx-border-width: 1; " +
-                            "-fx-border-radius: 12; " +
-                            "-fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.1), 20, 0, 0, 0);");
+                node.setStyle(""); // Limpiar todos los estilos inline
             }
         });
         peliculaSeleccionada = null;

@@ -58,7 +58,7 @@ public class Main extends Application {
             Scene scene = new Scene(root, 1200, 700);
 
             // Aplicar estilos base
-            scene.getStylesheets().add(getClass().getResource("/Vista/Peliculas/ayu-theme.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/temas/styles.css").toExternalForm());
 
             stage.setTitle(titulo);
             stage.setScene(scene);

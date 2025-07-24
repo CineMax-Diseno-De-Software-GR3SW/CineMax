@@ -199,7 +199,8 @@ public class ControladorFunciones implements Initializable {
 
         // Agregar nota
         Label lblNota = new Label("* Campos obligatorios");
-        lblNota.setStyle("-fx-font-style: italic; -fx-text-fill: #666;");
+        // Usar clase CSS para el estilo de nota
+        lblNota.getStyleClass().add("summary-details");
         grid.add(lblNota, 0, 6, 2, 1);
 
         dialog.getDialogPane().setContent(grid);
@@ -376,7 +377,8 @@ public class ControladorFunciones implements Initializable {
             indicadorCarga = new ProgressIndicator();
             indicadorCarga.setVisible(false);
             indicadorCarga.setPrefSize(50, 50);
-            indicadorCarga.setStyle("-fx-progress-color: #4a90e2;");
+            // Usar clase CSS en lugar de estilo inline
+            indicadorCarga.getStyleClass().add("progress-indicator");
         }
 
         // Enfoque simplificado: solo crear el indicador, no intentar modificar la estructura del layout
