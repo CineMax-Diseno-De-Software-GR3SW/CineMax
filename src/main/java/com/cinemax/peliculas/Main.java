@@ -43,7 +43,7 @@ public class Main extends Application {
                 fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionCartelera.fxml"));
                 titulo = "CineMax - Gestión de Cartelera";
             } else if (resultado.get() == btnFunciones) {
-                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaListaFunciones.fxml"));
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionFunciones.fxml"));
                 titulo = "CineMax - Gestión de Funciones";
             } else {
                 // Usuario canceló

@@ -67,7 +67,7 @@ public class ControladorCarteleraFX implements Initializable {
             servicioPelicula = new ServicioPelicula();
             cartelera = new Cartelera(servicioPelicula.obtenerPeliculas());
             listaPeliculasCartelera.addAll(cartelera.getPeliculas());
-            actualizarGrilla();
+            mostrarTodasLasPeliculas();
         } catch (Exception e) {
             mostrarError("Error al inicializar la cartelera", e.getMessage());
         }
@@ -97,8 +97,9 @@ public class ControladorCarteleraFX implements Initializable {
 
     @FXML
     private void onVerDetalles(ActionEvent event) {
-        // Ajustar lógica para manejar selección en grillaCartelera
-        // Implementar lógica adecuada para obtener detalles de la película seleccionada
+        // Implementar lógica para mostrar detalles de la película seleccionada
+        // Aquí se puede agregar un diálogo o una nueva vista para mostrar los detalles
+        mostrarInformacion("Detalles de la Película", "Funcionalidad en desarrollo.");
     }
 
     private void actualizarGrilla(List<Pelicula> peliculas) {
@@ -131,31 +132,27 @@ public class ControladorCarteleraFX implements Initializable {
 
     private void actualizarGrilla() {
         grillaCartelera.getChildren().clear();
-        List<Pelicula> peliculas = cartelera.getPeliculas();
+        int columnas = 3;
+        int fila = 0;
+        int columna = 0;
 
-        int row = 0;
-        int col = 0;
-        for (Pelicula pelicula : peliculas) {
-            ImageView imagenPelicula = new ImageView(new Image(pelicula.getUrlImagen()));
-            imagenPelicula.setFitWidth(100);
-            imagenPelicula.setFitHeight(150);
+        for (Pelicula pelicula : peliculasFiltradas) {
+            VBox contenedor = new VBox();
+            contenedor.setAlignment(Pos.CENTER);
+
+            ImageView imagen = new ImageView(new Image(pelicula.getUrlImagen()));
+            imagen.setFitWidth(150);
+            imagen.setFitHeight(200);
 
             Label titulo = new Label(pelicula.getTitulo());
-            Label genero = new Label(pelicula.getGenero());
-            Label anio = new Label(String.valueOf(pelicula.getAnio()));
+            contenedor.getChildren().addAll(imagen, titulo);
 
-            GridPane item = new GridPane();
-            item.add(imagenPelicula, 0, 0);
-            item.add(titulo, 0, 1);
-            item.add(genero, 0, 2);
-            item.add(anio, 0, 3);
+            grillaCartelera.add(contenedor, columna, fila);
 
-            grillaCartelera.add(item, col, row);
-
-            col++;
-            if (col == 3) {
-                col = 0;
-                row++;
+            columna++;
+            if (columna == columnas) {
+                columna = 0;
+                fila++;
             }
         }
     }
@@ -189,34 +186,28 @@ public class ControladorCarteleraFX implements Initializable {
         }
     }
 
+    @FXML
     private void buscarPorTitulo() {
         String titulo = txtBuscarTitulo.getText().trim().toLowerCase();
-
         if (titulo.isEmpty()) {
             mostrarTodasLasPeliculas();
             return;
         }
 
         peliculasFiltradas.clear();
-        for (Pelicula p : listaPeliculasCartelera) {
-            if (p.getTitulo().toLowerCase().contains(titulo)) {
-                peliculasFiltradas.add(p);
+        for (Pelicula pelicula : listaPeliculasCartelera) {
+            if (pelicula.getTitulo().toLowerCase().contains(titulo)) {
+                peliculasFiltradas.add(pelicula);
             }
         }
 
-        actualizarGrilla(peliculasFiltradas);
-        actualizarEstadisticas();
-
-        if (peliculasFiltradas.isEmpty()) {
-            lblEstadoCartelera.setText("No se encontraron películas con ese título en la cartelera");
-        } else {
-            lblEstadoCartelera.setText("Resultados de búsqueda por título: " + peliculasFiltradas.size() + " película(s)");
-        }
+        actualizarGrilla();
+        lblEstadoCartelera.setText("Películas encontradas: " + peliculasFiltradas.size());
     }
 
+    @FXML
     private void buscarPorId() {
         String idTexto = txtBuscarId.getText().trim();
-
         if (idTexto.isEmpty()) {
             mostrarTodasLasPeliculas();
             return;
@@ -225,36 +216,25 @@ public class ControladorCarteleraFX implements Initializable {
         try {
             int id = Integer.parseInt(idTexto);
             peliculasFiltradas.clear();
-
-            for (Pelicula p : listaPeliculasCartelera) {
-                if (p.getId() == id) {
-                    peliculasFiltradas.add(p);
+            for (Pelicula pelicula : listaPeliculasCartelera) {
+                if (pelicula.getId() == id) {
+                    peliculasFiltradas.add(pelicula);
+                    break;
                 }
             }
 
-            actualizarGrilla(peliculasFiltradas);
-            actualizarEstadisticas();
-
-            if (peliculasFiltradas.isEmpty()) {
-                lblEstadoCartelera.setText("No se encontró película con ID: " + id + " en la cartelera");
-            } else {
-                lblEstadoCartelera.setText("Película encontrada con ID: " + id);
-            }
-
+            actualizarGrilla();
+            lblEstadoCartelera.setText("Película encontrada con ID: " + id);
         } catch (NumberFormatException e) {
-            lblEstadoCartelera.setText("Por favor ingrese un ID válido (número entero)");
+            lblEstadoCartelera.setText("Por favor ingrese un ID válido.");
         }
     }
 
     private void mostrarTodasLasPeliculas() {
-        actualizarGrilla(listaPeliculasCartelera);
-        actualizarEstadisticas();
-
-        if (listaPeliculasCartelera.isEmpty()) {
-            lblEstadoCartelera.setText("No hay películas en la cartelera");
-        } else {
-            lblEstadoCartelera.setText("Mostrando todas las películas en cartelera");
-        }
+        peliculasFiltradas.clear();
+        peliculasFiltradas.addAll(listaPeliculasCartelera);
+        actualizarGrilla();
+        lblEstadoCartelera.setText("Mostrando todas las películas.");
     }
 
     private void actualizarEstadisticas() {

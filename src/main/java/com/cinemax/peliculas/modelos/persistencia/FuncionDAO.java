@@ -6,7 +6,7 @@ import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.TipoEstreno;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.modelos.persistencia.SalaDAO;
+import com.cinemax.salas.modelos.persistencia.SalasDAO;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -50,7 +50,7 @@ public class FuncionDAO {
         List<Funcion> funciones = new ArrayList<>();
         String sql = "SELECT * FROM funcion";
         PeliculaDAO peliculaDAO = new PeliculaDAO();
-        SalaDAO salaDAO = new SalaDAO();
+        SalasDAO salaDAO = new SalasDAO();
 
         try (Connection conn = gestorDB.getConexion();
                 Statement stmt = conn.createStatement();
@@ -60,7 +60,7 @@ public class FuncionDAO {
                 int peliculaId = rs.getInt("id_pelicula");
                 int salaId = rs.getInt("id_sala");
                 Pelicula pelicula = peliculaDAO.buscarPorId(peliculaId);
-                Sala sala = salaDAO.buscarPorId(salaId);
+                Sala sala = salaDAO.obtenerSalaPorId(salaId);
 
                 Funcion funcion = new Funcion(
                         rs.getInt("id_funcion"),
@@ -82,7 +82,7 @@ public class FuncionDAO {
         List<Funcion> funciones = new ArrayList<>();
         String sql = "SELECT * FROM funcion WHERE id_sala = ?";
         PeliculaDAO peliculaDAO = new PeliculaDAO();
-        SalaDAO salaDAO = new SalaDAO();
+        SalasDAO salaDAO = new SalasDAO();
 
         try (Connection conn = gestorDB.getConexion();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -91,7 +91,7 @@ public class FuncionDAO {
                 while (rs.next()) {
                     int peliculaId = rs.getInt("id_pelicula");
                     Pelicula pelicula = peliculaDAO.buscarPorId(peliculaId);
-                    Sala sala = salaDAO.buscarPorId(salaId);
+                    Sala sala = salaDAO.obtenerSalaPorId(salaId);
 
                     Funcion funcion = new Funcion(
                             rs.getInt("id_funcion"),
@@ -140,9 +140,9 @@ public class FuncionDAO {
                     // Aquí debes reconstruir el objeto Funcion como en listarTodas()
                     // Suponiendo que tienes PeliculaDAO y SalaDAO disponibles:
                     PeliculaDAO peliculaDAO = new PeliculaDAO();
-                    SalaDAO salaDAO = new SalaDAO();
+                    SalasDAO salaDAO = new SalasDAO();
                     Pelicula pelicula = peliculaDAO.buscarPorId(rs.getInt("id_pelicula"));
-                    Sala sala = salaDAO.buscarPorId(rs.getInt("id_sala"));
+                    Sala sala = salaDAO.obtenerSalaPorId(rs.getInt("id_sala"));
                     return new Funcion(
                             rs.getInt("id_funcion"),
                             pelicula,

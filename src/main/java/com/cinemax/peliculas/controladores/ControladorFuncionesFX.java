@@ -17,8 +17,8 @@ import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.modelos.persistencia.SalaDAO;
-import com.cinemax.salas.servicios.ServicioSala;
+import com.cinemax.salas.modelos.persistencia.SalasDAO;
+import com.cinemax.salas.servicios.SalaService;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -40,8 +40,7 @@ public class ControladorFuncionesFX implements Initializable {
     private ServicioFuncion servicioFuncion;
     private FuncionDAO funcionDAO;
     private PeliculaDAO peliculaDAO;
-    private SalaDAO salaDAO;
-    private ServicioSala servicioSala;
+    private SalaService salaService;
 
     // Componentes para programar función
     @FXML private ComboBox<Pelicula> cmbPelicula;
@@ -86,12 +85,11 @@ public class ControladorFuncionesFX implements Initializable {
         this.servicioFuncion = new ServicioFuncion();
         this.funcionDAO = new FuncionDAO();
         this.peliculaDAO = new PeliculaDAO();
-        this.salaDAO = new SalaDAO();
-        this.servicioSala = new ServicioSala();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.salaService = new SalaService();
         listaFunciones = FXCollections.observableArrayList();
         funcionesFiltradas = FXCollections.observableArrayList();
 
@@ -111,7 +109,7 @@ public class ControladorFuncionesFX implements Initializable {
 
         colPelicula.setCellValueFactory(cellData -> {
             return new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getPelicula().getTitulo()
+                    cellData.getValue().getPelicula().getTitulo()
             );
         });
 
@@ -125,30 +123,30 @@ public class ControladorFuncionesFX implements Initializable {
         colFechaHora.setCellValueFactory(cellData -> {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
             return new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getFechaHoraInicio().format(formatter)
+                    cellData.getValue().getFechaHoraInicio().format(formatter)
             );
         });
 
         colFormato.setCellValueFactory(cellData -> {
             return new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getFormato().toString()
+                    cellData.getValue().getFormato().toString()
             );
         });
 
         colTipoEstreno.setCellValueFactory(cellData -> {
             return new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getTipoEstreno().name()
+                    cellData.getValue().getTipoEstreno().name()
             );
         });
 
         // Configurar selección de tabla
         tablaFunciones.getSelectionModel().selectedItemProperty().addListener(
-            (obs, oldSelection, newSelection) -> {
-                boolean funcionSeleccionada = newSelection != null;
-                btnVerDetalles.setDisable(!funcionSeleccionada);
-                btnEditarFuncion.setDisable(!funcionSeleccionada);
-                btnEliminarFuncion.setDisable(!funcionSeleccionada);
-            }
+                (obs, oldSelection, newSelection) -> {
+                    boolean funcionSeleccionada = newSelection != null;
+                    btnVerDetalles.setDisable(!funcionSeleccionada);
+                    btnEditarFuncion.setDisable(!funcionSeleccionada);
+                    btnEliminarFuncion.setDisable(!funcionSeleccionada);
+                }
         );
 
         tablaFunciones.setItems(funcionesFiltradas);
@@ -171,14 +169,19 @@ public class ControladorFuncionesFX implements Initializable {
         });
 
         // Configurar ComboBox de salas
-        List<Sala> salas = salaDAO.listarTodas();
+        List<Sala> salas = null;
+        try {
+            salas = salaService.listarSalas();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         cmbSala.setItems(FXCollections.observableArrayList(salas));
         cmbFiltrarSala.setItems(FXCollections.observableArrayList(salas));
 
-        javafx.util.StringConverter<Sala> salaConverter = new javafx.util.StringConverter<Sala>() {
+        javafx.util.StringConverter<Sala> salaConverter = new javafx.util.StringConverter<>() {
             @Override
             public String toString(Sala sala) {
-                return sala != null ? sala.getNombre() + " (" + sala.getTipoSala().name() + ")" : "";
+                return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
             }
 
             @Override
@@ -214,6 +217,7 @@ public class ControladorFuncionesFX implements Initializable {
             listaFunciones.clear();
             listaFunciones.addAll(funciones);
             funcionesFiltradas.setAll(listaFunciones); // Asegurar que funcionesFiltradas se actualice
+            actualizarEstadisticas(); // CORRECCIÓN: Agregar esta línea para actualizar las estadísticas
             lblEstadoOperacion.setText("Funciones cargadas correctamente");
         } catch (Exception e) {
             lblEstadoOperacion.setText("Error al cargar funciones");
@@ -237,7 +241,7 @@ public class ControladorFuncionesFX implements Initializable {
             TipoEstreno tipoEstreno = cmbTipoEstreno.getValue();
 
             Funcion nuevaFuncion = servicioFuncion.programarNuevaFuncion(
-                pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
+                    pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
 
             mostrarInformacion("Éxito", "Función programada correctamente con ID: " + nuevaFuncion.getId());
             limpiarFormulario();
@@ -253,6 +257,18 @@ public class ControladorFuncionesFX implements Initializable {
     @FXML
     private void onLimpiarFormulario(ActionEvent event) {
         limpiarFormulario();
+    }
+
+    // CORRECCIÓN: Agregar el método onCrearFuncion que falta
+    @FXML
+    private void onCrearFuncion(ActionEvent event) {
+        // Limpiar el formulario para crear una nueva función
+        limpiarFormulario();
+        lblEstadoOperacion.setText("Programar nueva función - Complete todos los campos y presione 'Programar Función'");
+
+        mostrarInformacion("Nueva Función",
+                "El formulario está listo para programar una nueva función.\n" +
+                        "Complete todos los campos requeridos y presione el botón 'Programar Función'.");
     }
 
     @FXML
@@ -351,7 +367,7 @@ public class ControladorFuncionesFX implements Initializable {
         cmbFormato.setValue(null);
         cmbTipoEstreno.setValue(null);
         txtHoraInicio.setStyle("");
-        lblEstadoOperacion.setText("Formulario limpio");
+        lblEstadoOperacion.setText("Formulario limpio - listo para programar nueva función");
     }
 
     private void buscarPorId() {
@@ -433,7 +449,7 @@ public class ControladorFuncionesFX implements Initializable {
         StringBuilder contenido = new StringBuilder();
         contenido.append("Película: ").append(funcion.getPelicula().getTitulo()).append("\n");
         contenido.append("Sala: ").append(funcion.getSala().getNombre()).append("\n");
-        contenido.append("Tipo de Sala: ").append(funcion.getSala().getTipoSala().name()).append("\n");
+        contenido.append("Tipo de Sala: ").append(funcion.getSala().getTipo()).append("\n");
         contenido.append("Fecha y Hora de Inicio: ").append(funcion.getFechaHoraInicio().format(formatter)).append("\n");
         contenido.append("Fecha y Hora de Fin: ").append(funcion.getFechaHoraFin().format(formatter)).append("\n");
         contenido.append("Formato: ").append(funcion.getFormato().toString()).append("\n");
@@ -455,9 +471,9 @@ public class ControladorFuncionesFX implements Initializable {
         lblEstadoOperacion.setText("Editando función ID: " + funcion.getId() + ". Modifique los datos y programe nuevamente.");
 
         mostrarInformacion("Modo Edición",
-            "Los datos de la función han sido cargados en el formulario.\n" +
-            "Modifique los campos necesarios y presione 'Programar Función' para guardar los cambios.\n\n" +
-            "Nota: Se creará una nueva función y deberá eliminar la anterior manualmente si es necesario.");
+                "Los datos de la función han sido cargados en el formulario.\n" +
+                        "Modifique los campos necesarios y presione 'Programar Función' para guardar los cambios.\n\n" +
+                        "Nota: Se creará una nueva función y deberá eliminar la anterior manualmente si es necesario.");
     }
 
     private void eliminarFuncion(Funcion funcion) {
@@ -465,8 +481,8 @@ public class ControladorFuncionesFX implements Initializable {
         confirmacion.setTitle("Confirmar Eliminación");
         confirmacion.setHeaderText("¿Está seguro de eliminar esta función?");
         confirmacion.setContentText("Función ID: " + funcion.getId() + "\n" +
-                                   "Película: " + funcion.getPelicula().getTitulo() + "\n" +
-                                   "Sala: " + funcion.getSala().getNombre());
+                "Película: " + funcion.getPelicula().getTitulo() + "\n" +
+                "Sala: " + funcion.getSala().getNombre());
 
         confirmacion.showAndWait().ifPresent(response -> {
             if (response.getButtonData().isDefaultButton()) {
