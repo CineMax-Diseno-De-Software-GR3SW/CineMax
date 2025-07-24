@@ -15,6 +15,9 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionPeliculas.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 900, 650);
+        
+        // Aplicar el archivo CSS para los estilos
+        scene.getStylesheets().add(getClass().getResource("/temas/styles.css").toExternalForm());
 
         stage.setTitle("CineMax - Gestión de Películas");
         stage.setScene(scene);

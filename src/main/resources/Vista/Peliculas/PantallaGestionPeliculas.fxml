@@ -5,13 +5,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula">
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
-                <Label text="Gestión de Películas">
+                <Button fx:id="btnVolver" text="←" styleClass="icon-button" onAction="#onVolver" />
+                <Label text="Gestor de Películas">
                     <font>
-                        <Font name="Arial Black" size="24" />
+                        <Font name="Arial Black" size="32" />
                     </font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS" />
@@ -72,4 +73,16 @@
             </HBox>
         </VBox>
     </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
+            <children>
+                <Button fx:id="btnLogOut" text="Log Out" styleClass="logout-button" onAction="#onLogOut" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+            </padding>
+        </HBox>
+    </bottom>
 </BorderPane>

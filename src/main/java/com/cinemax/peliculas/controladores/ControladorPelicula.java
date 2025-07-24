@@ -595,4 +595,24 @@ public class ControladorPelicula implements Initializable {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
+    
+    @FXML
+    private void onLogOut(ActionEvent event) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Cerrar Sesión");
+        alert.setHeaderText(null);
+        alert.setContentText("¿Está seguro que desea cerrar sesión?");
+        
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            // Cerrar la aplicación
+            javafx.application.Platform.exit();
+        }
+    }
+    
+    @FXML
+    private void onVolver(ActionEvent event) {
+        // Por ahora solo muestra un mensaje, aquí puedes agregar la lógica para navegar a otra pantalla
+        mostrarInformacion("Volver", "Función de navegación no implementada aún");
+    }
 }
