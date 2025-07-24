@@ -21,7 +21,7 @@ public class FuncionDAO {
         this.gestorDB = ConexionBaseSingleton.getInstancia();
     }
 
-    public void guardar(Funcion funcion) throws SQLException {
+    public void crear(Funcion funcion) throws SQLException {
         String sql = "INSERT INTO funcion (id_pelicula, id_sala, fecha_hora_inicio, fecha_hora_fin, formato, tipo_estreno) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = gestorDB.getConexion();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -46,7 +46,7 @@ public class FuncionDAO {
         }
     }
 
-    public List<Funcion> listarTodas() {
+    public List<Funcion> listarTodasLasFunciones() {
         List<Funcion> funciones = new ArrayList<>();
         String sql = "SELECT * FROM funcion";
         PeliculaDAO peliculaDAO = new PeliculaDAO();
@@ -78,7 +78,7 @@ public class FuncionDAO {
         return funciones;
     }
 
-    public List<Funcion> listarPorSala(int salaId) {
+    public List<Funcion> listarFuncionesPorSala(int salaId) {
         List<Funcion> funciones = new ArrayList<>();
         String sql = "SELECT * FROM funcion WHERE id_sala = ?";
         PeliculaDAO peliculaDAO = new PeliculaDAO();
@@ -110,7 +110,7 @@ public class FuncionDAO {
         return funciones;
     }
 
-    public void editar(Funcion funcion) throws SQLException {
+    public void actualizar(Funcion funcion) throws SQLException {
         String sql = "UPDATE funcion SET id_pelicula = ?, id_sala = ?, fecha_hora_inicio = ?, fecha_hora_fin = ?, formato = ?, tipo_estreno = ? WHERE id_funcion = ?";
         try (Connection conn = gestorDB.getConexion();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {

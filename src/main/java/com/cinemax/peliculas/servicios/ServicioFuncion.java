@@ -21,10 +21,9 @@ public class ServicioFuncion {
         this.funcionDAO = new FuncionDAO();
     }
 
-    // EDITAR
-    // ELIMINAR
+   
 
-    public Funcion programarNuevaFuncion(Pelicula pelicula, Sala sala, LocalDateTime fechaHoraInicio,
+    public Funcion crearFuncion(Pelicula pelicula, Sala sala, LocalDateTime fechaHoraInicio,
             FormatoFuncion formato, TipoEstreno tipoEstreno)
             throws IllegalArgumentException, SQLException {
 
@@ -37,7 +36,7 @@ public class ServicioFuncion {
         validarTraslapeFunciones(sala, fechaHoraInicio, fechaHoraFin);
 
         Funcion funcion = new Funcion(0, pelicula, sala, fechaHoraInicio, fechaHoraFin, formato, tipoEstreno);
-        funcionDAO.guardar(funcion);
+        funcionDAO.crear(funcion);
         return funcion;
     }
 
@@ -77,7 +76,7 @@ public class ServicioFuncion {
     }
 
     private void validarTraslapeFunciones(Sala sala, LocalDateTime inicio, LocalDateTime fin) throws SQLException {
-        List<Funcion> funcionesSala = funcionDAO.listarPorSala(sala.getId());
+        List<Funcion> funcionesSala = funcionDAO.listarFuncionesPorSala(sala.getId());
         for (Funcion f : funcionesSala) {
             if (inicio.isBefore(f.getFechaHoraFin()) && fin.isAfter(f.getFechaHoraInicio())) {
                 throw new IllegalArgumentException(
@@ -87,7 +86,7 @@ public class ServicioFuncion {
         }
     }
 
-    public void editarFuncion(int id, Pelicula pelicula, Sala sala, LocalDateTime fechaHoraInicio,
+    public void actualizarFuncion(int id, Pelicula pelicula, Sala sala, LocalDateTime fechaHoraInicio,
             FormatoFuncion formato, TipoEstreno tipoEstreno) throws SQLException {
         Funcion funcionExistente = funcionDAO.buscarPorId(id);
         if (funcionExistente == null) {
@@ -106,19 +105,19 @@ public class ServicioFuncion {
         funcionExistente.setFormato(formato);
         funcionExistente.setTipoEstreno(tipoEstreno);
 
-        funcionDAO.editar(funcionExistente);
+        funcionDAO.actualizar(funcionExistente);
     }
 
     public List<Funcion> listarTodasLasFunciones() {
-        return funcionDAO.listarTodas();
+        return funcionDAO.listarTodasLasFunciones();
     }
 
-    public Funcion buscarPorId(int id) throws SQLException {
+    public Funcion buscarFuncionPorId(int id) throws SQLException {
         return funcionDAO.buscarPorId(id);
     }
 
     public List<Funcion> listarFuncionesPorSala(int salaId) throws SQLException {
-        return funcionDAO.listarPorSala(salaId);
+        return funcionDAO.listarFuncionesPorSala(salaId);
     }
 
     public void eliminarFuncion(int id) throws SQLException {
