@@ -19,11 +19,16 @@
 
     <PasswordField fx:id="txtPassword" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Contraseña" />
 
-    <Button styleClass="primary-button" onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Log In">
+    <Button styleClass="primary-button" onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Iniciar Sesión">
       <font>
          <Font size="18.0" />
       </font></Button>
 
     <Label fx:id="lblError" maxWidth="300" visible="false" wrapText="true" />
+    <Hyperlink onAction="#onForgotPasswordClick" text="¿Olvidaste tu contraseña?">
+        <font>
+            <Font size="14.0" />
+        </font>
+    </Hyperlink>
 
 </VBox>
