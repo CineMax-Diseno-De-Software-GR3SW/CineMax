@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
@@ -17,7 +18,6 @@ import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.modelos.persistencia.SalasDAO;
 import com.cinemax.salas.servicios.SalaService;
 
 import javafx.collections.FXCollections;
@@ -25,15 +25,21 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.GridPane;
+import javafx.util.StringConverter;
 
 public class ControladorFuncionesFX implements Initializable {
 
@@ -42,24 +48,9 @@ public class ControladorFuncionesFX implements Initializable {
     private PeliculaDAO peliculaDAO;
     private SalaService salaService;
 
-    // Componentes para programar función
-    @FXML private ComboBox<Pelicula> cmbPelicula;
-    @FXML private ComboBox<Sala> cmbSala;
-    @FXML private DatePicker dateFechaFuncion;
-    @FXML private TextField txtHoraInicio;
-    @FXML private ComboBox<FormatoFuncion> cmbFormato;
-    @FXML private ComboBox<TipoEstreno> cmbTipoEstreno;
-    @FXML private Button btnProgramarFuncion;
-    @FXML private Button btnLimpiarFormulario;
-
-    // Componentes para búsqueda y filtros
-    @FXML private TextField txtBuscarId;
-    @FXML private ComboBox<Sala> cmbFiltrarSala;
-    @FXML private Button btnBuscarId;
-    @FXML private Button btnFiltrarSala;
-    @FXML private Button btnMostrarTodas;
-
-    // Tabla de funciones
+    // Componentes de la interfaz FXML
+    @FXML private TextField txtBuscar;
+    @FXML private ComboBox<Sala> cmbFiltroSala;
     @FXML private TableView<Funcion> tablaFunciones;
     @FXML private TableColumn<Funcion, Integer> colId;
     @FXML private TableColumn<Funcion, String> colPelicula;
@@ -68,14 +59,15 @@ public class ControladorFuncionesFX implements Initializable {
     @FXML private TableColumn<Funcion, String> colFormato;
     @FXML private TableColumn<Funcion, String> colTipoEstreno;
 
-    // Botones de acción
+    @FXML private Button btnNuevaFuncion;
+    @FXML private Button btnBuscar;
+    @FXML private Button btnLimpiar;
+    @FXML private Button btnEditar;
+    @FXML private Button btnEliminar;
     @FXML private Button btnVerDetalles;
-    @FXML private Button btnEditarFuncion;
-    @FXML private Button btnEliminarFuncion;
 
-    // Labels informativos
     @FXML private Label lblTotalFunciones;
-    @FXML private Label lblEstadoOperacion;
+    @FXML private Label lblEstadisticas;
 
     // Datos para la tabla
     private ObservableList<Funcion> listaFunciones;
@@ -85,78 +77,40 @@ public class ControladorFuncionesFX implements Initializable {
         this.servicioFuncion = new ServicioFuncion();
         this.funcionDAO = new FuncionDAO();
         this.peliculaDAO = new PeliculaDAO();
-    }
-
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
         this.salaService = new SalaService();
-        listaFunciones = FXCollections.observableArrayList();
-        funcionesFiltradas = FXCollections.observableArrayList();
+    }
 
-        configurarTabla();
+    @FXML
+    private void onNuevaFuncion(ActionEvent event) {
+        mostrarFormularioNuevaFuncion();
+    }
+
+    private void mostrarFormularioNuevaFuncion() {
+        mostrarFormularioFuncion(null);
+    }
+
+    private void mostrarFormularioFuncion(Funcion funcionExistente) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        boolean esEdicion = funcionExistente != null;
+        dialog.setTitle(esEdicion ? "Editar Función" : "Agregar Nueva Función");
+        dialog.setHeaderText(esEdicion ? "Modifique los datos de la función" : "Complete los datos de la nueva función");
+
+        // Crear los campos del formulario
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // Campos del formulario
+        ComboBox<Pelicula> cmbPelicula = new ComboBox<>();
         try {
-            configurarComboBoxes();
+            List<Pelicula> peliculas = peliculaDAO.listarTodas();
+            cmbPelicula.setItems(FXCollections.observableArrayList(peliculas));
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            mostrarError("Error", "No se pudieron cargar las películas: " + e.getMessage());
+            return;
         }
-        configurarEventos();
-        cargarDatos();
-    }
-
-    private void configurarTabla() {
-        // Configurar las columnas de la tabla
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-
-        colPelicula.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleStringProperty(
-                    cellData.getValue().getPelicula().getTitulo()
-            );
-        });
-
-        colSala.setCellValueFactory(cellData -> {
-            Sala sala = cellData.getValue().getSala();
-            return new javafx.beans.property.SimpleStringProperty(
-                    sala != null ? sala.getNombre() : "Sala no asignada"
-            );
-        });
-
-        colFechaHora.setCellValueFactory(cellData -> {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            return new javafx.beans.property.SimpleStringProperty(
-                    cellData.getValue().getFechaHoraInicio().format(formatter)
-            );
-        });
-
-        colFormato.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleStringProperty(
-                    cellData.getValue().getFormato().toString()
-            );
-        });
-
-        colTipoEstreno.setCellValueFactory(cellData -> {
-            return new javafx.beans.property.SimpleStringProperty(
-                    cellData.getValue().getTipoEstreno().name()
-            );
-        });
-
-        // Configurar selección de tabla
-        tablaFunciones.getSelectionModel().selectedItemProperty().addListener(
-                (obs, oldSelection, newSelection) -> {
-                    boolean funcionSeleccionada = newSelection != null;
-                    btnVerDetalles.setDisable(!funcionSeleccionada);
-                    btnEditarFuncion.setDisable(!funcionSeleccionada);
-                    btnEliminarFuncion.setDisable(!funcionSeleccionada);
-                }
-        );
-
-        tablaFunciones.setItems(funcionesFiltradas);
-    }
-
-    private void configurarComboBoxes() throws SQLException {
-        // Configurar ComboBox de películas
-        List<Pelicula> peliculas = peliculaDAO.listarTodas();
-        cmbPelicula.setItems(FXCollections.observableArrayList(peliculas));
-        cmbPelicula.setConverter(new javafx.util.StringConverter<Pelicula>() {
+        cmbPelicula.setConverter(new StringConverter<Pelicula>() {
             @Override
             public String toString(Pelicula pelicula) {
                 return pelicula != null ? pelicula.getTitulo() : "";
@@ -167,18 +121,17 @@ public class ControladorFuncionesFX implements Initializable {
                 return null;
             }
         });
+        cmbPelicula.setPrefWidth(300);
 
-        // Configurar ComboBox de salas
-        List<Sala> salas = null;
+        ComboBox<Sala> cmbSala = new ComboBox<>();
         try {
-            salas = salaService.listarSalas();
+            List<Sala> salas = salaService.listarSalas();
+            cmbSala.setItems(FXCollections.observableArrayList(salas));
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            mostrarError("Error", "No se pudieron cargar las salas: " + e.getMessage());
+            return;
         }
-        cmbSala.setItems(FXCollections.observableArrayList(salas));
-        cmbFiltrarSala.setItems(FXCollections.observableArrayList(salas));
-
-        javafx.util.StringConverter<Sala> salaConverter = new javafx.util.StringConverter<>() {
+        cmbSala.setConverter(new StringConverter<Sala>() {
             @Override
             public String toString(Sala sala) {
                 return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
@@ -188,102 +141,193 @@ public class ControladorFuncionesFX implements Initializable {
             public Sala fromString(String string) {
                 return null;
             }
-        };
-        cmbSala.setConverter(salaConverter);
-        cmbFiltrarSala.setConverter(salaConverter);
-
-        // Configurar ComboBox de formato
-        cmbFormato.setItems(FXCollections.observableArrayList(FormatoFuncion.values()));
-
-        // Configurar ComboBox de tipo de estreno
-        cmbTipoEstreno.setItems(FXCollections.observableArrayList(TipoEstreno.values()));
-    }
-
-    private void configurarEventos() {
-        // Validación en tiempo real de la hora
-        txtHoraInicio.textProperty().addListener((obs, oldText, newText) -> {
-            validarFormatoHora(newText);
         });
-    }
+        cmbSala.setPrefWidth(300);
 
-    private void cargarDatos() {
-        cargarFunciones();
-    }
+        DatePicker dateFecha = new DatePicker();
+        dateFecha.setPrefWidth(200);
 
-    private void cargarFunciones() {
-        try {
-            lblEstadoOperacion.setText("Cargando funciones...");
-            List<Funcion> funciones = funcionDAO.listarTodas();
-            listaFunciones.clear();
-            listaFunciones.addAll(funciones);
-            funcionesFiltradas.setAll(listaFunciones); // Asegurar que funcionesFiltradas se actualice
-            actualizarEstadisticas(); // CORRECCIÓN: Agregar esta línea para actualizar las estadísticas
-            lblEstadoOperacion.setText("Funciones cargadas correctamente");
-        } catch (Exception e) {
-            lblEstadoOperacion.setText("Error al cargar funciones");
-            mostrarError("Error al cargar funciones", e.getMessage());
+        TextField txtHora = new TextField();
+        txtHora.setPromptText("HH:MM (ej: 14:30)");
+        txtHora.setPrefWidth(150);
+
+        ComboBox<FormatoFuncion> cmbFormato = new ComboBox<>();
+        cmbFormato.setItems(FXCollections.observableArrayList(FormatoFuncion.values()));
+        cmbFormato.setPrefWidth(200);
+
+        ComboBox<TipoEstreno> cmbTipoEstreno = new ComboBox<>();
+        cmbTipoEstreno.setItems(FXCollections.observableArrayList(TipoEstreno.values()));
+        cmbTipoEstreno.setPrefWidth(200);
+
+        // Si es edición, cargar datos existentes
+        if (esEdicion) {
+            cmbPelicula.setValue(funcionExistente.getPelicula());
+            cmbSala.setValue(funcionExistente.getSala());
+            dateFecha.setValue(funcionExistente.getFechaHoraInicio().toLocalDate());
+            txtHora.setText(funcionExistente.getFechaHoraInicio().toLocalTime().toString());
+            cmbFormato.setValue(funcionExistente.getFormato());
+            cmbTipoEstreno.setValue(funcionExistente.getTipoEstreno());
         }
-    }
 
-    @FXML
-    private void onProgramarFuncion(ActionEvent event) {
-        try {
-            if (!validarFormulario()) {
-                return;
+        // Agregar campos al grid
+        grid.add(new Label("Película *:"), 0, 0);
+        grid.add(cmbPelicula, 1, 0);
+
+        grid.add(new Label("Sala *:"), 0, 1);
+        grid.add(cmbSala, 1, 1);
+
+        grid.add(new Label("Fecha *:"), 0, 2);
+        grid.add(dateFecha, 1, 2);
+
+        grid.add(new Label("Hora *:"), 0, 3);
+        grid.add(txtHora, 1, 3);
+
+        grid.add(new Label("Formato *:"), 0, 4);
+        grid.add(cmbFormato, 1, 4);
+
+        grid.add(new Label("Tipo de Estreno *:"), 0, 5);
+        grid.add(cmbTipoEstreno, 1, 5);
+
+        // Agregar nota
+        Label lblNota = new Label("* Campos obligatorios");
+        lblNota.setStyle("-fx-font-style: italic; -fx-text-fill: #666;");
+        grid.add(lblNota, 0, 6, 2, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Botones
+        ButtonType btnGuardar = new ButtonType(esEdicion ? "Actualizar" : "Guardar", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
+
+        // Validación en tiempo real
+        Button botonGuardar = (Button) dialog.getDialogPane().lookupButton(btnGuardar);
+        botonGuardar.setDisable(true);
+
+        // Listener para habilitar/deshabilitar botón guardar
+        Runnable validarFormulario = () -> {
+            boolean valido = cmbPelicula.getValue() != null &&
+                           cmbSala.getValue() != null &&
+                           dateFecha.getValue() != null &&
+                           !txtHora.getText().trim().isEmpty() &&
+                           cmbFormato.getValue() != null &&
+                           cmbTipoEstreno.getValue() != null;
+            botonGuardar.setDisable(!valido);
+        };
+
+        cmbPelicula.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+        cmbSala.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+        dateFecha.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+        txtHora.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        cmbFormato.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+        cmbTipoEstreno.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+
+        // Validación inicial si es edición
+        if (esEdicion) {
+            validarFormulario.run();
+        }
+
+        // Mostrar el diálogo
+        Optional<ButtonType> resultado = dialog.showAndWait();
+
+        if (resultado.isPresent() && resultado.get() == btnGuardar) {
+            try {
+                // Validar formato de hora
+                LocalTime hora = LocalTime.parse(txtHora.getText().trim());
+                LocalDateTime fechaHoraInicio = LocalDateTime.of(dateFecha.getValue(), hora);
+
+                if (esEdicion) {
+                    // Actualizar función existente
+                    servicioFuncion.editarFuncion(
+                        funcionExistente.getId(),
+                        cmbPelicula.getValue(),
+                        cmbSala.getValue(),
+                        fechaHoraInicio,
+                        cmbFormato.getValue(),
+                        cmbTipoEstreno.getValue()
+                    );
+
+                    mostrarInformacion("Éxito", "Función actualizada correctamente");
+                } else {
+                    // Crear nueva función
+                    Funcion nuevaFuncion = servicioFuncion.programarNuevaFuncion(
+                        cmbPelicula.getValue(),
+                        cmbSala.getValue(),
+                        fechaHoraInicio,
+                        cmbFormato.getValue(),
+                        cmbTipoEstreno.getValue()
+                    );
+
+                    mostrarInformacion("Éxito", "Función creada exitosamente con ID: " + nuevaFuncion.getId());
+                }
+
+                // Recargar la tabla
+                cargarFunciones();
+
+            } catch (Exception e) {
+                String mensaje = e.getMessage();
+                if (mensaje != null && mensaje.contains("hora")) {
+                    mostrarError("Error de formato", "Formato de hora inválido. Use HH:MM (ej: 14:30)");
+                } else {
+                    mostrarError("Error al " + (esEdicion ? "actualizar" : "crear") + " función",
+                               "Error: " + (mensaje != null ? mensaje : "Error desconocido"));
+                }
             }
-
-            Pelicula pelicula = cmbPelicula.getValue();
-            Sala sala = cmbSala.getValue();
-            LocalDate fecha = dateFechaFuncion.getValue();
-            LocalTime hora = LocalTime.parse(txtHoraInicio.getText());
-            LocalDateTime fechaHoraInicio = LocalDateTime.of(fecha, hora);
-            FormatoFuncion formato = cmbFormato.getValue();
-            TipoEstreno tipoEstreno = cmbTipoEstreno.getValue();
-
-            Funcion nuevaFuncion = servicioFuncion.programarNuevaFuncion(
-                    pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
-
-            mostrarInformacion("Éxito", "Función programada correctamente con ID: " + nuevaFuncion.getId());
-            limpiarFormulario();
-            cargarFunciones();
-
-        } catch (IllegalArgumentException e) {
-            mostrarError("Error de validación", e.getMessage());
-        } catch (Exception e) {
-            mostrarError("Error al programar función", e.getMessage());
         }
     }
 
     @FXML
-    private void onLimpiarFormulario(ActionEvent event) {
-        limpiarFormulario();
-    }
-
-    // CORRECCIÓN: Agregar el método onCrearFuncion que falta
-    @FXML
-    private void onCrearFuncion(ActionEvent event) {
-        // Limpiar el formulario para crear una nueva función
-        limpiarFormulario();
-        lblEstadoOperacion.setText("Programar nueva función - Complete todos los campos y presione 'Programar Función'");
-
-        mostrarInformacion("Nueva Función",
-                "El formulario está listo para programar una nueva función.\n" +
-                        "Complete todos los campos requeridos y presione el botón 'Programar Función'.");
+    private void onEditarFuncion(ActionEvent event) {
+        Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
+        if (funcionSeleccionada != null) {
+            mostrarFormularioFuncion(funcionSeleccionada);
+        }
     }
 
     @FXML
-    private void onBuscarId(ActionEvent event) {
-        buscarPorId();
+    private void onEliminarFuncion(ActionEvent event) {
+        Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
+        if (funcionSeleccionada != null) {
+            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmacion.setTitle("Confirmar eliminación");
+            confirmacion.setHeaderText("¿Está seguro de eliminar esta función?");
+            confirmacion.setContentText("Función ID: " + funcionSeleccionada.getId() +
+                                      "\nPelícula: " + funcionSeleccionada.getPelicula().getTitulo() +
+                                      "\n\nATENCIÓN: Esta acción no se puede deshacer.");
+
+            Optional<ButtonType> resultado = confirmacion.showAndWait();
+            if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
+                try {
+                    funcionDAO.eliminar(funcionSeleccionada.getId());
+                    cargarFunciones();
+                    mostrarInformacion("Éxito", "Función eliminada correctamente");
+                } catch (Exception e) {
+                    String mensaje = e.getMessage();
+                    if (mensaje != null && (mensaje.contains("foreign key constraint") || mensaje.contains("violates"))) {
+                        mostrarErrorRestriccion(funcionSeleccionada);
+                    } else {
+                        mostrarError("Error", "No se pudo eliminar la función: " + (mensaje != null ? mensaje : "Error desconocido"));
+                    }
+                }
+            }
+        }
     }
 
-    @FXML
-    private void onFiltrarSala(ActionEvent event) {
-        filtrarPorSala();
-    }
+    private void mostrarErrorRestriccion(Funcion funcion) {
+        Alert alerta = new Alert(Alert.AlertType.WARNING);
+        alerta.setTitle("No se puede eliminar la función");
+        alerta.setHeaderText("La función está siendo utilizada en el sistema");
+        alerta.setContentText("No se puede eliminar la función ID " + funcion.getId() +
+                             " porque está asociada con:\n\n" +
+                             "• Boletos vendidos\n" +
+                             "• Reservas existentes\n" +
+                             "• Asientos ocupados\n\n" +
+                             "OPCIONES:\n" +
+                             "1. Cancelar todas las reservas primero\n" +
+                             "2. Esperar a que termine la función\n" +
+                             "3. Contactar al administrador del sistema");
 
-    @FXML
-    private void onMostrarTodas(ActionEvent event) {
-        mostrarTodasLasFunciones();
+        alerta.showAndWait();
     }
 
     @FXML
@@ -295,148 +339,163 @@ public class ControladorFuncionesFX implements Initializable {
     }
 
     @FXML
-    private void onEditarFuncion(ActionEvent event) {
-        Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
-        if (funcionSeleccionada != null) {
-            editarFuncion(funcionSeleccionada);
-        }
+    private void onBuscar(ActionEvent event) {
+        aplicarFiltros();
     }
 
     @FXML
-    private void onEliminarFuncion(ActionEvent event) {
-        Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
-        if (funcionSeleccionada != null) {
-            eliminarFuncion(funcionSeleccionada);
-        }
+    private void onLimpiar(ActionEvent event) {
+        txtBuscar.clear();
+        cmbFiltroSala.setValue(null);
+        aplicarFiltros();
     }
 
-    private boolean validarFormulario() {
-        if (cmbPelicula.getValue() == null) {
-            mostrarError("Validación", "Debe seleccionar una película");
-            return false;
-        }
-        if (cmbSala.getValue() == null) {
-            mostrarError("Validación", "Debe seleccionar una sala");
-            return false;
-        }
-        if (dateFechaFuncion.getValue() == null) {
-            mostrarError("Validación", "Debe seleccionar una fecha");
-            return false;
-        }
-        if (txtHoraInicio.getText().trim().isEmpty()) {
-            mostrarError("Validación", "Debe ingresar una hora de inicio");
-            return false;
-        }
-        if (cmbFormato.getValue() == null) {
-            mostrarError("Validación", "Debe seleccionar un formato");
-            return false;
-        }
-        if (cmbTipoEstreno.getValue() == null) {
-            mostrarError("Validación", "Debe seleccionar un tipo de estreno");
-            return false;
-        }
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        listaFunciones = FXCollections.observableArrayList();
+        funcionesFiltradas = FXCollections.observableArrayList();
 
-        try {
-            LocalTime.parse(txtHoraInicio.getText());
-        } catch (Exception e) {
-            mostrarError("Validación", "Formato de hora inválido. Use HH:MM (ej: 14:30)");
-            return false;
-        }
-
-        return true;
+        configurarTabla();
+        configurarFiltros();
+        configurarEventos();
+        cargarFunciones();
     }
 
-    private void validarFormatoHora(String texto) {
-        if (!texto.isEmpty()) {
-            try {
-                LocalTime.parse(texto);
-                txtHoraInicio.setStyle("-fx-border-color: green;");
-            } catch (Exception e) {
-                txtHoraInicio.setStyle("-fx-border-color: red;");
+    private void configurarTabla() {
+        // Configurar las columnas de la tabla
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+
+        colPelicula.setCellValueFactory(cellData -> {
+            Pelicula pelicula = cellData.getValue().getPelicula();
+            return new javafx.beans.property.SimpleStringProperty(
+                pelicula != null ? pelicula.getTitulo() : "N/A"
+            );
+        });
+
+        colSala.setCellValueFactory(cellData -> {
+            Sala sala = cellData.getValue().getSala();
+            return new javafx.beans.property.SimpleStringProperty(
+                sala != null ? sala.getNombre() : "N/A"
+            );
+        });
+
+        colFechaHora.setCellValueFactory(cellData -> {
+            LocalDateTime fechaHora = cellData.getValue().getFechaHoraInicio();
+            if (fechaHora != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                return new javafx.beans.property.SimpleStringProperty(fechaHora.format(formatter));
+            } else {
+                return new javafx.beans.property.SimpleStringProperty("N/A");
             }
-        } else {
-            txtHoraInicio.setStyle("");
-        }
+        });
+
+        colFormato.setCellValueFactory(cellData -> {
+            FormatoFuncion formato = cellData.getValue().getFormato();
+            return new javafx.beans.property.SimpleStringProperty(
+                formato != null ? formato.toString() : "N/A"
+            );
+        });
+
+        colTipoEstreno.setCellValueFactory(cellData -> {
+            TipoEstreno tipo = cellData.getValue().getTipoEstreno();
+            return new javafx.beans.property.SimpleStringProperty(
+                tipo != null ? tipo.name() : "N/A"
+            );
+        });
+
+        // Configurar selección de tabla
+        tablaFunciones.getSelectionModel().selectedItemProperty().addListener(
+            (obs, oldSelection, newSelection) -> {
+                boolean funcionSeleccionada = newSelection != null;
+                btnEditar.setDisable(!funcionSeleccionada);
+                btnEliminar.setDisable(!funcionSeleccionada);
+                btnVerDetalles.setDisable(!funcionSeleccionada);
+            }
+        );
+
+        tablaFunciones.setItems(funcionesFiltradas);
     }
 
-    private void limpiarFormulario() {
-        cmbPelicula.setValue(null);
-        cmbSala.setValue(null);
-        dateFechaFuncion.setValue(null);
-        txtHoraInicio.clear();
-        cmbFormato.setValue(null);
-        cmbTipoEstreno.setValue(null);
-        txtHoraInicio.setStyle("");
-        lblEstadoOperacion.setText("Formulario limpio - listo para programar nueva función");
-    }
-
-    private void buscarPorId() {
-        String idTexto = txtBuscarId.getText().trim();
-
-        if (idTexto.isEmpty()) {
-            mostrarTodasLasFunciones();
-            return;
-        }
-
+    private void configurarFiltros() {
+        // Configurar combo de salas
         try {
-            int id = Integer.parseInt(idTexto);
-            funcionesFiltradas.clear();
-
-            for (Funcion f : listaFunciones) {
-                if (f.getId() == id) {
-                    funcionesFiltradas.add(f);
-                    tablaFunciones.getSelectionModel().select(f);
-                    lblEstadoOperacion.setText("Función encontrada con ID: " + id);
-                    actualizarEstadisticas();
-                    return;
+            List<Sala> salas = salaService.listarSalas();
+            cmbFiltroSala.setItems(FXCollections.observableArrayList(salas));
+            cmbFiltroSala.setConverter(new StringConverter<Sala>() {
+                @Override
+                public String toString(Sala sala) {
+                    return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
                 }
+
+                @Override
+                public Sala fromString(String string) {
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            mostrarError("Error", "No se pudieron cargar las salas para el filtro: " + e.getMessage());
+        }
+
+        // Configurar evento de cambio en el filtro
+        cmbFiltroSala.setOnAction(e -> aplicarFiltros());
+    }
+
+    private void configurarEventos() {
+        // Configurar búsqueda en tiempo real
+        txtBuscar.textProperty().addListener((obs, oldText, newText) -> aplicarFiltros());
+    }
+
+    private void cargarFunciones() {
+        try {
+            listaFunciones.clear();
+            List<Funcion> funciones = funcionDAO.listarTodas();
+            if (funciones != null) {
+                listaFunciones.addAll(funciones);
             }
-
-            lblEstadoOperacion.setText("No se encontró función con ID: " + id);
-            actualizarEstadisticas();
-
-        } catch (NumberFormatException e) {
-            lblEstadoOperacion.setText("Por favor ingrese un ID válido (número entero)");
+            aplicarFiltros();
+        } catch (Exception e) {
+            mostrarError("Error al cargar funciones", e.getMessage() != null ? e.getMessage() : "Error desconocido");
         }
     }
 
-    private void filtrarPorSala() {
-        Sala salaSeleccionada = cmbFiltrarSala.getValue();
-
-        if (salaSeleccionada == null) {
-            mostrarTodasLasFunciones();
-            return;
-        }
-
+    private void aplicarFiltros() {
         funcionesFiltradas.clear();
-        int contador = 0;
 
-        for (Funcion f : listaFunciones) {
-            if (f.getSala().getId() == salaSeleccionada.getId()) {
-                funcionesFiltradas.add(f);
-                contador++;
+        String textoBusqueda = txtBuscar.getText() != null ? txtBuscar.getText().toLowerCase().trim() : "";
+        Sala salaSeleccionada = cmbFiltroSala.getValue();
+
+        for (Funcion funcion : listaFunciones) {
+            boolean coincideTexto = textoBusqueda.isEmpty() ||
+                String.valueOf(funcion.getId()).contains(textoBusqueda) ||
+                (funcion.getPelicula() != null && funcion.getPelicula().getTitulo() != null &&
+                 funcion.getPelicula().getTitulo().toLowerCase().contains(textoBusqueda)) ||
+                (funcion.getSala() != null && funcion.getSala().getNombre() != null &&
+                 funcion.getSala().getNombre().toLowerCase().contains(textoBusqueda));
+
+            boolean coincideSala = salaSeleccionada == null ||
+                (funcion.getSala() != null && funcion.getSala().getId() == salaSeleccionada.getId());
+
+            if (coincideTexto && coincideSala) {
+                funcionesFiltradas.add(funcion);
             }
         }
 
         actualizarEstadisticas();
-        lblEstadoOperacion.setText("Funciones de Sala " + salaSeleccionada.getNombre() + ": " + contador);
-    }
-
-    private void mostrarTodasLasFunciones() {
-        funcionesFiltradas.clear();
-        funcionesFiltradas.addAll(listaFunciones);
-        actualizarEstadisticas();
-
-        if (listaFunciones.isEmpty()) {
-            lblEstadoOperacion.setText("No hay funciones programadas");
-        } else {
-            lblEstadoOperacion.setText("Mostrando todas las funciones");
-        }
     }
 
     private void actualizarEstadisticas() {
         int total = funcionesFiltradas.size();
-        lblTotalFunciones.setText("Funciones mostradas: " + total + " de " + listaFunciones.size());
+        lblTotalFunciones.setText("Total de funciones: " + total);
+
+        if (total > 0) {
+            long funcionesHoy = funcionesFiltradas.stream()
+                .filter(f -> f.getFechaHoraInicio() != null)
+                .filter(f -> f.getFechaHoraInicio().toLocalDate().equals(LocalDate.now()))
+                .count();
+            lblEstadisticas.setText("Funciones hoy: " + funcionesHoy);
+        } else {
+            lblEstadisticas.setText("No hay funciones que mostrar");
+        }
     }
 
     private void mostrarDetallesFuncion(Funcion funcion) {
@@ -444,65 +503,44 @@ public class ControladorFuncionesFX implements Initializable {
         detalles.setTitle("Detalles de la Función");
         detalles.setHeaderText("Función ID: " + funcion.getId());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-
         StringBuilder contenido = new StringBuilder();
-        contenido.append("Película: ").append(funcion.getPelicula().getTitulo()).append("\n");
-        contenido.append("Sala: ").append(funcion.getSala().getNombre()).append("\n");
-        contenido.append("Tipo de Sala: ").append(funcion.getSala().getTipo()).append("\n");
-        contenido.append("Fecha y Hora de Inicio: ").append(funcion.getFechaHoraInicio().format(formatter)).append("\n");
-        contenido.append("Fecha y Hora de Fin: ").append(funcion.getFechaHoraFin().format(formatter)).append("\n");
-        contenido.append("Formato: ").append(funcion.getFormato().toString()).append("\n");
-        contenido.append("Tipo de Estreno: ").append(funcion.getTipoEstreno().name()).append("\n");
+        contenido.append("ID: ").append(funcion.getId()).append("\n");
+
+        if (funcion.getPelicula() != null) {
+            contenido.append("Película: ").append(funcion.getPelicula().getTitulo()).append("\n");
+        }
+
+        if (funcion.getSala() != null) {
+            contenido.append("Sala: ").append(funcion.getSala().getNombre()).append("\n");
+            contenido.append("Tipo de Sala: ").append(funcion.getSala().getTipo()).append("\n");
+        }
+
+        if (funcion.getFechaHoraInicio() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            contenido.append("Fecha y Hora de Inicio: ").append(funcion.getFechaHoraInicio().format(formatter)).append("\n");
+
+            if (funcion.getFechaHoraFin() != null) {
+                contenido.append("Fecha y Hora de Fin: ").append(funcion.getFechaHoraFin().format(formatter)).append("\n");
+            }
+        }
+
+        if (funcion.getFormato() != null) {
+            contenido.append("Formato: ").append(funcion.getFormato().toString()).append("\n");
+        }
+
+        if (funcion.getTipoEstreno() != null) {
+            contenido.append("Tipo de Estreno: ").append(funcion.getTipoEstreno().name()).append("\n");
+        }
 
         detalles.setContentText(contenido.toString());
         detalles.showAndWait();
-    }
-
-    private void editarFuncion(Funcion funcion) {
-        // Cargar datos en el formulario para edición
-        cmbPelicula.setValue(funcion.getPelicula());
-        cmbSala.setValue(funcion.getSala());
-        dateFechaFuncion.setValue(funcion.getFechaHoraInicio().toLocalDate());
-        txtHoraInicio.setText(funcion.getFechaHoraInicio().toLocalTime().toString());
-        cmbFormato.setValue(funcion.getFormato());
-        cmbTipoEstreno.setValue(funcion.getTipoEstreno());
-
-        lblEstadoOperacion.setText("Editando función ID: " + funcion.getId() + ". Modifique los datos y programe nuevamente.");
-
-        mostrarInformacion("Modo Edición",
-                "Los datos de la función han sido cargados en el formulario.\n" +
-                        "Modifique los campos necesarios y presione 'Programar Función' para guardar los cambios.\n\n" +
-                        "Nota: Se creará una nueva función y deberá eliminar la anterior manualmente si es necesario.");
-    }
-
-    private void eliminarFuncion(Funcion funcion) {
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar Eliminación");
-        confirmacion.setHeaderText("¿Está seguro de eliminar esta función?");
-        confirmacion.setContentText("Función ID: " + funcion.getId() + "\n" +
-                "Película: " + funcion.getPelicula().getTitulo() + "\n" +
-                "Sala: " + funcion.getSala().getNombre());
-
-        confirmacion.showAndWait().ifPresent(response -> {
-            if (response.getButtonData().isDefaultButton()) {
-                try {
-                    // Aquí implementarías la eliminación en el DAO
-                    // funcionDAO.eliminar(funcion.getId());
-                    mostrarInformacion("Función Eliminada", "La función ha sido eliminada correctamente.");
-                    cargarFunciones();
-                } catch (Exception e) {
-                    mostrarError("Error al eliminar", e.getMessage());
-                }
-            }
-        });
     }
 
     private void mostrarError(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(mensaje);
+        alert.setContentText(mensaje != null ? mensaje : "Error desconocido");
         alert.showAndWait();
     }
 
@@ -510,7 +548,7 @@ public class ControladorFuncionesFX implements Initializable {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(titulo);
         alert.setHeaderText(null);
-        alert.setContentText(mensaje);
+        alert.setContentText(mensaje != null ? mensaje : "Operación completada");
         alert.showAndWait();
     }
 }

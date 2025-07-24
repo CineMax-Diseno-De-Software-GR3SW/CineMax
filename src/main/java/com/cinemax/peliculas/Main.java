@@ -26,9 +26,10 @@ public class Main extends Application {
         ButtonType btnPeliculas = new ButtonType("Gestión de Películas");
         ButtonType btnCartelera = new ButtonType("Gestión de Cartelera");
         ButtonType btnFunciones = new ButtonType("Gestión de Funciones");
+        ButtonType btnSeleccionFuncion = new ButtonType("Selección de Función");
         ButtonType btnCancelar = new ButtonType("Cancelar");
 
-        seleccion.getButtonTypes().setAll(btnPeliculas, btnCartelera, btnFunciones, btnCancelar);
+        seleccion.getButtonTypes().setAll(btnPeliculas, btnCartelera, btnFunciones, btnSeleccionFuncion, btnCancelar);
 
         Optional<ButtonType> resultado = seleccion.showAndWait();
 
@@ -45,13 +46,16 @@ public class Main extends Application {
             } else if (resultado.get() == btnFunciones) {
                 fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionFunciones.fxml"));
                 titulo = "CineMax - Gestión de Funciones";
+            } else if (resultado.get() == btnSeleccionFuncion) {
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaSeleccionFuncion.fxml"));
+                titulo = "CineMax - Selección de Función";
             } else {
                 // Usuario canceló
                 return;
             }
 
             Parent root = fxmlLoader.load();
-            Scene scene = new Scene(root, 1000, 750);
+            Scene scene = new Scene(root, 1200, 700);
 
             // Aplicar estilos base
             scene.getStylesheets().add(getClass().getResource("/Vista/Peliculas/ayu-theme.css").toExternalForm());
