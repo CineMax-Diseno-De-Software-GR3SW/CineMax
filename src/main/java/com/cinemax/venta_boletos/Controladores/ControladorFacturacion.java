@@ -40,40 +40,62 @@ public class ControladorFacturacion {
     private double yOffset = 0;
 
     // --- Componentes FXML ---
-    @FXML private HBox headerBar;
-    @FXML private TextField nombreField;
-    @FXML private TextField apellidoField;
-    @FXML private ComboBox<String> tipoDocumentoBox;
-    @FXML private TextField documentoField;
-    @FXML private TextField correoField;
-    @FXML private Label subtotalLabel;
-    @FXML private Label impuestosLabel;
-    @FXML private Label totalLabel;
-    @FXML private Button finalizarButton;
-    @FXML private TextField identificacionField;
-    @FXML private Text mensajeActualizacionCliente;
-    @FXML private Text mensajeBusquedaCliente;
+    @FXML
+    private HBox headerBar;
+    @FXML
+    private TextField nombreField;
+    @FXML
+    private TextField apellidoField;
+    @FXML
+    private ComboBox<String> tipoDocumentoBox;
+    @FXML
+    private TextField documentoField;
+    @FXML
+    private TextField correoField;
+    @FXML
+    private Label subtotalLabel;
+    @FXML
+    private Label impuestosLabel;
+    @FXML
+    private Label totalLabel;
+    @FXML
+    private Button finalizarButton;
+    @FXML
+    private TextField identificacionField;
+    @FXML
+    private Text mensajeActualizacionCliente;
+    @FXML
+    private Text mensajeBusquedaCliente;
 
-    public void setPreviousScene(Scene scene) { this.previousScene = scene; }
+    public void setPreviousScene(Scene scene) {
+        this.previousScene = scene;
+    }
 
     @FXML
     public void initialize() {
         tipoDocumentoBox.setItems(FXCollections.observableArrayList("Cédula", "Pasaporte", "RUC"));
         tipoDocumentoBox.setValue("Cédula");
-        headerBar.setOnMousePressed(event -> { xOffset = event.getSceneX(); yOffset = event.getSceneY(); });
-        headerBar.setOnMouseDragged(event -> { ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset); ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset); });
+        headerBar.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+        headerBar.setOnMouseDragged(event -> {
+            ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset);
+            ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset);
+        });
     }
 
-    public void initData(String pelicula, String sala, List<Producto> boletos, double subtotal, double total, double impuestos) {
+    public void initData(String pelicula, String sala, List<Producto> boletos, double subtotal, double total,
+            double impuestos) {
         this.pelicula = pelicula;
         this.sala = sala;
         this.boletos = boletos;
 
         // Crear una instancia de Factura para usar su lógica de cálculo
-        //Factura facturaTemporal = new Factura();
-        //facturaTemporal.setProductos(this.boletos);
-        //facturaTemporal.calcularSubTotal();
-        //facturaTemporal.calcularTotal(new CalculadorIVA());
+        // Factura facturaTemporal = new Factura();
+        // facturaTemporal.setProductos(this.boletos);
+        // facturaTemporal.calcularSubTotal();
+        // facturaTemporal.calcularTotal(new CalculadorIVA());
 
         DecimalFormat df = new DecimalFormat("$ #,##0.00");
 
@@ -81,7 +103,6 @@ public class ControladorFacturacion {
         impuestosLabel.setText(df.format(impuestos));
         totalLabel.setText(df.format(total));
 
-        
     }
 
     @FXML
@@ -125,14 +146,16 @@ public class ControladorFacturacion {
 
     @FXML
     void onActualizarCliente(ActionEvent event) {
-        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty() || correoField.getText().isEmpty()) {
+        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
+                || correoField.getText().isEmpty()) {
             showAlert("Campo Incompleto", "Por favor, llene todos los campos para continuar.");
             return;
         }
 
         try {
             long idcliente = Long.parseLong(documentoField.getText());
-            Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), idcliente, correoField.getText());
+            Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), idcliente,
+                    correoField.getText());
             ClienteDAO clienteDAO = new ClienteDAO();
             clienteDAO.actualizarCliente(cliente);
             mensajeActualizacionCliente.setText("Cliente actualizado correctamente.");
@@ -146,7 +169,8 @@ public class ControladorFacturacion {
 
     @FXML
     protected void onFinalizarAction() {
-        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty() || correoField.getText().isEmpty()) {
+        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
+                || correoField.getText().isEmpty()) {
             showAlert("Campo Incompleto", "Por favor, llene todos los campos para continuar.");
             return;
         }
@@ -157,11 +181,10 @@ public class ControladorFacturacion {
             cliente = clienteDAO.buscarPorId(Long.parseLong(documentoField.getText()));
             if (cliente == null) {
                 cliente = new Cliente(
-                nombreField.getText(),
-                apellidoField.getText(),
-                Long.parseLong(documentoField.getText()),
-                correoField.getText()
-                );
+                        nombreField.getText(),
+                        apellidoField.getText(),
+                        Long.parseLong(documentoField.getText()),
+                        correoField.getText());
                 clienteDAO.crearCliente(cliente);
             }
         } catch (NumberFormatException e) {
@@ -172,7 +195,7 @@ public class ControladorFacturacion {
 
         // 2. Usar tu servicio para generar la factura final
         Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
-        //TODO: Dao debe guardar la factura
+        // TODO: Dao debe guardar la factura
 
         // 3. Mostrar un mensaje de éxito y cerrar
         showAlert("Compra Exitosa", "Se ha generado la factura: " + facturaFinal.getCodigoFactura());
@@ -185,10 +208,27 @@ public class ControladorFacturacion {
         // TODO: En vez de cerrar, redirigir a una vista de cartelera
     }
 
-    @FXML protected void onBackAction() { if (previousScene != null) { ((Stage) finalizarButton.getScene().getWindow()).setScene(previousScene); } }
-    @FXML protected void onCloseAction() { ((Stage) headerBar.getScene().getWindow()).close(); }
-    @FXML protected void onThemeToggleAction() { ApuntadorTema.getInstance().applyTheme(headerBar.getScene()); }
-    @FXML protected void onVerDetalle() { System.out.println("Acción para ver detalle del pedido..."); }
+    @FXML
+    protected void onBackAction() {
+        if (previousScene != null) {
+            ((Stage) finalizarButton.getScene().getWindow()).setScene(previousScene);
+        }
+    }
+
+    @FXML
+    protected void onCloseAction() {
+        ((Stage) headerBar.getScene().getWindow()).close();
+    }
+
+    @FXML
+    protected void onThemeToggleAction() {
+        ApuntadorTema.getInstance().applyTheme(headerBar.getScene());
+    }
+
+    @FXML
+    protected void onVerDetalle() {
+        System.out.println("Acción para ver detalle del pedido...");
+    }
 
     private void showAlert(String title, String message) {
         try {

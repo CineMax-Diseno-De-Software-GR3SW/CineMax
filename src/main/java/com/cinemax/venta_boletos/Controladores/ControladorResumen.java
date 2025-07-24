@@ -28,13 +28,20 @@ import java.util.stream.Collectors;
 
 public class ControladorResumen {
 
-    @FXML private HBox headerBar;
-    @FXML private VBox ticketDetailsContainer;
-    @FXML private Label subtotalLabel;
-    @FXML private Label impuestosLabel;
-    @FXML private Label totalLabel;
-    @FXML private CheckBox confirmCheckBox;
-    @FXML private Button continueButton;
+    @FXML
+    private HBox headerBar;
+    @FXML
+    private VBox ticketDetailsContainer;
+    @FXML
+    private Label subtotalLabel;
+    @FXML
+    private Label impuestosLabel;
+    @FXML
+    private Label totalLabel;
+    @FXML
+    private CheckBox confirmCheckBox;
+    @FXML
+    private Button continueButton;
 
     private Scene previousScene;
     private String pelicula;
@@ -47,12 +54,20 @@ public class ControladorResumen {
     private double total = 0.0;
     private double impuesto = 0.0;
 
-    public void setPreviousScene(Scene scene) { this.previousScene = scene; }
+    public void setPreviousScene(Scene scene) {
+        this.previousScene = scene;
+    }
 
     @FXML
     public void initialize() {
-        headerBar.setOnMousePressed(event -> { xOffset = event.getSceneX(); yOffset = event.getSceneY(); });
-        headerBar.setOnMouseDragged(event -> { ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset); ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset); });
+        headerBar.setOnMousePressed(event -> {
+            xOffset = event.getSceneX();
+            yOffset = event.getSceneY();
+        });
+        headerBar.setOnMouseDragged(event -> {
+            ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset);
+            ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset);
+        });
     }
 
     public void initData(String pelicula, String sala, List<Producto> boletos, double subtotal) {
@@ -61,17 +76,18 @@ public class ControladorResumen {
         this.boletos = boletos;
         this.subtotal = subtotal;
 
-        //Factura facturaTemporal = new Factura();
-        //facturaTemporal.setProductos(this.boletos);
-        //facturaTemporal.calcularSubTotal();
-        //facturaTemporal.calcularTotal(new CalculadorIVA());
+        // Factura facturaTemporal = new Factura();
+        // facturaTemporal.setProductos(this.boletos);
+        // facturaTemporal.calcularSubTotal();
+        // facturaTemporal.calcularTotal(new CalculadorIVA());
         impuesto = subtotal * CalculadorIVA.getIVA_TASA();
         total = subtotal + impuesto;
 
         DecimalFormat df = new DecimalFormat("$ #,##0.00");
-        //subtotalLabel.setText(df.format(facturaTemporal.getSubTotal()));
-        //impuestosLabel.setText(df.format(facturaTemporal.getTotal() - facturaTemporal.getSubTotal()));
-        //totalLabel.setText(df.format(facturaTemporal.getTotal()));
+        // subtotalLabel.setText(df.format(facturaTemporal.getSubTotal()));
+        // impuestosLabel.setText(df.format(facturaTemporal.getTotal() -
+        // facturaTemporal.getSubTotal()));
+        // totalLabel.setText(df.format(facturaTemporal.getTotal()));
         subtotalLabel.setText(df.format(subtotal));
         impuestosLabel.setText(df.format(impuesto));
         totalLabel.setText(df.format(total));
@@ -83,7 +99,7 @@ public class ControladorResumen {
         ticketDetailsContainer.getChildren().clear();
 
         String butacasStr = boletos.stream()
-                .map(p -> ((Boleto)p).getButaca())
+                .map(p -> ((Boleto) p).getButaca())
                 .collect(Collectors.joining(", "));
 
         Label tituloTicket = new Label(String.format("Boletos (%d)", boletos.size()));
@@ -116,7 +132,8 @@ public class ControladorResumen {
             Parent root = loader.load();
             ControladorFacturacion controllerDatosCliente = loader.getController();
 
-            controllerDatosCliente.initData(this.pelicula, this.sala, this.boletos, this.subtotal, this.total, this.impuesto);
+            controllerDatosCliente.initData(this.pelicula, this.sala, this.boletos, this.subtotal, this.total,
+                    this.impuesto);
             controllerDatosCliente.setPreviousScene(continueButton.getScene());
 
             Stage stage = (Stage) continueButton.getScene().getWindow();
@@ -137,13 +154,27 @@ public class ControladorResumen {
         System.out.println("Acción para ver detalle del pedido...");
     }
 
-    @FXML protected void onBackAction() { if (previousScene != null) { ((Stage) continueButton.getScene().getWindow()).setScene(previousScene); } }
-    @FXML protected void onCloseAction() { ((Stage) headerBar.getScene().getWindow()).close(); }
-    @FXML protected void onThemeToggleAction() { ApuntadorTema.getInstance().applyTheme(headerBar.getScene()); }
+    @FXML
+    protected void onBackAction() {
+        if (previousScene != null) {
+            ((Stage) continueButton.getScene().getWindow()).setScene(previousScene);
+        }
+    }
+
+    @FXML
+    protected void onCloseAction() {
+        ((Stage) headerBar.getScene().getWindow()).close();
+    }
+
+    @FXML
+    protected void onThemeToggleAction() {
+        ApuntadorTema.getInstance().applyTheme(headerBar.getScene());
+    }
 
     private void showAlert(String title, String message) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cinemax/venta_boletos/Vistas/Shared/alert-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/cinemax/venta_boletos/Vistas/Shared/alert-view.fxml"));
             Parent root = loader.load();
             ControllerAlert controller = loader.getController();
             controller.setData(title, message);

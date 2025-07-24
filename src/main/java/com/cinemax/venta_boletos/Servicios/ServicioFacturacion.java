@@ -12,7 +12,8 @@ import com.cinemax.venta_boletos.Modelos.Producto;
 
 public class ServicioFacturacion {
 
-    CalculadorImpuesto calculadorImpuesto; //TODO: No debería ser un atributo de la clase, sino un parámetro del método generarFactura
+    CalculadorImpuesto calculadorImpuesto; // TODO: No debería ser un atributo de la clase, sino un parámetro del método
+                                           // generarFactura
 
     public ServicioFacturacion() {
         this.calculadorImpuesto = new CalculadorIVA();
@@ -26,6 +27,8 @@ public class ServicioFacturacion {
         factura.setProductos(productos);
         factura.calcularSubTotal();
         factura.calcularTotal(calculadorImpuesto);
+        ServicioGeneradorArchivo generador = new GeneradorArchivoPDF();
+        generador.generarFacturaPDF(factura);
         return factura;
     }
 
@@ -33,7 +36,7 @@ public class ServicioFacturacion {
      * Genera un código único para la factura
      */
     private long generarCodigoFactura() {
-        return System.currentTimeMillis();  // Solo el número
+        return System.currentTimeMillis(); // Solo el número
     }
 
     /**
