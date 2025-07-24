@@ -3,8 +3,6 @@ package com.cinemax.venta_boletos.Controladores;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ListView;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
@@ -14,6 +12,9 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
 import java.io.IOException;
+
+import com.cinemax.comun.MetodosComunes;
+
 import javafx.scene.Node;
 
 public class ControladorMostrarCartelera {
@@ -44,7 +45,8 @@ public class ControladorMostrarCartelera {
         String peliculaSeleccionada = listViewPeliculas.getSelectionModel().getSelectedItem();
 
         if (peliculaSeleccionada == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "Por favor seleccione una película");
+            MetodosComunes.mostrarVentanaEmergente("Campos Incompletos >", "Por favor seleccione una películal");
+
             return;
         }
 
@@ -67,8 +69,8 @@ public class ControladorMostrarCartelera {
             stage.centerOnScreen();
 
         } catch (IOException e) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Error",
-                    "No se pudo cargar la pantalla de funciones: " + e.getMessage());
+            MetodosComunes.mostrarVentanaEmergente("Error",
+                    "No se pudo cargar la pantalla de funciones: ");
             e.printStackTrace();
         }
     }
@@ -87,18 +89,4 @@ public class ControladorMostrarCartelera {
         }
     }
 
-    private void mostrarAlerta(Alert.AlertType tipo, String titulo, String mensaje) {
-        Alert alert = new Alert(tipo);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-
-        // Estilo para la alerta
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(
-                getClass().getResource("/vistas/temas/ayu-theme.css").toExternalForm());
-        dialogPane.getStyleClass().add("dialog-pane");
-
-        alert.showAndWait();
-    }
 }
