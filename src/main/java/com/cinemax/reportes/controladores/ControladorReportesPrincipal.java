@@ -23,22 +23,20 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ChoiceBox;
 import java.time.LocalDate;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.Label;
+import javafx.collections.FXCollections;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.XYChart;
+import com.cinemax.reportes.modelos.ReporteVentaDTO;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import com.cinemax.reportes.modelos.persistencia.ReporteDAO;
 
 // Interfaz Strategy
 interface ExportStrategy {
     void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra) throws Exception;
-}
-
-// Clase DTO de ejemplo para los datos del reporte
-class ReporteVentaDTO {
-    public String fecha;
-    public int boletosVendidos;
-    public double ingresos;
-    public ReporteVentaDTO(String fecha, int boletosVendidos, double ingresos) {
-        this.fecha = fecha;
-        this.boletosVendidos = boletosVendidos;
-        this.ingresos = ingresos;
-    }
 }
 
 // Implementación PDF
@@ -150,6 +148,14 @@ public class ControladorReportesPrincipal {
     @FXML private ChoiceBox<String> choiceHorario;
     @FXML private ChoiceBox<String> choiceTipoBoleto;
     @FXML private ChoiceBox<String> choiceSala;
+    @FXML private TableView<ReporteVentaDTO> tablaPreview;
+    @FXML private Label labelTotales;
+    @FXML private BarChart<String, Number> barChart;
+    @FXML private MenuButton menuExportar;
+    @FXML private MenuItem menuExportarPDF;
+    @FXML private MenuItem menuExportarCSV;
+
+    private ReporteDAO reporteDAO = new ReporteDAO();
 
     @FXML
     private void initialize() {
@@ -161,6 +167,29 @@ public class ControladorReportesPrincipal {
 
         choiceSala.getItems().addAll("Todas", "Sala A", "Sala B", "Sala C");
         choiceSala.setValue("Todas");
+
+        // Configuración inicial de la tabla (puedes agregar columnas aquí si no están en FXML)
+        if (tablaPreview != null && tablaPreview.getColumns().isEmpty()) {
+            TableColumn<ReporteVentaDTO, String> colFecha = new TableColumn<>("Fecha");
+            colFecha.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().fecha));
+            TableColumn<ReporteVentaDTO, Number> colBoletos = new TableColumn<>("Boletos Vendidos");
+            colBoletos.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().boletosVendidos));
+            TableColumn<ReporteVentaDTO, Number> colIngresos = new TableColumn<>("Ingresos");
+            colIngresos.setCellValueFactory(data -> new javafx.beans.property.SimpleDoubleProperty(data.getValue().ingresos));
+            tablaPreview.getColumns().addAll(colFecha, colBoletos, colIngresos);
+        }
+        // Limpia la tabla y gráfica al iniciar
+        tablaPreview.setItems(FXCollections.observableArrayList());
+        if (barChart != null) barChart.getData().clear();
+        if (labelTotales != null) labelTotales.setText("Total: $0.00");
+
+        // Configura acciones de exportación en los MenuItem
+        if (menuExportarPDF != null) {
+            menuExportarPDF.setOnAction(e -> onExportarPDF(null));
+        }
+        if (menuExportarCSV != null) {
+            menuExportarCSV.setOnAction(e -> onExportarCSV(null));
+        }
     }
 
     @FXML
@@ -211,11 +240,32 @@ public class ControladorReportesPrincipal {
         String tipoBoleto = choiceTipoBoleto.getValue();
         String sala = choiceSala.getValue();
 
-        // Por ahora, solo imprime los valores seleccionados
-        System.out.println("Desde: " + desde + ", Hasta: " + hasta + ", Horario: " + horario +
-                           ", Tipo de Boleto: " + tipoBoleto + ", Sala: " + sala);
+        // Llama al DAO para obtener los datos filtrados
+        List<ReporteVentaDTO> ventas = reporteDAO.obtenerVentas(desde, hasta, sala, tipoBoleto, horario);
 
-        // Aquí luego llamarás al DAO para obtener los datos filtrados y actualizar la vista previa
+        // Si no hay datos reales, usa datos simulados para mostrar en la vista
+        List<ReporteVentaDTO> datosParaMostrar = ventas.isEmpty() ? List.of(
+            new ReporteVentaDTO("2024-07-01", 120, 3600.0),
+            new ReporteVentaDTO("2024-07-02", 98, 2940.0),
+            new ReporteVentaDTO("2024-07-03", 156, 4680.0)
+        ) : ventas;
+
+        // Actualiza la tabla
+        tablaPreview.setItems(FXCollections.observableArrayList(datosParaMostrar));
+
+        // Actualiza el gráfico
+        if (barChart != null) {
+            barChart.getData().clear();
+            XYChart.Series<String, Number> series = new XYChart.Series<>();
+            for (ReporteVentaDTO venta : datosParaMostrar) {
+                series.getData().add(new XYChart.Data<>(venta.fecha, venta.boletosVendidos));
+            }
+            barChart.getData().add(series);
+        }
+
+        // Actualiza el label de totales
+        double total = datosParaMostrar.stream().mapToDouble(v -> v.ingresos).sum();
+        if (labelTotales != null) labelTotales.setText(String.format("Total: $%.2f", total));
     }
 
     // Métodos para exportar PDF y CSV
@@ -231,12 +281,16 @@ public class ControladorReportesPrincipal {
 
     private void exportarReporte(ExportStrategy strategy, String tipo) {
         try {
-            // Simulación de datos (reemplaza por tus datos filtrados reales)
-            List<ReporteVentaDTO> datos = List.of(
-                new ReporteVentaDTO("2024-07-01", 120, 3600.0),
-                new ReporteVentaDTO("2024-07-02", 98, 2940.0),
-                new ReporteVentaDTO("2024-07-03", 156, 4680.0)
-            );
+            // Usa los datos actualmente mostrados en la tabla para exportar
+            List<ReporteVentaDTO> datos = tablaPreview.getItems();
+            if (datos == null || datos.isEmpty()) {
+                // Si la tabla está vacía, usa datos simulados
+                datos = List.of(
+                    new ReporteVentaDTO("2024-07-01", 120, 3600.0),
+                    new ReporteVentaDTO("2024-07-02", 98, 2940.0),
+                    new ReporteVentaDTO("2024-07-03", 156, 4680.0)
+                );
+            }
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
             fileChooser.setInitialFileName("reporte_ventas." + tipo);
