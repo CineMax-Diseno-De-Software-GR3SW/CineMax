@@ -42,13 +42,13 @@ public class ServicioUsuarios {
             usuario.setId(usuarioDAO.obtenerSiguienteId());
         }
         //TODO: generacion de contrasena (aleatoria con letras numeros y caracteres especiales)
+        usuario.setClave("Q568^W$#2#d%&ht");
 
         //TODO: Creacion del usuario
 
         usuarioDAO.crearUsuario(usuario);
-
         // Servicio de correo
-//        ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
+        ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
 
     }
 
@@ -128,6 +128,15 @@ public class ServicioUsuarios {
         usuarioDAO.cambiarEstado(idUsuario,nuevoEstado);
     }
 
+    public void recuperarClave(String correo) {
+        try {
+            Usuario usuario = usuarioDAO.buscarPorCorreo(correo);
+        } catch (Exception e) {
+
+        }
+
+
+    }
 }
 
 //
