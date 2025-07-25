@@ -18,6 +18,7 @@ import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -739,12 +740,9 @@ public class ControladorSeleccionFuncion implements Initializable {
     }
 
     private void seleccionarFuncion(Funcion funcion) {
-        Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-        confirmacion.setTitle("Función Seleccionada");
-        confirmacion.setHeaderText("Ha seleccionado la siguiente función:");
-
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String contenido = String.format(
+            "FUNCIÓN SELECCIONADA\n\n" +
             "Película: %s\n" +
             "Sala: %s\n" +
             "Fecha y Hora: %s\n" +
@@ -757,8 +755,7 @@ public class ControladorSeleccionFuncion implements Initializable {
             funcion.getPelicula().getIdioma().getNombre()
         );
 
-        confirmacion.setContentText(contenido);
-        confirmacion.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaExito(contenido);
 
         // Aquí podrías agregar lógica adicional como navegar a la compra de boletos
         lblEstadoSeleccion.setText("Función seleccionada: " + funcion.getFechaHoraInicio().format(formatter));
@@ -772,10 +769,6 @@ public class ControladorSeleccionFuncion implements Initializable {
     }
 
     private void mostrarError(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje != null ? mensaje : "Error desconocido");
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 }

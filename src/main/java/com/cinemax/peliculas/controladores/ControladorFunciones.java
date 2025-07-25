@@ -20,6 +20,7 @@ import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -300,46 +301,40 @@ public class ControladorFunciones implements Initializable {
     private void onEliminarFuncion(ActionEvent event) {
         Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
         if (funcionSeleccionada != null) {
-            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Confirmar eliminación");
-            confirmacion.setHeaderText("¿Está seguro de eliminar esta función?");
-            confirmacion.setContentText("Función ID: " + funcionSeleccionada.getId() +
-                                      "\nPelícula: " + funcionSeleccionada.getPelicula().getTitulo() +
-                                      "\n\nATENCIÓN: Esta acción no se puede deshacer.");
+            String mensaje = "¿Está seguro de eliminar esta función?\n\n" +
+                           "Función ID: " + funcionSeleccionada.getId() +
+                           "\nPelícula: " + funcionSeleccionada.getPelicula().getTitulo() +
+                           "\n\nATENCIÓN: Esta acción no se puede deshacer.";
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
 
-            Optional<ButtonType> resultado = confirmacion.showAndWait();
-            if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-                try {
-                    funcionDAO.eliminar(funcionSeleccionada.getId());
-                    cargarFuncionesAsync();
-                    mostrarInformacion("Éxito", "Función eliminada correctamente");
-                } catch (Exception e) {
-                    String mensaje = e.getMessage();
-                    if (mensaje != null && (mensaje.contains("foreign key constraint") || mensaje.contains("violates"))) {
-                        mostrarErrorRestriccion(funcionSeleccionada);
-                    } else {
-                        mostrarError("Error", "No se pudo eliminar la función: " + (mensaje != null ? mensaje : "Error desconocido"));
-                    }
+            // Proceder con la eliminación
+            try {
+                funcionDAO.eliminar(funcionSeleccionada.getId());
+                cargarFuncionesAsync();
+                ManejadorMetodosComunes.mostrarVentanaExito("Función eliminada correctamente");
+            } catch (Exception e) {
+                String mensajeError = e.getMessage();
+                if (mensajeError != null && (mensajeError.contains("foreign key constraint") || mensajeError.contains("violates"))) {
+                    mostrarErrorRestriccion(funcionSeleccionada);
+                } else {
+                    ManejadorMetodosComunes.mostrarVentanaError("No se pudo eliminar la función: " + (mensajeError != null ? mensajeError : "Error desconocido"));
                 }
             }
         }
     }
 
     private void mostrarErrorRestriccion(Funcion funcion) {
-        Alert alerta = new Alert(Alert.AlertType.WARNING);
-        alerta.setTitle("No se puede eliminar la función");
-        alerta.setHeaderText("La función está siendo utilizada en el sistema");
-        alerta.setContentText("No se puede eliminar la función ID " + funcion.getId() +
-                             " porque está asociada con:\n\n" +
-                             "• Boletos vendidos\n" +
-                             "• Reservas existentes\n" +
-                             "• Asientos ocupados\n\n" +
-                             "OPCIONES:\n" +
-                             "1. Cancelar todas las reservas primero\n" +
-                             "2. Esperar a que termine la función\n" +
-                             "3. Contactar al administrador del sistema");
+        String mensaje = "No se puede eliminar la función ID " + funcion.getId() +
+                        " porque está asociada con:\n\n" +
+                        "• Boletos vendidos\n" +
+                        "• Reservas existentes\n" +
+                        "• Asientos ocupados\n\n" +
+                        "OPCIONES:\n" +
+                        "1. Cancelar todas las reservas primero\n" +
+                        "2. Esperar a que termine la función\n" +
+                        "3. Contactar al administrador del sistema";
 
-        alerta.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
     }
 
     @FXML
@@ -681,11 +676,9 @@ public class ControladorFunciones implements Initializable {
     }
 
     private void mostrarDetallesFuncion(Funcion funcion) {
-        Alert detalles = new Alert(Alert.AlertType.INFORMATION);
-        detalles.setTitle("Detalles de la Función");
-        detalles.setHeaderText("Función ID: " + funcion.getId());
-
         StringBuilder contenido = new StringBuilder();
+        contenido.append("DETALLES DE LA FUNCIÓN\n");
+        contenido.append("━━━━━━━━━━━━━━━━━━━━━━━\n\n");
         contenido.append("ID: ").append(funcion.getId()).append("\n");
 
         if (funcion.getPelicula() != null) {
@@ -714,8 +707,7 @@ public class ControladorFunciones implements Initializable {
             contenido.append("Tipo de Estreno: ").append(funcion.getTipoEstreno().name()).append("\n");
         }
 
-        detalles.setContentText(contenido.toString());
-        detalles.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
     }
 
     private void mostrarError(String titulo, String mensaje) {
