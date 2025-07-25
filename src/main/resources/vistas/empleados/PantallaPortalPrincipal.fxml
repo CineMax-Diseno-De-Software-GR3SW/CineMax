@@ -76,7 +76,7 @@
 
             </HBox>
 
-             <Button  onAction="#onCerrarSesion" text="Log Out" styleClass="primary-button"/>
+             <Button  onAction="#onCerrarSesion" text="Cerrar Sesión" styleClass="primary-button"/>
         </VBox>
     </left>
 

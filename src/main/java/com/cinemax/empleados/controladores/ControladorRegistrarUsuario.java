@@ -76,6 +76,38 @@ public class ControladorRegistrarUsuario implements Initializable {
             e.printStackTrace();
             mostrarAlerta(AlertType.ERROR, "Error al Cargar", "Error al cargar Roles", "No se pudieron cargar los roles de usuario.");
         }
+
+        campoCelular.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+
+            // Eliminar caracteres no numéricos
+            String filteredValue = newValue.replaceAll("[^\\d]", "");
+
+            // Limitar a 10 caracteres
+            if (filteredValue.length() > 10) {
+                filteredValue = filteredValue.substring(0, 10);
+            }
+
+            // Actualizar el campo de texto solo si es diferente para evitar un bucle infinito
+            if (!campoCelular.getText().equals(filteredValue)) {
+                campoCelular.setText(filteredValue);
+            }
+        });
+
+        campoCedula.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^\\d]", ""); // Eliminar caracteres no numéricos
+            if (filteredValue.length() > 10) {
+                filteredValue = filteredValue.substring(0, 10); // Limitar a 10 dígitos
+            }
+            if (!campoCedula.getText().equals(filteredValue)) {
+                campoCedula.setText(filteredValue);
+            }
+        });
     }
 
     @FXML
@@ -94,7 +126,18 @@ public class ControladorRegistrarUsuario implements Initializable {
         if (nombres.isEmpty() || apellidos.isEmpty() || cedula.isEmpty() || correo.isEmpty() ||
                 celular.isEmpty() || nombreUsuario.isEmpty() ||
                  cargoSeleccionado == null) {
-            mostrarAlerta(AlertType.ERROR, "Campos Vacíos", "Error de Datos", "Por favor, complete todos los campos obligatorios.");
+            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Campos Incompletos", "Por favor, complete todos los campos obligatorios.");
+            return;
+        }
+
+        //Validación adicional para el celular
+        if (!celular.matches("\\d{10}")) {
+            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Celular Inválido", "El número de celular debe contener exactamente 10 dígitos numéricos.");
+            return;
+        }
+
+        if (!cedula.matches("\\d{10}")) {
+            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
             return;
         }
 
@@ -108,7 +151,7 @@ public class ControladorRegistrarUsuario implements Initializable {
         try {
             servicioUsuarios.crearUsuario(nombreCompleto,cedula,correo,celular,estadoActivo,nombreUsuario,cargoSeleccionado);
 
-            mostrarAlerta(AlertType.INFORMATION, "Registro Exitoso", "Empleado Registrado", "El empleado " + nombreCompleto + " ha sido registrado correctamente.");
+            mostrarAlerta(AlertType.INFORMATION, "¡ÉXITO!", "Empleado registrado exitosamente", "El empleado " + nombreCompleto + " ha sido registrado correctamente.");
             limpiarCampos();
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
@@ -120,10 +163,10 @@ public class ControladorRegistrarUsuario implements Initializable {
                 e.printStackTrace();
             }
         } catch (IllegalArgumentException e) {
-            mostrarAlerta(AlertType.WARNING, "Error de Validación", "Datos Incorrectos", e.getMessage());
+            mostrarAlerta(AlertType.WARNING, "¡ERROR!", "Sucedió algo inesperado al validar los datos. Datos Incorrectos", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta(AlertType.ERROR, "Error de Registro", "Fallo al Registrar Empleado", "Ocurrió un error al intentar registrar el empleado: " + e.getMessage());
+            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Error al Registrar Empleado", "Sucedió algo inesperado al intentar registrar el empleado: " + e.getMessage());
         }
     }
 
