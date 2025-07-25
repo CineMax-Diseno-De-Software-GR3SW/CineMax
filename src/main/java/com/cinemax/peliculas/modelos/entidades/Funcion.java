@@ -37,4 +37,47 @@ public class Funcion {
     public void setFechaHoraFin(LocalDateTime fechaHoraFin) { this.fechaHoraFin = fechaHoraFin; }
     public void setFormato(FormatoFuncion formato) { this.formato = formato; }
     public void setTipoEstreno(TipoEstreno tipoEstreno) { this.tipoEstreno = tipoEstreno; }
+
+    /**
+     * Obtiene el día de la semana de esta función para cálculos de precios futuros
+     * @return El enum DiaSemana correspondiente al día de inicio de la función
+     */
+    public DiaSemana getDiaSemana() {
+        return DiaSemana.obtenerDiaDeFecha(this.fechaHoraInicio);
+    }
+
+    /**
+     * Obtiene el precio base del día para esta función (para implementación futura de boletos)
+     * @return El precio correspondiente al día de la semana de la función
+     */
+    public java.math.BigDecimal getPrecioPorDia() {
+        return getDiaSemana().getPrecio();
+    }
+
+    /**
+     * Obtiene el multiplicador de precio por formato (para implementación futura de boletos)
+     * @return El multiplicador del formato (2D=1.0, 3D=1.5)
+     */
+    public java.math.BigDecimal getMultiplicadorFormato() {
+        return this.formato.getMultiplicadorPrecio();
+    }
+
+    /**
+     * Obtiene el multiplicador de precio por tipo de estreno (para implementación futura de boletos)
+     * @return El multiplicador del tipo de estreno (Estreno=1.2, Preestreno=1.3)
+     */
+    public java.math.BigDecimal getMultiplicadorTipoEstreno() {
+        return this.tipoEstreno.getMultiplicadorPrecio();
+    }
+
+    /**
+     * Calcula el precio final aplicando todos los multiplicadores (para implementación futura de boletos)
+     * Fórmula: PrecioBase * MultiplicadorFormato * MultiplicadorTipoEstreno
+     * @return El precio final calculado con todos los factores
+     */
+    public java.math.BigDecimal calcularPrecioFinal() {
+        return getPrecioPorDia()
+                .multiply(getMultiplicadorFormato())
+                .multiply(getMultiplicadorTipoEstreno());
+    }
 }
