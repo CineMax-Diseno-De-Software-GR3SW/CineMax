@@ -2,6 +2,8 @@ package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.peliculas.servicios.ServicioPelicula;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,27 +14,44 @@ import javafx.stage.Stage;
 import javafx.scene.Node;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
 
 public class ServicioMostrarCartelera {
 
-    private final String[] PELICULAS = {
-            "Avengers: Endgame",
-            "The Batman",
-            "Dune: Parte 2",
-            "Spider-Man: No Way Home"
-    };
+    private final ServicioPelicula servicioPelicula;
+
+    public ServicioMostrarCartelera() {
+        this.servicioPelicula = new ServicioPelicula();
+    }
 
     public void inicializarListaPeliculas(ListView<String> listViewPeliculas) {
-        listViewPeliculas.getItems().addAll(PELICULAS);
-        listViewPeliculas.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        listViewPeliculas.setStyle("-fx-selection-bar: #2a9df4; -fx-selection-bar-non-focused: #d0e6f5;");
+        try {
+            List<Pelicula> peliculas = servicioPelicula.obtenerPeliculas();
+
+            listViewPeliculas.getItems().clear();
+            if (peliculas != null && !peliculas.isEmpty()) {
+                for (Pelicula p : peliculas) {
+                    listViewPeliculas.getItems().add(p.getTitulo());
+                }
+            } else {
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("No hay películas disponibles en la cartelera.");
+            }
+
+            listViewPeliculas.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+            listViewPeliculas.setStyle("-fx-selection-bar: #2a9df4; -fx-selection-bar-non-focused: #d0e6f5;");
+        } catch (SQLException e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la lista de películas: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void seleccionarPelicula(ListView<String> listViewPeliculas) {
         String peliculaSeleccionada = listViewPeliculas.getSelectionModel().getSelectedItem();
 
         if (peliculaSeleccionada == null) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Campos Incompletos, Por favor seleccione una película");
+            ManejadorMetodosComunes
+                    .mostrarVentanaAdvertencia("Campos incompletos. Por favor, seleccione una película.");
             return;
         }
 
@@ -49,7 +68,8 @@ public class ServicioMostrarCartelera {
             stage.centerOnScreen();
 
         } catch (IOException e) {
-            ManejadorMetodosComunes.mostrarVentanaError("No se pudo cargar la pantalla de funciones");
+            ManejadorMetodosComunes
+                    .mostrarVentanaError("No se pudo cargar la pantalla de funciones: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -63,6 +83,8 @@ public class ServicioMostrarCartelera {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
+            ManejadorMetodosComunes
+                    .mostrarVentanaError("No se pudo regresar a la pantalla principal: " + e.getMessage());
             e.printStackTrace();
         }
     }

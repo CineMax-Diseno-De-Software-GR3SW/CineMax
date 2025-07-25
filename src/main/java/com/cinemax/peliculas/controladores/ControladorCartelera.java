@@ -40,18 +40,28 @@ public class ControladorCartelera implements Initializable {
     private PeliculaDAO peliculaDAO;
 
     // Componentes de la interfaz FXML
-    @FXML private TextField txtBuscarTitulo;
-    @FXML private TextField txtBuscarId;
-    @FXML private GridPane grillaCartelera;
+    @FXML
+    private TextField txtBuscarTitulo;
+    @FXML
+    private TextField txtBuscarId;
+    @FXML
+    private GridPane grillaCartelera;
 
-    @FXML private Button btnActualizarCartelera;
-    @FXML private Button btnBuscarTitulo;
-    @FXML private Button btnBuscarId;
-    @FXML private Button btnLimpiarBusqueda;
-    @FXML private Button btnVerDetalles;
+    @FXML
+    private Button btnActualizarCartelera;
+    @FXML
+    private Button btnBuscarTitulo;
+    @FXML
+    private Button btnBuscarId;
+    @FXML
+    private Button btnLimpiarBusqueda;
+    @FXML
+    private Button btnVerDetalles;
 
-    @FXML private Label lblTotalPeliculas;
-    @FXML private Label lblEstadoCartelera;
+    @FXML
+    private Label lblTotalPeliculas;
+    @FXML
+    private Label lblEstadoCartelera;
 
     // Datos para la tabla
     private ObservableList<Pelicula> listaPeliculasCartelera;
@@ -235,7 +245,8 @@ public class ControladorCartelera implements Initializable {
 
                     // Mostrar mensaje de confirmación como se solicitó
                     mostrarInformacion("Cartelera Actualizada",
-                        "Cartelera actualizada con éxito. Se han cargado " + nuevasPeliculas.size() + " películas.");
+                            "Cartelera actualizada con éxito. Se han cargado " + nuevasPeliculas.size()
+                                    + " películas.");
                 } catch (Exception ex) {
                     lblEstadoCartelera.textProperty().unbind();
                     lblEstadoCartelera.setText("Error al actualizar");
@@ -253,8 +264,8 @@ public class ControladorCartelera implements Initializable {
 
                     String mensajeError = task.getException().getMessage();
                     mostrarError("Error al actualizar la cartelera",
-                        "No se pudo actualizar la cartelera.\n\nDetalles del error:\n" +
-                        (mensajeError != null ? mensajeError : "Error desconocido"));
+                            "No se pudo actualizar la cartelera.\n\nDetalles del error:\n" +
+                                    (mensajeError != null ? mensajeError : "Error desconocido"));
                 } catch (Exception ex) {
                     lblEstadoCartelera.setText("Error de actualización");
                     mostrarError("Error", "Error crítico durante la actualización");
@@ -352,7 +363,8 @@ public class ControladorCartelera implements Initializable {
                 // Efecto hover - usar borde sutil
                 contenedor.setOnMouseEntered(event -> {
                     if (peliculaSeleccionada != pelicula) {
-                        contenedor.setStyle("-fx-border-color: #4A4A4A; -fx-border-width: 2px; -fx-border-radius: 12px;");
+                        contenedor
+                                .setStyle("-fx-border-color: #4A4A4A; -fx-border-width: 2px; -fx-border-radius: 12px;");
                     }
                 });
 
@@ -502,7 +514,6 @@ public class ControladorCartelera implements Initializable {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
 
-<<<<<<< HEAD
         ManejadorMetodosComunes.mostrarVentanaExito(pelicula.getTitulo() + "\n\n" + contenido.toString());
     }
 
@@ -512,17 +523,6 @@ public class ControladorCartelera implements Initializable {
 
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
-=======
-        ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
-    }
-
-    private void mostrarError(String titulo, String mensaje) {
-        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
-    }
-
-    private void mostrarInformacion(String titulo, String mensaje) {
-        ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
->>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
     }
 
     @FXML

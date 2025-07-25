@@ -9,10 +9,14 @@ import javafx.stage.Stage;
 
 public class ControladorAlertas {
 
-    @FXML private VBox alertPane;
-    @FXML private Label titleLabel;
-    @FXML private Label messageLabel;
-    @FXML private Button okButton;
+    @FXML
+    private VBox alertPane;
+    @FXML
+    private Label titleLabel;
+    @FXML
+    private Label messageLabel;
+    @FXML
+    private Button okButton;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -24,7 +28,7 @@ public class ControladorAlertas {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
-        
+
         alertPane.setOnMouseDragged(event -> {
             Stage stage = (Stage) alertPane.getScene().getWindow();
             stage.setX(event.getScreenX() - xOffset);
@@ -35,29 +39,29 @@ public class ControladorAlertas {
     public void setData(String title, String message) {
         titleLabel.setText(title);
         messageLabel.setText(message);
-        
+
         // Permitir cerrar con Enter o Escape
         alertPane.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.ESCAPE) {
                 onOkAction();
             }
         });
-        
+
         // Enfocar el botón por defecto
         if (okButton != null) {
             okButton.requestFocus();
         }
-        
+
         // Forzar aplicación de estilos de iconos después de la inicialización
         javafx.application.Platform.runLater(() -> {
             aplicarEstilosIconos();
         });
     }
-    
+
     private void aplicarEstilosIconos() {
         if (titleLabel != null && titleLabel.getGraphic() != null && titleLabel.getGraphic() instanceof Label) {
             Label iconLabel = (Label) titleLabel.getGraphic();
-            
+
             // Forzar que las clases CSS definidas se apliquen correctamente
             String currentText = iconLabel.getText();
             if ("✓".equals(currentText) || "✔".equals(currentText)) {
@@ -79,23 +83,6 @@ public class ControladorAlertas {
         }
     }
 
-<<<<<<< HEAD
-=======
-    public void setData(String title, String message) {
-        if (titleLabel != null) {
-            titleLabel.setText(title);
-        }
-        if (messageLabel != null) {
-            messageLabel.setText(message);
-        }
-        
-        // Aplicar estilos de iconos después de configurar los datos
-        javafx.application.Platform.runLater(() -> {
-            aplicarEstilosIconos();
-        });
-    }
-
->>>>>>> origin/peliculas-funciones
     @FXML
     private void onOkAction() {
         Stage stage = (Stage) okButton.getScene().getWindow();
