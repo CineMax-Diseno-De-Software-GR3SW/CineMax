@@ -49,13 +49,13 @@ public class FuncionDAO {
 
     public List<Funcion> listarTodasLasFunciones() {
         List<Funcion> funciones = new ArrayList<>();
-        String sql = "SELECT * FROM funcion";
+        String sql = "SELECT * FROM obtener_todas_funciones()";
         PeliculaDAO peliculaDAO = new PeliculaDAO();
         SalasDAO salaDAO = new SalasDAO();
 
         try (Connection conn = gestorDB.getConexion();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 int peliculaId = rs.getInt("id_pelicula");
@@ -73,20 +73,24 @@ public class FuncionDAO {
                         TipoEstreno.valueOf(rs.getString("tipo_estreno")));
                 funciones.add(funcion);
             }
+
+            return funciones;
+
         } catch (SQLException e) {
+            System.err.println("Error al listar todas las funciones (SP): " + e.getMessage());
             throw new RuntimeException("Error al listar funciones: " + e.getMessage(), e);
         }
-        return funciones;
     }
 
     public List<Funcion> listarFuncionesPorSala(int salaId) {
         List<Funcion> funciones = new ArrayList<>();
-        String sql = "SELECT * FROM funcion WHERE id_sala = ?";
+        String sql = "SELECT * FROM listar_funciones_por_sala(?)";
         PeliculaDAO peliculaDAO = new PeliculaDAO();
         SalasDAO salaDAO = new SalasDAO();
 
         try (Connection conn = gestorDB.getConexion();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
             stmt.setInt(1, salaId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -105,45 +109,53 @@ public class FuncionDAO {
                     funciones.add(funcion);
                 }
             }
+            
+            return funciones;
+            
         } catch (SQLException e) {
+            System.err.println("Error al listar funciones por sala (SP): " + e.getMessage());
             throw new RuntimeException("Error al listar funciones por sala: " + e.getMessage(), e);
         }
-        return funciones;
     }
 
     public void actualizar(Funcion funcion) throws SQLException {
-        String sql = "UPDATE funcion SET id_pelicula = ?, id_sala = ?, fecha_hora_inicio = ?, fecha_hora_fin = ?, formato = ?, tipo_estreno = ? WHERE id_funcion = ?";
+        String sql = "CALL actualizar_funcion(?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = gestorDB.getConexion();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setInt(1, funcion.getPelicula().getId());
-            stmt.setInt(2, funcion.getSala().getId());
-            stmt.setTimestamp(3, Timestamp.valueOf(funcion.getFechaHoraInicio()));
-            stmt.setTimestamp(4, Timestamp.valueOf(funcion.getFechaHoraFin()));
-            stmt.setString(5, funcion.getFormato().toString());
-            stmt.setString(6, funcion.getTipoEstreno().name());
-            stmt.setInt(7, funcion.getId());
+            stmt.setInt(1, funcion.getId());
+            stmt.setInt(2, funcion.getPelicula().getId());
+            stmt.setInt(3, funcion.getSala().getId());
+            stmt.setTimestamp(4, Timestamp.valueOf(funcion.getFechaHoraInicio()));
+            stmt.setTimestamp(5, Timestamp.valueOf(funcion.getFechaHoraFin()));
+            stmt.setString(6, funcion.getFormato().toString());
+            stmt.setString(7, funcion.getTipoEstreno().name());
 
-            int filas = stmt.executeUpdate();
-            if (filas == 0) {
-                throw new SQLException("No se encontró la función a editar.");
-            }
+            stmt.execute();
+
+            System.out.println("Función actualizada con ID: " + funcion.getId());
+
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar función (SP): " + e.getMessage());
+            throw e;
         }
     }
 
     public Funcion buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM funcion WHERE id_funcion = ?";
+        String sql = "SELECT * FROM buscar_funcion_por_id(?)";
+        
         try (Connection conn = gestorDB.getConexion();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    // Aquí debes reconstruir el objeto Funcion como en listarTodas()
-                    // Suponiendo que tienes PeliculaDAO y SalaDAO disponibles:
                     PeliculaDAO peliculaDAO = new PeliculaDAO();
                     SalasDAO salaDAO = new SalasDAO();
                     Pelicula pelicula = peliculaDAO.buscarPorId(rs.getInt("id_pelicula"));
                     Sala sala = salaDAO.obtenerSalaPorId(rs.getInt("id_sala"));
+                    
                     return new Funcion(
                             rs.getInt("id_funcion"),
                             pelicula,
@@ -154,47 +166,50 @@ public class FuncionDAO {
                             TipoEstreno.valueOf(rs.getString("tipo_estreno")));
                 }
             }
+            
+            return null;
+            
+        } catch (SQLException e) {
+            System.err.println("Error al buscar función por ID (SP): " + e.getMessage());
+            throw e;
         }
-        return null;
     }
 
     public void eliminar(int id) throws SQLException {
-
-        String sql = "DELETE FROM funcion WHERE id_funcion = ?";
+        String sql = "CALL eliminar_funcion(?)";
 
         try (Connection conn = gestorDB.getConexion();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, id);
-            int filasAfectadas = stmt.executeUpdate();
+            stmt.execute();
 
-            if (filasAfectadas == 0) {
-                throw new SQLException("No se encontró la función con ID: " + id);
-            } else {
-                System.out.println("Película eliminada correctamente con ID: " + id);
-            }
+            System.out.println("Función eliminada correctamente con ID: " + id);
 
         } catch (SQLException e) {
-            System.err.println("Error al eliminar película: " + e.getMessage());
+            System.err.println("Error al eliminar función (SP): " + e.getMessage());
             throw e;
         }
     }
 
     public List<Integer> listarIdsPeliculasDeFuncionesFuturas() {
         List<Integer> idsPeliculas = new ArrayList<>();
-        String sql = "SELECT DISTINCT id_pelicula FROM funcion WHERE fecha_hora_inicio > ?";
+        String sql = "SELECT * FROM listar_ids_peliculas_funciones_futuras()";
+        
         try (Connection conn = gestorDB.getConexion();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    idsPeliculas.add(rs.getInt("id_pelicula"));
-                }
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+             
+            while (rs.next()) {
+                idsPeliculas.add(rs.getInt("id_pelicula"));
             }
+            
+            return idsPeliculas;
+            
         } catch (SQLException e) {
+            System.err.println("Error al listar IDs de películas de funciones futuras (SP): " + e.getMessage());
             throw new RuntimeException("Error al listar IDs de películas de funciones futuras: " + e.getMessage(), e);
         }
-        return idsPeliculas;
     }
 
 }
