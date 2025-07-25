@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.comun;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-public class ControllerAlert {
+public class ControladorAlertas {
 
     @FXML private VBox alertPane;
     @FXML private Label titleLabel;

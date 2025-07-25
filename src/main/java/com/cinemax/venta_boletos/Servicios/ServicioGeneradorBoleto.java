@@ -15,7 +15,10 @@ public class ServicioGeneradorBoleto {
             Boleto boleto = new Boleto(funcion, butaca);
             boletos.add(boleto);
         }
+        ServicioGeneradorArchivo generador = new GeneradorArchivoPDF();
+        generador.generarBoletosPDF(boletos);
+
         return boletos;
     }
-    
+
 }

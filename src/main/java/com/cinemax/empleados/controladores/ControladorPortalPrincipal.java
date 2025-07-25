@@ -6,7 +6,6 @@ import java.net.URL;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-import com.cinemax.venta_boletos.Util.ThemeManager;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
