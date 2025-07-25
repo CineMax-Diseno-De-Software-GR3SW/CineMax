@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Genero;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
@@ -581,20 +582,17 @@ public class ControladorPelicula implements Initializable {
     }
 
     private void mostrarErrorRestriccion(Pelicula pelicula) {
-        Alert alerta = new Alert(Alert.AlertType.ERROR);
-        alerta.setTitle("No se puede eliminar la película");
-        alerta.setHeaderText("La película está siendo utilizada en el sistema");
-        alerta.setContentText("No se puede eliminar la película '" + pelicula.getTitulo() + 
-                             "' porque está asociada con:\n\n" +
-                             "• Funciones programadas\n" +
-                             "• Cartelera\n" +
-                             "• Boletos vendidos\n" +
-                             "• Reservas existentes\n\n" +
-                             "ACCIÓN REQUERIDA:\n" +
-                             "Para eliminar esta película, primero debe eliminar todas las funciones\n" +
-                             "y entradas de cartelera asociadas en el gestor correspondiente.");
+        String mensaje = "No se puede eliminar la película '" + pelicula.getTitulo() + 
+                        "' porque está asociada con:\n\n" +
+                        "• Funciones programadas\n" +
+                        "• Cartelera\n" +
+                        "• Boletos vendidos\n" +
+                        "• Reservas existentes\n\n" +
+                        "ACCIÓN REQUERIDA:\n" +
+                        "Para eliminar esta película, primero debe eliminar todas las funciones\n" +
+                        "y entradas de cartelera asociadas en el gestor correspondiente.";
         
-        alerta.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
     }
 
     @FXML
@@ -814,19 +812,11 @@ public class ControladorPelicula implements Initializable {
     }
 
     private void mostrarError(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
     private void mostrarInformacion(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }
     
     @FXML

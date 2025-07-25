@@ -44,15 +44,15 @@ public class ManejadorMetodosComunes {
 
 
     public static void mostrarVentanaExito(String mensaje) {
-        mostrarVentanaEmergente("Éxito", mensaje, "/vistas/comun/VistaExito.fxml");
+        mostrarVentanaEmergente("Éxito", mensaje, "/Vista/comun/VistaExito.fxml");
     }
 
     public static void mostrarVentanaError(String mensaje) {
-        mostrarVentanaEmergente("Error", mensaje, "/vistas/comun/VistaError.fxml");
+        mostrarVentanaEmergente("Error", mensaje, "/Vista/comun/VistaError.fxml");
     }
 
     public static void mostrarVentanaAdvertencia(String mensaje) {
-        mostrarVentanaEmergente("Advertencia", mensaje, "/vistas/comun/VistaAdvertencia.fxml");
+        mostrarVentanaEmergente("Advertencia", mensaje, "/Vista/comun/VistaAdvertencia.fxml");
     }
     
     /**
@@ -104,9 +104,12 @@ public class ManejadorMetodosComunes {
 
             Scene scene = new Scene(root, ancho, alto);
             
-            // Aplicar estilos CSS
-            String cssPath = ManejadorMetodosComunes.class.getResource("/vistas/comun/estilos-alertas.css").toExternalForm();
-            scene.getStylesheets().add(cssPath);
+            // Aplicar estilos CSS: primero general, luego específico para mayor precedencia
+            String generalCssPath = ManejadorMetodosComunes.class.getResource("/temas/styles.css").toExternalForm();
+            String alertasCssPath = ManejadorMetodosComunes.class.getResource("/Vista/comun/estilos-alertas.css").toExternalForm();
+            scene.getStylesheets().clear(); // Limpiar cualquier CSS previo
+            scene.getStylesheets().add(generalCssPath);
+            scene.getStylesheets().add(alertasCssPath); // Este se carga último y tiene prioridad
 
             alertStage.setScene(scene);
             alertStage.setWidth(ancho);

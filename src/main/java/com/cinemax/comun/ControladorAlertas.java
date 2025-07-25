@@ -42,6 +42,36 @@ public class ControladorAlertas {
         if (okButton != null) {
             okButton.requestFocus();
         }
+        
+        // Forzar aplicación de estilos de iconos después de la inicialización
+        javafx.application.Platform.runLater(() -> {
+            aplicarEstilosIconos();
+        });
+    }
+    
+    private void aplicarEstilosIconos() {
+        if (titleLabel != null && titleLabel.getGraphic() != null && titleLabel.getGraphic() instanceof Label) {
+            Label iconLabel = (Label) titleLabel.getGraphic();
+            
+            // Forzar que las clases CSS definidas se apliquen correctamente
+            String currentText = iconLabel.getText();
+            if ("✓".equals(currentText) || "✔".equals(currentText)) {
+                iconLabel.getStyleClass().removeAll("error-icon", "warning-icon", "success-icon", "x-icon");
+                if (!iconLabel.getStyleClass().contains("check-icon")) {
+                    iconLabel.getStyleClass().add("check-icon");
+                }
+            } else if ("X".equals(currentText) || "✗".equals(currentText) || "✖".equals(currentText)) {
+                iconLabel.getStyleClass().removeAll("success-icon", "warning-icon", "check-icon", "error-icon");
+                if (!iconLabel.getStyleClass().contains("x-icon")) {
+                    iconLabel.getStyleClass().add("x-icon");
+                }
+            } else if ("⚠".equals(currentText) || "!".equals(currentText)) {
+                iconLabel.getStyleClass().removeAll("success-icon", "error-icon", "check-icon", "x-icon");
+                if (!iconLabel.getStyleClass().contains("warning-icon")) {
+                    iconLabel.getStyleClass().add("warning-icon");
+                }
+            }
+        }
     }
 
     public void setData(String title, String message) {
@@ -51,6 +81,11 @@ public class ControladorAlertas {
         if (messageLabel != null) {
             messageLabel.setText(message);
         }
+        
+        // Aplicar estilos de iconos después de configurar los datos
+        javafx.application.Platform.runLater(() -> {
+            aplicarEstilosIconos();
+        });
     }
 
     @FXML

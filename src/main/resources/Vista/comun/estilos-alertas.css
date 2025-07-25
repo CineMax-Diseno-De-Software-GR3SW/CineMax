@@ -22,8 +22,24 @@
 /* ====== ESTILOS ESPECÍFICOS PARA ÉXITO ====== */
 
 .success-icon {
-    -fx-text-fill: #4CAF50;
+    -fx-text-fill: white !important;
+    -fx-background-color: #4CAF50 !important;
     -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-padding: 8px;
+    -fx-background-radius: 50%;
+    -fx-min-width: 35px;
+    -fx-min-height: 35px;
+    -fx-max-width: 35px;
+    -fx-max-height: 35px;
+    -fx-alignment: center;
+}
+
+/* Estilo específico para el símbolo del check */
+.check-icon {
+    -fx-text-fill: #4CAF50 !important;
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
 }
 
 .success-button {
@@ -46,8 +62,24 @@
 /* ====== ESTILOS ESPECÍFICOS PARA ERROR ====== */
 
 .error-icon {
-    -fx-text-fill: #f44336;
+    -fx-text-fill: white !important;
+    -fx-background-color: #f44336 !important;
     -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-padding: 8px;
+    -fx-background-radius: 50%;
+    -fx-min-width: 35px;
+    -fx-min-height: 35px;
+    -fx-max-width: 35px;
+    -fx-max-height: 35px;
+    -fx-alignment: center;
+}
+
+/* Estilo específico para el símbolo de X de error */
+.x-icon {
+    -fx-text-fill: #f44336 !important;
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
 }
 
 .error-title {
@@ -74,8 +106,17 @@
 /* ====== ESTILOS ESPECÍFICOS PARA ADVERTENCIA ====== */
 
 .warning-icon {
-    -fx-text-fill: #ff9800;
+    -fx-text-fill: white !important;
+    -fx-background-color: #ff9800 !important;
     -fx-font-weight: bold;
+    -fx-font-size: 18px;
+    -fx-padding: 8px;
+    -fx-background-radius: 50%;
+    -fx-min-width: 35px;
+    -fx-min-height: 35px;
+    -fx-max-width: 35px;
+    -fx-max-height: 35px;
+    -fx-alignment: center;
 }
 
 .warning-title {

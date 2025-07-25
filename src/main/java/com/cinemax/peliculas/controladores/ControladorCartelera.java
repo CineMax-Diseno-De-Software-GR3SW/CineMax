@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Cartelera;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
@@ -486,10 +487,6 @@ public class ControladorCartelera implements Initializable {
     }
 
     private void mostrarDetallesPelicula(Pelicula pelicula) {
-        Alert detalles = new Alert(Alert.AlertType.INFORMATION);
-        detalles.setTitle("Detalles de la Película");
-        detalles.setHeaderText(pelicula.getTitulo());
-
         StringBuilder contenido = new StringBuilder();
         contenido.append("ID: ").append(pelicula.getId()).append("\n");
         contenido.append("Año: ").append(pelicula.getAnio()).append("\n");
@@ -502,24 +499,15 @@ public class ControladorCartelera implements Initializable {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
 
-        detalles.setContentText(contenido.toString());
-        detalles.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaExito(pelicula.getTitulo() + "\n\n" + contenido.toString());
     }
 
     private void mostrarError(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
     private void mostrarInformacion(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }
 
     @FXML
