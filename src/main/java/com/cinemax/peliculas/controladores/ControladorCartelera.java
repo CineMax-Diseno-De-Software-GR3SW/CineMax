@@ -10,6 +10,7 @@ import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -486,11 +487,9 @@ public class ControladorCartelera implements Initializable {
     }
 
     private void mostrarDetallesPelicula(Pelicula pelicula) {
-        Alert detalles = new Alert(Alert.AlertType.INFORMATION);
-        detalles.setTitle("Detalles de la Película");
-        detalles.setHeaderText(pelicula.getTitulo());
-
         StringBuilder contenido = new StringBuilder();
+        contenido.append("DETALLES DE LA PELÍCULA\n\n");
+        contenido.append("Título: ").append(pelicula.getTitulo()).append("\n");
         contenido.append("ID: ").append(pelicula.getId()).append("\n");
         contenido.append("Año: ").append(pelicula.getAnio()).append("\n");
         contenido.append("Género: ").append(pelicula.getGenerosComoString()).append("\n");
@@ -502,24 +501,15 @@ public class ControladorCartelera implements Initializable {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
 
-        detalles.setContentText(contenido.toString());
-        detalles.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
     }
 
     private void mostrarError(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
     }
 
     private void mostrarInformacion(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
     }
 
     @FXML
