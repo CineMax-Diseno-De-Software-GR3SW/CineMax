@@ -1,32 +1,20 @@
-package com.cinemax.empleados.servicios;
+package com.cinemax.venta_boletos.Servicios;
 
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
+import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
+import java.io.File;
 import java.util.Properties;
 
-public class ServicioCorreoSingleton {
-
-    private static ServicioCorreoSingleton instancia;
-
-    // Definimos remitente y clave como constantes o variables finales
+public class ServicioCorreoVentaBoletos {
     private final String remitente = "notificaciones.cinemax@gmail.com";
     private final String clave = "zcbdvjxpnngnptgs";
-
     private final Session sesion;
-    private Transport transport;
 
-    private ServicioCorreoSingleton() throws MessagingException {
+    public ServicioCorreoVentaBoletos() throws MessagingException {
         this.sesion = crearSesionSMTP();
-        this.transport = null;
-    }
-
-    // Método para obtener la instancia singleton (sin parámetros)
-    public static synchronized ServicioCorreoSingleton getInstancia() throws MessagingException {
-        if (instancia == null) {
-            instancia = new ServicioCorreoSingleton();
-        }
-        return instancia;
     }
 
     private Session crearSesionSMTP() {
@@ -43,26 +31,30 @@ public class ServicioCorreoSingleton {
         });
     }
 
-    public boolean enviarCorreo(String destinatario, ContenidoMensaje contenido) {
+    public boolean enviarCorreoConAdjunto(String destinatario, ContenidoMensaje contenido, File adjunto) {
         try {
             Message mensaje = new MimeMessage(sesion);
             mensaje.setFrom(new InternetAddress(remitente));
             mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
             mensaje.setSubject(contenido.getAsunto());
-            // Asumimos HTML, puedes cambiar según necesidad:
-            mensaje.setContent(contenido.getCuerpo(), "text/html; charset=utf-8");
 
-            Transport.send(mensaje);  // Maneja conexión internamente
+            MimeBodyPart cuerpoMensaje = new MimeBodyPart();
+            cuerpoMensaje.setContent(contenido.getCuerpo(), "text/html; charset=utf-8");
 
-//            System.out.println("✅ Correo enviado a: " + destinatario);
+            MimeBodyPart adjuntoPart = new MimeBodyPart();
+            adjuntoPart.attachFile(adjunto);
+
+            MimeMultipart multipart = new MimeMultipart();
+            multipart.addBodyPart(cuerpoMensaje);
+            multipart.addBodyPart(adjuntoPart);
+
+            mensaje.setContent(multipart);
+
+            Transport.send(mensaje);
             return true;
-        } catch (MessagingException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-//            System.out.println("❌ Error al enviar el correo a: " + destinatario);
             return false;
         }
     }
-}
-
-
-
+} 
