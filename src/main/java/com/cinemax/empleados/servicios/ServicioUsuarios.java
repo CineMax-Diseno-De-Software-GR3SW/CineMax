@@ -2,7 +2,11 @@ package com.cinemax.empleados.servicios;
 
 import com.cinemax.empleados.modelos.entidades.*;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
+
+import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ServicioUsuarios {
     private ValidadorUsuario validador;
@@ -14,42 +18,80 @@ public class ServicioUsuarios {
     }
 
     //TODO: Pasar atributos para crear el usuario
-    public void crearUsuario(Usuario usuario) throws Exception {
-//        if (usuario == null) {
-//            throw new IllegalArgumentException("El usuario no puede ser null");
-//        }
 
-        if (!validador.validarCorreo(usuario.getCorreo())) {
-            throw new IllegalArgumentException("El correo electrónico no es válido");
-        }
+    public void crearUsuario(String nombreCompleto, String cedula, String correo, String celular, boolean estadoActivo, String nombreUsuario, Rol cargoSeleccionado) throws Exception {
 
-//        if (!validador.validarClave(usuario.getClave())) {
-//            throw new IllegalArgumentException("La clave no cumple con los requisitos de seguridad: una Mayúscula, una minúscula, un número y un caracter especial.");
-//        }
+        validarDatos(correo, nombreUsuario);
 
-        // Verificar que el nombre de usuario no exista
-        if (usuarioDAO.buscarPorNombreUsuario(usuario.getNombreUsuario()) != null) {
-            throw new IllegalArgumentException("El nombre de usuario ya existe");
-        }
+        String clave = generarClaveAleatoria();
 
-        // Verificar que el correo no exista
-        if (usuarioDAO.buscarPorCorreo(usuario.getCorreo()) != null) {
-            throw new IllegalArgumentException("El correo electrónico ya está registrado");
-        }
-
+        Usuario usuario = new Usuario(nombreUsuario,correo,clave,nombreCompleto,
+                cedula,celular,cargoSeleccionado, estadoActivo);
         // Asignar ID si no tiene
         if (usuario.getId() == null) {
             usuario.setId(usuarioDAO.obtenerSiguienteId());
         }
         //TODO: generacion de contrasena (aleatoria con letras numeros y caracteres especiales)
-        usuario.setClave("Q568^W$#2#d%&ht");
 
         //TODO: Creacion del usuario
 
         usuarioDAO.crearUsuario(usuario);
+
         // Servicio de correo
         ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
 
+    }
+
+    private String generarClaveAleatoria() {
+        final String MAYUSCULAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
+        final String NUMEROS = "0123456789";
+        final String ESPECIALES = "!@#$%&*";
+        final String TODOS = MAYUSCULAS + MINUSCULAS + NUMEROS + ESPECIALES;
+        final int LONGITUD = 12;
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder clave = new StringBuilder();
+
+        // Garantiza al menos un carácter de cada tipo
+        clave.append(MAYUSCULAS.charAt(random.nextInt(MAYUSCULAS.length())));
+        clave.append(MINUSCULAS.charAt(random.nextInt(MINUSCULAS.length())));
+        clave.append(NUMEROS.charAt(random.nextInt(NUMEROS.length())));
+        clave.append(ESPECIALES.charAt(random.nextInt(ESPECIALES.length())));
+
+        // Completa el resto aleatoriamente
+        for (int i = 4; i < LONGITUD; i++) {
+            clave.append(TODOS.charAt(random.nextInt(TODOS.length())));
+        }
+
+        // Mezcla los caracteres para que no sigan un patrón predecible
+        List<Character> caracteres = clave.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.toList());
+        Collections.shuffle(caracteres, random);
+
+        StringBuilder claveFinal = new StringBuilder();
+        caracteres.forEach(claveFinal::append);
+
+        return claveFinal.toString();
+    }
+
+
+    private void validarDatos(String correo, String nombreUsuario) throws Exception {
+        if (!validador.validarCorreo(correo)) {
+            throw new IllegalArgumentException("El correo electrónico no es válido");
+        }
+
+
+        // Verificar que el nombre de usuario no exista
+        if (usuarioDAO.buscarPorNombreUsuario(nombreUsuario) != null) {
+            throw new IllegalArgumentException("El nombre de usuario ya existe");
+        }
+
+        // Verificar que el correo no exista
+        if (usuarioDAO.buscarPorCorreo(correo) != null) {
+            throw new IllegalArgumentException("El correo electrónico ya está registrado");
+        }
     }
 
     public void actualizarRolUsuario(Long idUsuario, Rol nuevoRol) throws Exception {

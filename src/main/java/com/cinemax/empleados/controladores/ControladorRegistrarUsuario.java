@@ -37,8 +37,6 @@ public class ControladorRegistrarUsuario implements Initializable {
     @FXML private TextField campoCorreo;
     @FXML private TextField campoCelular;
     @FXML private TextField campoNombreUsuario;
-//    @FXML private PasswordField campoContrasena;
-//    @FXML private PasswordField campoConfirmar;
     @FXML private ComboBox<Rol> comboBoxRol;
     @FXML private RadioButton radioActivo;
 
@@ -90,8 +88,7 @@ public class ControladorRegistrarUsuario implements Initializable {
         Rol cargoSeleccionado = comboBoxRol.getSelectionModel().getSelectedItem();
         boolean estadoActivo = radioActivo.isSelected();
         String nombreUsuario = campoNombreUsuario.getText().trim();
-//        String contrasena = campoContrasena.getText();
-//        String confirmarContrasena = campoConfirmar.getText();
+
 
         // Validaciones básicas
         if (nombres.isEmpty() || apellidos.isEmpty() || cedula.isEmpty() || correo.isEmpty() ||
@@ -107,20 +104,11 @@ public class ControladorRegistrarUsuario implements Initializable {
 //        }
 
         //TODO: NO, Hacerlo desde el servicio
-        Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.setNombreCompleto(nombres + " " + apellidos);
-        nuevoUsuario.setCedula(cedula);
-        nuevoUsuario.setCorreo(correo);
-        nuevoUsuario.setCelular(celular);
-        nuevoUsuario.setActivo(estadoActivo);
-        nuevoUsuario.setNombreUsuario(nombreUsuario);
-//        nuevoUsuario.setClave(contrasena);
-        nuevoUsuario.setRol(cargoSeleccionado);
-
+        String nombreCompleto =nombres + " " + apellidos;
         try {
-            servicioUsuarios.crearUsuario(nuevoUsuario);
+            servicioUsuarios.crearUsuario(nombreCompleto,cedula,correo,celular,estadoActivo,nombreUsuario,cargoSeleccionado);
 
-            mostrarAlerta(AlertType.INFORMATION, "Registro Exitoso", "Empleado Registrado", "El empleado " + nuevoUsuario.getNombreCompleto() + " ha sido registrado correctamente.");
+            mostrarAlerta(AlertType.INFORMATION, "Registro Exitoso", "Empleado Registrado", "El empleado " + nombreCompleto + " ha sido registrado correctamente.");
             limpiarCampos();
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));

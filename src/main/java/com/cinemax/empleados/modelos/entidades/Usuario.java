@@ -23,7 +23,7 @@ public class Usuario {
     }
 
     public Usuario(String nombreUsuario, String correo, String clave, String nombreCompleto,
-            String cedula, String celular, Rol rol) {
+            String cedula, String celular, Rol rol, boolean activo) {
         this();
         this.nombreUsuario = nombreUsuario;
         this.correo = correo;
@@ -32,6 +32,7 @@ public class Usuario {
         this.cedula = cedula;
         this.celular = celular;
         this.rol = rol;
+        this.activo = activo;
     }
 
     // Métodos de negocio
