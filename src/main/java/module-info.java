@@ -14,6 +14,7 @@ module com.cinemax.empleados {
     exports com.cinemax.empleados.controladores;
 
     requires org.apache.pdfbox;
+    requires java.desktop;
 
     exports com.cinemax.venta_boletos.Controladores;
 

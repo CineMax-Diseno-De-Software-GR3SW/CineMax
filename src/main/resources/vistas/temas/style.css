@@ -42,10 +42,14 @@
 .ticket-price, .summary-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
 .summary-details { -fx-font-size: 14px; -fx-text-fill: #B0B0B0; }
 
-#tusBoletosTitle, #confirmCheckBox {
+#tusBoletosTitle {
     -fx-font-weight: bold;
     -fx-fill: #B0B0B0;
     -fx-font-size: 14px;
+
+}#confirmCheckBox {
+    -fx-fill: #F25F00;
+    -fx-font-size: 12px;
 }
 
 
@@ -74,8 +78,21 @@
 .alert-message { -fx-font-size: 14px; -fx-text-fill: #EAEAEA; -fx-text-alignment: center; }
 
 /* --- Iconos y Contadores --- */
-.summary-ticket-count { -fx-background-color: #4A4A4A; -fx-text-fill: white; }
-.summary-price { -fx-text-fill: white; }
+
+.summary-ticket-count {
+    -fx-background-color: #4A4A4A; /* Gris oscuro del tema clásico */
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 5px; /* Esquinas ligeramente redondeadas para el estilo cuadrado */
+    -fx-padding: 2px 8px; /* Espaciado interno para darle forma rectangular */
+    -fx-alignment: center;
+}
+
+.summary-price {
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
 
 
 /* --- Tablas -------------------------------------------------------------------------------- */

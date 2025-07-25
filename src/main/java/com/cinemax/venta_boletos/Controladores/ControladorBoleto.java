@@ -58,12 +58,26 @@ public class ControladorBoleto {
     private Text tusBoletosTitle;
     @FXML
     private VBox ticketSummaryContainer;
+    @FXML
+    private Label peliculaTitleLabel;
+    @FXML
+    private Label funcionDetailsLabel;
 
+
+    /**
+     * Método llamado por el controlador anterior para
+     * pasarle la información de la película y la función seleccionadas.
+     * @param pelicula El nombre de la película.
+     * @param funcion La información de la sala y el horario.
+     */
     public void initData(String pelicula, String funcion) {
         this.pelicula = pelicula;
         this.funcion = funcion;
-        peliculaLabel.setText(this.pelicula);
-        salaLabel.setText(this.funcion);
+
+        this.peliculaTitleLabel.setText(pelicula);
+        this.funcionDetailsLabel.setText(funcion);
+        this.peliculaLabel.setText(pelicula);
+        this.salaLabel.setText(funcion);
     }
 
     @FXML
@@ -95,32 +109,38 @@ public class ControladorBoleto {
     }
 
     private void actualizarVista() {
-        normalCountLabel.setText(String.valueOf(boletosSalaNormal));
-        actualizarResumenDinamico();
+        if (normalCountLabel != null) { // Comprobación para evitar errores
+            normalCountLabel.setText(String.valueOf(boletosSalaNormal));
+            double total = boletosSalaNormal * precioSalaNormal;
+            DecimalFormat df = new DecimalFormat("$ #,##0.00");
+            totalLabel.setText(df.format(total));
+
+            actualizarResumenDinamico();
+        }
     }
 
+    /**
+     * Muestra u oculta la sección "Tus Boletos" y actualiza su contenido
+     * basado en si se han seleccionado boletos o no.
+     */
     private void actualizarResumenDinamico() {
         ticketSummaryContainer.getChildren().clear();
         boolean hayBoletos = boletosSalaNormal > 0;
+
+        // Controlar visibilidad de toda la sección de resumen
         tusBoletosTitle.setVisible(hayBoletos);
         tusBoletosTitle.setManaged(hayBoletos);
+        totalLabel.setVisible(hayBoletos);
+        totalLabel.setManaged(hayBoletos);
+        ticketSummaryContainer.setVisible(hayBoletos);
+        ticketSummaryContainer.setManaged(hayBoletos);
 
-        // Se usa un boleto temporal para obtener el precio base del modelo.
-        // double precioUnitario = new com.cinemax.venta_boletos.Modelos.Boleto("",
-        // "").getPrecio();
-
-        subtotal = 0.0;
-
-        if (boletosSalaNormal > 0) {
-            subtotal += boletosSalaNormal * precioSalaNormal;
-            ticketSummaryContainer.getChildren()
-                    .add(crearFilaResumen("Sala 2D Normal", boletosSalaNormal, precioSalaNormal));
+        // Si hay boletos, crear y añadir la fila de resumen
+        if (hayBoletos) {
+            ticketSummaryContainer.getChildren().add(crearFilaResumen(this.funcion, boletosSalaNormal, precioSalaNormal));
         }
 
-        DecimalFormat df = new DecimalFormat("$ #,##0.00");
-        totalLabel.setText(df.format(subtotal));
-
-        /*
+    /*
          * TODO: Buscar boletos en la BD usando la "función" para encontrar todos los
          * boletos asociados. De ahí, extraer en una estructura de datos, los códigos
          * alfanuméricos de las butacas asociadas a esos boletos. Esa estructura de
