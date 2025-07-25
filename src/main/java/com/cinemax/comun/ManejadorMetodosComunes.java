@@ -98,8 +98,13 @@ public class ManejadorMetodosComunes {
 
             Scene scene = new Scene(root, ancho, alto);
             scene.setFill(null);
-
-            //ApuntadorTema.getInstance().applyTheme(scene);
+            
+            // Aplicar estilos CSS: primero general, luego específico para mayor precedencia
+            String generalCssPath = ManejadorMetodosComunes.class.getResource("/temas/styles.css").toExternalForm();
+            String alertasCssPath = ManejadorMetodosComunes.class.getResource("/Vista/comun/estilos-alertas.css").toExternalForm();
+            scene.getStylesheets().clear(); // Limpiar cualquier CSS previo
+            scene.getStylesheets().add(generalCssPath);
+            scene.getStylesheets().add(alertasCssPath); // Este se carga último y tiene prioridad
 
             alertStage.setScene(scene);
             alertStage.setWidth(ancho);

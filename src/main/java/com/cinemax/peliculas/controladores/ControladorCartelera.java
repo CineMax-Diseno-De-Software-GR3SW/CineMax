@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Cartelera;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
@@ -501,6 +502,17 @@ public class ControladorCartelera implements Initializable {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
 
+<<<<<<< HEAD
+        ManejadorMetodosComunes.mostrarVentanaExito(pelicula.getTitulo() + "\n\n" + contenido.toString());
+    }
+
+    private void mostrarError(String titulo, String mensaje) {
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
+    }
+
+    private void mostrarInformacion(String titulo, String mensaje) {
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
+=======
         ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
     }
 
@@ -510,6 +522,7 @@ public class ControladorCartelera implements Initializable {
 
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
+>>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
     }
 
     @FXML

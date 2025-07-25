@@ -175,9 +175,9 @@ public class ControladorFacturacion {
 
     @FXML
     protected void onFinalizarAction() {
-        if (!validarCamposCliente()) {
+        /*if (!validarCamposCliente()) {
             return; // Si la validación falla, no continuar
-        }
+        }*/
 
         ClienteDAO clienteDAO = new ClienteDAO();
         Cliente cliente = null;
