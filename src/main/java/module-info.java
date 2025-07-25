@@ -21,7 +21,6 @@ module com.cinemax.empleados {
 
     // exports com.cinemax.venta_boletos;
 
-    opens com.cinemax.venta_boletos.Util to javafx.fxml;
     exports com.cinemax.venta_boletos.Servicios;
     opens com.cinemax.venta_boletos.Servicios to javafx.fxml;
 
