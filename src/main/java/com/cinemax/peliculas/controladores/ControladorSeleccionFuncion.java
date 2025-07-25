@@ -409,7 +409,7 @@ public class ControladorSeleccionFuncion implements Initializable {
             protected List<Funcion> call() throws Exception {
                 updateMessage("Cargando funciones disponibles...");
 
-                List<Funcion> todasLasFunciones = funcionDAO.listarTodas();
+                List<Funcion> todasLasFunciones = funcionDAO.listarTodasLasFunciones();
                 List<Funcion> funcionesFiltradas = new ArrayList<>();
 
                 for (Funcion funcion : todasLasFunciones) {
@@ -651,7 +651,7 @@ public class ControladorSeleccionFuncion implements Initializable {
 
         try {
             // Obtener todas las funciones de la película para la fecha seleccionada
-            List<Funcion> todasLasFunciones = funcionDAO.listarTodas();
+            List<Funcion> todasLasFunciones = funcionDAO.listarTodasLasFunciones();
             funcionesDisponibles.clear();
 
             for (Funcion funcion : todasLasFunciones) {

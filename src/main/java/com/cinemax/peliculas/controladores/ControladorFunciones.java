@@ -248,7 +248,7 @@ public class ControladorFunciones implements Initializable {
 
                 if (esEdicion) {
                     // Actualizar función existente
-                    servicioFuncion.editarFuncion(
+                    servicioFuncion.actualizarFuncion(
                         funcionExistente.getId(),
                         cmbPelicula.getValue(),
                         cmbSala.getValue(),
@@ -260,7 +260,7 @@ public class ControladorFunciones implements Initializable {
                     mostrarInformacion("Éxito", "Función actualizada correctamente");
                 } else {
                     // Crear nueva función
-                    Funcion nuevaFuncion = servicioFuncion.programarNuevaFuncion(
+                    Funcion nuevaFuncion = servicioFuncion.crearFuncion(
                         cmbPelicula.getValue(),
                         cmbSala.getValue(),
                         fechaHoraInicio,
@@ -422,7 +422,7 @@ public class ControladorFunciones implements Initializable {
                 updateMessage("Cargando funciones...");
 
                 try {
-                    List<Funcion> funciones = funcionDAO.listarTodas();
+                    List<Funcion> funciones = funcionDAO.listarTodasLasFunciones();
                     updateMessage("Procesando datos de funciones...");
                     updateProgress(1, 1);
                     return funciones != null ? funciones : List.of();
