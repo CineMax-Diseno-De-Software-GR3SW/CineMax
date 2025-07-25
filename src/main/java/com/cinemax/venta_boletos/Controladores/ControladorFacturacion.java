@@ -1,7 +1,7 @@
 package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.comun.ValidadadorCampos;
+//import com.cinemax.comun.ValidadadorCampos;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
@@ -227,7 +227,7 @@ public class ControladorFacturacion {
         // TODO: En vez de cerrar, redirigir a una vista de cartelera
     }
 
-    private boolean validarCamposCliente() {
+    /*private boolean validarCamposCliente() {
         //Resetear estilos de todos los campos
         resetValidationStyles();
 
@@ -277,7 +277,7 @@ public class ControladorFacturacion {
         }
 
         return true; // Solo si los campos son válidos
-    }
+    }*/
 
     /**
      * Elimina el estilo de error de todos los campos.

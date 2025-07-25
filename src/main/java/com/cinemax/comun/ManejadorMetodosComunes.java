@@ -44,15 +44,40 @@ public class ManejadorMetodosComunes {
 
 
     public static void mostrarVentanaExito(String mensaje) {
-        mostrarVentanaEmergente("Éxito", mensaje, "/vistas/comun/VistaExito.fxml");
+        mostrarVentanaEmergente("Éxito", mensaje, "/Vista/comun/VistaExito.fxml");
     }
 
     public static void mostrarVentanaError(String mensaje) {
-        mostrarVentanaEmergente("Error", mensaje, "/vistas/comun/VistaError.fxml");
+        mostrarVentanaEmergente("Error", mensaje, "/Vista/comun/VistaError.fxml");
     }
 
     public static void mostrarVentanaAdvertencia(String mensaje) {
-        mostrarVentanaEmergente("Advertencia", mensaje, "/vistas/comun/VistaAdvertencia.fxml");
+        mostrarVentanaEmergente("Advertencia", mensaje, "/Vista/comun/VistaAdvertencia.fxml");
+    }
+
+    // Método para validar campos vacíos
+    public static boolean validarCampoObligatorio(String valor, String nombreCampo) {
+        if (valor == null || valor.trim().isEmpty()) {
+            mostrarVentanaError("El campo '" + nombreCampo + "' es obligatorio.");
+            return false;
+        }
+        return true;
+    }
+
+    // Método para validar números
+    public static boolean validarNumero(String valor, String nombreCampo) {
+        try {
+            Integer.parseInt(valor.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            mostrarVentanaError("El campo '" + nombreCampo + "' debe ser un número válido.");
+            return false;
+        }
+    }
+
+    // Método para mostrar confirmación exitosa de operación
+    public static void mostrarOperacionExitosa(String operacion, String detalle) {
+        mostrarVentanaExito(operacion + " realizada exitosamente.\n" + detalle);
     }
 
     private static void mostrarVentanaEmergente(String titulo, String mensaje, String fxmlPath) {
