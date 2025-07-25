@@ -15,11 +15,10 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ public class ControladorBoleto {
 
     // --- Estado de la Vista ---
     private final int MAX_BOLETOS = 10; // TODO: Debería depender de la cantidad de butacas disponibles en la sala
-    private int boletosSalaVIP = 0;
     private int boletosSalaNormal = 0;
     private double xOffset = 0;
     private double yOffset = 0;
@@ -41,14 +39,11 @@ public class ControladorBoleto {
     private List<String> butacasOcupadas = new ArrayList<>(); // Lista de butacas ocupadas
     private double subtotal = 0.0;
     // TODO: Son datos que deben ser entregados por el modulo sala
-    private double precioSalaVIP = 7.60;
     private double precioSalaNormal = 3.00;
 
     // --- Componentes FXML ---
     @FXML
     private HBox headerBar;
-    @FXML
-    private Label vipCountLabel;
     @FXML
     private Label normalCountLabel;
     @FXML
@@ -86,20 +81,6 @@ public class ControladorBoleto {
     }
 
     @FXML
-    private void onVipPlus() {
-        if (boletosSalaVIP < MAX_BOLETOS)
-            boletosSalaVIP++;
-        actualizarVista();
-    }
-
-    @FXML
-    private void onVipMinus() {
-        if (boletosSalaVIP > 0)
-            boletosSalaVIP--;
-        actualizarVista();
-    }
-
-    @FXML
     private void onNormalPlus() {
         if (boletosSalaNormal < MAX_BOLETOS)
             boletosSalaNormal++;
@@ -114,14 +95,13 @@ public class ControladorBoleto {
     }
 
     private void actualizarVista() {
-        vipCountLabel.setText(String.valueOf(boletosSalaVIP));
         normalCountLabel.setText(String.valueOf(boletosSalaNormal));
         actualizarResumenDinamico();
     }
 
     private void actualizarResumenDinamico() {
         ticketSummaryContainer.getChildren().clear();
-        boolean hayBoletos = boletosSalaVIP > 0 || boletosSalaNormal > 0;
+        boolean hayBoletos = boletosSalaNormal > 0;
         tusBoletosTitle.setVisible(hayBoletos);
         tusBoletosTitle.setManaged(hayBoletos);
 
@@ -131,10 +111,6 @@ public class ControladorBoleto {
 
         subtotal = 0.0;
 
-        if (boletosSalaVIP > 0) {
-            subtotal += boletosSalaVIP * precioSalaVIP;
-            ticketSummaryContainer.getChildren().add(crearFilaResumen("Sala 2D VIP", boletosSalaVIP, precioSalaVIP));
-        }
         if (boletosSalaNormal > 0) {
             subtotal += boletosSalaNormal * precioSalaNormal;
             ticketSummaryContainer.getChildren()
@@ -175,14 +151,14 @@ public class ControladorBoleto {
 
     @FXML
     protected void onContinuarAction() {
-        if (boletosSalaVIP == 0 && boletosSalaNormal == 0) {
+        if (boletosSalaNormal == 0) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Selecciona al menos un boleto para continuar.");
             return;
         }
         try {
             // 1. Simular asignación de butacas
             // List<String> butacas = new ArrayList<>();
-            int totalBoletos = boletosSalaVIP + boletosSalaNormal;
+            int totalBoletos = boletosSalaNormal; //TODO Revisar si es correcto
             String controladoDeConsultasSalas = "Controlador de Consultas de Salas"; // Simulación
             ControladorAsignadorButacas controladorAsignadorButacas = new ControladorAsignadorButacas();
             List<String> butacasAsignadas = controladorAsignadorButacas.asignarButacas(controladoDeConsultasSalas,
@@ -204,6 +180,32 @@ public class ControladorBoleto {
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @FXML
+    protected void onBackAction() {
+        try {
+            String fxmlPath = "/vistas/venta_boletos/cartelera-view.fxml";
+            URL fxmlUrl = getClass().getResource(fxmlPath);
+
+            if (fxmlUrl == null) {
+                System.err.println("Error crítico: No se pudo encontrar el archivo FXML en la ruta: " + fxmlPath);
+                return;
+            }
+
+            FXMLLoader loader = new FXMLLoader(fxmlUrl);
+            Parent root = loader.load();
+
+            Scene scene = new Scene(root);
+//            ApuntadorTema.getInstance().applyTheme(scene);
+
+            Stage stage = (Stage) headerBar.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("Error de I/O al cargar la vista de funciones:");
             e.printStackTrace();
         }
     }
