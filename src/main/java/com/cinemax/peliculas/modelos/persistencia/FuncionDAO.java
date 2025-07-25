@@ -22,9 +22,10 @@ public class FuncionDAO {
     }
 
     public void crear(Funcion funcion) throws SQLException {
-        String sql = "INSERT INTO funcion (id_pelicula, id_sala, fecha_hora_inicio, fecha_hora_fin, formato, tipo_estreno) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "SELECT guardar_funcion(?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = gestorDB.getConexion();
-                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, funcion.getPelicula().getId());
             stmt.setInt(2, funcion.getSala().getId());
@@ -33,16 +34,16 @@ public class FuncionDAO {
             stmt.setString(5, funcion.getFormato().toString());
             stmt.setString(6, funcion.getTipoEstreno().name());
 
-            stmt.executeUpdate();
-
-            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
-                if (generatedKeys.next()) {
-                    funcion.setId(generatedKeys.getInt(1));
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    funcion.setId(rs.getInt(1));
                     System.out.println("Función guardada con ID: " + funcion.getId());
                 }
             }
+
         } catch (SQLException e) {
-            throw new RuntimeException("Error al guardar función: " + e.getMessage(), e);
+            System.err.println("Error al guardar función (SP): " + e.getMessage());
+            throw e;
         }
     }
 

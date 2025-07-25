@@ -76,9 +76,14 @@ public class ServicioFuncion {
     }
 
     private void validarTraslapeFunciones(Sala sala, LocalDateTime inicio, LocalDateTime fin) throws SQLException {
+        validarTraslapeFunciones(sala, inicio, fin, -1); // -1 indica que no hay función a excluir
+    }
+
+    private void validarTraslapeFunciones(Sala sala, LocalDateTime inicio, LocalDateTime fin, int idFuncionAExcluir) throws SQLException {
         List<Funcion> funcionesSala = funcionDAO.listarFuncionesPorSala(sala.getId());
         for (Funcion f : funcionesSala) {
-            if (inicio.isBefore(f.getFechaHoraFin()) && fin.isAfter(f.getFechaHoraInicio())) {
+            // Excluir la función que se está editando
+            if (f.getId() != idFuncionAExcluir && inicio.isBefore(f.getFechaHoraFin()) && fin.isAfter(f.getFechaHoraInicio())) {
                 throw new IllegalArgumentException(
                         String.format("Ya existe una función programada en la sala %s entre %s y %s.",
                                 sala.getNombre(), f.getFechaHoraInicio(), f.getFechaHoraFin()));
@@ -96,7 +101,7 @@ public class ServicioFuncion {
         validarDatosFuncion(pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
         LocalDateTime fechaHoraFin = fechaHoraInicio.plusHours(3);
         validarHorarioTrabajo(fechaHoraInicio, fechaHoraFin);
-        validarTraslapeFunciones(sala, fechaHoraInicio, fechaHoraFin);
+        validarTraslapeFunciones(sala, fechaHoraInicio, fechaHoraFin, id); // Excluir la función que se está editando
 
         funcionExistente.setPelicula(pelicula);
         funcionExistente.setSala(sala);
