@@ -2,6 +2,7 @@ module com.cinemax.empleados {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires jakarta.mail;
 
     opens com.cinemax.empleados to javafx.fxml;
     opens com.cinemax.empleados.modelos.entidades to javafx.base;
@@ -20,8 +21,9 @@ module com.cinemax.empleados {
 
     // exports com.cinemax.venta_boletos;
 
-    // opens com.cinemax.venta_boletos.Util to javafx.fxml;
-    opens com.cinemax.venta_boletos.Servicios to javafx.base, javafx.fxml;
+    opens com.cinemax.venta_boletos.Util to javafx.fxml;
+    exports com.cinemax.venta_boletos.Servicios;
+    opens com.cinemax.venta_boletos.Servicios to javafx.fxml;
 
     // opens com.cinemax.venta_boletos.Util to javafx.fxml;
     exports com.cinemax.comun;

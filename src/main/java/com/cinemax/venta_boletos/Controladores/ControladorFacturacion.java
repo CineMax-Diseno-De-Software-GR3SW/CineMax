@@ -25,6 +25,13 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
+import com.cinemax.venta_boletos.Servicios.ContenidoMensaje;
+import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.Modelos.Cliente;
+import com.cinemax.venta_boletos.Servicios.GeneradorArchivoPDF;
+import com.cinemax.venta_boletos.Servicios.ServicioCorreoVentaBoletos;
+import java.io.File;
+import jakarta.mail.MessagingException;
 
 public class ControladorFacturacion {
 
@@ -195,7 +202,22 @@ public class ControladorFacturacion {
 
         // 2. Usar tu servicio para generar la factura final
         Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
-        // TODO: Dao debe guardar la factura
+        // Generar el PDF de la factura
+        GeneradorArchivoPDF generadorPDF = new GeneradorArchivoPDF();
+        generadorPDF.generarFacturaPDF(facturaFinal);
+        // Enviar la factura por correo
+        String correoCliente = cliente.getCorreoElectronico();
+        String asunto = "Factura de su compra en CineMax";
+        String cuerpo = "<p>Estimado/a " + cliente.getNombre() + ",<br>Adjuntamos la factura de su compra. ¡Gracias por preferirnos!</p>";
+        String nombreArchivo = "Factura_" + facturaFinal.getCodigoFactura() + ".pdf";
+        File archivoAdjunto = new File(nombreArchivo);
+        try {
+            ServicioCorreoVentaBoletos correo = new ServicioCorreoVentaBoletos();
+            correo.enviarCorreoConAdjunto(correoCliente, new ContenidoMensaje(asunto, cuerpo), archivoAdjunto);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //TODO: Dao debe guardar la factura
 
         // 3. Mostrar un mensaje de éxito y cerrar
         ManejadorMetodosComunes.mostrarVentanaExito("Se ha generado la factura: " + facturaFinal.getCodigoFactura());
