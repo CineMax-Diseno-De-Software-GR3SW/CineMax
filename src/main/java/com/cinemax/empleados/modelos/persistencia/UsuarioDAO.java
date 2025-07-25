@@ -278,4 +278,16 @@ public class UsuarioDAO {
 
 //        db.insertarModificarEliminar(sql);
     }
+
+    public void actualizarClave(Long idUsuario, String nuevaClave) throws SQLException {
+        String sql = """
+                CALL actualizar_clave_usuario(%d,'%s')
+                """.formatted(
+                idUsuario,
+                nuevaClave
+        );
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
+    }
 }
