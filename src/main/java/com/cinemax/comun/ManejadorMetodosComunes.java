@@ -1,6 +1,5 @@
 package com.cinemax.comun;
 
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -55,6 +54,37 @@ public class ManejadorMetodosComunes {
     public static void mostrarVentanaAdvertencia(String mensaje) {
         mostrarVentanaEmergente("Advertencia", mensaje, "/vistas/comun/VistaAdvertencia.fxml");
     }
+    
+    /**
+     * Métodos específicos para casos comunes
+     */
+    public static void mostrarRegistroExitoso(String entidad) {
+        mostrarVentanaExito("¡" + entidad + " registrado exitosamente!");
+    }
+    
+    public static void mostrarActualizacionExitosa(String entidad) {
+        mostrarVentanaExito("¡" + entidad + " actualizado exitosamente!");
+    }
+    
+    public static void mostrarEliminacionExitosa(String entidad) {
+        mostrarVentanaExito("¡" + entidad + " eliminado exitosamente!");
+    }
+    
+    public static void mostrarErrorCamposVacios() {
+        mostrarVentanaError("Por favor, complete todos los campos obligatorios.");
+    }
+    
+    public static void mostrarErrorBaseDatos() {
+        mostrarVentanaError("Error al conectar con la base de datos. Intente nuevamente.");
+    }
+    
+    public static void mostrarAdvertenciaEliminacion(String entidad) {
+        mostrarVentanaAdvertencia("¿Está seguro de que desea eliminar " + entidad + "? Esta acción no se puede deshacer.");
+    }
+    
+    public static void mostrarInformacion(String mensaje) {
+        mostrarVentanaEmergente("Información", mensaje, "/vistas/comun/VistaExito.fxml");
+    }
 
     private static void mostrarVentanaEmergente(String titulo, String mensaje, String fxmlPath) {
         try {
@@ -65,26 +95,46 @@ public class ManejadorMetodosComunes {
             controller.setData(titulo, mensaje);
 
             Stage alertStage = new Stage();
-            alertStage.initStyle(StageStyle.TRANSPARENT);
+            alertStage.initStyle(StageStyle.UNDECORATED); // Sin decoraciones pero no transparente
             alertStage.initModality(Modality.APPLICATION_MODAL);
 
-            // Establecer tamaño fijo (puedes ajustarlo a lo que necesites)
-            double ancho = 400;
-            double alto = 200;
+            // Establecer tamaño fijo
+            double ancho = 420;
+            double alto = 220;
 
             Scene scene = new Scene(root, ancho, alto);
-            scene.setFill(null);
-
-            //ApuntadorTema.getInstance().applyTheme(scene);
+            
+            // Aplicar estilos CSS
+            String cssPath = ManejadorMetodosComunes.class.getResource("/vistas/comun/estilos-alertas.css").toExternalForm();
+            scene.getStylesheets().add(cssPath);
 
             alertStage.setScene(scene);
             alertStage.setWidth(ancho);
             alertStage.setHeight(alto);
-            alertStage.setResizable(false); // Evita que el usuario lo cambie
+            alertStage.setResizable(false);
+            alertStage.centerOnScreen(); // Centrar en pantalla
             alertStage.showAndWait();
 
         } catch (IOException e) {
+            System.err.println("Error al cargar la ventana emergente: " + e.getMessage());
             e.printStackTrace();
+            // Fallback: mostrar un diálogo simple si falla la carga del FXML
+            mostrarDialogoSimple(titulo, mensaje);
+        }
+    }
+    
+    /**
+     * Método de respaldo para mostrar un diálogo simple si falla la carga del FXML
+     */
+    private static void mostrarDialogoSimple(String titulo, String mensaje) {
+        try {
+            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
+            alert.setTitle(titulo);
+            alert.setHeaderText(null);
+            alert.setContentText(mensaje);
+            alert.showAndWait();
+        } catch (Exception e) {
+            System.err.println("Error crítico al mostrar mensaje: " + titulo + " - " + mensaje);
         }
     }
 }
