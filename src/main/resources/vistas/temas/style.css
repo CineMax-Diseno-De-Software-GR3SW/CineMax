@@ -42,6 +42,13 @@
 .ticket-price, .summary-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
 .summary-details { -fx-font-size: 14px; -fx-text-fill: #B0B0B0; }
 
+#tusBoletosTitle, #confirmCheckBox {
+    -fx-font-weight: bold;
+    -fx-fill: #B0B0B0;
+    -fx-font-size: 14px;
+}
+
+
 /* --- BOTONES --- */
 .stepper-button { -fx-background-color: #F25F00; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50em; -fx-alignment: CENTER; -fx-padding: 4px 12px; }
 .stepper-button:hover { -fx-background-color: #D85600; }
@@ -201,4 +208,19 @@
     -fx-font-size: 24px;
     -fx-text-fill: #43a047; /* Verde de éxito */
     -fx-font-weight: bold;
+}
+
+/* --- NUEVO: Estilo para campos con error de validación --- */
+.text-field.error {
+    -fx-border-color: #e53935; /* Un rojo de error vibrante */
+    -fx-border-width: 2px;
+}
+
+/* Estilo para la ventana emergente de error (Tooltip) */
+.tooltip {
+    -fx-background-color: #e53935;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 4px;
+    -fx-padding: 8px;
 }

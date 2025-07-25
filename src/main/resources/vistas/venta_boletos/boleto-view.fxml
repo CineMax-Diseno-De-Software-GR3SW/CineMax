@@ -12,6 +12,7 @@
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
+                <Button onAction="#onBackAction" styleClass="icon-button" text="←" />
                 <Label styleClass="section-title" text="Selecciona tus Boletos" />
                 <Region HBox.hgrow="ALWAYS" />
             </children>
@@ -21,30 +22,16 @@
     <center>
         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="scroll-pane">
             <content>
-                <!-- CORRECCIÓN: Se añade la clase de estilo para que el fondo sea visible -->
                 <VBox alignment="TOP_CENTER" spacing="20.0" styleClass="content-pane">
                     <padding>
                         <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
                     </padding>
+                    <VBox spacing="10.0" />
                     <VBox spacing="10.0">
                         <children>
-                            <Label styleClass="section-title" text="VIP" />
+                            <Label styleClass="section-title" text="[Película]" />
                             <VBox spacing="10" styleClass="ticket-card">
-                                <Label styleClass="ticket-price" text="Sala 2D VIP" />
-                                <Label text="Precio: 7.60" />
-                                <HBox alignment="CENTER_LEFT" spacing="15.0">
-                                    <Button fx:id="vipMinusButton" onAction="#onVipMinus" styleClass="stepper-button" text="-" />
-                                    <Label fx:id="vipCountLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="0" />
-                                    <Button fx:id="vipPlusButton" onAction="#onVipPlus" styleClass="stepper-button" text="+" />
-                                </HBox>
-                            </VBox>
-                        </children>
-                    </VBox>
-                    <VBox spacing="10.0">
-                        <children>
-                            <Label styleClass="section-title" text="Normal" />
-                            <VBox spacing="10" styleClass="ticket-card">
-                                <Label styleClass="ticket-price" text="Sala 2D Normal" />
+                                <Label styleClass="ticket-price" text="[Sala y Horario]" />
                                 <Label text="Precio: 3.00" />
                                 <HBox alignment="CENTER_LEFT" spacing="15.0">
                                     <Button fx:id="normalMinusButton" onAction="#onNormalMinus" styleClass="stepper-button" text="-" />

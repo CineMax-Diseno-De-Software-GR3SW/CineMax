@@ -1,6 +1,7 @@
 package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.comun.ValidadadorCampos;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
@@ -10,12 +11,10 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
@@ -176,10 +175,8 @@ public class ControladorFacturacion {
 
     @FXML
     protected void onFinalizarAction() {
-        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
-                || correoField.getText().isEmpty()) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
-            return;
+        if (!validarCamposCliente()) {
+            return; // Si la validación falla, no continuar
         }
 
         ClienteDAO clienteDAO = new ClienteDAO();
@@ -228,6 +225,84 @@ public class ControladorFacturacion {
         Stage stage = (Stage) finalizarButton.getScene().getWindow();
         stage.close();
         // TODO: En vez de cerrar, redirigir a una vista de cartelera
+    }
+
+    private boolean validarCamposCliente() {
+        //Resetear estilos de todos los campos
+        resetValidationStyles();
+
+        String nombre = nombreField.getText();
+        String apellido = apellidoField.getText();
+        String documento = documentoField.getText();
+        String correo = correoField.getText();
+        String tipoDocumento = tipoDocumentoBox.getValue();
+
+        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
+                || correoField.getText().isEmpty()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
+        }if (!ValidadadorCampos.esSoloTexto(nombre)) {
+            showFieldError(nombreField, "El nombre solo debe contener letras.");
+            return false;
+        }if (!ValidadadorCampos.esSoloTexto(apellido)) {
+            showFieldError(apellidoField, "El apellido solo debe contener letras.");
+            return false;
+        }if (documento.isEmpty()) {
+            showFieldError(documentoField, "El documento no puede estar vacío.");
+            return false;
+        }switch (tipoDocumento) {
+            case "Cédula":
+                if (!ValidadadorCampos.esSoloNumeros(documento) || documento.length() != 10) {
+                    showFieldError(documentoField, "La Cédula debe tener 10 números.");
+                    return false;
+                }
+                break;
+            case "RUC":
+                if (!ValidadadorCampos.esSoloNumeros(documento) || documento.length() != 13) {
+                    showFieldError(documentoField, "El RUC debe tener 13 números.");
+                    return false;
+                }
+                break;
+            case "Pasaporte":
+                if (documento.length() < 6 || documento.length() > 15) {
+                    showFieldError(documentoField, "El Pasaporte debe tener entre 6 y 15 caracteres.");
+                    return false;
+                }
+                break;
+        }if (correo.isEmpty()) {
+            showFieldError(correoField, "El correo no puede estar vacío.");
+            return false;
+        }if (!ValidadadorCampos.esCorreoValido(correo)) {
+            showFieldError(correoField, "El formato del correo no es válido.");
+            return false;
+        }
+
+        return true; // Solo si los campos son válidos
+    }
+
+    /**
+     * Elimina el estilo de error de todos los campos.
+     */
+    private void resetValidationStyles() {
+        nombreField.getStyleClass().remove("error");
+        apellidoField.getStyleClass().remove("error");
+        documentoField.getStyleClass().remove("error");
+        correoField.getStyleClass().remove("error");
+    }
+
+    /**
+     * Aplica el estilo de error a un campo y muestra un tooltip.
+     * @param field El TextField que tiene el error.
+     * @param message El mensaje a mostrar.
+     */
+    private void showFieldError(TextField field, String message) {
+        field.getStyleClass().add("error");
+        Tooltip tooltip = new Tooltip(message);
+        tooltip.setAutoHide(true);
+
+        // Mostrar el tooltip a la derecha del campo
+        Point2D p = field.localToScreen(field.getBoundsInLocal().getMaxX(), field.getBoundsInLocal().getMinY());
+        tooltip.show(field, p.getX() + 5, p.getY());
+        field.requestFocus(); // Poner el foco en el campo con error
     }
 
     @FXML
