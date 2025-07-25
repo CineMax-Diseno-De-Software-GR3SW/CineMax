@@ -1,11 +1,11 @@
 package com.cinemax.venta_boletos.Controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Modelos.Persistencia.ClienteDAO;
 import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
-import com.cinemax.comun.ApuntadorTema;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -117,7 +117,7 @@ public class ControladorFacturacion {
         String texto = identificacionField.getText();
 
         if (texto.isEmpty()) {
-            showAlert("Campo Incompleto", "Por favor, ingrese un número de identificación para buscar al cliente.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
             return;
         }
 
@@ -140,7 +140,7 @@ public class ControladorFacturacion {
                 e.printStackTrace();
             }
         } catch (NumberFormatException e) {
-            showAlert("Dato inválido", "La identificación ingresada no es un número válido.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El número de identificación debe ser un número válido.");
         }
     }
 
@@ -148,7 +148,7 @@ public class ControladorFacturacion {
     void onActualizarCliente(ActionEvent event) {
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
-            showAlert("Campo Incompleto", "Por favor, llene todos los campos para continuar.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
             return;
         }
 
@@ -160,10 +160,10 @@ public class ControladorFacturacion {
             clienteDAO.actualizarCliente(cliente);
             mensajeActualizacionCliente.setText("Cliente actualizado correctamente.");
         } catch (NumberFormatException e) {
-            showAlert("Dato inválido", "El documento ingresado no es un número válido.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Error", "Ocurrió un error al actualizar el cliente.");
+            ManejadorMetodosComunes.mostrarVentanaError("Ocurrió un error al actualizar el cliente.");
         }
     }
 
@@ -171,7 +171,7 @@ public class ControladorFacturacion {
     protected void onFinalizarAction() {
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
-            showAlert("Campo Incompleto", "Por favor, llene todos los campos para continuar.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
             return;
         }
 
@@ -198,7 +198,7 @@ public class ControladorFacturacion {
         // TODO: Dao debe guardar la factura
 
         // 3. Mostrar un mensaje de éxito y cerrar
-        showAlert("Compra Exitosa", "Se ha generado la factura: " + facturaFinal.getCodigoFactura());
+        ManejadorMetodosComunes.mostrarVentanaExito("Se ha generado la factura: " + facturaFinal.getCodigoFactura());
 
         System.out.println("--- FACTURA GENERADA ---");
         System.out.println(facturaFinal);
@@ -221,32 +221,7 @@ public class ControladorFacturacion {
     }
 
     @FXML
-    protected void onThemeToggleAction() {
-        ApuntadorTema.getInstance().applyTheme(headerBar.getScene());
-    }
-
-    @FXML
     protected void onVerDetalle() {
         System.out.println("Acción para ver detalle del pedido...");
-    }
-
-    private void showAlert(String title, String message) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/shared/alert-view.fxml"));
-            Parent root = loader.load();
-            ControllerAlert controller = loader.getController();
-            controller.setData(title, message);
-            Stage alertStage = new Stage();
-            alertStage.initOwner(finalizarButton.getScene().getWindow());
-            alertStage.initStyle(StageStyle.TRANSPARENT);
-            alertStage.initModality(Modality.APPLICATION_MODAL);
-            Scene scene = new Scene(root);
-            scene.setFill(null);
-            ApuntadorTema.getInstance().applyTheme(scene);
-            alertStage.setScene(scene);
-            alertStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

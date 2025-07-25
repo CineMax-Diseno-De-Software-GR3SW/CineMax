@@ -1,11 +1,11 @@
 package com.cinemax.venta_boletos.Controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Modelos.Boleto;
 import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
 //import com.cinemax.venta_boletos.Modelos.Factura;
 //import com.cinemax.venta_boletos.Modelos.*;
-import com.cinemax.comun.ApuntadorTema;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -124,7 +124,7 @@ public class ControladorResumen {
     @FXML
     protected void onContinuarAction() {
         if (!confirmCheckBox.isSelected()) {
-            showAlert("Confirmación Requerida", "Por favor, confirme la compra para continuar.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Confirme la compra para continuar.");
             return;
         }
         try {
@@ -138,7 +138,6 @@ public class ControladorResumen {
 
             Stage stage = (Stage) continueButton.getScene().getWindow();
             Scene scene = new Scene(root);
-            ApuntadorTema.getInstance().applyTheme(scene);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
@@ -164,31 +163,5 @@ public class ControladorResumen {
     @FXML
     protected void onCloseAction() {
         ((Stage) headerBar.getScene().getWindow()).close();
-    }
-
-    @FXML
-    protected void onThemeToggleAction() {
-        ApuntadorTema.getInstance().applyTheme(headerBar.getScene());
-    }
-
-    private void showAlert(String title, String message) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/cinemax/venta_boletos/Vistas/Shared/alert-view.fxml"));
-            Parent root = loader.load();
-            ControllerAlert controller = loader.getController();
-            controller.setData(title, message);
-            Stage alertStage = new Stage();
-            alertStage.initOwner(continueButton.getScene().getWindow());
-            alertStage.initStyle(StageStyle.TRANSPARENT);
-            alertStage.initModality(Modality.APPLICATION_MODAL);
-            Scene scene = new Scene(root);
-            scene.setFill(null);
-            ApuntadorTema.getInstance().applyTheme(scene);
-            alertStage.setScene(scene);
-            alertStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

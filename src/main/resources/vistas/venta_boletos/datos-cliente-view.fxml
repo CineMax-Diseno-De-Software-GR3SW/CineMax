@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorFacturacion">
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/style.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorFacturacion">
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
@@ -47,7 +47,7 @@
             </padding>
          <Label styleClass="section-title" text="Buscar cliente" />
          <TextField fx:id="identificacionField" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="39.0" prefWidth="220.0" promptText="Ingrese el número de identificación" />
-         <Button mnemonicParsing="false" onAction="#onBuscarCliente" text="Buscar" textAlignment="CENTER" />
+         <Button mnemonicParsing="false" onAction="#onBuscarCliente" styleClass="primary-button" text="Buscar" textAlignment="CENTER" />
          <Text fx:id="mensajeBusquedaCliente" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
             <GridPane hgap="10.0" vgap="15.0">
                 <columnConstraints>
@@ -73,7 +73,7 @@
             </rowConstraints>
             </GridPane>
          <Text fx:id="mensajeActualizacionCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
-         <Button mnemonicParsing="false" onAction="#onActualizarCliente" text="Actualizar" textAlignment="CENTER" />
+         <Button mnemonicParsing="false" onAction="#onActualizarCliente" styleClass="primary-button" text="Actualizar" textAlignment="CENTER" />
         </VBox>
    </center>
 </BorderPane>

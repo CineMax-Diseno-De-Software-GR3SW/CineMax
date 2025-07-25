@@ -132,3 +132,23 @@
     -fx-padding: 20px;
     -fx-effect: dropshadow(gaussian, rgba(255, 143, 64, 0.2), 15, 0, 0, 0);
 }
+
+.warning-icon {
+    -fx-font-size: 32px;
+    -fx-text-fill: #ffc107; /* Amarillo/Naranja de advertencia */
+    -fx-font-weight: bold;
+}
+
+/* Ícono de error (rojo) */
+.error-icon {
+    -fx-font-size: 24px;
+    -fx-text-fill: #e53935; /* Rojo de error */
+    -fx-font-weight: bold;
+}
+
+/* Ícono de éxito (verde) */
+.success-icon {
+    -fx-font-size: 24px;
+    -fx-text-fill: #43a047; /* Verde de éxito */
+    -fx-font-weight: bold;
+}

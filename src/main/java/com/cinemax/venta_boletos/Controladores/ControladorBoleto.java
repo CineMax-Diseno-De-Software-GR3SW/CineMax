@@ -1,8 +1,8 @@
 package com.cinemax.venta_boletos.Controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
-import com.cinemax.comun.ApuntadorTema;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
@@ -176,7 +176,7 @@ public class ControladorBoleto {
     @FXML
     protected void onContinuarAction() {
         if (boletosSalaVIP == 0 && boletosSalaNormal == 0) {
-            showAlert("Sin Selección", "Por favor, selecciona al menos un boleto para continuar.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Selecciona al menos un boleto para continuar.");
             return;
         }
         try {
@@ -201,7 +201,6 @@ public class ControladorBoleto {
 
             Stage stage = (Stage) continueButton.getScene().getWindow();
             Scene scene = new Scene(root);
-            ApuntadorTema.getInstance().applyTheme(scene);
             stage.setScene(scene);
             stage.show();
         } catch (IOException e) {
@@ -212,35 +211,5 @@ public class ControladorBoleto {
     @FXML
     protected void onCloseAction() {
         ((Stage) headerBar.getScene().getWindow()).close();
-    }
-
-    @FXML
-    protected void onThemeToggleAction() {
-        ApuntadorTema.getInstance().applyTheme(headerBar.getScene());
-    }
-
-    // Método de alerta local (hasta que implementes AlertManager)
-    private void showAlert(String title, String message) {
-        try {
-            // TODO: ¿Dónde exactamente debería estar esto?, ¿Por qué está en la carpeta
-            // shared, es porque debe ser un archivo compartido entre todo el curso como el
-            // singleton?
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/cinemax/venta_boletos/Vistas/Shared/alert-view.fxml"));
-            Parent root = loader.load();
-            ControllerAlert controller = loader.getController();
-            controller.setData(title, message);
-            Stage alertStage = new Stage();
-            alertStage.initOwner(continueButton.getScene().getWindow());
-            alertStage.initStyle(StageStyle.TRANSPARENT);
-            alertStage.initModality(Modality.APPLICATION_MODAL);
-            Scene scene = new Scene(root);
-            scene.setFill(null);
-            ApuntadorTema.getInstance().applyTheme(scene);
-            alertStage.setScene(scene);
-            alertStage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

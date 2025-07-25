@@ -1,5 +1,6 @@
 package com.cinemax.venta_boletos.Servicios;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Controladores.ControladorBoleto;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -85,27 +86,14 @@ public class ServicioMostrarFunciones {
                 stage.centerOnScreen();
 
             } catch (IOException e) {
-                mostrarError("Error al cargar la pantalla de boletos: " + e.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la pantalla de boletos: " + e.getMessage());
                 e.printStackTrace();
             } catch (Exception e) {
-                mostrarError("Error inesperado: " + e.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError("Error inesperado: " + e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            mostrarError("Por favor seleccione una función");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor seleccione una función");
         }
-    }
-
-    private void mostrarError(String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.getStylesheets().add(getClass().getResource("/vistas/temas/ayu-theme.css").toExternalForm());
-        dialogPane.getStyleClass().add("dialog-pane");
-
-        alert.showAndWait();
     }
 }

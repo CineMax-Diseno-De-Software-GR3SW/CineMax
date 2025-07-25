@@ -1,6 +1,6 @@
 package com.cinemax.venta_boletos.Servicios;
 
-import com.cinemax.comun.MetodosComunes;
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -32,7 +32,7 @@ public class ServicioMostrarCartelera {
         String peliculaSeleccionada = listViewPeliculas.getSelectionModel().getSelectedItem();
 
         if (peliculaSeleccionada == null) {
-            MetodosComunes.mostrarVentanaEmergente("Campos Incompletos >", "Por favor seleccione una película");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Campos Incompletos, Por favor seleccione una película");
             return;
         }
 
@@ -49,7 +49,7 @@ public class ServicioMostrarCartelera {
             stage.centerOnScreen();
 
         } catch (IOException e) {
-            MetodosComunes.mostrarVentanaEmergente("Error", "No se pudo cargar la pantalla de funciones");
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo cargar la pantalla de funciones");
             e.printStackTrace();
         }
     }
