@@ -29,7 +29,7 @@ public class ServicioFuncion {
 
         validarDatosFuncion(pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
 
-        LocalDateTime fechaHoraFin = fechaHoraInicio.plusHours(3);
+        LocalDateTime fechaHoraFin = fechaHoraInicio.plusMinutes(pelicula.getDuracionMinutos() + 40);
 
         validarHorarioTrabajo(fechaHoraInicio, fechaHoraFin);
 
@@ -99,7 +99,7 @@ public class ServicioFuncion {
         }
 
         validarDatosFuncion(pelicula, sala, fechaHoraInicio, formato, tipoEstreno);
-        LocalDateTime fechaHoraFin = fechaHoraInicio.plusHours(3);
+        LocalDateTime fechaHoraFin = fechaHoraInicio.plusMinutes(pelicula.getDuracionMinutos() + 40);
         validarHorarioTrabajo(fechaHoraInicio, fechaHoraFin);
         validarTraslapeFunciones(sala, fechaHoraInicio, fechaHoraFin, id); // Excluir la función que se está editando
 
