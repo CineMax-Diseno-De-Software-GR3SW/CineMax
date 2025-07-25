@@ -60,7 +60,8 @@ public class ControladorFunciones implements Initializable {
     @FXML private TableColumn<Funcion, Integer> colId;
     @FXML private TableColumn<Funcion, String> colPelicula;
     @FXML private TableColumn<Funcion, String> colSala;
-    @FXML private TableColumn<Funcion, String> colFechaHora;
+    @FXML private TableColumn<Funcion, String> colFechaHoraInicio;
+    @FXML private TableColumn<Funcion, String> colFechaHoraFin;
     @FXML private TableColumn<Funcion, String> colFormato;
     @FXML private TableColumn<Funcion, String> colTipoEstreno;
 
@@ -561,8 +562,18 @@ public class ControladorFunciones implements Initializable {
             );
         });
 
-        colFechaHora.setCellValueFactory(cellData -> {
+        colFechaHoraInicio.setCellValueFactory(cellData -> {
             LocalDateTime fechaHora = cellData.getValue().getFechaHoraInicio();
+            if (fechaHora != null) {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+                return new javafx.beans.property.SimpleStringProperty(fechaHora.format(formatter));
+            } else {
+                return new javafx.beans.property.SimpleStringProperty("N/A");
+            }
+        });
+
+        colFechaHoraFin.setCellValueFactory(cellData -> {
+            LocalDateTime fechaHora = cellData.getValue().getFechaHoraFin();
             if (fechaHora != null) {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
                 return new javafx.beans.property.SimpleStringProperty(fechaHora.format(formatter));

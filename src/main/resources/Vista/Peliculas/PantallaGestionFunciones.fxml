@@ -44,9 +44,10 @@
             <TableView fx:id="tablaFunciones" prefHeight="400.0" styleClass="table-view">
                 <columns>
                     <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
-                    <TableColumn fx:id="colPelicula" text="Película" prefWidth="200.0" />
-                    <TableColumn fx:id="colSala" text="Sala" prefWidth="100.0" />
-                    <TableColumn fx:id="colFechaHora" text="Fecha y Hora" prefWidth="150.0" />
+                    <TableColumn fx:id="colPelicula" text="Película" prefWidth="180.0" />
+                    <TableColumn fx:id="colSala" text="Sala" prefWidth="80.0" />
+                    <TableColumn fx:id="colFechaHoraInicio" text="Inicio" prefWidth="130.0" />
+                    <TableColumn fx:id="colFechaHoraFin" text="Fin" prefWidth="130.0" />
                     <TableColumn fx:id="colFormato" text="Formato" prefWidth="100.0" />
                     <TableColumn fx:id="colTipoEstreno" text="Tipo Estreno" prefWidth="120.0" />
                 </columns>
