@@ -13,12 +13,10 @@ public class Pelicula {
     private List<Genero> generos;
     private String imagenUrl;
     
-    // Constructor vacío
     public Pelicula() {
         this.generos = new ArrayList<>();
     }
     
-    // Constructor con parámetros
     public Pelicula(int id, String titulo, String sinopsis, int duracionMinutos, 
                    int anio, Idioma idioma, List<Genero> generos, String imagenUrl) {
         this.id = id;
@@ -138,7 +136,6 @@ public class Pelicula {
     }
     
     
-    // Método de conveniencia para establecer idioma por código (para DAO)
     public void setIdiomaPorCodigo(String codigoIdioma) {
         if (codigoIdioma != null && !codigoIdioma.trim().isEmpty()) {
             this.idioma = Idioma.porCodigo(codigoIdioma);
@@ -147,15 +144,14 @@ public class Pelicula {
         }
     }
     
-    // Método para agregar un género a la lista
     public void agregarGenero(Genero genero) {
         if (genero != null && !this.generos.contains(genero)) {
             this.generos.add(genero);
         }
     }
-    
-    // Método para remover un género de la lista
-    public void removerGenero(Genero genero) {
+
+    // Método para eliminar un género de la lista
+    public void eliminarGenero(Genero genero) {
         this.generos.remove(genero);
     }
     

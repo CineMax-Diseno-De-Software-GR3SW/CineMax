@@ -1,5 +1,7 @@
 package com.cinemax.peliculas.modelos.entidades;
 
+import java.util.List;
+
 public enum Genero {
     ACCION("Acción"),
     COMEDIA("Comedia"),
@@ -7,7 +9,11 @@ public enum Genero {
     TERROR("Terror"),
     CIENCIA_FICCION("Ciencia Ficción"),
     ANIMACION("Animación"),
-    ROMANCE("Romance");
+    ROMANCE("Romance"),
+    DOCUMENTAL("Documental"),
+    AVENTURA("Aventura"),
+    FANTASIA("Fantasía");
+
     
     private final String nombre;
     
@@ -72,19 +78,13 @@ public enum Genero {
         return resultado.toString();
     }
     
-    // Método para obtener todos los géneros como string para mostrar al usuario
-    public static String obtenerTodosLosGeneros() {
-        StringBuilder sb = new StringBuilder();
+    public static List<String> obtenerTodosLosGeneros() {
         Genero[] generos = values();
-        
-        for (int i = 0; i < generos.length; i++) {
-            if (i > 0) {
-                sb.append(", ");
-            }
-            sb.append(generos[i].getNombre());
+        List<String> lista = new java.util.ArrayList<>();
+        for (Genero genero : generos) {
+            lista.add(genero.getNombre());
         }
-        
-        return sb.toString();
+        return lista;
     }
     
     @Override

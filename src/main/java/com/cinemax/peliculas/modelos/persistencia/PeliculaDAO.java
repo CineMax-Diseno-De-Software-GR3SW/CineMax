@@ -166,7 +166,6 @@ public class PeliculaDAO {
     }
 
     
-    // Método adicional: buscar por título (búsqueda parcial)
     public List<Pelicula> buscarPorTitulo(String titulo) throws SQLException {
         List<Pelicula> peliculas = new ArrayList<>();
         String sql = "SELECT * FROM buscar_peliculas_por_titulo(?)";

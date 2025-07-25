@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import com.cinemax.peliculas.modelos.entidades.Genero;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
@@ -125,21 +126,13 @@ public class ControladorPelicula implements Initializable {
 
         // ComboBox para géneros múltiples
         ComboBox<String> cmbGenero = new ComboBox<>();
-        cmbGenero.getItems().addAll(
-            "Acción", "Aventura", "Comedia", "Drama", "Terror", 
-            "Ciencia Ficción", "Romance", "Thriller", "Animación", 
-            "Documental", "Musical", "Western", "Biografía", "Historia"
-        );
+        cmbGenero.getItems().addAll(Genero.obtenerTodosLosGeneros());
         cmbGenero.setPromptText("Seleccione género principal");
         cmbGenero.setPrefWidth(200);
 
         // Lista para géneros adicionales
         ListView<String> listGeneros = new ListView<>();
-        listGeneros.getItems().addAll(
-            "Acción", "Aventura", "Comedia", "Drama", "Terror", 
-            "Ciencia Ficción", "Romance", "Thriller", "Animación", 
-            "Documental", "Musical", "Western", "Biografía", "Historia"
-        );
+        listGeneros.getItems().addAll(Genero.obtenerTodosLosGeneros());
         listGeneros.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listGeneros.setPrefHeight(100);
         listGeneros.setPrefWidth(200);
@@ -356,11 +349,7 @@ public class ControladorPelicula implements Initializable {
 
         // ComboBox para género principal
         ComboBox<String> cmbGenero = new ComboBox<>();
-        cmbGenero.getItems().addAll(
-            "Acción", "Aventura", "Comedia", "Drama", "Terror", 
-            "Ciencia Ficción", "Romance", "Thriller", "Animación", 
-            "Documental", "Musical", "Western", "Biografía", "Historia"
-        );
+        cmbGenero.getItems().addAll(Genero.obtenerTodosLosGeneros());
         
         // Establecer el primer género como valor principal
         String generosActuales = peliculaOriginal.getGenerosComoString();
@@ -373,11 +362,7 @@ public class ControladorPelicula implements Initializable {
 
         // Lista para géneros adicionales
         ListView<String> listGeneros = new ListView<>();
-        listGeneros.getItems().addAll(
-            "Acción", "Aventura", "Comedia", "Drama", "Terror", 
-            "Ciencia Ficción", "Romance", "Thriller", "Animación", 
-            "Documental", "Musical", "Western", "Biografía", "Historia"
-        );
+        listGeneros.getItems().addAll(Genero.obtenerTodosLosGeneros());
         listGeneros.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listGeneros.setPrefHeight(100);
         listGeneros.setPrefWidth(200);
@@ -681,11 +666,7 @@ public class ControladorPelicula implements Initializable {
 
     private void configurarFiltros() {
         // Llenar el combo de géneros con géneros estáticos iniciales
-        cmbFiltroGenero.getItems().addAll(
-            "Todos", "Acción", "Aventura", "Comedia", "Drama", 
-            "Terror", "Ciencia Ficción", "Romance", "Thriller", "Animación",
-            "Documental", "Musical", "Western", "Biografía", "Historia"
-        );
+        cmbFiltroGenero.getItems().addAll(Genero.obtenerTodosLosGeneros());
         cmbFiltroGenero.setValue("Todos");
         
         // Configurar evento de cambio en el filtro
