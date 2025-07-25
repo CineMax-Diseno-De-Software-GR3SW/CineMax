@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorFunciones" styleClass="root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Label text="Gestión de Funciones" styleClass="section-title" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnNuevaFuncion" onAction="#onNuevaFuncion" styleClass="primary-button" text="+ Nueva Función" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20.0">
+            <padding>
+                <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
+            </padding>
+
+            <!-- Sección de búsqueda y filtros -->
+            <VBox spacing="15.0" styleClass="ticket-card">
+                <Label text="Búsqueda y Filtros" styleClass="section-title" />
+                <HBox spacing="15.0" alignment="CENTER_LEFT">
+                    <children>
+                        <Label text="Buscar:" />
+                        <TextField fx:id="txtBuscar" promptText="ID, película, sala..." prefWidth="300.0" styleClass="text-field" />
+                        <Button fx:id="btnBuscar" onAction="#onBuscar" text="Buscar" styleClass="stepper-button" />
+                        <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="link-button" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <ComboBox fx:id="cmbFiltroSala" promptText="Filtrar por sala" prefWidth="150.0" styleClass="combo-box" />
+                    </children>
+                </HBox>
+            </VBox>
+
+            <!-- Tabla de funciones -->
+            <TableView fx:id="tablaFunciones" prefHeight="400.0" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
+                    <TableColumn fx:id="colPelicula" text="Película" prefWidth="180.0" />
+                    <TableColumn fx:id="colSala" text="Sala" prefWidth="80.0" />
+                    <TableColumn fx:id="colFechaHoraInicio" text="Inicio" prefWidth="130.0" />
+                    <TableColumn fx:id="colFechaHoraFin" text="Fin" prefWidth="130.0" />
+                    <TableColumn fx:id="colFormato" text="Formato" prefWidth="100.0" />
+                    <TableColumn fx:id="colTipoEstreno" text="Tipo Estreno" prefWidth="120.0" />
+                </columns>
+            </TableView>
+
+            <!-- Botones de acción -->
+            <HBox spacing="15.0" alignment="CENTER">
+                <children>
+                    <Button fx:id="btnEditar" onAction="#onEditarFuncion" text="Editar" disable="true" styleClass="primary-button" />
+                    <Button fx:id="btnEliminar" onAction="#onEliminarFuncion" text="Eliminar" disable="true" styleClass="stepper-button" />
+                    <Button fx:id="btnVerDetalles" onAction="#onVerDetalles" text="Ver Detalles" disable="true" styleClass="primary-button" />
+                </children>
+            </HBox>
+
+            <!-- Información adicional -->
+            <HBox spacing="20.0" alignment="CENTER_LEFT" styleClass="summary-pane">
+                <children>
+                    <Label fx:id="lblTotalFunciones" text="Total de funciones: 0" styleClass="summary-details" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="lblEstadisticas" text="Cargando..." styleClass="summary-details" />
+                </children>
+            </HBox>
+        </VBox>
+    </center>
+</BorderPane>

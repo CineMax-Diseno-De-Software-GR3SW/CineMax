@@ -24,6 +24,8 @@ public class ControladorMostrarFunciones {
 
     private final ServicioMostrarFunciones servicio = new ServicioMostrarFunciones();
 
+    // Este método debe ser llamado desde el controlador anterior con el título
+    // seleccionado
     public void setPelicula(String pelicula) {
         peliculaTituloLabel.setText(pelicula);
         servicio.cargarFunciones(tableViewFunciones, columnaHora, columnaSala);

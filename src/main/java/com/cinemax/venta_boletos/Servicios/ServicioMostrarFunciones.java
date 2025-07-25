@@ -36,7 +36,6 @@ public class ServicioMostrarFunciones {
         }
     }
 
-    // Datos quemados para funciones
     private final Funcion[] FUNCIONES = {
             new Funcion("16:00", "Sala 1"),
             new Funcion("19:30", "Sala 3D"),
@@ -64,6 +63,7 @@ public class ServicioMostrarFunciones {
             stage.centerOnScreen();
             stage.show();
         } catch (IOException e) {
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo regresar a la cartelera: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -86,14 +86,15 @@ public class ServicioMostrarFunciones {
                 stage.centerOnScreen();
 
             } catch (IOException e) {
-                ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la pantalla de boletos: " + e.getMessage());
+                ManejadorMetodosComunes
+                        .mostrarVentanaError("Error al cargar la pantalla de boletos: " + e.getMessage());
                 e.printStackTrace();
             } catch (Exception e) {
                 ManejadorMetodosComunes.mostrarVentanaError("Error inesperado: " + e.getMessage());
                 e.printStackTrace();
             }
         } else {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor seleccione una función");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor seleccione una función.");
         }
     }
 }

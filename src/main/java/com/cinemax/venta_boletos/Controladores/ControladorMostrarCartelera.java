@@ -18,10 +18,11 @@ public class ControladorMostrarCartelera {
     @FXML
     private ListView<String> listViewPeliculas;
 
-    private final ServicioMostrarCartelera servicioMostrarCartelera = new ServicioMostrarCartelera();
+    private ServicioMostrarCartelera servicioMostrarCartelera;
 
     @FXML
     public void initialize() {
+        servicioMostrarCartelera = new ServicioMostrarCartelera();
         servicioMostrarCartelera.inicializarListaPeliculas(listViewPeliculas);
     }
 
