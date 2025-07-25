@@ -298,8 +298,272 @@ public class ControladorPelicula implements Initializable {
     private void onEditarPelicula(ActionEvent event) {
         Pelicula peliculaSeleccionada = tablaPeliculas.getSelectionModel().getSelectedItem();
         if (peliculaSeleccionada != null) {
-            // TODO: Implementar formulario de edición
-            mostrarInformacion("Funcionalidad en desarrollo", "El formulario de edición estará disponible pronto");
+            mostrarFormularioEditarPelicula(peliculaSeleccionada);
+        }
+    }
+
+    private void mostrarFormularioEditarPelicula(Pelicula peliculaOriginal) {
+        Dialog<ButtonType> dialog = new Dialog<>();
+        dialog.setTitle("Editar Película");
+        dialog.setHeaderText("Modifique los datos de la película: " + peliculaOriginal.getTitulo());
+
+        // Crear los campos del formulario
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        // Campos del formulario con valores actuales
+        TextField txtTitulo = new TextField();
+        txtTitulo.setText(peliculaOriginal.getTitulo());
+        txtTitulo.setPromptText("Título de la película");
+        txtTitulo.setPrefWidth(300);
+
+        TextArea txtSinopsis = new TextArea();
+        txtSinopsis.setText(peliculaOriginal.getSinopsis() != null ? peliculaOriginal.getSinopsis() : "");
+        txtSinopsis.setPromptText("Sinopsis de la película");
+        txtSinopsis.setPrefRowCount(3);
+        txtSinopsis.setPrefWidth(300);
+        txtSinopsis.setWrapText(true);
+
+        TextField txtDuracion = new TextField();
+        txtDuracion.setText(String.valueOf(peliculaOriginal.getDuracionMinutos()));
+        txtDuracion.setPromptText("Duración en minutos");
+        txtDuracion.setPrefWidth(150);
+
+        TextField txtAnio = new TextField();
+        txtAnio.setText(String.valueOf(peliculaOriginal.getAnio()));
+        txtAnio.setPromptText("Año de estreno");
+        txtAnio.setPrefWidth(150);
+
+        // ComboBox para idioma
+        ComboBox<Idioma> cmbIdioma = new ComboBox<>();
+        cmbIdioma.getItems().addAll(Idioma.values());
+        cmbIdioma.setValue(peliculaOriginal.getIdioma());
+        cmbIdioma.setPromptText("Seleccione idioma");
+        cmbIdioma.setPrefWidth(200);
+        cmbIdioma.setConverter(new StringConverter<Idioma>() {
+            @Override
+            public String toString(Idioma idioma) {
+                return idioma != null ? idioma.getNombre() : "";
+            }
+
+            @Override
+            public Idioma fromString(String string) {
+                return null; // No necesario para ComboBox
+            }
+        });
+
+        // ComboBox para género principal
+        ComboBox<String> cmbGenero = new ComboBox<>();
+        cmbGenero.getItems().addAll(
+            "Acción", "Aventura", "Comedia", "Drama", "Terror", 
+            "Ciencia Ficción", "Romance", "Thriller", "Animación", 
+            "Documental", "Musical", "Western", "Biografía", "Historia"
+        );
+        
+        // Establecer el primer género como valor principal
+        String generosActuales = peliculaOriginal.getGenerosComoString();
+        if (generosActuales != null && !generosActuales.isEmpty()) {
+            String primerGenero = generosActuales.split(",")[0].trim();
+            cmbGenero.setValue(primerGenero);
+        }
+        cmbGenero.setPromptText("Seleccione género principal");
+        cmbGenero.setPrefWidth(200);
+
+        // Lista para géneros adicionales
+        ListView<String> listGeneros = new ListView<>();
+        listGeneros.getItems().addAll(
+            "Acción", "Aventura", "Comedia", "Drama", "Terror", 
+            "Ciencia Ficción", "Romance", "Thriller", "Animación", 
+            "Documental", "Musical", "Western", "Biografía", "Historia"
+        );
+        listGeneros.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listGeneros.setPrefHeight(100);
+        listGeneros.setPrefWidth(200);
+        
+        // Preseleccionar géneros actuales en la lista
+        if (generosActuales != null && !generosActuales.isEmpty()) {
+            String[] generos = generosActuales.split(",");
+            for (String genero : generos) {
+                String generoLimpio = genero.trim();
+                if (listGeneros.getItems().contains(generoLimpio)) {
+                    listGeneros.getSelectionModel().select(generoLimpio);
+                }
+            }
+        }
+
+        TextField txtImagenUrl = new TextField();
+        txtImagenUrl.setText(peliculaOriginal.getImagenUrl() != null ? peliculaOriginal.getImagenUrl() : "");
+        txtImagenUrl.setPromptText("URL de la imagen (opcional)");
+        txtImagenUrl.setPrefWidth(300);
+
+        // Agregar campos al grid
+        grid.add(new Label("Título *:"), 0, 0);
+        grid.add(txtTitulo, 1, 0);
+
+        grid.add(new Label("Sinopsis *:"), 0, 1);
+        grid.add(txtSinopsis, 1, 1);
+
+        grid.add(new Label("Duración (min) *:"), 0, 2);
+        grid.add(txtDuracion, 1, 2);
+
+        grid.add(new Label("Año *:"), 0, 3);
+        grid.add(txtAnio, 1, 3);
+
+        grid.add(new Label("Idioma *:"), 0, 4);
+        grid.add(cmbIdioma, 1, 4);
+
+        grid.add(new Label("Género principal *:"), 0, 5);
+        grid.add(cmbGenero, 1, 5);
+
+        grid.add(new Label("Géneros adicionales:"), 0, 6);
+        grid.add(listGeneros, 1, 6);
+
+        grid.add(new Label("URL imagen:"), 0, 7);
+        grid.add(txtImagenUrl, 1, 7);
+
+        // Agregar nota y información del ID
+        Label lblInfo = new Label("ID de la película: " + peliculaOriginal.getId());
+        lblInfo.setStyle("-fx-font-weight: bold; -fx-text-fill: #333;");
+        grid.add(lblInfo, 0, 8, 2, 1);
+        
+        Label lblNota = new Label("* Campos obligatorios");
+        lblNota.setStyle("-fx-font-style: italic; -fx-text-fill: #666;");
+        grid.add(lblNota, 0, 9, 2, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Botones
+        ButtonType btnGuardar = new ButtonType("Guardar Cambios", ButtonBar.ButtonData.OK_DONE);
+        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(btnGuardar, btnCancelar);
+
+        // Validación en tiempo real
+        Button botonGuardar = (Button) dialog.getDialogPane().lookupButton(btnGuardar);
+
+        // Listener para habilitar/deshabilitar botón guardar
+        Runnable validarFormulario = () -> {
+            boolean valido = !txtTitulo.getText().trim().isEmpty() &&
+                           !txtSinopsis.getText().trim().isEmpty() &&
+                           !txtDuracion.getText().trim().isEmpty() &&
+                           !txtAnio.getText().trim().isEmpty() &&
+                           cmbIdioma.getValue() != null &&
+                           cmbGenero.getValue() != null;
+            botonGuardar.setDisable(!valido);
+        };
+
+        txtTitulo.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        txtSinopsis.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        txtDuracion.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        txtAnio.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        cmbIdioma.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+        cmbGenero.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+
+        // Mostrar el diálogo
+        Optional<ButtonType> resultado = dialog.showAndWait();
+        
+        if (resultado.isPresent() && resultado.get() == btnGuardar) {
+            try {
+                // Validar datos numéricos
+                int duracion = Integer.parseInt(txtDuracion.getText().trim());
+                int anio = Integer.parseInt(txtAnio.getText().trim());
+                
+                if (duracion <= 0) {
+                    mostrarError("Error de validación", "La duración debe ser un número positivo");
+                    return;
+                }
+                
+                if (anio < 1900 || anio > 2030) {
+                    mostrarError("Error de validación", "El año debe estar entre 1900 y 2030");
+                    return;
+                }
+
+                // Construir string de géneros
+                StringBuilder generosBuilder = new StringBuilder();
+                generosBuilder.append(cmbGenero.getValue());
+                
+                List<String> generosAdicionales = listGeneros.getSelectionModel().getSelectedItems();
+                for (String genero : generosAdicionales) {
+                    if (!genero.equals(cmbGenero.getValue())) {
+                        generosBuilder.append(", ").append(genero);
+                    }
+                }
+
+                // Verificar si hay cambios en los datos
+                boolean hayDiferencias = !txtTitulo.getText().trim().equals(peliculaOriginal.getTitulo()) ||
+                                       !txtSinopsis.getText().trim().equals(peliculaOriginal.getSinopsis() != null ? peliculaOriginal.getSinopsis() : "") ||
+                                       duracion != peliculaOriginal.getDuracionMinutos() ||
+                                       anio != peliculaOriginal.getAnio() ||
+                                       !cmbIdioma.getValue().equals(peliculaOriginal.getIdioma()) ||
+                                       !generosBuilder.toString().equals(peliculaOriginal.getGenerosComoString()) ||
+                                       !txtImagenUrl.getText().trim().equals(peliculaOriginal.getImagenUrl() != null ? peliculaOriginal.getImagenUrl() : "");
+
+                if (!hayDiferencias) {
+                    mostrarInformacion("Sin cambios", "No se detectaron cambios en los datos de la película.");
+                    return;
+                }
+
+                // Verificar duplicados solo si cambió el título o año
+                if (!txtTitulo.getText().trim().equals(peliculaOriginal.getTitulo()) || 
+                    anio != peliculaOriginal.getAnio()) {
+                    
+                    boolean existe = servicioPelicula.existePeliculaDuplicada(
+                        txtTitulo.getText().trim(), anio);
+                    
+                    if (existe) {
+                        Alert confirmacion = new Alert(Alert.AlertType.WARNING);
+                        confirmacion.setTitle("Película duplicada");
+                        confirmacion.setHeaderText("Ya existe otra película con ese título y año");
+                        confirmacion.setContentText("¿Desea continuar con la actualización de todas formas?");
+                        
+                        ButtonType btnContinuar = new ButtonType("Continuar", ButtonBar.ButtonData.YES);
+                        ButtonType btnCancelarDup = new ButtonType("Cancelar", ButtonBar.ButtonData.NO);
+                        confirmacion.getButtonTypes().setAll(btnContinuar, btnCancelarDup);
+                        
+                        Optional<ButtonType> respuesta = confirmacion.showAndWait();
+                        if (respuesta.isEmpty() || respuesta.get() != btnContinuar) {
+                            return;
+                        }
+                    }
+                }
+
+                // Preparar datos para actualización
+                String imagenUrl = txtImagenUrl.getText().trim();
+                if (imagenUrl.isEmpty()) {
+                    imagenUrl = null;
+                }
+
+                // Actualizar la película
+                servicioPelicula.actualizarPelicula(
+                    peliculaOriginal.getId(),
+                    txtTitulo.getText().trim(),
+                    txtSinopsis.getText().trim(),
+                    duracion,
+                    anio,
+                    cmbIdioma.getValue(),
+                    generosBuilder.toString(),
+                    imagenUrl
+                );
+
+                // Recargar la tabla
+                cargarPeliculas();
+                
+                // Intentar mantener la selección en la película editada
+                for (Pelicula pelicula : peliculasFiltradas) {
+                    if (pelicula.getId() == peliculaOriginal.getId()) {
+                        tablaPeliculas.getSelectionModel().select(pelicula);
+                        break;
+                    }
+                }
+
+                mostrarInformacion("Éxito", "Película actualizada exitosamente:\n" + txtTitulo.getText().trim());
+
+            } catch (NumberFormatException e) {
+                mostrarError("Error de formato", "La duración y el año deben ser números válidos");
+            } catch (Exception e) {
+                mostrarError("Error al actualizar película", "Error: " + e.getMessage());
+            }
         }
     }
 
@@ -332,32 +596,20 @@ public class ControladorPelicula implements Initializable {
     }
 
     private void mostrarErrorRestriccion(Pelicula pelicula) {
-        Alert alerta = new Alert(Alert.AlertType.WARNING);
+        Alert alerta = new Alert(Alert.AlertType.ERROR);
         alerta.setTitle("No se puede eliminar la película");
         alerta.setHeaderText("La película está siendo utilizada en el sistema");
         alerta.setContentText("No se puede eliminar la película '" + pelicula.getTitulo() + 
                              "' porque está asociada con:\n\n" +
                              "• Funciones programadas\n" +
+                             "• Cartelera\n" +
                              "• Boletos vendidos\n" +
                              "• Reservas existentes\n\n" +
-                             "OPCIONES:\n" +
-                             "1. Desactivar la película (recomendado)\n" +
-                             "2. Eliminar primero las funciones y boletos asociados\n" +
-                             "3. Contactar al administrador del sistema");
+                             "ACCIÓN REQUERIDA:\n" +
+                             "Para eliminar esta película, primero debe eliminar todas las funciones\n" +
+                             "y entradas de cartelera asociadas en el gestor correspondiente.");
         
-        ButtonType btnDesactivar = new ButtonType("Desactivar Película", ButtonBar.ButtonData.OK_DONE);
-        ButtonType btnCancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
-        
-        alerta.getButtonTypes().setAll(btnDesactivar, btnCancelar);
-        
-        Optional<ButtonType> resultado = alerta.showAndWait();
-        if (resultado.isPresent() && resultado.get() == btnDesactivar) {
-            // Aquí podrías implementar la lógica para desactivar la película
-            // Por ahora solo mostramos un mensaje
-            mostrarInformacion("Información", 
-                "Funcionalidad de desactivación no implementada aún.\n" +
-                "Contacte al administrador del sistema para desactivar la película.");
-        }
+        alerta.showAndWait();
     }
 
     @FXML
