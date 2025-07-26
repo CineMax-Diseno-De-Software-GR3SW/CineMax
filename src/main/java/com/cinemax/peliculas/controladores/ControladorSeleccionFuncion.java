@@ -803,7 +803,7 @@ public class ControladorSeleccionFuncion implements Initializable {
 
     private void actualizarLabelFecha() {
         if (fechaSeleccionada != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, dd/MM");
             lblFechaSeleccionada.setText("Funciones para " + fechaSeleccionada.format(formatter));
         }
     }
@@ -818,13 +818,13 @@ public class ControladorSeleccionFuncion implements Initializable {
         btnDiaManana.setToggleGroup(grupoFechas);
         btnDiaPasado.setToggleGroup(grupoFechas);
 
-        // Configurar textos con fechas
+        // Configurar textos con fechas (sin año)
         LocalDate hoy = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
 
         btnDiaHoy.setText("Hoy " + hoy.format(formatter));
-        btnDiaManana.setText("Mañana " + hoy.plusDays(1).format(formatter));
-        btnDiaPasado.setText("Pasado " + hoy.plusDays(2).format(formatter));
+        btnDiaManana.setText(hoy.plusDays(1).format(formatter)); // Solo día y fecha
+        btnDiaPasado.setText(hoy.plusDays(2).format(formatter)); // Solo día y fecha
     }
 
     private void configurarEventos() {
