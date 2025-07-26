@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import com.cinemax.peliculas.modelos.entidades.Cartelera;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
@@ -18,6 +19,7 @@ import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -28,6 +30,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -56,6 +59,12 @@ public class ControladorSeleccionFuncion implements Initializable {
     private LocalDate fechaSeleccionada;
     private List<Funcion> funcionesDisponibles;
     private ToggleGroup grupoFechas;
+
+    // Control de concurrencia
+    private final AtomicBoolean cargandoPeliculas = new AtomicBoolean(false);
+    private final AtomicBoolean cargandoFunciones = new AtomicBoolean(false);
+    private Task<?> tareaActualPeliculas;
+    private Task<?> tareaActualFunciones;
 
     // Indicadores de carga
     private ProgressIndicator indicadorCargaPeliculas;
@@ -145,6 +154,10 @@ public class ControladorSeleccionFuncion implements Initializable {
             grillaPeliculas.setDisable(mostrar);
             btnActualizarCartelera.setDisable(mostrar);
 
+            // Bloquear búsqueda durante carga de películas
+            txtBuscarPelicula.setDisable(mostrar);
+            btnLimpiarBusqueda.setDisable(mostrar);
+
             // Solo establecer texto si no está vinculado
             if (!lblEstadoSeleccion.textProperty().isBound() && mostrar) {
                 lblEstadoSeleccion.setText("Cargando películas...");
@@ -156,6 +169,14 @@ public class ControladorSeleccionFuncion implements Initializable {
         Platform.runLater(() -> {
             indicadorCargaFunciones.setVisible(mostrar);
             contenedorFunciones.setDisable(mostrar);
+
+            // Bloquear todos los filtros durante carga de funciones
+            cmbFiltroFormato.setDisable(mostrar);
+            cmbFiltroSala.setDisable(mostrar);
+            btnDiaHoy.setDisable(mostrar);
+            btnDiaManana.setDisable(mostrar);
+            btnDiaPasado.setDisable(mostrar);
+            btnLimpiarBusqueda.setDisable(mostrar);
 
             // Solo establecer texto si no está vinculado
             if (!lblEstadoSeleccion.textProperty().isBound() && mostrar) {
@@ -216,7 +237,7 @@ public class ControladorSeleccionFuncion implements Initializable {
 
         task.setOnFailed(e -> {
             Platform.runLater(() -> {
-                mostrarError("Error", "No se pudieron cargar las salas: " +
+                ManejadorMetodosComunes.mostrarVentanaError("No se pudieron cargar las salas: " +
                     task.getException().getMessage());
             });
         });
@@ -227,76 +248,115 @@ public class ControladorSeleccionFuncion implements Initializable {
     }
 
     private void actualizarCarteleraAsync() {
-        Task<List<Pelicula>> task = new Task<List<Pelicula>>() {
-            @Override
-            protected List<Pelicula> call() throws Exception {
-                updateMessage("Obteniendo películas de la cartelera...");
-
-                List<Integer> idsPeliculas = funcionDAO.listarIdsPeliculasDeFuncionesFuturas();
-                List<Pelicula> nuevasPeliculas = new ArrayList<>();
-
-                updateMessage("Cargando detalles de películas...");
-
-                for (int i = 0; i < idsPeliculas.size(); i++) {
-                    Integer id = idsPeliculas.get(i);
-                    Pelicula p = peliculaDAO.buscarPorId(id);
-                    if (p != null && !nuevasPeliculas.contains(p)) {
-                        nuevasPeliculas.add(p);
-                    }
-
-                    // Actualizar progreso
-                    updateProgress(i + 1, idsPeliculas.size());
-                }
-
-                return nuevasPeliculas;
+        // Verificar si ya hay una tarea de carga de películas en ejecución
+        if (cargandoPeliculas.compareAndSet(false, true)) {
+            // Cancelar tarea anterior si existe
+            if (tareaActualPeliculas != null && !tareaActualPeliculas.isDone()) {
+                tareaActualPeliculas.cancel(true);
             }
-        };
 
-        task.setOnRunning(e -> mostrarIndicadorCargaPeliculas(true));
+            Task<List<Pelicula>> task = new Task<List<Pelicula>>() {
+                @Override
+                protected List<Pelicula> call() throws Exception {
+                    updateMessage("Obteniendo películas de la cartelera...");
 
-        task.setOnSucceeded(e -> {
-            List<Pelicula> nuevasPeliculas = task.getValue();
-            Platform.runLater(() -> {
-                try {
-                    cartelera.setPeliculas(nuevasPeliculas);
-                    mostrarPeliculasEnGrillaAsync();
-                    mostrarIndicadorCargaPeliculas(false);
+                    try {
+                        List<Integer> idsPeliculas = funcionDAO.listarIdsPeliculasDeFuncionesFuturas();
+                        List<Pelicula> nuevasPeliculas = new ArrayList<>();
 
-                    // Desvincular y establecer mensaje final
-                    lblEstadoSeleccion.textProperty().unbind();
-                    lblEstadoSeleccion.setText("Cartelera actualizada correctamente - " + nuevasPeliculas.size() + " películas");
-                } catch (Exception ex) {
-                    lblEstadoSeleccion.textProperty().unbind();
-                    lblEstadoSeleccion.setText("Error al procesar cartelera");
+                        updateMessage("Cargando detalles de películas...");
+
+                        for (int i = 0; i < idsPeliculas.size(); i++) {
+                            // Verificar si la tarea fue cancelada
+                            if (isCancelled()) {
+                                break;
+                            }
+
+                            Integer id = idsPeliculas.get(i);
+                            try {
+                                Pelicula p = peliculaDAO.buscarPorId(id);
+                                if (p != null && !nuevasPeliculas.contains(p)) {
+                                    nuevasPeliculas.add(p);
+                                }
+                            } catch (Exception e) {
+                                // Log del error pero continúa con la siguiente película
+                                System.err.println("Error cargando película ID " + id + ": " + e.getMessage());
+                            }
+
+                            // Actualizar progreso
+                            updateProgress(i + 1, idsPeliculas.size());
+                        }
+
+                        return nuevasPeliculas;
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error al conectar con la base de datos: " + e.getMessage(), e);
+                    }
                 }
-            });
-        });
+            };
 
-        task.setOnFailed(e -> {
-            Platform.runLater(() -> {
-                try {
+            task.setOnRunning(e -> mostrarIndicadorCargaPeliculas(true));
+
+            task.setOnSucceeded(e -> {
+                List<Pelicula> nuevasPeliculas = task.getValue();
+                Platform.runLater(() -> {
+                    try {
+                        cartelera.setPeliculas(nuevasPeliculas);
+                        mostrarPeliculasEnGrillaAsync();
+                        mostrarIndicadorCargaPeliculas(false);
+                        cargandoPeliculas.set(false);
+
+                        // Desvincular y establecer mensaje final
+                        lblEstadoSeleccion.textProperty().unbind();
+                        lblEstadoSeleccion.setText("Cartelera actualizada correctamente - " + nuevasPeliculas.size() + " películas");
+                    } catch (Exception ex) {
+                        lblEstadoSeleccion.textProperty().unbind();
+                        lblEstadoSeleccion.setText("Error al procesar cartelera");
+                        cargandoPeliculas.set(false);
+                    }
+                });
+            });
+
+            task.setOnFailed(e -> {
+                Platform.runLater(() -> {
+                    try {
+                        mostrarIndicadorCargaPeliculas(false);
+                        cargandoPeliculas.set(false);
+                        lblEstadoSeleccion.textProperty().unbind();
+                        lblEstadoSeleccion.setText("Error al cargar la cartelera");
+
+                        String mensajeError = task.getException() != null ?
+                            task.getException().getMessage() : "Error desconocido al cargar la cartelera";
+                        ManejadorMetodosComunes.mostrarVentanaError("Error al actualizar la cartelera: " + mensajeError);
+                    } catch (Exception ex) {
+                        lblEstadoSeleccion.setText("Error de carga");
+                        cargandoPeliculas.set(false);
+                    }
+                });
+            });
+
+            task.setOnCancelled(e -> {
+                Platform.runLater(() -> {
                     mostrarIndicadorCargaPeliculas(false);
-                    lblEstadoSeleccion.textProperty().unbind();
-                    lblEstadoSeleccion.setText("Error al cargar la cartelera");
-                    mostrarError("Error", "Error al actualizar la cartelera: " +
-                        task.getException().getMessage());
-                } catch (Exception ex) {
-                    lblEstadoSeleccion.setText("Error de carga");
-                }
+                    cargandoPeliculas.set(false);
+                    lblEstadoSeleccion.setText("Carga cancelada");
+                });
             });
-        });
 
-        // Vincular el mensaje del task al label de estado solo si no hay binding previo
-        try {
-            lblEstadoSeleccion.textProperty().bind(task.messageProperty());
-        } catch (Exception e) {
-            // Si hay error en el binding, usar enfoque alternativo
-            lblEstadoSeleccion.setText("Iniciando carga...");
+            // Vincular el mensaje del task al label de estado solo si no hay binding previo
+            try {
+                lblEstadoSeleccion.textProperty().bind(task.messageProperty());
+            } catch (Exception e) {
+                lblEstadoSeleccion.setText("Iniciando carga...");
+            }
+
+            tareaActualPeliculas = task;
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        } else {
+            // Ya hay una carga en progreso
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Ya hay una actualización de cartelera en progreso. Espere a que termine.");
         }
-
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
     }
 
     private void mostrarPeliculasEnGrillaAsync() {
@@ -404,124 +464,123 @@ public class ControladorSeleccionFuncion implements Initializable {
             return;
         }
 
-        Task<List<Funcion>> task = new Task<List<Funcion>>() {
-            @Override
-            protected List<Funcion> call() throws Exception {
-                updateMessage("Cargando funciones disponibles...");
+        // Verificar si ya hay una tarea de carga de funciones en ejecución
+        if (cargandoFunciones.compareAndSet(false, true)) {
+            // Cancelar tarea anterior si existe
+            if (tareaActualFunciones != null && !tareaActualFunciones.isDone()) {
+                tareaActualFunciones.cancel(true);
+            }
 
-                List<Funcion> todasLasFunciones = funcionDAO.listarTodasLasFunciones();
-                List<Funcion> funcionesFiltradas = new ArrayList<>();
+            Task<List<Funcion>> task = new Task<List<Funcion>>() {
+                @Override
+                protected List<Funcion> call() throws Exception {
+                    updateMessage("Cargando funciones disponibles...");
 
-                for (Funcion funcion : todasLasFunciones) {
-                    if (funcion.getPelicula().getId() == peliculaSeleccionada.getId() &&
-                        funcion.getFechaHoraInicio().toLocalDate().equals(fechaSeleccionada)) {
+                    try {
+                        List<Funcion> todasLasFunciones = funcionDAO.listarTodasLasFunciones();
+                        List<Funcion> funcionesFiltradas = new ArrayList<>();
 
-                        // Aplicar filtros
-                        boolean pasaFiltros = true;
+                        for (Funcion funcion : todasLasFunciones) {
+                            if (funcion.getPelicula().getId() == peliculaSeleccionada.getId() &&
+                                funcion.getFechaHoraInicio().toLocalDate().equals(fechaSeleccionada)) {
 
-                        if (cmbFiltroFormato.getValue() != null) {
-                            pasaFiltros = pasaFiltros && funcion.getFormato() == cmbFiltroFormato.getValue();
+                                // Aplicar filtros
+                                boolean pasaFiltros = true;
+
+                                if (cmbFiltroFormato.getValue() != null) {
+                                    pasaFiltros = pasaFiltros && funcion.getFormato() == cmbFiltroFormato.getValue();
+                                }
+
+                                if (cmbFiltroSala.getValue() != null) {
+                                    pasaFiltros = pasaFiltros && funcion.getSala().getId() == cmbFiltroSala.getValue().getId();
+                                }
+
+                                if (pasaFiltros) {
+                                    funcionesFiltradas.add(funcion);
+                                }
+                            }
                         }
 
-                        if (cmbFiltroSala.getValue() != null) {
-                            pasaFiltros = pasaFiltros && funcion.getSala().getId() == cmbFiltroSala.getValue().getId();
-                        }
-
-                        if (pasaFiltros) {
-                            funcionesFiltradas.add(funcion);
-                        }
+                        return funcionesFiltradas;
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error al cargar funciones desde la base de datos: " + e.getMessage(), e);
                     }
                 }
+            };
 
-                return funcionesFiltradas;
-            }
-        };
+            task.setOnRunning(e -> mostrarIndicadorCargaFunciones(true));
 
-        task.setOnRunning(e -> mostrarIndicadorCargaFunciones(true));
-
-        task.setOnSucceeded(e -> {
-            List<Funcion> funcionesEncontradas = task.getValue();
-            Platform.runLater(() -> {
-                try {
-                    funcionesDisponibles.clear();
-                    funcionesDisponibles.addAll(funcionesEncontradas);
-                    mostrarFunciones();
-                    mostrarIndicadorCargaFunciones(false);
-                    lblEstadoSeleccion.setText("Funciones cargadas para " + peliculaSeleccionada.getTitulo());
-                } catch (Exception ex) {
-                    lblEstadoSeleccion.setText("Error al procesar funciones");
-                }
+            task.setOnSucceeded(e -> {
+                List<Funcion> funcionesEncontradas = task.getValue();
+                Platform.runLater(() -> {
+                    try {
+                        funcionesDisponibles.clear();
+                        funcionesDisponibles.addAll(funcionesEncontradas);
+                        mostrarFunciones();
+                        mostrarIndicadorCargaFunciones(false);
+                        cargandoFunciones.set(false);
+                        lblEstadoSeleccion.setText("Funciones cargadas para " + peliculaSeleccionada.getTitulo());
+                    } catch (Exception ex) {
+                        lblEstadoSeleccion.setText("Error al procesar funciones");
+                        cargandoFunciones.set(false);
+                    }
+                });
             });
-        });
 
-        task.setOnFailed(e -> {
-            Platform.runLater(() -> {
-                try {
-                    mostrarIndicadorCargaFunciones(false);
-                    lblEstadoSeleccion.setText("Error al cargar las funciones");
-                    mostrarError("Error", "Error al cargar las funciones: " +
-                        task.getException().getMessage());
-                } catch (Exception ex) {
-                    lblEstadoSeleccion.setText("Error de carga");
-                }
+            task.setOnFailed(e -> {
+                Platform.runLater(() -> {
+                    try {
+                        mostrarIndicadorCargaFunciones(false);
+                        cargandoFunciones.set(false);
+                        lblEstadoSeleccion.setText("Error al cargar las funciones");
+
+                        String mensajeError = task.getException() != null ?
+                            task.getException().getMessage() : "Error desconocido al cargar funciones";
+                        ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las funciones: " + mensajeError);
+                    } catch (Exception ex) {
+                        lblEstadoSeleccion.setText("Error de carga");
+                        cargandoFunciones.set(false);
+                    }
+                });
             });
-        });
 
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
-    }
+            task.setOnCancelled(e -> {
+                Platform.runLater(() -> {
+                    mostrarIndicadorCargaFunciones(false);
+                    cargandoFunciones.set(false);
+                    lblEstadoSeleccion.setText("Carga de funciones cancelada");
+                });
+            });
 
-    private void configurarGrupoFechas() {
-        grupoFechas = new ToggleGroup();
-        btnDiaHoy.setToggleGroup(grupoFechas);
-        btnDiaManana.setToggleGroup(grupoFechas);
-        btnDiaPasado.setToggleGroup(grupoFechas);
-
-        // Configurar textos con fechas
-        LocalDate hoy = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
-
-        btnDiaHoy.setText("Hoy " + hoy.format(formatter));
-        btnDiaManana.setText("Mañana " + hoy.plusDays(1).format(formatter));
-        btnDiaPasado.setText("Pasado " + hoy.plusDays(2).format(formatter));
-    }
-
-    private void configurarEventos() {
-        // Búsqueda en tiempo real
-        txtBuscarPelicula.textProperty().addListener((obs, oldText, newText) -> filtrarPeliculas());
-
-        // Filtros
-        cmbFiltroFormato.setOnAction(e -> cargarFuncionesPeliculaSeleccionadaAsync());
-        cmbFiltroSala.setOnAction(e -> cargarFuncionesPeliculaSeleccionadaAsync());
-    }
-
-    @FXML
-    private void onActualizarCartelera(ActionEvent event) {
-        actualizarCarteleraAsync();
-    }
-
-    @FXML
-    private void onLimpiarBusqueda(ActionEvent event) {
-        txtBuscarPelicula.clear();
-        cmbFiltroFormato.setValue(null);
-        cmbFiltroSala.setValue(null);
-    }
-
-    @FXML
-    private void onSeleccionarDia(ActionEvent event) {
-        ToggleButton botonSeleccionado = (ToggleButton) event.getSource();
-
-        if (botonSeleccionado == btnDiaHoy) {
-            fechaSeleccionada = LocalDate.now();
-        } else if (botonSeleccionado == btnDiaManana) {
-            fechaSeleccionada = LocalDate.now().plusDays(1);
-        } else if (botonSeleccionado == btnDiaPasado) {
-            fechaSeleccionada = LocalDate.now().plusDays(2);
+            tareaActualFunciones = task;
+            Thread thread = new Thread(task);
+            thread.setDaemon(true);
+            thread.start();
+        } else {
+            // Ya hay una carga en progreso - solo actualizar estado, sin mensaje intrusivo
+            lblEstadoSeleccion.setText("Carga de funciones en progreso...");
         }
+    }
 
-        actualizarLabelFecha();
-        cargarFuncionesPeliculaSeleccionadaAsync();
+    private void seleccionarFuncion(Funcion funcion) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        String contenido = String.format(
+            "Película: %s\n" +
+            "Sala: %s\n" +
+            "Fecha y Hora: %s\n" +
+            "Formato: %s\n" +
+            "Idioma: %s",
+            funcion.getPelicula().getTitulo(),
+            funcion.getSala().getNombre(),
+            funcion.getFechaHoraInicio().format(formatter),
+            funcion.getFormato().toString(),
+            funcion.getPelicula().getIdioma().getNombre()
+        );
+
+        ManejadorMetodosComunes.mostrarVentanaExito("Función seleccionada:\n\n" + contenido);
+
+        // Aquí podrías agregar lógica adicional como navegar a la compra de boletos
+        lblEstadoSeleccion.setText("Función seleccionada: " + funcion.getFechaHoraInicio().format(formatter));
     }
 
     private void actualizarCartelera() {
@@ -738,31 +797,6 @@ public class ControladorSeleccionFuncion implements Initializable {
         return tarjeta;
     }
 
-    private void seleccionarFuncion(Funcion funcion) {
-        Alert confirmacion = new Alert(Alert.AlertType.INFORMATION);
-        confirmacion.setTitle("Función Seleccionada");
-        confirmacion.setHeaderText("Ha seleccionado la siguiente función:");
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String contenido = String.format(
-            "Película: %s\n" +
-            "Sala: %s\n" +
-            "Fecha y Hora: %s\n" +
-            "Formato: %s\n" +
-            "Idioma: %s",
-            funcion.getPelicula().getTitulo(),
-            funcion.getSala().getNombre(),
-            funcion.getFechaHoraInicio().format(formatter),
-            funcion.getFormato().toString(),
-            funcion.getPelicula().getIdioma().getNombre()
-        );
-
-        confirmacion.setContentText(contenido);
-        confirmacion.showAndWait();
-
-        // Aquí podrías agregar lógica adicional como navegar a la compra de boletos
-        lblEstadoSeleccion.setText("Función seleccionada: " + funcion.getFechaHoraInicio().format(formatter));
-    }
 
     private void actualizarLabelFecha() {
         if (fechaSeleccionada != null) {
@@ -772,10 +806,71 @@ public class ControladorSeleccionFuncion implements Initializable {
     }
 
     private void mostrarError(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje != null ? mensaje : "Error desconocido");
-        alert.showAndWait();
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
+    }
+
+    private void configurarGrupoFechas() {
+        grupoFechas = new ToggleGroup();
+        btnDiaHoy.setToggleGroup(grupoFechas);
+        btnDiaManana.setToggleGroup(grupoFechas);
+        btnDiaPasado.setToggleGroup(grupoFechas);
+
+        // Configurar textos con fechas
+        LocalDate hoy = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM");
+
+        btnDiaHoy.setText("Hoy " + hoy.format(formatter));
+        btnDiaManana.setText("Mañana " + hoy.plusDays(1).format(formatter));
+        btnDiaPasado.setText("Pasado " + hoy.plusDays(2).format(formatter));
+    }
+
+    private void configurarEventos() {
+        // Búsqueda en tiempo real
+        txtBuscarPelicula.textProperty().addListener((obs, oldText, newText) -> filtrarPeliculas());
+
+        // Filtros - solo agregar listeners si no están ya configurados
+        if (cmbFiltroFormato.getOnAction() == null) {
+            cmbFiltroFormato.setOnAction(e -> cargarFuncionesPeliculaSeleccionadaAsync());
+        }
+        if (cmbFiltroSala.getOnAction() == null) {
+            cmbFiltroSala.setOnAction(e -> cargarFuncionesPeliculaSeleccionadaAsync());
+        }
+    }
+
+    @FXML
+    private void onActualizarCartelera(ActionEvent event) {
+        actualizarCarteleraAsync();
+    }
+
+    @FXML
+    private void onLimpiarBusqueda(ActionEvent event) {
+        txtBuscarPelicula.clear();
+        cmbFiltroFormato.setValue(null);
+        cmbFiltroSala.setValue(null);
+
+        // Recargar funciones si hay una película seleccionada
+        if (peliculaSeleccionada != null) {
+            cargarFuncionesPeliculaSeleccionadaAsync();
+        }
+    }
+
+    @FXML
+    private void onSeleccionarDia(ActionEvent event) {
+        ToggleButton botonSeleccionado = (ToggleButton) event.getSource();
+
+        if (botonSeleccionado == btnDiaHoy) {
+            fechaSeleccionada = LocalDate.now();
+        } else if (botonSeleccionado == btnDiaManana) {
+            fechaSeleccionada = LocalDate.now().plusDays(1);
+        } else if (botonSeleccionado == btnDiaPasado) {
+            fechaSeleccionada = LocalDate.now().plusDays(2);
+        }
+
+        actualizarLabelFecha();
+
+        // Solo cargar funciones si hay una película seleccionada
+        if (peliculaSeleccionada != null) {
+            cargarFuncionesPeliculaSeleccionadaAsync();
+        }
     }
 }

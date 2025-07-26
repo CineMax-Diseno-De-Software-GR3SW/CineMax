@@ -48,9 +48,9 @@ public class ServicioFuncion {
         if (sala == null) {
             throw new IllegalArgumentException("Debe seleccionar una sala válida.");
         }
-        if (sala.getEstadoSala() != null && sala.getEstadoSala() != EstadoSala.DISPONIBLE) {
+        if (sala.getEstado() != null && sala.getEstado() != EstadoSala.DISPONIBLE) {
             throw new IllegalArgumentException("La sala seleccionada no está disponible (actualmente está "
-                    + sala.getEstadoSala().name().toLowerCase() + ").");
+                    + sala.getEstado().name().toLowerCase() + ").");
         }
         if (fechaHoraInicio == null) {
             throw new IllegalArgumentException("Debe ingresar una fecha y hora de inicio válida.");

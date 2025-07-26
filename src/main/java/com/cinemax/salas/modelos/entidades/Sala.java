@@ -33,9 +33,6 @@ public class Sala {
     public EstadoSala getEstado() { return estado; }
     public void setEstado(EstadoSala estado) { this.estado = estado; }
 
-    public EstadoSala getEstadoSala() {
-        return estado;
-    }
 
     @Override
     public String toString() {
