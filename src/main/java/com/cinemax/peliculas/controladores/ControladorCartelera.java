@@ -501,28 +501,28 @@ public class ControladorCartelera implements Initializable {
         if (pelicula.getSinopsis() != null && !pelicula.getSinopsis().isEmpty()) {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
-
-<<<<<<< HEAD
-        ManejadorMetodosComunes.mostrarVentanaExito(pelicula.getTitulo() + "\n\n" + contenido.toString());
     }
+// <<<<<<< HEAD
+//         ManejadorMetodosComunes.mostrarVentanaExito(pelicula.getTitulo() + "\n\n" + contenido.toString());
+//     }
 
     private void mostrarError(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
-    private void mostrarInformacion(String titulo, String mensaje) {
-        ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
-=======
-        ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
-    }
+//     private void mostrarInformacion(String titulo, String mensaje) {
+//         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
+// =======
+//         ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
+//     }
 
-    private void mostrarError(String titulo, String mensaje) {
-        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
-    }
+    // private void mostrarError(String titulo, String mensaje) {
+    //     ManejadorMetodosComunes.mostrarVentanaError(mensaje);
+    // }
 
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
->>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
+// >>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
     }
 
     @FXML

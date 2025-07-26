@@ -791,20 +791,20 @@ public class ControladorPelicula implements Initializable {
     }
 
     private void mostrarError(String titulo, String mensaje) {
-<<<<<<< HEAD
+// <<<<<<< HEAD
         ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
-=======
+// =======
         ManejadorMetodosComunes.mostrarVentanaError(mensaje);
     }
 
-    private void mostrarInformacion(String titulo, String mensaje) {
-        ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
->>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
-    }
+//     private void mostrarInformacion(String titulo, String mensaje) {
+//         ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
+// >>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
+//     }
     
     @FXML
     private void onLogOut(ActionEvent event) {
