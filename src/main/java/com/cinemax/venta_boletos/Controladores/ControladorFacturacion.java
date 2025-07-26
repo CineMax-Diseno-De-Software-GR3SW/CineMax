@@ -1,6 +1,7 @@
 package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.venta_boletos.Modelos.Boleto;
 //import com.cinemax.comun.ValidadadorCampos;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
@@ -68,10 +69,6 @@ public class ControladorFacturacion {
     private Button finalizarButton;
     @FXML
     private TextField identificacionField;
-    @FXML
-    private Text mensajeActualizacionCliente;
-    @FXML
-    private Text mensajeBusquedaCliente;
 
     public void setPreviousScene(Scene scene) {
         this.previousScene = scene;
@@ -117,8 +114,7 @@ public class ControladorFacturacion {
         apellidoField.clear();
         documentoField.clear();
         correoField.clear();
-        mensajeBusquedaCliente.setText("");
-        mensajeActualizacionCliente.setText("");
+        documentoField.setDisable(true);
 
         String texto = identificacionField.getText();
 
@@ -138,9 +134,10 @@ public class ControladorFacturacion {
                     apellidoField.setText(cliente.getApellido());
                     documentoField.setText(String.valueOf(cliente.getIdCliente()));
                     correoField.setText(cliente.getCorreoElectronico());
-                    mensajeBusquedaCliente.setText("Cliente encontrado.");
+                    ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
+
                 } else {
-                    mensajeBusquedaCliente.setText("Cliente no encontrado.");
+                    ManejadorMetodosComunes.mostrarVentanaError("Cliente no encontrado.");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -152,11 +149,9 @@ public class ControladorFacturacion {
 
     @FXML
     void onActualizarCliente(ActionEvent event) {
-        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
-                || correoField.getText().isEmpty()) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
-            return;
-        }
+        // if (!validarCamposCliente()) {
+        //     return;
+        // }
 
         try {
             long idcliente = Long.parseLong(documentoField.getText());
@@ -164,20 +159,20 @@ public class ControladorFacturacion {
                     correoField.getText());
             ClienteDAO clienteDAO = new ClienteDAO();
             clienteDAO.actualizarCliente(cliente);
-            mensajeActualizacionCliente.setText("Cliente actualizado correctamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
         } catch (NumberFormatException e) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
         } catch (Exception e) {
             e.printStackTrace();
-            ManejadorMetodosComunes.mostrarVentanaError("Ocurrió un error al actualizar el cliente.");
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar el cliente.");
         }
     }
 
     @FXML
     protected void onFinalizarAction() {
-        /*if (!validarCamposCliente()) {
-            return; // Si la validación falla, no continuar
-        }*/
+        // if (!validarCamposCliente()) {
+        //     return; // No continuar si los campos son inválidos
+        // }
 
         ClienteDAO clienteDAO = new ClienteDAO();
         Cliente cliente = null;
@@ -198,7 +193,7 @@ public class ControladorFacturacion {
         }
 
         // 2. Usar tu servicio para generar la factura final
-        Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
+        Factura facturaFinal = generarFactura(this.boletos, cliente);
         // Generar el PDF de la factura
         GeneradorArchivoPDF generadorPDF = new GeneradorArchivoPDF();
         generadorPDF.generarFacturaPDF(facturaFinal);
@@ -222,62 +217,13 @@ public class ControladorFacturacion {
         System.out.println("--- FACTURA GENERADA ---");
         System.out.println(facturaFinal);
 
-        Stage stage = (Stage) finalizarButton.getScene().getWindow();
-        stage.close();
         // TODO: En vez de cerrar, redirigir a una vista de cartelera
+        ManejadorMetodosComunes.cambiarVentana((Stage) finalizarButton.getScene().getWindow(),"/Vista/venta_boletos/cartelera-view.fxml", "Cartelera");
     }
 
-    /*private boolean validarCamposCliente() {
-        //Resetear estilos de todos los campos
-        resetValidationStyles();
-
-        String nombre = nombreField.getText();
-        String apellido = apellidoField.getText();
-        String documento = documentoField.getText();
-        String correo = correoField.getText();
-        String tipoDocumento = tipoDocumentoBox.getValue();
-
-        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
-                || correoField.getText().isEmpty()) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
-        }if (!ValidadadorCampos.esSoloTexto(nombre)) {
-            showFieldError(nombreField, "El nombre solo debe contener letras.");
-            return false;
-        }if (!ValidadadorCampos.esSoloTexto(apellido)) {
-            showFieldError(apellidoField, "El apellido solo debe contener letras.");
-            return false;
-        }if (documento.isEmpty()) {
-            showFieldError(documentoField, "El documento no puede estar vacío.");
-            return false;
-        }switch (tipoDocumento) {
-            case "Cédula":
-                if (!ValidadadorCampos.esSoloNumeros(documento) || documento.length() != 10) {
-                    showFieldError(documentoField, "La Cédula debe tener 10 números.");
-                    return false;
-                }
-                break;
-            case "RUC":
-                if (!ValidadadorCampos.esSoloNumeros(documento) || documento.length() != 13) {
-                    showFieldError(documentoField, "El RUC debe tener 13 números.");
-                    return false;
-                }
-                break;
-            case "Pasaporte":
-                if (documento.length() < 6 || documento.length() > 15) {
-                    showFieldError(documentoField, "El Pasaporte debe tener entre 6 y 15 caracteres.");
-                    return false;
-                }
-                break;
-        }if (correo.isEmpty()) {
-            showFieldError(correoField, "El correo no puede estar vacío.");
-            return false;
-        }if (!ValidadadorCampos.esCorreoValido(correo)) {
-            showFieldError(correoField, "El formato del correo no es válido.");
-            return false;
-        }
-
-        return true; // Solo si los campos son válidos
-    }*/
+    public Factura generarFactura(List<Producto> boletos, Cliente cliente) {
+        return servicioFacturacion.generarFactura(boletos, cliente);
+    }
 
     /**
      * Elimina el estilo de error de todos los campos.
@@ -320,5 +266,28 @@ public class ControladorFacturacion {
     @FXML
     protected void onVerDetalle() {
         System.out.println("Acción para ver detalle del pedido...");
+    }
+
+    private boolean validarCamposCliente() {
+        resetValidationStyles(); // Opcional si tienes estilos visuales de error
+
+        // Validar campos obligatorios
+        if (!ManejadorMetodosComunes.validarCampoObligatorio(identificacionField.getText(), "Identificación")) return false;
+        if (!ManejadorMetodosComunes.validarCampoObligatorio(nombreField.getText(), "Nombre")) return false;
+        if (!ManejadorMetodosComunes.validarCampoObligatorio(apellidoField.getText(), "Apellido")) return false;
+        if (!ManejadorMetodosComunes.validarCampoObligatorio(tipoDocumentoBox.getValue(), "Tipo de documento")) return false;
+        if (!ManejadorMetodosComunes.validarCampoObligatorio(documentoField.getText(), "Número de documento")) return false;
+        if (!ManejadorMetodosComunes.validarCampoObligatorio(correoField.getText(), "Correo")) return false;
+
+        // Validar que identificación sea numérica
+        if (!ManejadorMetodosComunes.validarNumero(identificacionField.getText(), "Identificación")) return false;
+
+        // Validar que número de documento también sea numérico si aplica (por ejemplo para cédula o RUC)
+        String tipoDocumento = tipoDocumentoBox.getValue();
+        if (tipoDocumento.equals("Cédula") || tipoDocumento.equals("RUC")) {
+            if (!ManejadorMetodosComunes.validarNumero(documentoField.getText(), "Número de documento")) return false;
+        }
+
+        return true;
     }
 }

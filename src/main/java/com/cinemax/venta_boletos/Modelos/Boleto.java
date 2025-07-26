@@ -2,8 +2,21 @@ package com.cinemax.venta_boletos.Modelos;
 
 
 public class Boleto extends Producto {
+    private long idBoleto;
+    private int idFuncion;
+    private long idFactura;
+    private int idButaca;
     private String funcion;
+
+
     private String butaca;
+
+    public Boleto(long idBoleto, int idFuncion, long idFactura, int idButaca) {
+        this.idBoleto = idBoleto;
+        this.idFuncion = idFuncion;
+        this.idFactura = idFactura;
+        this.idButaca = idButaca;
+    }
 
     public Boleto(String funcion, String butaca) {
         this.funcion = funcion;
@@ -11,20 +24,24 @@ public class Boleto extends Producto {
         calcularPrecio();
     }
     
-    public void setFuncion(String funcion) {
-        this.funcion = funcion;
+    public long getIdBoleto() { return idBoleto; }
+    public void setIdBoleto(long idBoleto) { this.idBoleto = idBoleto; }
+
+    public int getIdFuncion() { return idFuncion; }
+    public void setIdFuncion(int idFuncion) { this.idFuncion = idFuncion; }
+
+    public long getIdFactura() { return idFactura; }
+    public void setIdFactura(long idFactura) { this.idFactura = idFactura; }
+
+    public int getIdButaca() { return idButaca; }
+    public void setIdButaca(int idButaca) { this.idButaca = idButaca; }
+
+    public String getButaca() {
+        return butaca;
     }
 
     public String getFuncion() {
         return funcion;
-    }
-
-    public void setButaca(String butaca) {
-        this.butaca = butaca;
-    }
-
-    public String getButaca() {
-        return butaca;
     }
 
     @Override
@@ -40,8 +57,8 @@ public class Boleto extends Producto {
     @Override
     public String toString() {
         return "Boleto{" +
-                "funcion='" + funcion + '\n' +
-                ", butaca='" + butaca + '\n' +
+                "idFuncion='" + idFuncion + '\n' +
+                ", idButaca='" + idButaca + '\n' +
                 ", precioUnitario=" + getPrecio() +
                 '}';
     }
