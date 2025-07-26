@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Optional;
 
-import com.cinemax.comun.modelos.persistencia.ConexionBaseSingleton;
+import com.cinemax.comun.ConexionBaseSingleton;
 
 public class Main extends Application {
 
@@ -38,16 +38,16 @@ public class Main extends Application {
             String titulo;
 
             if (resultado.get() == btnPeliculas) {
-                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionPeliculas.fxml"));
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/peliculas/PantallaGestionPeliculas.fxml"));
                 titulo = "CineMax - Gestión de Películas";
             } else if (resultado.get() == btnCartelera) {
-                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionCartelera.fxml"));
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/peliculas/PantallaGestionCartelera.fxml"));
                 titulo = "CineMax - Gestión de Cartelera";
             } else if (resultado.get() == btnFunciones) {
-                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaGestionFunciones.fxml"));
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/peliculas/PantallaGestionFunciones.fxml"));
                 titulo = "CineMax - Gestión de Funciones";
             } else if (resultado.get() == btnSeleccionFuncion) {
-                fxmlLoader = new FXMLLoader(Main.class.getResource("/Vista/Peliculas/PantallaSeleccionFuncion.fxml"));
+                fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/peliculas/PantallaSeleccionFuncion.fxml"));
                 titulo = "CineMax - Selección de Función";
             } else {
                 // Usuario canceló
@@ -58,7 +58,7 @@ public class Main extends Application {
             Scene scene = new Scene(root, 1200, 700);
 
             // Aplicar estilos base
-            scene.getStylesheets().add(getClass().getResource("/temas/styles.css").toExternalForm());
+            scene.getStylesheets().add(getClass().getResource("/vistas/temas/styles.css").toExternalForm());
 
             stage.setTitle(titulo);
             stage.setScene(scene);

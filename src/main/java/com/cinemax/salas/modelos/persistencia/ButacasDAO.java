@@ -1,7 +1,7 @@
 package com.cinemax.salas.modelos.persistencia;
 
 import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.comun.modelos.persistencia.ConexionBaseSingleton;
+import com.cinemax.comun.ConexionBaseSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;

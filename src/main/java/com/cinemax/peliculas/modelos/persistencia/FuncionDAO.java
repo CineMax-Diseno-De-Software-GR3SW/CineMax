@@ -1,6 +1,6 @@
 package com.cinemax.peliculas.modelos.persistencia;
 
-import com.cinemax.comun.modelos.persistencia.ConexionBaseSingleton;
+import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
@@ -9,7 +9,6 @@ import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.modelos.persistencia.SalasDAO;
 
 import java.sql.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

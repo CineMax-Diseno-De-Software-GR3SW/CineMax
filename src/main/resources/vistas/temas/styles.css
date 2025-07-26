@@ -18,27 +18,12 @@
 
 /* --- CABECERA Y NAVEGACIÓN --- */
 .header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #4A4A4A; -fx-border-width: 0 0 1px 0; }
-
-/* Botón de flecha (volver) - NARANJA */
-.icon-button { 
-    -fx-background-color: #F25F00; 
-    -fx-padding: 8px; 
-    -fx-border-radius: 50%; 
-    -fx-background-radius: 50%; 
-}
-.icon-button:hover { -fx-background-color: #E55A00; }
+.icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
+.icon-button:hover { -fx-background-color: #4A4A4A; }
 .icon-button .text { -fx-font-size: 20px; -fx-fill: white; -fx-font-weight: bold; }
-
 .close-button:hover { -fx-background-color: #E81123; }
 .close-button:hover .text { -fx-fill: white; }
 .theme-button .text { -fx-font-size: 16px; }
-
-/* Título "Gestión de Películas" más grande */
-.header-bar .label {
-    -fx-font-size: 32px !important;
-    -fx-font-weight: bold;
-    -fx-text-fill: white;
-}
 
 /* --- PANELES Y TARJETAS --- */
 .ticket-card, .financial-summary-pane, .alert-pane, .summary-pane {
@@ -64,34 +49,6 @@
 .primary-button:hover { -fx-background-color: #035a9a; }
 .link-button { -fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-underline: true; }
 .link-button:hover { -fx-text-fill: white; }
-
-/* --- BOTÓN LOG OUT (Estilo similar al Portal del Administrador) --- */
-.logout-button {
-    -fx-background-color: #02487B; /* Azul como el Portal */
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-font-weight: bold;
-    -fx-background-radius: 8px;
-    -fx-pref-height: 40px;
-    -fx-pref-width: 100px;
-    -fx-padding: 10px 20px;
-    -fx-cursor: hand;
-}
-
-.logout-button:hover {
-    -fx-background-color: #035a9a; /* Azul más oscuro al hover */
-    -fx-scale-x: 1.02;
-    -fx-scale-y: 1.02;
-}
-
-/* --- FOOTER BAR --- */
-.footer-bar {
-    -fx-background-color: #2B2B2B;
-    -fx-border-color: #4A4A4A;
-    -fx-border-width: 1px 0 0 0;
-    -fx-padding: 15px 20px;
-    -fx-min-height: 60px;
-}
 
 /* --- FORMULARIOS --- */
 .text-field { -fx-background-color: #2B2B2B; -fx-text-fill: #EAEAEA; -fx-prompt-text-fill: #888888; -fx-background-radius: 8px; -fx-border-color: #4A4A4A; -fx-border-radius: 8px; -fx-font-size: 14px; -fx-padding: 8px; }
@@ -226,5 +183,22 @@
     -fx-background-color: #AAD94C;         /* Verde para confirmación */
 }
 
+.warning-icon {
+    -fx-font-size: 32px;
+    -fx-text-fill: #ffc107; /* Amarillo/Naranja de advertencia */
+    -fx-font-weight: bold;
+}
 
+/* Ícono de error (rojo) */
+.error-icon {
+    -fx-font-size: 24px;
+    -fx-text-fill: #e53935; /* Rojo de error */
+    -fx-font-weight: bold;
+}
 
+/* Ícono de éxito (verde) */
+.success-icon {
+    -fx-font-size: 24px;
+    -fx-text-fill: #43a047; /* Verde de éxito */
+    -fx-font-weight: bold;
+}

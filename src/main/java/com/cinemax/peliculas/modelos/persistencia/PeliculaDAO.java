@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.comun.modelos.persistencia.ConexionBaseSingleton;
+import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 
