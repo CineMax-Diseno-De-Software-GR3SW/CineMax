@@ -10,16 +10,25 @@
 
     <!-- Encabezado -->
     <top>
-        <HBox alignment="center" style="-fx-background-color: #181a20;">
-            <Label text="Gestión de Butacas"
-                   style="-fx-font-family: 'Georgia', 'Times New Roman', serif;
+        <BorderPane style="-fx-background-color: #181a20; -fx-padding: 16;">
+            <left>
+                <Button fx:id="btnBack"
+                        text="←"
+                        onAction="#onBackAction"
+                        prefWidth="48"
+                        style="-fx-font-family: 'Segoe UI Emoji', 'Segoe UI', Arial, sans-serif; -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800); -fx-text-fill: #fff; -fx-font-weight: bold; -fx-background-radius: 10; -fx-font-size: 18px;"/>
+            </left>
+            <center>
+                <Label text="Gestión de Butacas"
+                       style="-fx-font-family: 'Georgia', 'Times New Roman', serif;
                           -fx-font-size: 34px;
                           -fx-font-weight: bold;
                           -fx-padding: 28 0 28 0;
                           -fx-text-fill: linear-gradient(to bottom, #FFA726 60%, #FF9800 100%);
                           -fx-effect: dropshadow(gaussian, #000000cc, 16, 0.4, 0, 4);
                           -fx-letter-spacing: 2px;"/>
-        </HBox>
+            </center>
+        </BorderPane>
     </top>
 
     <center>
@@ -33,25 +42,25 @@
                                   style="-fx-background-color: #23272e;
                                          -fx-padding: 16;
                                          -fx-background-radius: 12;">
-                            <Label text="Fila:" GridPane.rowIndex="0" GridPane.columnIndex="0"
+                            <Label text="Fila:*" GridPane.rowIndex="0" GridPane.columnIndex="0"
                                    style="-fx-text-fill: #f5f5f5;"/>
                             <TextField fx:id="txtFila"
                                        GridPane.rowIndex="0" GridPane.columnIndex="1"
                                        prefWidth="120"/>
 
-                            <Label text="Columna:" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                            <Label text="Columna:*" GridPane.rowIndex="1" GridPane.columnIndex="0"
                                    style="-fx-text-fill: #f5f5f5;"/>
                             <TextField fx:id="txtColumna"
                                        GridPane.rowIndex="1" GridPane.columnIndex="1"
                                        prefWidth="120"/>
 
-                            <Label text="Estado:" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                            <Label text="Estado:*" GridPane.rowIndex="2" GridPane.columnIndex="0"
                                    style="-fx-text-fill: #f5f5f5;"/>
                             <ComboBox fx:id="cmbEstado"
                                       GridPane.rowIndex="2" GridPane.columnIndex="1"
                                       prefWidth="140"/>
 
-                            <Label text="Sala:" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                            <Label text="Sala:*" GridPane.rowIndex="3" GridPane.columnIndex="0"
                                    style="-fx-text-fill: #f5f5f5;"/>
                             <ComboBox fx:id="cmbSala"
                                       GridPane.rowIndex="3" GridPane.columnIndex="1"

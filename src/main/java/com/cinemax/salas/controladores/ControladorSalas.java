@@ -8,8 +8,15 @@ import com.cinemax.salas.modelos.entidades.SalaNormalFactory;
 import com.cinemax.salas.modelos.entidades.SalaVIPFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 public class ControladorSalas {
     @FXML private TextField txtNombre;
@@ -66,7 +73,17 @@ public class ControladorSalas {
             }
         });
     }
-
+    public void onBackAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     // Este es tu método original, sin cambiar
     private void cargarSalas() throws Exception {
         salas.setAll(salaService.listarSalas());
@@ -153,7 +170,7 @@ public class ControladorSalas {
                 mostrarAviso("Datos inválidos", "La capacidad debe ser un número válido.");
             } else {
                 mostrarAviso("Error inesperado en crearSala",
-                        "Hubo un error inesperado en crearSala: " + msg);
+                        "" + msg);
             }
         }
     }
@@ -178,7 +195,7 @@ public class ControladorSalas {
                     mostrarAviso("Datos inválidos", "La capacidad debe ser un número válido.");
                 } else {
                     mostrarAviso("Error inesperado en actualizarSala",
-                            "Hubo un error inesperado en actualizarSala: " + e.getMessage());
+                            " " + e.getMessage());
                 }
             }
         }
@@ -187,6 +204,11 @@ public class ControladorSalas {
     @FXML
     private void eliminarSala() {
         Sala seleccionada = tablaSalas.getSelectionModel().getSelectedItem();
+        // Suponiendo que tienes un TextField llamado txtNombreSala
+        if (txtNombre.getText().trim().isEmpty()) {
+            mostrarAviso("No se puede eliminar", "El campo 'Nombre de sala' está vacío. Selecciona una sala válida.");
+            return;
+        }
         if (seleccionada != null) {
             try {
                 salaService.eliminarSala(seleccionada.getId());
@@ -194,8 +216,7 @@ public class ControladorSalas {
                 limpiarCampos();
                 mostrarInfo("Operación Exitosa", "Sala eliminada correctamente.");
             } catch (Exception e) {
-                mostrarAviso("Error inesperado en eliminarSala",
-                        "Hubo un error inesperado en eliminarSala: " + e.getMessage());
+                mostrarAviso("Error inesperado en eliminarSala", " " + e.getMessage());
             }
         }
     }
@@ -224,7 +245,7 @@ public class ControladorSalas {
             lblEstado.setText("ID inválido.");
         } catch (Exception e) {
             mostrarAviso("Error en buscarSalaPorId",
-                    "Hubo un error inesperado: " + e.getMessage());
+                    "");
         }
     }
 

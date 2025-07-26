@@ -9,10 +9,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ControladorButacas {
@@ -91,6 +96,31 @@ public class ControladorButacas {
     }
 
     @FXML
+    private boolean validarCampos() {
+        String fila = txtFila.getText().trim();
+        String columna = txtColumna.getText().trim();
+        EstadoButaca estado = cmbEstado.getValue();
+        Sala sala = cmbSala.getValue();
+
+        if (fila.isEmpty() || columna.isEmpty() || estado == null || sala == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos vacíos", "Por favor, complete todos los campos obligatorios.");
+            return false;
+        }
+        // Validación de datos erróneos (ejemplo: solo letras/números, longitud, etc.)
+        // Validación de Fila: solo letras de la A a la Z
+        if (!fila.matches("[A-Za-z]")) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Dato erróneo", "El campo Fila solo debe contener una letra de la A a la Z.");
+            return false;
+        }
+// Validación de Columna: solo un dígito del 0 al 9
+        if (!columna.matches("[0-9]")) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Dato erróneo", "El campo Columna solo debe contener un número del 0 al 9.");
+            return false;
+        }
+        return true;
+    }
+
+    @FXML
     private void listarButacasPorSala(ActionEvent e) {
         try {
             String txt = txtBuscarIdSala.getText().trim();
@@ -109,14 +139,16 @@ public class ControladorButacas {
         listarButacasPorSala(e);
     }
 
+
     @FXML
     private void crearButaca(ActionEvent e) {
+        if (!validarCampos()) return;
         try {
             Butaca b = new Butaca();
             b.setFila(txtFila.getText());
             b.setColumna(txtColumna.getText());
             b.setEstado(cmbEstado.getValue().name());
-            b.setIdSala(cmbSala.getValue().getId());      // <-- uso de cmbSala
+            b.setIdSala(cmbSala.getValue().getId());
 
             servicio.crearButaca(b);
 
@@ -137,14 +169,14 @@ public class ControladorButacas {
 
     @FXML
     private void actualizarButaca(ActionEvent e) {
+        Butaca sel = tablaButacas.getSelectionModel().getSelectedItem();
+        if (sel == null) return;
+        if (!validarCampos()) return;
         try {
-            Butaca sel = tablaButacas.getSelectionModel().getSelectedItem();
-            if (sel == null) return;
-
             sel.setFila(txtFila.getText());
             sel.setColumna(txtColumna.getText());
             sel.setEstado(cmbEstado.getValue().name());
-            sel.setIdSala(cmbSala.getValue().getId());    // <-- uso de cmbSala
+            sel.setIdSala(cmbSala.getValue().getId());
 
             servicio.actualizarButaca(sel);
 
@@ -163,6 +195,7 @@ public class ControladorButacas {
         }
     }
 
+
     @FXML
     private void eliminarButaca(ActionEvent e) {
         try {
@@ -177,7 +210,17 @@ public class ControladorButacas {
             mostrarAlerta(Alert.AlertType.ERROR, "No se pudo eliminar", ex.getMessage());
         }
     }
-
+    public void onBackAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @FXML
     private void limpiarCampos() {
         txtFila.clear();

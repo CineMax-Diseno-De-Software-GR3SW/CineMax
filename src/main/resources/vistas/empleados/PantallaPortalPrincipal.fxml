@@ -49,6 +49,7 @@
              <Button fx:id="btnConfiguracionFunciones" onAction="#onConfiguracionFunciones" text="Configuración de Funciones" />
 
             <Button fx:id="btnConfiguracionSalas" onAction="#onConfiguracionSalas" text="Configuración de Salas" />
+            <Button fx:id="btnConfiguracionButacas" onAction="#onConfiguracionButacas" text="Configuración de Butacas" />
 
             <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" text="Venta de Boletos" />
 

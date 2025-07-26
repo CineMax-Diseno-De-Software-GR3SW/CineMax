@@ -8,16 +8,26 @@
             style="-fx-background-color: linear-gradient(to bottom, #23272e 0%, #181a20 100%);
                    -fx-font-family: 'Segoe UI Emoji','Segoe UI', Arial, sans-serif;">
 
-    <!-- TOP: título -->
     <top>
-        <HBox alignment="center"
-              style="-fx-background-color: #181a20; -fx-padding: 16;">
-            <Label text="Gestión de Salas"
-                   style="-fx-font-family: 'Georgia'; -fx-font-size: 34px; -fx-font-weight: bold;
+        <BorderPane style="-fx-background-color: #181a20; -fx-padding: 16;">
+            <left>
+                <Button fx:id="btnBack"
+                        text="←"
+                        onAction="#onBackAction"
+                        prefWidth="48"
+                        style="-fx-font-family: 'Segoe UI Emoji', 'Segoe UI', Arial, sans-serif; -fx-background-color: linear-gradient(to bottom, #FFA726, #FF9800); -fx-text-fill: #fff; -fx-font-weight: bold; -fx-background-radius: 10; -fx-font-size: 18px;"/>
+            </left>
+            <center>
+                <Label text="Gestión de Salas"
+                       style="-fx-font-family: 'Georgia', 'Times New Roman', serif;
+                          -fx-font-size: 34px;
+                          -fx-font-weight: bold;
+                          -fx-padding: 28 0 28 0;
                           -fx-text-fill: linear-gradient(to bottom, #FFA726 60%, #FF9800 100%);
                           -fx-effect: dropshadow(gaussian, #000000cc, 16, 0.4, 0, 4);
-                          -fx-letter-spacing: 2px;" />
-        </HBox>
+                          -fx-letter-spacing: 2px;"/>
+            </center>
+        </BorderPane>
     </top>
 
     <!-- CENTER: SplitPane con fondo oscuro -->
