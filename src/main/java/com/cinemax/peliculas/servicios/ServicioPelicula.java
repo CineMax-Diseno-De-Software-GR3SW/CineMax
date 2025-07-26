@@ -101,9 +101,9 @@ public class ServicioPelicula {
     /**
      * Obtiene todas las películas
      */
-    public List<Pelicula> listarTodasLasPeliculas() throws SQLException {
-        return peliculaDAO.listarTodas();
-    }
+    // public List<Pelicula> listarTodasLasPeliculas() throws SQLException {
+    //     return peliculaDAO.listarTodas();
+    // }
     
     /**
      * Obtiene todas las películas disponibles
@@ -185,6 +185,20 @@ public class ServicioPelicula {
         
         if (genero.trim().length() > 50) {
             throw new IllegalArgumentException("El género no puede tener más de 50 caracteres");
+        }
+    }
+
+        /**
+     * Obtiene todas las películas disponibles en cartelera
+     *
+     * @return Lista de películas
+     * @throws Exception Si ocurre un error durante la consulta
+     */
+    public List<Pelicula> listarTodasLasPeliculas() throws Exception {
+        try {
+            return peliculaDAO.listarTodas();
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener la lista de películas: " + e.getMessage(), e);
         }
     }
 }

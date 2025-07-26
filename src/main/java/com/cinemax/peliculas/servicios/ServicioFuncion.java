@@ -9,6 +9,7 @@ import com.cinemax.salas.modelos.entidades.*;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 // import java.util.ArrayList;
 import java.util.List;
 
@@ -133,5 +134,47 @@ public class ServicioFuncion {
         }
 
         funcionDAO.eliminar(id);
+    }
+
+        /**
+     * Obtiene las funciones de una película específica por su nombre/título
+     * @param nombrePelicula El título de la película a buscar
+     * @return Lista de funciones de la película especificada
+     * @throws Exception Si ocurre un error durante la búsqueda
+     */
+    public List<Funcion> obtenerFuncionesPorNombrePelicula(String nombrePelicula) throws Exception {
+        if (nombrePelicula == null || nombrePelicula.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de la película no puede estar vacío");
+        }
+        
+        try {
+            // Obtener todas las funciones
+            List<Funcion> todasLasFunciones = funcionDAO.listarTodasLasFunciones();
+            List<Funcion> funcionesEncontradas = new ArrayList<>();
+            
+            // Filtrar por nombre de película (búsqueda case-insensitive y parcial)
+            String nombreBusqueda = nombrePelicula.trim().toLowerCase();
+            
+            for (Funcion funcion : todasLasFunciones) {
+                if (funcion.getPelicula() != null && 
+                    funcion.getPelicula().getTitulo() != null &&
+                    funcion.getPelicula().getTitulo().toLowerCase().contains(nombreBusqueda)) {
+                    funcionesEncontradas.add(funcion);
+                }
+            }
+            
+            // Ordenar por fecha y hora de inicio
+            funcionesEncontradas.sort((f1, f2) -> {
+                if (f1.getFechaHoraInicio() != null && f2.getFechaHoraInicio() != null) {
+                    return f1.getFechaHoraInicio().compareTo(f2.getFechaHoraInicio());
+                }
+                return 0;
+            });
+            
+            return funcionesEncontradas;
+            
+        } catch (Exception e) {
+            throw new Exception("Error al obtener funciones por película: " + e.getMessage(), e);
+        }
     }
 }

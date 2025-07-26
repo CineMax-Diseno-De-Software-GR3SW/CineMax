@@ -550,4 +550,20 @@ public class ControladorCartelera implements Initializable {
             mostrarError("Sin selección", "Por favor, seleccione una película de la cartelera para ver sus detalles.");
         }
     }
+
+        /**
+     * Método público para obtener la cartelera (lista de películas)
+     * Delega la lógica al servicio correspondiente
+     *
+     * @return Lista de películas disponibles en cartelera
+     */
+    public List<Pelicula> obtenerCartelera() {
+        try {
+            return servicioPelicula.listarTodasLasPeliculas();
+        } catch (Exception e) {
+            // Log del error pero no mostrar UI desde aquí
+            System.err.println("Error al obtener cartelera: " + e.getMessage());
+            return new ArrayList<>(); // Retornar lista vacía en caso de error
+        }
+    }
 }

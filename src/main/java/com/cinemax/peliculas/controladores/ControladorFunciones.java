@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -716,5 +717,21 @@ public class ControladorFunciones implements Initializable {
 
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
+    }
+
+        /**
+     * Método público para obtener funciones por nombre de película
+     * Delega la lógica al servicio correspondiente
+     * @param nombrePelicula El título de la película
+     * @return Lista de funciones de la película especificada
+     */
+    public List<Funcion> obtenerFuncionesPorNombrePelicula(String nombrePelicula) {
+        try {
+            return servicioFuncion.obtenerFuncionesPorNombrePelicula(nombrePelicula);
+        } catch (Exception e) {
+            // Log del error pero no mostrar UI desde aquí
+            System.err.println("Error al obtener funciones por película: " + e.getMessage());
+            return new ArrayList<>(); // Retornar lista vacía en caso de error
+        }
     }
 }
