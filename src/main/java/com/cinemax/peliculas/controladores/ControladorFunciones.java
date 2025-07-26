@@ -21,7 +21,6 @@ import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.SalaService;
-import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -708,7 +707,11 @@ public class ControladorFunciones implements Initializable {
             contenido.append("Tipo de Estreno: ").append(funcion.getTipoEstreno().name()).append("\n");
         }
 
-        ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Detalles de la Función");
+        alert.setHeaderText("Información de la Función ID: " + funcion.getId());
+        alert.setContentText(contenido.toString());
+        alert.showAndWait();
     }
 
     private void mostrarError(String titulo, String mensaje) {

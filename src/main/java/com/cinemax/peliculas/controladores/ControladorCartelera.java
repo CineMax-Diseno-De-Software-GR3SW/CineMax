@@ -502,7 +502,11 @@ public class ControladorCartelera implements Initializable {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
 
-        ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Detalles de la Película");
+        alert.setHeaderText("Información de: " + pelicula.getTitulo());
+        alert.setContentText(contenido.toString());
+        alert.showAndWait();
     }
 
     private void mostrarError(String titulo, String mensaje) {

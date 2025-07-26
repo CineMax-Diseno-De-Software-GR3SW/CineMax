@@ -30,7 +30,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -577,7 +576,11 @@ public class ControladorSeleccionFuncion implements Initializable {
             funcion.getPelicula().getIdioma().getNombre()
         );
 
-        ManejadorMetodosComunes.mostrarVentanaExito("Función seleccionada:\n\n" + contenido);
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Función Seleccionada");
+        alert.setHeaderText("Has seleccionado la siguiente función:");
+        alert.setContentText(contenido);
+        alert.showAndWait();
 
         // Aquí podrías agregar lógica adicional como navegar a la compra de boletos
         lblEstadoSeleccion.setText("Función seleccionada: " + funcion.getFechaHoraInicio().format(formatter));
