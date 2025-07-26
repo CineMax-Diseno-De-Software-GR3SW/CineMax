@@ -6,7 +6,6 @@ import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.TipoEstreno;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.modelos.persistencia.SalasDAO;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -48,44 +47,30 @@ public class FuncionDAO {
 
     public List<Funcion> listarTodasLasFunciones() {
         List<Funcion> funciones = new ArrayList<>();
-        String sql = "SELECT * FROM obtener_todas_funciones()";
-        PeliculaDAO peliculaDAO = new PeliculaDAO();
-        SalasDAO salaDAO = new SalasDAO();
+        // Usando SP optimizado con JOINs para eliminar el problema N+1
+        String sql = "SELECT * FROM obtener_todas_funciones_optimizado()";
 
         try (Connection conn = gestorDB.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                int peliculaId = rs.getInt("id_pelicula");
-                int salaId = rs.getInt("id_sala");
-                Pelicula pelicula = peliculaDAO.buscarPorId(peliculaId);
-                Sala sala = salaDAO.obtenerSalaPorId(salaId);
-
-                Funcion funcion = new Funcion(
-                        rs.getInt("id_funcion"),
-                        pelicula,
-                        sala,
-                        rs.getTimestamp("fecha_hora_inicio").toLocalDateTime(),
-                        rs.getTimestamp("fecha_hora_fin").toLocalDateTime(),
-                        FormatoFuncion.fromString(rs.getString("formato")),
-                        TipoEstreno.valueOf(rs.getString("tipo_estreno")));
-                funciones.add(funcion);
+                funciones.add(mapearResultSetAFuncion(rs));
             }
 
+            System.out.println("Funciones cargadas exitosamente con SP optimizado: " + funciones.size());
             return funciones;
 
         } catch (SQLException e) {
-            System.err.println("Error al listar todas las funciones (SP): " + e.getMessage());
+            System.err.println("Error al listar todas las funciones (SP optimizado): " + e.getMessage());
             throw new RuntimeException("Error al listar funciones: " + e.getMessage(), e);
         }
     }
 
     public List<Funcion> listarFuncionesPorSala(int salaId) {
         List<Funcion> funciones = new ArrayList<>();
-        String sql = "SELECT * FROM listar_funciones_por_sala(?)";
-        PeliculaDAO peliculaDAO = new PeliculaDAO();
-        SalasDAO salaDAO = new SalasDAO();
+        // Usando SP optimizado con JOINs para eliminar el problema N+1
+        String sql = "SELECT * FROM listar_funciones_por_sala_optimizado(?)";
 
         try (Connection conn = gestorDB.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -93,26 +78,15 @@ public class FuncionDAO {
             stmt.setInt(1, salaId);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    int peliculaId = rs.getInt("id_pelicula");
-                    Pelicula pelicula = peliculaDAO.buscarPorId(peliculaId);
-                    Sala sala = salaDAO.obtenerSalaPorId(salaId);
-
-                    Funcion funcion = new Funcion(
-                            rs.getInt("id_funcion"),
-                            pelicula,
-                            sala,
-                            rs.getTimestamp("fecha_hora_inicio").toLocalDateTime(),
-                            rs.getTimestamp("fecha_hora_fin").toLocalDateTime(),
-                            FormatoFuncion.fromString(rs.getString("formato")),
-                            TipoEstreno.valueOf(rs.getString("tipo_estreno")));
-                    funciones.add(funcion);
+                    funciones.add(mapearResultSetAFuncion(rs));
                 }
             }
             
+            System.out.println("Funciones por sala cargadas exitosamente con SP optimizado: " + funciones.size());
             return funciones;
             
         } catch (SQLException e) {
-            System.err.println("Error al listar funciones por sala (SP): " + e.getMessage());
+            System.err.println("Error al listar funciones por sala (SP optimizado): " + e.getMessage());
             throw new RuntimeException("Error al listar funciones por sala: " + e.getMessage(), e);
         }
     }
@@ -142,7 +116,8 @@ public class FuncionDAO {
     }
 
     public Funcion buscarPorId(int id) throws SQLException {
-        String sql = "SELECT * FROM buscar_funcion_por_id(?)";
+        // Usando SP optimizado con JOINs para eliminar consultas adicionales
+        String sql = "SELECT * FROM buscar_funcion_por_id_optimizado(?)";
         
         try (Connection conn = gestorDB.getConexion();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -150,26 +125,14 @@ public class FuncionDAO {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    PeliculaDAO peliculaDAO = new PeliculaDAO();
-                    SalasDAO salaDAO = new SalasDAO();
-                    Pelicula pelicula = peliculaDAO.buscarPorId(rs.getInt("id_pelicula"));
-                    Sala sala = salaDAO.obtenerSalaPorId(rs.getInt("id_sala"));
-                    
-                    return new Funcion(
-                            rs.getInt("id_funcion"),
-                            pelicula,
-                            sala,
-                            rs.getTimestamp("fecha_hora_inicio").toLocalDateTime(),
-                            rs.getTimestamp("fecha_hora_fin").toLocalDateTime(),
-                            FormatoFuncion.fromString(rs.getString("formato")),
-                            TipoEstreno.valueOf(rs.getString("tipo_estreno")));
+                    return mapearResultSetAFuncion(rs);
                 }
             }
             
             return null;
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar función por ID (SP): " + e.getMessage());
+            System.err.println("Error al buscar función por ID (SP optimizado): " + e.getMessage());
             throw e;
         }
     }
@@ -209,6 +172,49 @@ public class FuncionDAO {
             System.err.println("Error al listar IDs de películas de funciones futuras (SP): " + e.getMessage());
             throw new RuntimeException("Error al listar IDs de películas de funciones futuras: " + e.getMessage(), e);
         }
+    }
+
+    // Método privado para mapear ResultSet a objeto Funcion (elimina duplicación de código)
+    private Funcion mapearResultSetAFuncion(ResultSet rs) throws SQLException {
+        // Crear objeto Pelicula usando el patrón del PeliculaDAO
+        Pelicula pelicula = new Pelicula();
+        pelicula.setId(rs.getInt("pelicula_id"));
+        pelicula.setTitulo(rs.getString("titulo"));
+        pelicula.setSinopsis(rs.getString("sinopsis"));
+        pelicula.setDuracionMinutos(rs.getInt("duracion_minutos"));
+        pelicula.setAnio(rs.getInt("anio"));
+        
+        // Mapear idioma de String a Enum
+        String idiomaCodigo = rs.getString("idioma");
+        if (idiomaCodigo != null && !idiomaCodigo.trim().isEmpty()) {
+            try {
+                pelicula.setIdioma(com.cinemax.peliculas.modelos.entidades.Idioma.porCodigo(idiomaCodigo));
+            } catch (IllegalArgumentException e) {
+                System.err.println("Código de idioma no válido en BD: " + idiomaCodigo + ". Se establece null.");
+            }
+        }
+        
+        pelicula.setGenerosPorString(rs.getString("genero"));
+        pelicula.setImagenUrl(rs.getString("imagen_url"));
+
+        // Crear objeto Sala directamente del ResultSet
+        Sala sala = new Sala(
+            rs.getInt("sala_id"),
+            rs.getString("sala_nombre"),
+            rs.getInt("capacidad"),
+            com.cinemax.salas.modelos.entidades.TipoSala.valueOf(rs.getString("sala_tipo")),
+            com.cinemax.salas.modelos.entidades.EstadoSala.valueOf(rs.getString("sala_estado"))
+        );
+
+        // Crear y retornar la función con los objetos ya construidos
+        return new Funcion(
+                rs.getInt("id_funcion"),
+                pelicula,
+                sala,
+                rs.getTimestamp("fecha_hora_inicio").toLocalDateTime(),
+                rs.getTimestamp("fecha_hora_fin").toLocalDateTime(),
+                FormatoFuncion.fromString(rs.getString("formato")),
+                TipoEstreno.valueOf(rs.getString("tipo_estreno")));
     }
 
 }
