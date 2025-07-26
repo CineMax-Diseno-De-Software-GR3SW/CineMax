@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox fx:id="root" spacing="15.0" alignment="CENTER" stylesheets="@../temas/styles.css" styleClass="dialog-box"
+      xmlns="http://javafx.com/javafx/17.0.2-ea"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cinemax.empleados.controladores.ControladorCambiarContrasena">
+
+<padding>
+        <Insets top="10" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Cambiar Contraseña" style="-fx-font-size: 16px;" />
+
+    <PasswordField fx:id="txtContrasenaActual" promptText="Contraseña actual"/>
+    <PasswordField fx:id="txtNuevaContrasena" promptText="Nueva contraseña"/>
+    <PasswordField fx:id="txtConfirmarContrasena" promptText="Confirmar nueva contraseña"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Cancelar" onAction="#onCancelar"/>
+        <Button text="Guardar" onAction="#onGuardar"/>
+    </HBox>
+</VBox>

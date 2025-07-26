@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefWidth="800" prefHeight="550" stylesheets="@../temas/styles.css"
+            xmlns="http://javafx.com/javafx/17"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cinemax.empleados.controladores.ControladorGestionUsuarios">
+
+    <!-- ░░░ TOP BAR ░░░ -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
+            <children>
+                <!-- Botón Regresar -->
+                <Button fx:id="btnBack"
+                        text="←"
+                        onAction="#onBackAction"
+                        styleClass="stepper-button"/>
+
+                <!-- Título -->
+                <Label text="Gestión de Usuarios" styleClass="section-title">
+                    <font><Font name="Arial Black" size="22"/></font>
+                </Label>
+            </children>
+        </HBox>
+    </top>
+
+    <!-- ░░░ PANEL CENTRAL ░░░ -->
+    <center>
+        <VBox spacing="12">
+            <!-- Botón Nuevo Usuario alineado a la derecha -->
+            <HBox alignment="CENTER_RIGHT">
+                <Button fx:id="btnAgregarUsuario"
+                        text="Nuevo Usuario"
+                        onAction="#onAgregarUsuario"
+                        styleClass="primary-button"/>
+                <Label text="" minWidth="10"/> <!-- Espacio simulado -->
+            </HBox>
+
+            <VBox spacing="12" prefWidth="620" maxWidth="620">
+
+            <!--             Tabla de usuarios -->
+            <TableView fx:id="tableUsuarios" prefHeight="400" prefWidth="400" styleClass="tabla">
+                <columns>
+                    <TableColumn fx:id="colUsuario"  text="Usuario"        prefWidth="85"/>
+                    <TableColumn fx:id="colNombre" text="Nombre"    prefWidth="130"/>
+                    <TableColumn fx:id="colEmail"  text="Correo"    prefWidth="170"/>
+                    <TableColumn fx:id="colRol"    text="Rol"       prefWidth="150"/>
+                    <TableColumn fx:id="colActivo"     text="Activo"        prefWidth="85"/>
+
+                    <!-- Columna de acciones -->
+<!--                    <TableColumn fx:id="colEditar" text="Acciones"  prefWidth="90"/>-->
+                </columns>
+            </TableView>
+        </VBox>
+
+    </VBox>
+    </center>
+
+    <!-- ░░░ FRANJA IZQUIERDA CON DATOS DE SESIÓN ░░░ -->
+    <left>
+        <VBox spacing="10" prefWidth="170" styleClass="summary-pane" alignment="TOP_CENTER">
+            <children>
+                <!-- Etiquetas de usuario activo -->
+                <Label fx:id="lblNombreUsuario" prefHeight="26.0" prefWidth="172.0" text="-----" textAlignment="CENTER" styleClass="section-title">
+                    <font>
+                        <Font size="20.0" />
+                    </font></Label>
+                <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="150.0" text="-------" textAlignment="CENTER" styleClass="summary-details">
+                    <font>
+                        <Font name="System Bold Italic" size="15.0" />
+                    </font></Label>
+                <!-- Espaciador que empuja el botón Log Out al fondo -->
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <Button text="Log Out" onAction="#onCerrarSesion" styleClass="primary-button" />
+            </children>
+        </VBox>
+    </left>
+
+</BorderPane>
