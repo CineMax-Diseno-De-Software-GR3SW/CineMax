@@ -113,7 +113,7 @@ public class ControladorButacas {
             return false;
         }
 // Validación de Columna: solo un dígito del 0 al 9
-        if (!columna.matches("[0-9]")) {
+        if (!columna.matches("[1-9]")) {
             mostrarAlerta(Alert.AlertType.WARNING, "Dato erróneo", "El campo Columna solo debe contener un número del 0 al 9.");
             return false;
         }
