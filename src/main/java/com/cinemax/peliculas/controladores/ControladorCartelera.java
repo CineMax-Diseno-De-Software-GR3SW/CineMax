@@ -11,6 +11,7 @@ import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -488,6 +489,8 @@ public class ControladorCartelera implements Initializable {
 
     private void mostrarDetallesPelicula(Pelicula pelicula) {
         StringBuilder contenido = new StringBuilder();
+        contenido.append("DETALLES DE LA PELÍCULA\n\n");
+        contenido.append("Título: ").append(pelicula.getTitulo()).append("\n");
         contenido.append("ID: ").append(pelicula.getId()).append("\n");
         contenido.append("Año: ").append(pelicula.getAnio()).append("\n");
         contenido.append("Género: ").append(pelicula.getGenerosComoString()).append("\n");
@@ -499,6 +502,7 @@ public class ControladorCartelera implements Initializable {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
 
+<<<<<<< HEAD
         ManejadorMetodosComunes.mostrarVentanaExito(pelicula.getTitulo() + "\n\n" + contenido.toString());
     }
 
@@ -508,6 +512,17 @@ public class ControladorCartelera implements Initializable {
 
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
+=======
+        ManejadorMetodosComunes.mostrarVentanaExito(contenido.toString());
+    }
+
+    private void mostrarError(String titulo, String mensaje) {
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
+    }
+
+    private void mostrarInformacion(String titulo, String mensaje) {
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
+>>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
     }
 
     @FXML

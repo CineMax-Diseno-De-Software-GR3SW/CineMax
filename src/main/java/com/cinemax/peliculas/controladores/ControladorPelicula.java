@@ -14,6 +14,7 @@ import com.cinemax.peliculas.modelos.entidades.Genero;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -236,19 +237,9 @@ public class ControladorPelicula implements Initializable {
                     txtTitulo.getText().trim(), anio);
                 
                 if (existe) {
-                    Alert confirmacion = new Alert(Alert.AlertType.WARNING);
-                    confirmacion.setTitle("Película duplicada");
-                    confirmacion.setHeaderText("Ya existe una película con ese título y año");
-                    confirmacion.setContentText("¿Desea continuar de todas formas?");
-                    
-                    ButtonType btnContinuar = new ButtonType("Continuar", ButtonBar.ButtonData.YES);
-                    ButtonType btnCancelarDup = new ButtonType("Cancelar", ButtonBar.ButtonData.NO);
-                    confirmacion.getButtonTypes().setAll(btnContinuar, btnCancelarDup);
-                    
-                    Optional<ButtonType> respuesta = confirmacion.showAndWait();
-                    if (respuesta.isEmpty() || respuesta.get() != btnContinuar) {
-                        return;
-                    }
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia(
+                        "Ya existe una película con ese título y año. Se continuará con el registro.");
+                    // Continuamos con el registro
                 }
 
                 // Crear la película
@@ -498,19 +489,9 @@ public class ControladorPelicula implements Initializable {
                         txtTitulo.getText().trim(), anio);
                     
                     if (existe) {
-                        Alert confirmacion = new Alert(Alert.AlertType.WARNING);
-                        confirmacion.setTitle("Película duplicada");
-                        confirmacion.setHeaderText("Ya existe otra película con ese título y año");
-                        confirmacion.setContentText("¿Desea continuar con la actualización de todas formas?");
-                        
-                        ButtonType btnContinuar = new ButtonType("Continuar", ButtonBar.ButtonData.YES);
-                        ButtonType btnCancelarDup = new ButtonType("Cancelar", ButtonBar.ButtonData.NO);
-                        confirmacion.getButtonTypes().setAll(btnContinuar, btnCancelarDup);
-                        
-                        Optional<ButtonType> respuesta = confirmacion.showAndWait();
-                        if (respuesta.isEmpty() || respuesta.get() != btnContinuar) {
-                            return;
-                        }
+                        ManejadorMetodosComunes.mostrarVentanaAdvertencia(
+                            "Ya existe otra película con ese título y año. Se continuará con la actualización.");
+                        // Continuamos con la actualización
                     }
                 }
 
@@ -557,25 +538,23 @@ public class ControladorPelicula implements Initializable {
     private void onEliminarPelicula(ActionEvent event) {
         Pelicula peliculaSeleccionada = tablaPeliculas.getSelectionModel().getSelectedItem();
         if (peliculaSeleccionada != null) {
-            Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmacion.setTitle("Confirmar eliminación");
-            confirmacion.setHeaderText("¿Está seguro de eliminar esta película?");
-            confirmacion.setContentText("Título: " + peliculaSeleccionada.getTitulo() + 
-                                      "\n\nATENCIÓN: Esta acción no se puede deshacer.");
+            // Mostrar advertencia de confirmación
+            String mensaje = "¿Está seguro de eliminar esta película?\n\n" +
+                           "Título: " + peliculaSeleccionada.getTitulo() + 
+                           "\n\nATENCIÓN: Esta acción no se puede deshacer.";
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
             
-            Optional<ButtonType> resultado = confirmacion.showAndWait();
-            if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-                try {
-                    servicioPelicula.eliminarPelicula(peliculaSeleccionada.getId());
-                    cargarPeliculas();
-                    mostrarInformacion("Éxito", "Película eliminada correctamente");
-                } catch (Exception e) {
-                    String mensaje = e.getMessage();
-                    if (mensaje.contains("foreign key constraint") || mensaje.contains("violates")) {
-                        mostrarErrorRestriccion(peliculaSeleccionada);
-                    } else {
-                        mostrarError("Error", "No se pudo eliminar la película: " + mensaje);
-                    }
+            // Proceder con la eliminación
+            try {
+                servicioPelicula.eliminarPelicula(peliculaSeleccionada.getId());
+                cargarPeliculas();
+                mostrarInformacion("Éxito", "Película eliminada correctamente");
+            } catch (Exception e) {
+                String mensajeError = e.getMessage();
+                if (mensajeError.contains("foreign key constraint") || mensajeError.contains("violates")) {
+                    mostrarErrorRestriccion(peliculaSeleccionada);
+                } else {
+                    mostrarError("Error", "No se pudo eliminar la película: " + mensajeError);
                 }
             }
         }
@@ -812,25 +791,26 @@ public class ControladorPelicula implements Initializable {
     }
 
     private void mostrarError(String titulo, String mensaje) {
+<<<<<<< HEAD
         ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
+=======
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
+    }
+
+    private void mostrarInformacion(String titulo, String mensaje) {
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
+>>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
     }
     
     @FXML
     private void onLogOut(ActionEvent event) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Cerrar Sesión");
-        alert.setHeaderText(null);
-        alert.setContentText("¿Está seguro que desea cerrar sesión?");
-        
-        Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            // Cerrar la aplicación
-            javafx.application.Platform.exit();
-        }
+        ManejadorMetodosComunes.mostrarVentanaAdvertencia("Sesión cerrada");
+        // Cerrar la aplicación
+        javafx.application.Platform.exit();
     }
     
     @FXML

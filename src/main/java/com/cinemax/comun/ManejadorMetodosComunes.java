@@ -54,36 +54,30 @@ public class ManejadorMetodosComunes {
     public static void mostrarVentanaAdvertencia(String mensaje) {
         mostrarVentanaEmergente("Advertencia", mensaje, "/Vista/comun/VistaAdvertencia.fxml");
     }
-    
-    /**
-     * Métodos específicos para casos comunes
-     */
-    public static void mostrarRegistroExitoso(String entidad) {
-        mostrarVentanaExito("¡" + entidad + " registrado exitosamente!");
+
+    // Método para validar campos vacíos
+    public static boolean validarCampoObligatorio(String valor, String nombreCampo) {
+        if (valor == null || valor.trim().isEmpty()) {
+            mostrarVentanaError("El campo '" + nombreCampo + "' es obligatorio.");
+            return false;
+        }
+        return true;
     }
-    
-    public static void mostrarActualizacionExitosa(String entidad) {
-        mostrarVentanaExito("¡" + entidad + " actualizado exitosamente!");
+
+    // Método para validar números
+    public static boolean validarNumero(String valor, String nombreCampo) {
+        try {
+            Integer.parseInt(valor.trim());
+            return true;
+        } catch (NumberFormatException e) {
+            mostrarVentanaError("El campo '" + nombreCampo + "' debe ser un número válido.");
+            return false;
+        }
     }
-    
-    public static void mostrarEliminacionExitosa(String entidad) {
-        mostrarVentanaExito("¡" + entidad + " eliminado exitosamente!");
-    }
-    
-    public static void mostrarErrorCamposVacios() {
-        mostrarVentanaError("Por favor, complete todos los campos obligatorios.");
-    }
-    
-    public static void mostrarErrorBaseDatos() {
-        mostrarVentanaError("Error al conectar con la base de datos. Intente nuevamente.");
-    }
-    
-    public static void mostrarAdvertenciaEliminacion(String entidad) {
-        mostrarVentanaAdvertencia("¿Está seguro de que desea eliminar " + entidad + "? Esta acción no se puede deshacer.");
-    }
-    
-    public static void mostrarInformacion(String mensaje) {
-        mostrarVentanaEmergente("Información", mensaje, "/vistas/comun/VistaExito.fxml");
+
+    // Método para mostrar confirmación exitosa de operación
+    public static void mostrarOperacionExitosa(String operacion, String detalle) {
+        mostrarVentanaExito(operacion + " realizada exitosamente.\n" + detalle);
     }
 
     private static void mostrarVentanaEmergente(String titulo, String mensaje, String fxmlPath) {
@@ -95,14 +89,15 @@ public class ManejadorMetodosComunes {
             controller.setData(titulo, mensaje);
 
             Stage alertStage = new Stage();
-            alertStage.initStyle(StageStyle.UNDECORATED); // Sin decoraciones pero no transparente
+            alertStage.initStyle(StageStyle.TRANSPARENT);
             alertStage.initModality(Modality.APPLICATION_MODAL);
 
-            // Establecer tamaño fijo
-            double ancho = 420;
-            double alto = 220;
+            // Establecer tamaño fijo (puedes ajustarlo a lo que necesites)
+            double ancho = 400;
+            double alto = 200;
 
             Scene scene = new Scene(root, ancho, alto);
+            scene.setFill(null);
             
             // Aplicar estilos CSS: primero general, luego específico para mayor precedencia
             String generalCssPath = ManejadorMetodosComunes.class.getResource("/temas/styles.css").toExternalForm();
@@ -114,31 +109,11 @@ public class ManejadorMetodosComunes {
             alertStage.setScene(scene);
             alertStage.setWidth(ancho);
             alertStage.setHeight(alto);
-            alertStage.setResizable(false);
-            alertStage.centerOnScreen(); // Centrar en pantalla
+            alertStage.setResizable(false); // Evita que el usuario lo cambie
             alertStage.showAndWait();
 
         } catch (IOException e) {
-            System.err.println("Error al cargar la ventana emergente: " + e.getMessage());
             e.printStackTrace();
-            // Fallback: mostrar un diálogo simple si falla la carga del FXML
-            mostrarDialogoSimple(titulo, mensaje);
-        }
-    }
-    
-    /**
-     * Método de respaldo para mostrar un diálogo simple si falla la carga del FXML
-     */
-    private static void mostrarDialogoSimple(String titulo, String mensaje) {
-        try {
-            javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.INFORMATION);
-            alert.setTitle(titulo);
-            alert.setHeaderText(null);
-            alert.setContentText(mensaje);
-            alert.showAndWait();
-        } catch (Exception e) {
-            System.err.println("Error crítico al mostrar mensaje: " + titulo + " - " + mensaje);
         }
     }
 }
-
