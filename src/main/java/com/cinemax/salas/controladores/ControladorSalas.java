@@ -1,5 +1,6 @@
 package com.cinemax.salas.controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.*;
 import com.cinemax.salas.servicios.ButacaService;
 import com.cinemax.salas.servicios.SalaService;
@@ -20,7 +21,7 @@ import java.io.IOException;
 
 public class ControladorSalas {
     @FXML private TextField txtNombre;
-    @FXML private ComboBox<Integer> cmbCapacidad;       // ← cambiado
+    @FXML private ComboBox<Integer> cmbCapacidad;
     @FXML private ComboBox<TipoSala> cmbTipo;
     @FXML private ComboBox<EstadoSala> cmbEstado;
     @FXML private TableView<Sala> tablaSalas;
@@ -34,21 +35,15 @@ public class ControladorSalas {
     private final SalaService salaService = new SalaService();
     private final ObservableList<Sala> salas = FXCollections.observableArrayList();
     private final ButacaService butacaService = new ButacaService();
+
     @FXML
     public void initialize() throws Exception {
-        // 1) Poblar capacidades fijas
-        System.out.println("cmbCapacidad = " + cmbCapacidad);
-        System.out.println("txtNombre    = " + txtNombre);
-// …etc…
-
         cmbCapacidad.setItems(FXCollections.observableArrayList(36, 42, 48));
         cmbCapacidad.getSelectionModel().selectFirst();
 
-        // 2) Poblar tipo y estado
         cmbTipo.setItems(FXCollections.observableArrayList(TipoSala.values()));
         cmbEstado.setItems(FXCollections.observableArrayList(EstadoSala.values()));
 
-        // 3) Configurar columnas de la tabla
         colId.setCellValueFactory(data ->
                 new javafx.beans.property.SimpleIntegerProperty(data.getValue().getId()).asObject());
         colNombre.setCellValueFactory(data ->
@@ -61,18 +56,18 @@ public class ControladorSalas {
                 new javafx.beans.property.SimpleStringProperty(data.getValue().getEstado().name()));
 
         tablaSalas.setItems(salas);
-        listarTodasSalas();  // usa tu wrapper para no modificar cargarSalas()
+        listarTodasSalas();
 
-        // 4) Cuando seleccionas una fila, llenas el formulario
         tablaSalas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 txtNombre.setText(newSel.getNombre());
-                cmbCapacidad.setValue(newSel.getCapacidad()); // ← ahora ComboBox
+                cmbCapacidad.setValue(newSel.getCapacidad());
                 cmbTipo.setValue(newSel.getTipo());
                 cmbEstado.setValue(newSel.getEstado());
             }
         });
     }
+
     public void onBackAction(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
@@ -84,42 +79,21 @@ public class ControladorSalas {
             e.printStackTrace();
         }
     }
-    // Este es tu método original, sin cambiar
+
     private void cargarSalas() throws Exception {
         salas.setAll(salaService.listarSalas());
     }
 
-    // Wrapper anotado para FXML
     @FXML
     private void listarTodasSalas() {
         try {
             cargarSalas();
             lblEstado.setText("Salas cargadas exitosamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("Salas cargadas exitosamente.");
         } catch (Exception e) {
-            mostrarAviso("Error al cargar salas",
-                    "Hubo un error inesperado cargando las salas: " + e.getMessage());
             lblEstado.setText("Error cargando salas.");
+            ManejadorMetodosComunes.mostrarVentanaError("Hubo un error inesperado cargando las salas: " + e.getMessage());
         }
-    }
-
-    // Muestra mensajes de error
-    private void mostrarAviso(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.getDialogPane().setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 15px;");
-        alert.showAndWait();
-    }
-
-    // Muestra mensajes de información
-    private void mostrarInfo(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.getDialogPane().setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 15px;");
-        alert.showAndWait();
     }
 
     @FXML
@@ -136,19 +110,16 @@ public class ControladorSalas {
                     cmbEstado.getValue()
             );
 
-            salaService.crearSala(sala);      // persiste y genera butacas la primera vez
+            salaService.crearSala(sala);
 
             listarTodasSalas();
             limpiarCampos();
-            mostrarInfo("Operación Exitosa",
-                    "Sala creada exitosamente.\nButacas creadas exitosamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("Sala creada exitosamente.\nButacas creadas exitosamente.");
 
         } catch (Exception e) {
             String msg = e.getMessage();
-            if (msg.contains("Ya existe una sala con ese nombre")) {
-                // En lugar de fallar, regeneramos butacas para la sala existente
+            if (msg != null && msg.contains("Ya existe una sala con ese nombre")) {
                 try {
-                    // Buscamos la sala por nombre en la lista actual
                     Sala existente = salaService.listarSalas().stream()
                             .filter(s -> s.getNombre().equalsIgnoreCase(txtNombre.getText().trim()))
                             .findFirst()
@@ -158,19 +129,16 @@ public class ControladorSalas {
 
                     listarTodasSalas();
                     limpiarCampos();
-                    mostrarInfo("Butacas Generadas",
-                            "Butacas creadas exitosamente para la sala existente \"" +
-                                    existente.getNombre() + "\".");
+                    ManejadorMetodosComunes.mostrarVentanaExito("Butacas creadas exitosamente para la sala existente \"" +
+                            existente.getNombre() + "\".");
 
                 } catch (Exception ex2) {
-                    mostrarAviso("Error al regenerar butacas",
-                            "No se pudo generar butacas: " + ex2.getMessage());
+                    ManejadorMetodosComunes.mostrarVentanaError("No se pudo generar butacas: " + ex2.getMessage());
                 }
             } else if (e instanceof NumberFormatException) {
-                mostrarAviso("Datos inválidos", "La capacidad debe ser un número válido.");
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("La capacidad debe ser un número válido.");
             } else {
-                mostrarAviso("Error inesperado en crearSala",
-                        "" + msg);
+                ManejadorMetodosComunes.mostrarVentanaError("" + msg);
             }
         }
     }
@@ -181,7 +149,7 @@ public class ControladorSalas {
         if (seleccionada != null) {
             try {
                 seleccionada.setNombre(txtNombre.getText());
-                seleccionada.setCapacidad(cmbCapacidad.getValue());  // ← ComboBox
+                seleccionada.setCapacidad(cmbCapacidad.getValue());
                 seleccionada.setTipo(cmbTipo.getValue());
                 seleccionada.setEstado(cmbEstado.getValue());
 
@@ -189,24 +157,24 @@ public class ControladorSalas {
                 listarTodasSalas();
                 limpiarCampos();
 
-                mostrarInfo("Operación Exitosa", "Sala actualizada correctamente.");
+                ManejadorMetodosComunes.mostrarVentanaExito("Sala actualizada correctamente.");
             } catch (Exception e) {
                 if (e instanceof NumberFormatException) {
-                    mostrarAviso("Datos inválidos", "La capacidad debe ser un número válido.");
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("La capacidad debe ser un número válido.");
                 } else {
-                    mostrarAviso("Error inesperado en actualizarSala",
-                            " " + e.getMessage());
+                    ManejadorMetodosComunes.mostrarVentanaError("Error inesperado en actualizarSala: " + e.getMessage());
                 }
             }
+        } else {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Selecciona una sala para actualizar.");
         }
     }
 
     @FXML
     private void eliminarSala() {
         Sala seleccionada = tablaSalas.getSelectionModel().getSelectedItem();
-        // Suponiendo que tienes un TextField llamado txtNombreSala
         if (txtNombre.getText().trim().isEmpty()) {
-            mostrarAviso("No se puede eliminar", "El campo 'Nombre de sala' está vacío. Selecciona una sala válida.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El campo 'Nombre de sala' está vacío. Selecciona una sala válida.");
             return;
         }
         if (seleccionada != null) {
@@ -214,10 +182,12 @@ public class ControladorSalas {
                 salaService.eliminarSala(seleccionada.getId());
                 listarTodasSalas();
                 limpiarCampos();
-                mostrarInfo("Operación Exitosa", "Sala eliminada correctamente.");
+                ManejadorMetodosComunes.mostrarVentanaExito("Sala eliminada correctamente.");
             } catch (Exception e) {
-                mostrarAviso("Error inesperado en eliminarSala", " " + e.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError("Error inesperado en eliminarSala: " + e.getMessage());
             }
+        } else {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Selecciona una sala para eliminar.");
         }
     }
 
@@ -236,16 +206,18 @@ public class ControladorSalas {
             if (sala != null) {
                 salas.setAll(sala);
                 lblEstado.setText("Sala encontrada.");
+                ManejadorMetodosComunes.mostrarVentanaExito("Sala encontrada.");
             } else {
                 salas.clear();
                 lblEstado.setText("No existe sala con ID " + id);
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("No existe sala con ID " + id);
             }
         } catch (NumberFormatException e) {
             salas.clear();
             lblEstado.setText("ID inválido.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El ID debe ser un número válido.");
         } catch (Exception e) {
-            mostrarAviso("Error en buscarSalaPorId",
-                    "");
+            ManejadorMetodosComunes.mostrarVentanaError("Error en buscarSalaPorId: " + e.getMessage());
         }
     }
 
