@@ -514,7 +514,7 @@ public class ControladorCartelera implements Initializable {
     }
 
     private void mostrarInformacion(String titulo, String mensaje) {
-// >>>>>>> ed7aebbd90609132e5451feb080117c1ec7a8d00
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }
 
     @FXML
