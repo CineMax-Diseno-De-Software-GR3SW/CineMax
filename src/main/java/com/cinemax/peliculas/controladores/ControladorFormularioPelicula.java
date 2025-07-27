@@ -10,6 +10,8 @@ import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
 
+
+
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

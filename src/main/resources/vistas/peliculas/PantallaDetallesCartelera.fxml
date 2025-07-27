@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorDetallesCartelera" styleClass="root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button fx:id="btnVolver" text="←" styleClass="icon-button" onAction="#onVolver" />
+                <Label text="Detalles de Película en Cartelera" styleClass="section-title" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="25.0">
+                <padding>
+                    <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                </padding>
+                
+                <!-- Información principal de la película -->
+                <VBox spacing="20.0" styleClass="ticket-card">
+                    <HBox spacing="25.0" alignment="TOP_LEFT">
+                        <!-- Imagen de la película -->
+                        <VBox spacing="10.0" alignment="TOP_CENTER" minWidth="200.0">
+                            <ImageView fx:id="imgPelicula" fitHeight="300.0" fitWidth="200.0" preserveRatio="true" styleClass="movie-poster">
+                                <image>
+                                    <Image url="@../../../images/placeholder-movie.png" requestedHeight="300.0" requestedWidth="200.0" />
+                                </image>
+                            </ImageView>
+                            <Label fx:id="lblEstadoCartelera" text="En Cartelera" styleClass="status-label" />
+                        </VBox>
+                        
+                        <!-- Información detallada -->
+                        <VBox spacing="15.0" VBox.vgrow="ALWAYS">
+                            <Label fx:id="lblTitulo" text="Título de la Película" styleClass="movie-title" />
+                            
+                            <!-- Información técnica -->
+                            <GridPane hgap="15.0" vgap="10.0">
+                                <columnConstraints>
+                                    <ColumnConstraints minWidth="100.0" prefWidth="120.0" />
+                                    <ColumnConstraints hgrow="ALWAYS" />
+                                </columnConstraints>
+                                
+                                <Label text="ID:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Label fx:id="lblId" text="001" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                
+                                <Label text="Año:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label fx:id="lblAnio" text="2024" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                
+                                <Label text="Duración:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <Label fx:id="lblDuracion" text="120 minutos" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                
+                                <Label text="Idioma:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <Label fx:id="lblIdioma" text="Español" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                
+                                <Label text="Géneros:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                                <Label fx:id="lblGeneros" text="Acción, Aventura" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                            </GridPane>
+                        </VBox>
+                    </HBox>
+                </VBox>
+                
+                <!-- Sinopsis -->
+                <VBox spacing="15.0" styleClass="ticket-card">
+                    <Label text="Sinopsis" styleClass="section-title" />
+                    <Label fx:id="lblSinopsis" text="Aquí se mostrará la sinopsis de la película..." 
+                           wrapText="true" styleClass="detail-value" />
+                </VBox>
+                
+                <!-- Información de cartelera -->
+                <VBox spacing="15.0" styleClass="ticket-card">
+                    <Label text="Información de Cartelera" styleClass="section-title" />
+                    <GridPane hgap="20.0" vgap="10.0">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="150.0" prefWidth="150.0" />
+                            <ColumnConstraints hgrow="ALWAYS" />
+                        </columnConstraints>
+                        
+                        <Label text="Funciones Disponibles:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label fx:id="lblFuncionesDisponibles" text="Consultando..." styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        
+                        <Label text="Próxima Función:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="lblProximaFuncion" text="Consultando..." styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        
+                        <Label text="URL de Imagen:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <TextField fx:id="txtImagenUrl" editable="false" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    </GridPane>
+                </VBox>
+                
+                <!-- Botones de acción -->
+                <HBox spacing="15.0" alignment="CENTER">
+                    <children>
+                        <Button fx:id="btnGestionarFunciones" text="Gestionar Funciones" styleClass="primary-button" 
+                                onAction="#onGestionarFunciones" prefWidth="150.0" />
+                        <Button fx:id="btnEditarPelicula" text="Editar Película" styleClass="stepper-button" 
+                                onAction="#onEditarPelicula" prefWidth="120.0" />
+                        <Button fx:id="btnActualizarInfo" text="Actualizar Info" styleClass="link-button" 
+                                onAction="#onActualizarInfo" prefWidth="120.0" />
+                    </children>
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
+            <children>
+                <Button fx:id="btnLogOut" text="Log Out" styleClass="logout-button" onAction="#onLogOut" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblInformacionExtra" text="Vista de detalles de cartelera" styleClass="summary-details" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

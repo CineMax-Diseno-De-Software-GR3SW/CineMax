@@ -25,9 +25,11 @@ import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -42,6 +44,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 public class ControladorSeleccionFuncion implements Initializable {
@@ -83,6 +86,7 @@ public class ControladorSeleccionFuncion implements Initializable {
 
     @FXML private Button btnActualizarCartelera;
     @FXML private Button btnLimpiarBusqueda;
+    @FXML private Button btnVolver;
 
     @FXML private Label lblPeliculaSeleccionada;
     @FXML private Label lblFechaSeleccionada;
@@ -874,6 +878,19 @@ public class ControladorSeleccionFuncion implements Initializable {
         // Solo cargar funciones si hay una película seleccionada
         if (peliculaSeleccionada != null) {
             cargarFuncionesPeliculaSeleccionadaAsync();
+        }
+    }
+
+    @FXML
+    private void onVolver(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo volver al portal: " + e.getMessage());
         }
     }
 }

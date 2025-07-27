@@ -69,6 +69,7 @@ public class ControladorPelicula implements Initializable {
     @FXML private Button btnEditar;
     @FXML private Button btnEliminar;
     @FXML private Button btnVerDetalles;
+    @FXML private Button btnVolver;
     
     @FXML private Label lblTotalPeliculas;
     @FXML private Label lblEstadisticas;
@@ -810,8 +811,15 @@ public class ControladorPelicula implements Initializable {
     
     @FXML
     private void onVolver(ActionEvent event) {
-        // Por ahora solo muestra un mensaje, aquí puedes agregar la lógica para navegar a otra pantalla
-        mostrarInformacion("Volver", "Función de navegación no implementada aún");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            mostrarError("Error de navegación", "No se pudo volver al portal: " + e.getMessage());
+        }
     }
 
     private void navegarAFormularioPelicula(Pelicula pelicula) {

@@ -9,6 +9,7 @@
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
+                <Button fx:id="btnVolver" text="←" styleClass="stepper-button" onAction="#onVolver" />
                 <Label text="Gestión de Funciones" styleClass="section-title" />
                 <Region HBox.hgrow="ALWAYS" />
                 <Button fx:id="btnNuevaFuncion" onAction="#onNuevaFuncion" styleClass="primary-button" text="+ Nueva Función" />

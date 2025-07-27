@@ -42,7 +42,20 @@
                <RowConstraints />
             </rowConstraints>
             </GridPane>
-             <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" text=" Gestión de Usuarios" styleClass="primary-button" />
+             <!-- Botones de Navegación Principal -->
+             <Button fx:id="btnGestionPeliculas" onAction="#onGestionPeliculas" text="Gestión de Películas" styleClass="primary-button" />
+             
+             <Button fx:id="btnGestionCartelera" onAction="#onGestionCartelera" text="Gestión de Cartelera" styleClass="primary-button" />
+             
+             <Button fx:id="btnGestionFunciones" onAction="#onGestionFunciones" text="Gestión de Funciones" styleClass="primary-button" />
+             
+             <Button fx:id="btnSeleccionFuncion" onAction="#onSeleccionFuncion" text="Selección de Función" styleClass="primary-button" />
+
+             <!-- Separador -->
+             <Label text="" />
+
+             <!-- Otros Botones del Sistema -->
+             <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" text="Gestión de Usuarios" styleClass="primary-button" />
 
              <Button fx:id="btnVerReportes" onAction="#onVerReportes" text="Reportes" styleClass="primary-button" />
 

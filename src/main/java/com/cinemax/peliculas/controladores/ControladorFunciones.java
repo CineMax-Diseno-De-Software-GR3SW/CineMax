@@ -28,8 +28,10 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -46,6 +48,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 public class ControladorFunciones implements Initializable {
@@ -73,6 +76,7 @@ public class ControladorFunciones implements Initializable {
     @FXML private Button btnEditar;
     @FXML private Button btnEliminar;
     @FXML private Button btnVerDetalles;
+    @FXML private Button btnVolver;
 
     @FXML private Label lblTotalFunciones;
     @FXML private Label lblEstadisticas;
@@ -94,11 +98,25 @@ public class ControladorFunciones implements Initializable {
 
     @FXML
     private void onNuevaFuncion(ActionEvent event) {
-        mostrarFormularioNuevaFuncion();
+        navegarAFormularioFuncion(null);
     }
 
-    private void mostrarFormularioNuevaFuncion() {
-        mostrarFormularioFuncion(null);
+    private void navegarAFormularioFuncion(Funcion funcion) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaFormularioFuncion.fxml"));
+            Parent root = loader.load();
+            
+            // Si hay una función, configurar para edición
+            if (funcion != null) {
+                ControladorFormularioFuncion controlador = loader.getController();
+                controlador.configurarParaEdicion(funcion);
+            }
+            
+            Stage stage = (Stage) btnNuevaFuncion.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            mostrarError("Error de navegación", "No se pudo abrir el formulario: " + e.getMessage());
+        }
     }
 
     private void mostrarFormularioFuncion(Funcion funcionExistente) {
@@ -293,7 +311,7 @@ public class ControladorFunciones implements Initializable {
     private void onEditarFuncion(ActionEvent event) {
         Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
         if (funcionSeleccionada != null) {
-            mostrarFormularioFuncion(funcionSeleccionada);
+            navegarAFormularioFuncion(funcionSeleccionada);
         }
     }
 
@@ -341,7 +359,23 @@ public class ControladorFunciones implements Initializable {
     private void onVerDetalles(ActionEvent event) {
         Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
         if (funcionSeleccionada != null) {
-            mostrarDetallesFuncion(funcionSeleccionada);
+            navegarADetallesFuncion(funcionSeleccionada);
+        }
+    }
+
+    private void navegarADetallesFuncion(Funcion funcion) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaDetallesFuncion.fxml"));
+            Parent root = loader.load();
+            
+            // Configurar el controlador con la función seleccionada
+            ControladorDetallesFuncion controlador = loader.getController();
+            controlador.cargarFuncion(funcion);
+            
+            Stage stage = (Stage) btnVerDetalles.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            mostrarError("Error de navegación", "No se pudo abrir los detalles: " + e.getMessage());
         }
     }
 
@@ -735,6 +769,19 @@ public class ControladorFunciones implements Initializable {
             // Log del error pero no mostrar UI desde aquí
             System.err.println("Error al obtener funciones por película: " + e.getMessage());
             return new ArrayList<>(); // Retornar lista vacía en caso de error
+        }
+    }
+
+    @FXML
+    private void onVolver(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo volver al portal: " + e.getMessage());
         }
     }
 }

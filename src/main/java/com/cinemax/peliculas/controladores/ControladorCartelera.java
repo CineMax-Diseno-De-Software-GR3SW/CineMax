@@ -19,8 +19,10 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -31,6 +33,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class ControladorCartelera implements Initializable {
 
@@ -45,6 +48,7 @@ public class ControladorCartelera implements Initializable {
     @FXML private GridPane grillaCartelera;
 
     @FXML private Button btnActualizarCartelera;
+    @FXML private Button btnVolver;
     @FXML private Button btnBuscarTitulo;
     @FXML private Button btnBuscarId;
     @FXML private Button btnLimpiarBusqueda;
@@ -488,25 +492,23 @@ public class ControladorCartelera implements Initializable {
     }
 
     private void mostrarDetallesPelicula(Pelicula pelicula) {
-        StringBuilder contenido = new StringBuilder();
-        contenido.append("DETALLES DE LA PELÍCULA\n\n");
-        contenido.append("Título: ").append(pelicula.getTitulo()).append("\n");
-        contenido.append("ID: ").append(pelicula.getId()).append("\n");
-        contenido.append("Año: ").append(pelicula.getAnio()).append("\n");
-        contenido.append("Género: ").append(pelicula.getGenerosComoString()).append("\n");
-        contenido.append("Duración: ").append(pelicula.getDuracionMinutos()).append(" minutos\n");
-        if (pelicula.getIdioma() != null) {
-            contenido.append("Idioma: ").append(pelicula.getIdioma().getNombre()).append("\n");
-        }
-        if (pelicula.getSinopsis() != null && !pelicula.getSinopsis().isEmpty()) {
-            contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
-        }
+        navegarADetallesCartelera(pelicula);
+    }
 
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Detalles de la Película");
-        alert.setHeaderText("Información de: " + pelicula.getTitulo());
-        alert.setContentText(contenido.toString());
-        alert.showAndWait();
+    private void navegarADetallesCartelera(Pelicula pelicula) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaDetallesCartelera.fxml"));
+            Parent root = loader.load();
+            
+            // Configurar el controlador con la película seleccionada
+            ControladorDetallesCartelera controlador = loader.getController();
+            controlador.cargarPelicula(pelicula);
+            
+            Stage stage = (Stage) btnActualizarCartelera.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            mostrarError("Error de navegación", "No se pudo abrir los detalles: " + e.getMessage());
+        }
     }
 
     private void mostrarError(String titulo, String mensaje) {
@@ -556,6 +558,19 @@ public class ControladorCartelera implements Initializable {
             // Log del error pero no mostrar UI desde aquí
             System.err.println("Error al obtener cartelera: " + e.getMessage());
             return new ArrayList<>(); // Retornar lista vacía en caso de error
+        }
+    }
+
+    @FXML
+    private void onVolver(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            
+            Stage stage = (Stage) btnVolver.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo volver al portal: " + e.getMessage());
         }
     }
 }
