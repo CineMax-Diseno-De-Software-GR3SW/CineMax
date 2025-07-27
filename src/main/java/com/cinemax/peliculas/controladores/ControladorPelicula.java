@@ -20,8 +20,10 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -37,6 +39,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 
@@ -76,7 +79,7 @@ public class ControladorPelicula implements Initializable {
 
     @FXML
     private void onNuevaPelicula(ActionEvent event) {
-        mostrarFormularioNuevaPelicula();
+        navegarAFormularioPelicula(null);
     }
 
     private void mostrarFormularioNuevaPelicula() {
@@ -283,7 +286,7 @@ public class ControladorPelicula implements Initializable {
     private void onEditarPelicula(ActionEvent event) {
         Pelicula peliculaSeleccionada = tablaPeliculas.getSelectionModel().getSelectedItem();
         if (peliculaSeleccionada != null) {
-            mostrarFormularioEditarPelicula(peliculaSeleccionada);
+            navegarAFormularioPelicula(peliculaSeleccionada);
         }
     }
 
@@ -578,7 +581,7 @@ public class ControladorPelicula implements Initializable {
     private void onVerDetalles(ActionEvent event) {
         Pelicula peliculaSeleccionada = tablaPeliculas.getSelectionModel().getSelectedItem();
         if (peliculaSeleccionada != null) {
-            mostrarDetallesPelicula(peliculaSeleccionada);
+            navegarADetallesPelicula(peliculaSeleccionada);
         }
     }
 
@@ -809,5 +812,39 @@ public class ControladorPelicula implements Initializable {
     private void onVolver(ActionEvent event) {
         // Por ahora solo muestra un mensaje, aquí puedes agregar la lógica para navegar a otra pantalla
         mostrarInformacion("Volver", "Función de navegación no implementada aún");
+    }
+
+    private void navegarAFormularioPelicula(Pelicula pelicula) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaFormularioPelicula.fxml"));
+            Parent root = loader.load();
+            
+            // Si hay una película, configurar para edición
+            if (pelicula != null) {
+                ControladorFormularioPelicula controlador = loader.getController();
+                controlador.configurarParaEdicion(pelicula);
+            }
+            
+            Stage stage = (Stage) btnNuevaPelicula.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            mostrarError("Error de navegación", "No se pudo abrir el formulario: " + e.getMessage());
+        }
+    }
+
+    private void navegarADetallesPelicula(Pelicula pelicula) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaDetallesPelicula.fxml"));
+            Parent root = loader.load();
+            
+            // Configurar el controlador con la película seleccionada
+            ControladorDetallesPelicula controlador = loader.getController();
+            controlador.cargarPelicula(pelicula);
+            
+            Stage stage = (Stage) btnVerDetalles.getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (Exception e) {
+            mostrarError("Error de navegación", "No se pudo abrir los detalles: " + e.getMessage());
+        }
     }
 }

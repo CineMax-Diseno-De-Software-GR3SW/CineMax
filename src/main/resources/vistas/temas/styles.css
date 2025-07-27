@@ -202,3 +202,73 @@
     -fx-text-fill: #43a047; /* Verde de éxito */
     -fx-font-weight: bold;
 }
+
+/* --- ESTILOS PARA FORMULARIOS --- */
+.form-label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #FFFFFF;
+}
+
+.help-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #B0B0B0;
+    -fx-font-style: italic;
+}
+
+.text-area {
+    -fx-background-color: #3A3A3A;
+    -fx-text-fill: #EAEAEA;
+    -fx-border-color: #4A4A4A;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px;
+    -fx-font-size: 14px;
+    -fx-editable: true;
+}
+
+.text-area .content {
+    -fx-background-color: #3A3A3A;
+    -fx-text-fill: #EAEAEA;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: #3A3A3A;
+}
+
+.text-area .scroll-pane .viewport {
+    -fx-background-color: #3A3A3A;
+}
+
+.text-area .scroll-pane .content {
+    -fx-background-color: #3A3A3A;
+    -fx-text-fill: #EAEAEA;
+}
+
+.text-area:focused {
+    -fx-border-color: #F25F00;
+    -fx-border-width: 2px;
+}
+
+.scroll-pane-content {
+    -fx-background-color: transparent;
+}
+
+/* --- ESTILOS PARA DETALLES DE PELÍCULA --- */
+.movie-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #F25F00;
+}
+
+.detail-label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #B0B0B0;
+}
+
+.detail-value {
+    -fx-font-size: 14px;
+    -fx-text-fill: #EAEAEA;
+}

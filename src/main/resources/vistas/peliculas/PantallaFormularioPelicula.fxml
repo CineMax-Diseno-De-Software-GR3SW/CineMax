@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorFormularioPelicula" styleClass="root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button fx:id="btnVolver" text="←" styleClass="icon-button" onAction="#onVolver" />
+                <Label fx:id="lblTituloPantalla" text="Nueva Película" styleClass="section-title" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="20.0">
+                <padding>
+                    <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                </padding>
+                
+                <!-- Formulario de película -->
+                <VBox spacing="25.0" styleClass="ticket-card">
+                    <Label text="Información de la Película" styleClass="section-title" />
+                    
+                    <!-- Fila 1: Título y Año -->
+                    <HBox spacing="20.0" alignment="CENTER_LEFT">
+                        <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                            <Label text="Título *" styleClass="form-label" />
+                            <TextField fx:id="txtTitulo" promptText="Ingrese el título de la película" styleClass="text-field" />
+                        </VBox>
+                        <VBox spacing="8.0" prefWidth="150.0">
+                            <Label text="Año *" styleClass="form-label" />
+                            <TextField fx:id="txtAnio" promptText="2024" styleClass="text-field" />
+                        </VBox>
+                    </HBox>
+                    
+                    <!-- Fila 2: Duración e Idioma -->
+                    <HBox spacing="20.0" alignment="CENTER_LEFT">
+                        <VBox spacing="8.0" prefWidth="150.0">
+                            <Label text="Duración (min) *" styleClass="form-label" />
+                            <TextField fx:id="txtDuracion" promptText="120" styleClass="text-field" />
+                        </VBox>
+                        <VBox spacing="8.0" prefWidth="200.0">
+                            <Label text="Idioma *" styleClass="form-label" />
+                            <ComboBox fx:id="cmbIdioma" promptText="Seleccione idioma" styleClass="combo-box" prefWidth="200.0" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+                    
+                    <!-- Fila 3: Sinopsis -->
+                    <VBox spacing="8.0">
+                        <Label text="Sinopsis *" styleClass="form-label" />
+                        <TextArea fx:id="txtSinopsis" promptText="Ingrese la sinopsis de la película" 
+                                wrapText="true" prefRowCount="4" styleClass="text-area" />
+                    </VBox>
+                    
+                    <!-- Fila 4: Género Principal -->
+                    <VBox spacing="8.0">
+                        <Label text="Género Principal *" styleClass="form-label" />
+                        <ComboBox fx:id="cmbGenero" promptText="Seleccione género principal" styleClass="combo-box" prefWidth="300.0" />
+                    </VBox>
+                    
+                    <!-- Fila 5: Géneros Adicionales -->
+                    <VBox spacing="8.0">
+                        <Label text="Géneros Adicionales" styleClass="form-label" />
+                        <ListView fx:id="listGeneros" prefHeight="120.0" styleClass="list-view" />
+                        <Label text="Seleccione múltiples géneros manteniendo presionado Ctrl" styleClass="help-text" />
+                    </VBox>
+                    
+                    <!-- Fila 6: URL de Imagen -->
+                    <VBox spacing="8.0">
+                        <Label text="URL de Imagen" styleClass="form-label" />
+                        <TextField fx:id="txtImagenUrl" promptText="https://ejemplo.com/imagen.jpg (opcional)" styleClass="text-field" />
+                    </VBox>
+                    
+                    <!-- Información de campos obligatorios -->
+                    <Label text="* Campos obligatorios" styleClass="help-text" />
+                </VBox>
+                
+                <!-- Botones de acción -->
+                <HBox spacing="15.0" alignment="CENTER">
+                    <children>
+                        <Button fx:id="btnGuardar" text="Guardar Película" styleClass="primary-button" 
+                                onAction="#onGuardar" disable="true" prefWidth="150.0" />
+                        <Button fx:id="btnCancelar" text="Cancelar" styleClass="stepper-button" 
+                                onAction="#onCancelar" prefWidth="100.0" />
+                        <Button fx:id="btnLimpiar" text="Limpiar Formulario" styleClass="link-button" 
+                                onAction="#onLimpiar" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                
+                <!-- Estado del formulario -->
+                <HBox alignment="CENTER" styleClass="summary-pane">
+                    <Label fx:id="lblEstadoFormulario" text="Complete todos los campos obligatorios" styleClass="summary-details" />
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
+            <children>
+                <Button fx:id="btnLogOut" text="Log Out" styleClass="logout-button" onAction="#onLogOut" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblModoEdicion" text="" styleClass="summary-details" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>
