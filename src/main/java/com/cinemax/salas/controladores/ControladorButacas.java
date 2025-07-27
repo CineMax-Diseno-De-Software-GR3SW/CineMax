@@ -1,5 +1,6 @@
 package com.cinemax.salas.controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
@@ -35,7 +36,7 @@ public class ControladorButacas {
     @FXML private TextField txtFila;
     @FXML private TextField txtColumna;
     @FXML private ComboBox<EstadoButaca> cmbEstado;
-    @FXML private ComboBox<Sala> cmbSala;              // <-- agregado
+    @FXML private ComboBox<Sala> cmbSala;
     @FXML private Label lblEstado;
 
     private final ObservableList<Sala>   salas   = FXCollections.observableArrayList();
@@ -46,8 +47,6 @@ public class ControladorButacas {
         salas.setAll(salaService.listarSalas());
         cmbSala.setItems(salas);
 
-        // ——— Aquí pones el CellFactory ———
-        // Renderiza cada Sala mostrando sólo su ID
         cmbSala.setCellFactory(listView -> new ListCell<Sala>() {
             @Override
             protected void updateItem(Sala sala, boolean empty) {
@@ -58,7 +57,6 @@ public class ControladorButacas {
                 setStyle("-fx-text-fill: #000000;");
             }
         });
-        // Asegura que al colapsar el combo también muestre sólo el ID
         cmbSala.setButtonCell(new ListCell<Sala>() {
             @Override
             protected void updateItem(Sala sala, boolean empty) {
@@ -69,24 +67,21 @@ public class ControladorButacas {
                 setStyle("-fx-text-fill: #ffffff;");
             }
         });
-        // —— Configuro las columnas de la tabla ——
+
         colId.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId()).asObject());
         colFila.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getFila()));
         colColumna.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getColumna()));
         colEstado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEstado()));
         colIdSala.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getIdSala()).asObject());
 
-        // —— Items de la tabla y combo de estados ——
         tablaButacas.setItems(butacas);
         cmbEstado.setItems(FXCollections.observableArrayList(EstadoButaca.values()));
 
-        // —— Listener para cargar la butaca seleccionada en el formulario ——
         tablaButacas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, sel) -> {
             if (sel != null) {
                 txtFila.setText(sel.getFila());
                 txtColumna.setText(sel.getColumna());
                 cmbEstado.setValue(EstadoButaca.valueOf(sel.getEstado()));
-                // en vez de new Sala(...), buscamos en la lista existente:
                 salas.stream()
                         .filter(s -> s.getId() == sel.getIdSala())
                         .findFirst()
@@ -103,18 +98,15 @@ public class ControladorButacas {
         Sala sala = cmbSala.getValue();
 
         if (fila.isEmpty() || columna.isEmpty() || estado == null || sala == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos vacíos", "Por favor, complete todos los campos obligatorios.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, complete todos los campos obligatorios.");
             return false;
         }
-        // Validación de datos erróneos (ejemplo: solo letras/números, longitud, etc.)
-        // Validación de Fila: solo letras de la A a la Z
         if (!fila.matches("[A-Za-z]")) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Dato erróneo", "El campo Fila solo debe contener una letra de la A a la Z.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El campo Fila solo debe contener una letra de la A a la Z.");
             return false;
         }
-// Validación de Columna: solo un dígito del 0 al 9
         if (!columna.matches("[1-9]")) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Dato erróneo", "El campo Columna solo debe contener un número del 0 al 9.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El campo Columna solo debe contener un número del 0 al 9.");
             return false;
         }
         return true;
@@ -130,7 +122,7 @@ public class ControladorButacas {
             butacas.setAll(lista);
             lblEstado.setText("Mostrando " + lista.size() + " butacas");
         } catch (Exception ex) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error al listar", ex.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
         }
     }
 
@@ -138,7 +130,6 @@ public class ControladorButacas {
     private void listarTodasButacas(ActionEvent e) {
         listarButacasPorSala(e);
     }
-
 
     @FXML
     private void crearButaca(ActionEvent e) {
@@ -154,15 +145,15 @@ public class ControladorButacas {
 
             listarButacasPorSala(null);
             limpiarCampos();
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Butaca creada correctamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("Butaca creada correctamente.");
         } catch (Exception ex) {
             String msg = ex.getMessage().toLowerCase();
             if (msg.contains("ya existe")) {
-                mostrarAlerta(Alert.AlertType.ERROR, "Butaca duplicada", ex.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
             } else if (msg.contains("capacidad")) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Capacidad excedida", ex.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia(ex.getMessage());
             } else {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error al crear butaca", ex.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
             }
         }
     }
@@ -182,19 +173,18 @@ public class ControladorButacas {
 
             listarButacasPorSala(null);
             limpiarCampos();
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Butaca actualizada correctamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("Butaca actualizada correctamente.");
         } catch (Exception ex) {
             String msg = ex.getMessage().toLowerCase();
             if (msg.contains("ya existe")) {
-                mostrarAlerta(Alert.AlertType.ERROR, "Butaca duplicada", ex.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
             } else if (msg.contains("capacidad")) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Capacidad excedida", ex.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia(ex.getMessage());
             } else {
-                mostrarAlerta(Alert.AlertType.ERROR, "Error al actualizar butaca", ex.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
             }
         }
     }
-
 
     @FXML
     private void eliminarButaca(ActionEvent e) {
@@ -205,11 +195,12 @@ public class ControladorButacas {
             servicio.eliminarButaca(sel.getId());
             listarButacasPorSala(null);
             limpiarCampos();
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Butaca eliminada correctamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("Butaca eliminada correctamente.");
         } catch (Exception ex) {
-            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo eliminar", ex.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
         }
     }
+
     public void onBackAction(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
@@ -221,21 +212,13 @@ public class ControladorButacas {
             e.printStackTrace();
         }
     }
+
     @FXML
     private void limpiarCampos() {
         txtFila.clear();
         txtColumna.clear();
         cmbEstado.getSelectionModel().clearSelection();
-        cmbSala.getSelectionModel().clearSelection();   // <-- limpio el combo
+        cmbSala.getSelectionModel().clearSelection();
         tablaButacas.getSelectionModel().clearSelection();
-    }
-
-    private void mostrarAlerta(Alert.AlertType type, String titulo, String mensaje) {
-        Alert a = new Alert(type);
-        a.setTitle(titulo);
-        a.setHeaderText(null);
-        a.setContentText(mensaje);
-        a.getDialogPane().setStyle("-fx-font-family: 'Segoe UI Emoji'; -fx-font-size: 15px;");
-        a.showAndWait();
     }
 }
