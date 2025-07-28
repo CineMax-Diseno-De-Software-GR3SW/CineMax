@@ -5,6 +5,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
@@ -41,9 +42,6 @@ public class ControladorPerfil implements Initializable {
 
     @FXML
     private TextField txtTelefono;
-
-    @FXML
-    private Button btnEditarPerfil;
 
     @FXML
     private Button btnCambiarContrasena;
@@ -133,9 +131,13 @@ public class ControladorPerfil implements Initializable {
             // Relación con el servicio actualizarCorreo
             try {
                 servicioPerfilUsuario.actualizarCorreo(sesionSingleton.getUsuarioActivo(),nuevoEmail);
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Correo Registrado", "Actualizacion", "Correo " + nuevoEmail + " registrado exitosamente");
+                ManejadorMetodosComunes.mostrarVentanaExito("Correo actualizado exitosamente");
+
+//                mostrarAlerta(Alert.AlertType.INFORMATION, "Correo Registrado", "Actualizacion", "Correo " + nuevoEmail + " registrado exitosamente");
             } catch (SQLException e) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el correo", "Error", e.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar el correo");
+
+//                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el correo", "Error", e.getMessage());
             }
         }
     }
@@ -148,23 +150,27 @@ public class ControladorPerfil implements Initializable {
         if (!editandoTelefono) {
             String nuevoCelular = txtTelefono.getText();
             // Aquí podrías guardar el teléfono a base de datos o backend
-            System.out.println("Nuevo teléfono guardado: " + nuevoCelular);
+//            System.out.println("Nuevo teléfono guardado: " + nuevoCelular);
             try {
                 servicioPerfilUsuario.actualizarCelular(sesionSingleton.getUsuarioActivo(),nuevoCelular);
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Celular Registrado", "Actualizacion", "Celular " + nuevoCelular + " registrado exitosamente");
+                ManejadorMetodosComunes.mostrarVentanaExito("Celular actualizado exitosamente");
+
+//                mostrarAlerta(Alert.AlertType.INFORMATION, "Celular Registrado", "Actualizacion", "Celular " + nuevoCelular + " registrado exitosamente");
             } catch (SQLException e) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el celular", "Error", e.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al registrar el celular");
+
+//                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el celular", "Error", e.getMessage());
             }
         }
     }
 
 
 
-    private void mostrarAlerta(Alert.AlertType type, String title, String header, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+//    private void mostrarAlerta(Alert.AlertType type, String title, String header, String content) {
+//        Alert alert = new Alert(type);
+//        alert.setTitle(title);
+//        alert.setHeaderText(header);
+//        alert.setContentText(content);
+//        alert.showAndWait();
+//    }
 }

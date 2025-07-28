@@ -1,6 +1,7 @@
 package com.cinemax.empleados.controladores;
 
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
@@ -42,24 +43,30 @@ public class ControladorCambiarContrasena {
         String confirmar = txtConfirmarContrasena.getText();
 
         if (!nueva.equals(confirmar)) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Error", "Las contraseñas no coinciden", "Verifica que la nueva contraseña y su confirmación sean iguales.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia ("Las contraseñas no coinciden");
+
+//            mostrarAlerta(Alert.AlertType.WARNING, "Error", "Las contraseñas no coinciden", "Verifica que la nueva contraseña y su confirmación sean iguales.");
             return;
         }
 
         try {
             servicioPerfilUsuario.actualizarClave(sesionSingleton.getUsuarioActivo(), actual, nueva);
-            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Contraseña actualizada", "Tu contraseña se ha actualizado correctamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("Contraseña actualizada exitosamente");
+
+//            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Contraseña actualizada", "Tu contraseña se ha actualizado correctamente.");
             ((Stage) txtContrasenaActual.getScene().getWindow()).close();
         } catch (SQLException e) {
-            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo actualizar la contraseña", e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar la contraseña");
+
+//            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo actualizar la contraseña", e.getMessage());
         }
     }
 
-    private void mostrarAlerta(Alert.AlertType type, String title, String header, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+//    private void mostrarAlerta(Alert.AlertType type, String title, String header, String content) {
+//        Alert alert = new Alert(type);
+//        alert.setTitle(title);
+//        alert.setHeaderText(header);
+//        alert.setContentText(content);
+//        alert.showAndWait();
+//    }
 }

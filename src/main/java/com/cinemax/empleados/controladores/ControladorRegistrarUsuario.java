@@ -1,11 +1,13 @@
 package com.cinemax.empleados.controladores;
 
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
 
+import com.cinemax.empleados.servicios.ValidadorUsuario;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -31,22 +33,32 @@ import java.util.ResourceBundle;
 
 public class ControladorRegistrarUsuario implements Initializable {
 
-    @FXML private TextField campoNombres;
-    @FXML private TextField campoApellidos;
-    @FXML private TextField campoCedula;
-    @FXML private TextField campoCorreo;
-    @FXML private TextField campoCelular;
-    @FXML private TextField campoNombreUsuario;
-    @FXML private ComboBox<Rol> comboBoxRol;
-    @FXML private RadioButton radioActivo;
+    @FXML
+    private TextField campoNombres;
+    @FXML
+    private TextField campoApellidos;
+    @FXML
+    private TextField campoCedula;
+    @FXML
+    private TextField campoCorreo;
+    @FXML
+    private TextField campoCelular;
+    @FXML
+    private TextField campoNombreUsuario;
+    @FXML
+    private ComboBox<Rol> comboBoxRol;
+    @FXML
+    private RadioButton radioActivo;
 
     private ServicioUsuarios servicioUsuarios;
     private ServicioRoles servicioRoles;
+    private ValidadorUsuario validadorUsuario;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         servicioUsuarios = new ServicioUsuarios();
         servicioRoles = new ServicioRoles();
+        validadorUsuario = new ValidadorUsuario();
 
         // Configurar el ComboBox de Roles
         try {
@@ -74,7 +86,9 @@ public class ControladorRegistrarUsuario implements Initializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta(AlertType.ERROR, "Error al Cargar", "Error al cargar Roles", "No se pudieron cargar los roles de usuario.");
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al cargar Roles");
+
+//            mostrarAlerta(AlertType.ERROR, "Error al Cargar", "Error al cargar Roles", "No se pudieron cargar los roles de usuario.");
         }
 
         campoCelular.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -125,19 +139,30 @@ public class ControladorRegistrarUsuario implements Initializable {
         // Validaciones básicas
         if (nombres.isEmpty() || apellidos.isEmpty() || cedula.isEmpty() || correo.isEmpty() ||
                 celular.isEmpty() || nombreUsuario.isEmpty() ||
-                 cargoSeleccionado == null) {
-            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Campos Incompletos", "Por favor, complete todos los campos obligatorios.");
+                cargoSeleccionado == null) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Campos incompletos");
+//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Campos Incompletos", "Por favor, complete todos los campos obligatorios.");
             return;
         }
 
         //Validación adicional para el celular
         if (!celular.matches("\\d{10}")) {
-            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Celular Inválido", "El número de celular debe contener exactamente 10 dígitos numéricos.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de Celular Inválido \n Debe contener exactamente 10 dígitos");
+
+//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Celular Inválido", "Debe contener exactamente 10 dígitos");
             return;
         }
 
         if (!cedula.matches("\\d{10}")) {
-            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de Cédula Inválido \n Debe contener exactamente 10 dígitos");
+
+//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
+            return;
+        }
+        if (!validadorUsuario.validarCorreo(correo)) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de correo inválido");
+
+//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
             return;
         }
 
@@ -147,11 +172,12 @@ public class ControladorRegistrarUsuario implements Initializable {
 //        }
 
         //TODO: NO, Hacerlo desde el servicio
-        String nombreCompleto =nombres + " " + apellidos;
+        String nombreCompleto = nombres + " " + apellidos;
         try {
-            servicioUsuarios.crearUsuario(nombreCompleto,cedula,correo,celular,estadoActivo,nombreUsuario,cargoSeleccionado);
+            servicioUsuarios.crearUsuario(nombreCompleto, cedula, correo, celular, estadoActivo, nombreUsuario, cargoSeleccionado);
+            ManejadorMetodosComunes.mostrarVentanaExito("Empleado creado exitosamente");
 
-            mostrarAlerta(AlertType.INFORMATION, "¡ÉXITO!", "Empleado registrado exitosamente", "El empleado " + nombreCompleto + " ha sido registrado correctamente.");
+//            mostrarAlerta(AlertType.INFORMATION, "¡ÉXITO!", "Empleado registrado exitosamente", "El empleado " + nombreCompleto + " ha sido registrado correctamente.");
             limpiarCampos();
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
@@ -163,10 +189,14 @@ public class ControladorRegistrarUsuario implements Initializable {
                 e.printStackTrace();
             }
         } catch (IllegalArgumentException e) {
-            mostrarAlerta(AlertType.WARNING, "¡ERROR!", "Sucedió algo inesperado al validar los datos. Datos Incorrectos", e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al validar los datos");
+
+//            mostrarAlerta(AlertType.WARNING, "¡ERROR!", "Sucedió algo inesperado al validar los datos. Datos Incorrectos", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Error al Registrar Empleado", "Sucedió algo inesperado al intentar registrar el empleado: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al registrar Empleado");
+
+//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Error al Registrar Empleado", "Sucedió algo inesperado al intentar registrar el empleado: " + e.getMessage());
         }
     }
 
@@ -196,11 +226,11 @@ public class ControladorRegistrarUsuario implements Initializable {
         radioActivo.setSelected(true);
     }
 
-    private void mostrarAlerta(AlertType type, String title, String header, String content) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+//    private void mostrarAlerta(AlertType type, String title, String header, String content) {
+//        Alert alert = new Alert(type);
+//        alert.setTitle(title);
+//        alert.setHeaderText(header);
+//        alert.setContentText(content);
+//        alert.showAndWait();
+//    }
 }

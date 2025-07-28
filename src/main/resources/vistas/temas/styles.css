@@ -8,6 +8,11 @@
     -fx-text-fill: #EAEAEA; /* Texto principal casi blanco */
     -fx-font-size: 14px;
 }
+.loginTitle{     -fx-text-fill: #035a9a;
+    -fx-font-size: 80px;
+    -fx-font-weight: bold;
+
+}
 
 /* --- SCROLLPANE --- */
 .scroll-pane { -fx-background-color: transparent; }
