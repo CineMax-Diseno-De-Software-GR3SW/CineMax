@@ -4,7 +4,7 @@
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<BorderPane xmlns:fx="http://javafx.com/fxml" prefHeight="550.0" prefWidth="800.0"
             fx:controller="com.cinemax.salas.controladores.ControladorSalas"
             stylesheets="@../temas/styles.css"
             styleClass="root">
@@ -55,15 +55,15 @@
                 </TitledPane>
 
                 <HBox spacing="16" alignment="CENTER">
-                    <Button text="🆕 Crear" onAction="#crearSala" styleClass="primary-button"
+                    <Button text="Crear" onAction="#crearSala" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                    <Button text="✏️ Actualizar" onAction="#actualizarSala" styleClass="primary-button"
+                    <Button text="Actualizar" onAction="#actualizarSala" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
                 </HBox>
                 <HBox spacing="16" alignment="CENTER">
-                    <Button text="🗑️ Eliminar" onAction="#eliminarSala" styleClass="primary-button"
+                    <Button text="Eliminar" onAction="#eliminarSala" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                    <Button text="🧹 Limpiar" onAction="#limpiarCampos" styleClass="primary-button"
+                    <Button text="Limpiar" onAction="#limpiarCampos" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
                 </HBox>
             </VBox>

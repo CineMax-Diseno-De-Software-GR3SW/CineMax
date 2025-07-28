@@ -116,39 +116,9 @@ public class ControladorPortalPrincipal {
             System.out.println("Navegar a Configuración");
             // TODO: Implementar navegación a la pantalla de configuración
         }
-        @FXML
+
         public void onConfiguracionSalas(ActionEvent event) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/salas/VistaGSalas.fxml"));
-            try {
-                Parent root = loader.load();
-
-                // Obtener el Stage actual desde el botón o cualquier nodo
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setTitle("Portal del Administrador");
-                stage.setScene(new Scene(root));
-                stage.show();
-
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
         }
-
-        @FXML
-        public void onConfiguracionButacas(ActionEvent event) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/salas/VistaGButacas.fxml"));
-            try {
-                Parent root = loader.load();
-
-                // Obtener el Stage actual desde el botón o cualquier nodo
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setTitle("Portal del Administrador");
-                stage.setScene(new Scene(root));
-                stage.show();
-
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-            }
-         }
 
         @FXML
         private void onVenderBoleto(ActionEvent event) {

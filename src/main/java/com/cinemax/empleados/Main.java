@@ -1,6 +1,6 @@
 package com.cinemax.empleados;
 
-import src.main.java.com.cinemax.comun.ConexionBaseSingleton;
+import com.cinemax.comun.ConexionBaseSingleton;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
