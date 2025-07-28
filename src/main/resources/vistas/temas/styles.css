@@ -15,7 +15,22 @@
 .scroll-bar:vertical .thumb { -fx-background-color: #F25F00; -fx-background-radius: 10px; }
 .scroll-bar:vertical .track { -fx-background-color: #4A4A4A; -fx-background-radius: 10px; }
 
-
+/* --- ICONOS VENTANAS EMERGENTES*/
+.warning-icon {
+    -fx-font-size: 32px;
+    -fx-text-fill: #FFC107;
+    -fx-font-weight: bold;
+}
+.error-icon {
+    -fx-font-size: 32px;
+    -fx-text-fill: #E53935;
+    -fx-font-weight: bold;
+}
+.success-icon {
+    -fx-font-size: 32px;
+    -fx-text-fill: #43a047;
+    -fx-font-weight: bold;
+}
 /* --- CABECERA Y NAVEGACIÓN --- */
 .header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #4A4A4A; -fx-border-width: 0 0 1px 0; }
 .icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
