@@ -11,7 +11,7 @@ import java.io.IOException;
 
 public class ManejadorMetodosComunes {
 
-    public static void cambiarVentana(Stage currentStage, String rutaFXML, String titulo) {
+     public static void cambiarVentana(Stage currentStage, String rutaFXML, String titulo) {
         try {
             // Cargar el archivo FXML
             FXMLLoader loader = new FXMLLoader(ManejadorMetodosComunes.class.getResource(rutaFXML));

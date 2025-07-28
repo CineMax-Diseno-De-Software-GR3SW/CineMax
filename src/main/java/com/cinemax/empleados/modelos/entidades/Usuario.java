@@ -169,4 +169,6 @@ public class Usuario {
 
     public void actualizarCelular(String nuevoCelular) { this.celular = nuevoCelular; }
 
+    public void actualizarClave(String nuevaClave) { this.clave = nuevaClave;
+    }
 }

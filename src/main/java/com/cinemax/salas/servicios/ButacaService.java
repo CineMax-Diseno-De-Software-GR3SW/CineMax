@@ -31,6 +31,8 @@ public class ButacaService {
         // ¡Usamos el método del DAO!
         butacasDAO.generarButacas(salaId, FILAS, columnas);
     }
+
+
     public void crearButaca(Butaca butaca) throws Exception {
         validarDatosBasicos(butaca);
 

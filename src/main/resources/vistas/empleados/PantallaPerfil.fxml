@@ -9,12 +9,11 @@
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
-                <Button onAction="#onVolver" styleClass="icon-button" text="← Volver" />
-                <Label text="Mi Perfil">
-                    <font>
-                        <Font name="Arial Black" size="28" />
-                    </font>
-                </Label>
+                <!-- Botón Regresar -->
+                <Button fx:id="btnBack"
+                        text="←"
+                        onAction="#onVolver"
+                        styleClass="stepper-button"/>                <Label text="Mi Perfil" styleClass="section-title" />
             </children>
         </HBox>
     </top>
@@ -24,15 +23,15 @@
             <padding>
                 <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
             </padding>
-            
+
             <Label styleClass="section-title" text="Información del Perfil" />
-            
+
             <GridPane hgap="15.0" vgap="20.0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
                 </columnConstraints>
-                
+
                 <rowConstraints>
                     <RowConstraints />
                     <RowConstraints />
@@ -41,63 +40,38 @@
                     <RowConstraints />
                     <RowConstraints />
                 </rowConstraints>
-                
-                <Label text="Nombre Completo:" GridPane.columnIndex="0" GridPane.rowIndex="0">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblNombreCompleto" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                
-                <Label text="Cédula:" GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblCedula" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                
-                <Label text="Usuario:" GridPane.columnIndex="0" GridPane.rowIndex="2">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblUsuario" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                
-                <Label text="Rol:" GridPane.columnIndex="0" GridPane.rowIndex="3">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
-                <Label fx:id="lblRol" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
+                <Label text="Nombre Completo:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="label" />
+                <Label fx:id="lblNombreCompleto" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="label" />
+
+                <Label text="Cédula:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="label" />
+                <Label fx:id="lblCedula" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="label" />
+
+                <Label text="Usuario:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="label" />
+                <Label fx:id="lblUsuario" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="label" />
+
+                <Label text="Rol:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="label" />
+                <Label fx:id="lblRol" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="label" />
+
+                <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="label" />
                 <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <children>
-                        <TextField fx:id="txtEmail" promptText="Correo electrónico" editable="false" />
-                        <Button text="✎" onAction="#onEditarEmail" />
+                        <TextField fx:id="txtEmail" promptText="Correo electrónico" editable="false" styleClass="text-field" />
+                        <Button text="✎" onAction="#onEditarEmail" styleClass="icon-button" />
                     </children>
                 </HBox>
 
-                <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="5">
-                    <font>
-                        <Font name="System Bold" size="14.0" />
-                    </font>
-                </Label>
+                <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="label" />
                 <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
                     <children>
-                        <TextField fx:id="txtTelefono" promptText="Teléfono" editable="false" />
-                        <Button text="✎" onAction="#onEditarTelefono" />
+                        <TextField fx:id="txtTelefono" promptText="Teléfono" editable="false" styleClass="text-field" />
+                        <Button text="✎" onAction="#onEditarTelefono" styleClass="icon-button" />
                     </children>
                 </HBox>
             </GridPane>
-            
+
             <HBox spacing="15.0" alignment="CENTER">
-                <Button fx:id="btnEditarPerfil" onAction="#onEditarPerfil" text="Editar Perfil" />
-                <Button fx:id="btnCambiarContrasena" onAction="#onCambiarContrasena" text="Cambiar Contraseña" />
+                <Button fx:id="btnCambiarContrasena" onAction="#onCambiarContrasena" text="Cambiar Contraseña" styleClass="primary-button" />
             </HBox>
         </VBox>
     </center>

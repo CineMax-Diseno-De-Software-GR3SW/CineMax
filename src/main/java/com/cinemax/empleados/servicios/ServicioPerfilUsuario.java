@@ -81,4 +81,14 @@ public class ServicioPerfilUsuario {
         usuarioActivo.actualizarCelular(nuevoCelular);
         usuarioDAO.actualizarCelular(usuarioActivo.getId(), nuevoCelular);
     }
+
+    public void actualizarClave(Usuario usuarioActivo, String claveActual,String nuevaClave) throws SQLException {
+        if (!usuarioActivo.getClave().equals(claveActual)) {
+            throw new SQLException("La contraseña actual es incorrecta.");
+        }
+
+        usuarioActivo.actualizarClave(nuevaClave);
+        usuarioDAO.actualizarClave(usuarioActivo.getId(), nuevaClave);
+    }
+
 }

@@ -1,25 +1,39 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
+# Archivos compilados de Java
+*.class
+*.jar
+*.war
+*.ear
+
+# Archivos de log
+*.log
+
+# Carpetas de compilación de Maven
+# Ignora la carpeta target principal, pero no las subcarpetas con el mismo nombre
+/target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
-.apt_generated
+# ¡Importante! No ignorar el Maven Wrapper
+# Esto permite que otros construyan el proyecto con la misma versión de Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# Carpetas y archivos de configuración del IDE (IntelliJ IDEA)
+# Ignorar la carpeta completa es más simple y seguro
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Archivos de configuración del IDE (Eclipse)
 .classpath
-.factorypath
 .project
-.settings
+.settings/
+.factorypath
+.apt_generated
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
+# Archivos de configuración del IDE (NetBeans)
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,5 +43,12 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# Archivos de configuración del IDE (VS Code)
 .vscode/
+
+# Archivos de Sistema Operativo
+.DS_Store
+Thumbs.db
+
+# Archivos de volcado de memoria de la JVM
+hs_err_pid*
