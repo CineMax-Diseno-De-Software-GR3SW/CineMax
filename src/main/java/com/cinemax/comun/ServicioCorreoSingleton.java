@@ -1,5 +1,6 @@
-package com.cinemax.empleados.servicios;
+package com.cinemax.comun;
 
+import com.cinemax.empleados.servicios.ContenidoMensaje;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;

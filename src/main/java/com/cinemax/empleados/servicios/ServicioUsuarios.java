@@ -1,5 +1,6 @@
 package com.cinemax.empleados.servicios;
 
+import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.modelos.entidades.*;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
