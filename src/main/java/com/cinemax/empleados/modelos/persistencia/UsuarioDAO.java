@@ -279,18 +279,15 @@ public class UsuarioDAO {
 //        db.insertarModificarEliminar(sql);
     }
 
-    public void actualizarClave(Long id, String nuevaClave) {
+    public void actualizarClave(Long idUsuario, String nuevaClave) throws SQLException {
         String sql = """
                 CALL actualizar_clave_usuario(%d,'%s')
                 """.formatted(
-                id,
+                idUsuario,
                 nuevaClave
         );
-        try {
-            db.ejecutarActualizacion(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("Error al actualizar la clave del usuario: " + e.getMessage());
-        }
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 }

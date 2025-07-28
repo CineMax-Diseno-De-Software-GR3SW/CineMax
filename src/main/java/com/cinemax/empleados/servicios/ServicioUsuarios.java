@@ -170,7 +170,18 @@ public class ServicioUsuarios {
         usuarioDAO.cambiarEstado(idUsuario,nuevoEstado);
     }
 
+    public void recuperarClave(String correo) {
+        try {
+            Usuario usuario = usuarioDAO.buscarPorCorreo(correo);
+            usuario.setClave(generarClaveAleatoria());
+            usuarioDAO.actualizarClave(usuario.getId(), usuario.getClave());
+            ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeRecuperacionContrasena(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
+        } catch (Exception e) {
 
+        }
+
+
+    }
 }
 
 //

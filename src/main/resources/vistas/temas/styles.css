@@ -25,6 +25,13 @@
 .close-button:hover .text { -fx-fill: white; }
 .theme-button .text { -fx-font-size: 16px; }
 
+/* --- Asterisco de obligatorio --- */
+.required-asterisk {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.2em; /* Puedes ajustar el tamaño si quieres que destaque más */
+}
+
 /* --- PANELES Y TARJETAS --- */
 .ticket-card, .financial-summary-pane, .alert-pane, .summary-pane {
     -fx-background-color: #2B2B2B; /* Gris oscuro para paneles */

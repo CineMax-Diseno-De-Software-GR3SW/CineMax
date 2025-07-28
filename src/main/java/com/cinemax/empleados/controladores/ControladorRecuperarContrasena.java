@@ -1,5 +1,6 @@
 package com.cinemax.empleados.controladores;
 
+import com.cinemax.empleados.servicios.ServicioUsuarios;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,26 +22,29 @@ public class ControladorRecuperarContrasena {
 
     @FXML
     private Label lblMensaje;
+    private ServicioUsuarios servicioUsuarios;
 
     @FXML
     private void initialize() {
         lblMensaje.setVisible(false); // Oculta el mensaje al inicioo
+        this.servicioUsuarios = new ServicioUsuarios();
     }
 
     @FXML
     private void onSendClick(ActionEvent event) {
-        String email = txtEmail.getText().trim();
+        String correo = txtEmail.getText().trim();
 
-        if (email.isEmpty()) {
+        if (correo.isEmpty()) {
             mostrarMensaje("Por favor, ingresa tu correo electrónico.", true);
             return;
         }
 
-        if (!isValidEmail(email)) {
+        if (!isValidEmail(correo)) {
             mostrarMensaje("Formato de correo electrónico inválido.", true);
             return;
         }
 
+        servicioUsuarios.recuperarClave(correo);
         // --- Simulación de envío de credencial ---
         // 1. Validar si el correo existe en tu base de datos.
         // 2. Generar un token seguro o una contraseña temporal.

@@ -44,5 +44,32 @@ public class ContenidoMensaje {
         return new ContenidoMensaje(asunto, cuerpoHtml);
     }
 
+    // Método estático para crear contenido de correo para recuperación de contraseña
+    public static ContenidoMensaje crearMensajeRecuperacionContrasena(String nombreCompleto, String nombreUsuario, String contrasenaTemporal) {
+        String asunto = "Recuperación de contraseña - Cinemax";
+
+        String cuerpoHtml = "<html>" +
+                "<body style='font-family: Arial, sans-serif; color:#333;'>" +
+                "<h2>Hola " + nombreCompleto + ",</h2>" +
+                "<p>Hemos recibido una solicitud para restablecer tu contraseña de <b>Cinemax</b>.</p>" +
+                "<p>A continuación te proporcionamos una contraseña temporal para que puedas acceder nuevamente:</p>" +
+                "<ul>" +
+                "<li><b>Nombre de usuario:</b> " + nombreUsuario + "</li>" +
+                "<li><b>Contraseña temporal:</b> <code>" + contrasenaTemporal + "</code></li>" +
+                "</ul>" +
+                "<p>Te recomendamos cambiar tu contraseña inmediatamente después de iniciar sesión por seguridad.</p>" +
+                "<br>" +
+                "<p>Si tú no solicitaste este cambio, por favor contáctanos.</p>" +
+                "<br>" +
+                "<p>Saludos,<br>Equipo de soporte Cinemax</p>" +
+                "<br>" +
+                "<p><i>Por favor, no respondas a este mensaje. Este correo ha sido generado automáticamente.</i></p>" +
+                "</body>" +
+                "</html>";
+
+        return new ContenidoMensaje(asunto, cuerpoHtml);
+    }
+
+
 }
 
