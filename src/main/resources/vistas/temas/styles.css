@@ -40,6 +40,13 @@
 .close-button:hover .text { -fx-fill: white; }
 .theme-button .text { -fx-font-size: 16px; }
 
+/* --- Asterisco de obligatorio --- */
+.required-asterisk {
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+    -fx-font-size: 1.2em; /* Puedes ajustar el tamaño si quieres que destaque más */
+}
+
 /* --- PANELES Y TARJETAS --- */
 .ticket-card, .financial-summary-pane, .alert-pane, .summary-pane {
     -fx-background-color: #2B2B2B; /* Gris oscuro para paneles */
@@ -83,3 +90,119 @@
 /* --- Iconos y Contadores --- */
 .summary-ticket-count { -fx-background-color: #4A4A4A; -fx-text-fill: white; }
 .summary-price { -fx-text-fill: white; }
+
+
+/* --- Tablas -------------------------------------------------------------------------------- */
+/* Fondo general de la tabla */
+.table-view {
+    -fx-background-color: #F9FAFB; /* gris claro */
+    -fx-border-color: #E3E6EA;
+    -fx-table-cell-border-color: transparent;
+}
+
+/* Cabecera */
+.table-view .column-header {
+    -fx-background-color: #02487B; /* Indigo */
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Filas */
+.table-row-cell {
+    -fx-background-color: white;
+}
+
+.table-row-cell:filled:selected, .table-row-cell:focused:selected {
+    -fx-background-color: #749ed1; /* Purple */
+    -fx-text-fill: white;
+}
+
+/* Celdas */
+.table-cell {
+    /*-fx-font-size: 10px;*/
+}
+
+/* Bordes de columnas */
+.table-view .table-column {
+    /*-fx-border-color: #E3E6EA;*/
+}
+
+
+/* Toggle Buttons ------------------------------------------------- */
+
+.toggle-button.switch {
+    -fx-background-color: #ccc;
+    -fx-background-radius: 20;
+    -fx-padding: 0 5 0 5; /* arriba derecha abajo izquierda */
+    -fx-alignment: CENTER_LEFT;
+    -fx-pref-width: 50;
+    -fx-pref-height: 25;
+}
+
+.toggle-button.switch:selected {
+    -fx-background-color: #F25F00;
+    -fx-padding: 0 5 0 5; /* arriba derecha abajo izquierda */
+    -fx-alignment: CENTER_RIGHT;
+}
+
+.toggle-button.switch > .text {
+    -fx-fill: #ffffff;                /* color opcional */
+    -fx-font-weight: bold;        /* texto en negrita */
+
+}
+
+/* Estilo general del ComboBox cuando está colapsado */
+.combo-box {
+    -fx-background-color: #02487B;         /* Azul oscuro */
+    -fx-border-color: #02487B;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-mark-color: white;                 /* Flechita blanca */
+}
+
+/* Estilo del texto seleccionado (parte visible) */
+.combo-box .list-cell {
+    -fx-text-fill: white;                  /* Texto blanco */
+    -fx-background-color: #02487B;
+}
+
+/* Estilo del panel desplegable */
+.combo-box-popup .list-view {
+    -fx-background-color: #02487B;         /* Naranja base */
+    -fx-border-color: #1F2430;
+}
+
+/* Ítems normales */
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: #02487B;
+    -fx-text-fill: white;                  /* Texto negro */
+}
+
+/* Ítem resaltado con el mouse */
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #F25F00;         /* Naranja claro al pasar el mouse */
+    -fx-text-fill: #ffffff;                /* Texto negro */
+}
+
+/* Ítem seleccionado en el desplegable */
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: #F25F00;         /* Fondo naranja selección */
+    -fx-text-fill: #ffffff;                /* Texto negro */
+}
+
+/* Estilo del checkbox (no modificado, pero lo dejo si lo estás usando) */
+.confirmation-checkbox .box {
+    -fx-background-color: transparent;
+    -fx-border-color: #6C7079;
+    -fx-border-radius: 4px;
+}
+
+.confirmation-checkbox:selected .box .mark {
+    -fx-background-color: #AAD94C;         /* Verde para confirmación */
+}
+
+
+

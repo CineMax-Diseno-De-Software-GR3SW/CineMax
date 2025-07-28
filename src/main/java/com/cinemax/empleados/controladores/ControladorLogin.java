@@ -70,6 +70,28 @@ e.printStackTrace();            }
 
     }
 
+    @FXML
+    // metodo para manejar el clic en "Olvidaste tu contraseña"
+    private void onForgotPasswordClick(ActionEvent event) {
+        try {
+            // Carga la nueva pantalla de recuperación de contraseña
+            // Asegúrate de que esta ruta sea correcta:
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRecuperarContrasena.fxml"));
+            Parent root = loader.load();
+
+            // Obtiene el Stage actual y cambia la escena
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Recuperar Contraseña");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (Exception e) {
+            lblError.setText("Error al cargar la pantalla de recuperación de contraseña.");
+            lblError.setVisible(true);
+            e.printStackTrace();
+        }
+    }
+
     private boolean iniciarSesion() {
         String nomUsuario = txtUsuario.getText();
         String password = txtPassword.getText();
