@@ -41,15 +41,15 @@
                     </content>
                 </TitledPane>
                 <HBox spacing="16" alignment="CENTER">
-                    <Button text="🆕 Crear" onAction="#crearButaca" styleClass="primary-button"
+                    <Button text="Crear" onAction="#crearButaca" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                    <Button text="✏️ Actualizar" onAction="#actualizarButaca" styleClass="primary-button"
+                    <Button text="Actualizar" onAction="#actualizarButaca" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
                 </HBox>
                 <HBox spacing="16" alignment="CENTER">
-                    <Button text="🗑️ Eliminar" onAction="#eliminarButaca" styleClass="primary-button"
+                    <Button text="Eliminar" onAction="#eliminarButaca" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                    <Button text="🧹 Limpiar" onAction="#limpiarCampos" styleClass="primary-button"
+                    <Button text="Limpiar" onAction="#limpiarCampos" styleClass="primary-button"
                             style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
                 </HBox>
             </VBox>
@@ -62,15 +62,12 @@
                     <Region HBox.hgrow="ALWAYS"/>
                     <Label fx:id="lblEstado" text="Listo" styleClass="label"/>
                 </HBox>
-                <TableView fx:id="tablaButacas" prefHeight="360"
-                           style="-fx-control-inner-background: black;
-                                  -fx-background-color: black;
-                                  -fx-table-cell-border-color: black;
-                                  -fx-border-color: black;">
-                    <columns>
+
+                <TableView fx:id="tablaButacas" prefHeight="400" prefWidth="400" styleClass="tabla">
+                <columns>
                         <TableColumn fx:id="colId" prefWidth="50">
                             <graphic>
-                                <Label text="ID" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="ID" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="id"/>
@@ -78,7 +75,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colFila" prefWidth="80">
                             <graphic>
-                                <Label text="Fila" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="Fila"/>
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="fila"/>
@@ -86,7 +83,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colColumna" prefWidth="80">
                             <graphic>
-                                <Label text="Columna" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="Columna" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="columna"/>
@@ -94,7 +91,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colEstado" prefWidth="100">
                             <graphic>
-                                <Label text="Estado" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="Estado" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="estado"/>
@@ -102,7 +99,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colIdSala" prefWidth="100">
                             <graphic>
-                                <Label text="ID Sala" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="ID Sala" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="salaId"/>

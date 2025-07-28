@@ -1,4 +1,4 @@
-package com.cinemax.empleados;
+package com.cinemax;
 
 import src.main.java.com.cinemax.comun.ConexionBaseSingleton;
 import javafx.application.Application;
