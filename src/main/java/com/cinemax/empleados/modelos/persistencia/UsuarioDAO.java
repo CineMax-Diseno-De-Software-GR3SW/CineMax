@@ -1,6 +1,6 @@
 package com.cinemax.empleados.modelos.persistencia;
 
-import com.cinemax.comun.ConexionBaseSingleton;
+import src.main.java.com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.modelos.entidades.Rol;
 
