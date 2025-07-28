@@ -79,15 +79,18 @@
                     <Label fx:id="lblEstado" text="Listo" styleClass="label"/>
                 </HBox>
 
-                <TableView fx:id="tablaSalas" prefHeight="360"
-                           style="-fx-control-inner-background: black;
-                                  -fx-background-color: black;
-                                  -fx-table-cell-border-color: black;
-                                  -fx-border-color: black;">
-                    <columns>
+<!--                <TableView fx:id="tablaSalas" prefHeight="360"-->
+<!--&lt;!&ndash;                           style="-fx-control-inner-background: black;&ndash;&gt;-->
+<!--&lt;!&ndash;                                  -fx-background-color: black;&ndash;&gt;-->
+<!--&lt;!&ndash;                                  -fx-table-cell-border-color: black;&ndash;&gt;-->
+<!--&lt;!&ndash;                                  -fx-border-color: black;"&ndash;&gt;-->
+<!--                           styleClass="tabla">-->
+                <TableView fx:id="tablaSalas" prefHeight="400" prefWidth="400" styleClass="tabla">
+
+                <columns>
                         <TableColumn fx:id="colId" prefWidth="60">
                             <graphic>
-                                <Label text="ID" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="ID"/>
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="id"/>
@@ -95,7 +98,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colNombre" prefWidth="180">
                             <graphic>
-                                <Label text="Nombre" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="Nombre" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="nombre"/>
@@ -103,7 +106,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colCapacidad" prefWidth="100">
                             <graphic>
-                                <Label text="Capacidad" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="Capacidad" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="capacidad"/>
@@ -111,7 +114,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colTipo" prefWidth="120">
                             <graphic>
-                                <Label text="Tipo" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="Tipo" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="tipo"/>
@@ -119,7 +122,7 @@
                         </TableColumn>
                         <TableColumn fx:id="colEstado" prefWidth="120">
                             <graphic>
-                                <Label text="Estado" style="-fx-text-fill: black; -fx-font-weight: bold;"/>
+                                <Label text="Estado" />
                             </graphic>
                             <cellValueFactory>
                                 <PropertyValueFactory property="estado"/>
