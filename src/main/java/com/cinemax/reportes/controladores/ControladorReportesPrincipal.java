@@ -36,13 +36,15 @@ import com.cinemax.reportes.modelos.persistencia.ReporteDAO;
 
 // Interfaz Strategy
 interface ExportStrategy {
-    void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra) throws Exception;
+    void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
+            throws Exception;
 }
 
 // Implementación PDF
 class ExportPDFStrategy implements ExportStrategy {
     @Override
-    public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra) throws Exception {
+    public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
+            throws Exception {
         try (PDDocument document = new PDDocument()) {
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
@@ -133,7 +135,8 @@ class ExportPDFStrategy implements ExportStrategy {
 // Implementación CSV (solo definida)
 class ExportCSVStrategy implements ExportStrategy {
     @Override
-    public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra) throws Exception {
+    public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
+            throws Exception {
         // Lógica pendiente
     }
 }
@@ -143,17 +146,28 @@ public class ControladorReportesPrincipal {
     @FXML
     private Button btnBack;
 
-    @FXML private DatePicker dateDesde;
-    @FXML private DatePicker dateHasta;
-    @FXML private ChoiceBox<String> choiceHorario;
-    @FXML private ChoiceBox<String> choiceTipoBoleto;
-    @FXML private ChoiceBox<String> choiceSala;
-    @FXML private TableView<ReporteVentaDTO> tablaPreview;
-    @FXML private Label labelTotales;
-    @FXML private BarChart<String, Number> barChart;
-    @FXML private MenuButton menuExportar;
-    @FXML private MenuItem menuExportarPDF;
-    @FXML private MenuItem menuExportarCSV;
+    @FXML
+    private DatePicker dateDesde;
+    @FXML
+    private DatePicker dateHasta;
+    @FXML
+    private ChoiceBox<String> choiceHorario;
+    @FXML
+    private ChoiceBox<String> choiceTipoBoleto;
+    @FXML
+    private ChoiceBox<String> choiceSala;
+    @FXML
+    private TableView<ReporteVentaDTO> tablaPreview;
+    @FXML
+    private Label labelTotales;
+    @FXML
+    private BarChart<String, Number> barChart;
+    @FXML
+    private MenuButton menuExportar;
+    @FXML
+    private MenuItem menuExportarPDF;
+    @FXML
+    private MenuItem menuExportarCSV;
 
     private ReporteDAO reporteDAO = new ReporteDAO();
 
@@ -168,20 +182,25 @@ public class ControladorReportesPrincipal {
         choiceSala.getItems().addAll("Todas", "Sala A", "Sala B", "Sala C");
         choiceSala.setValue("Todas");
 
-        // Configuración inicial de la tabla (puedes agregar columnas aquí si no están en FXML)
+        // Configuración inicial de la tabla (puedes agregar columnas aquí si no están
+        // en FXML)
         if (tablaPreview != null && tablaPreview.getColumns().isEmpty()) {
             TableColumn<ReporteVentaDTO, String> colFecha = new TableColumn<>("Fecha");
             colFecha.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().fecha));
             TableColumn<ReporteVentaDTO, Number> colBoletos = new TableColumn<>("Boletos Vendidos");
-            colBoletos.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().boletosVendidos));
+            colBoletos.setCellValueFactory(
+                    data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().boletosVendidos));
             TableColumn<ReporteVentaDTO, Number> colIngresos = new TableColumn<>("Ingresos");
-            colIngresos.setCellValueFactory(data -> new javafx.beans.property.SimpleDoubleProperty(data.getValue().ingresos));
+            colIngresos.setCellValueFactory(
+                    data -> new javafx.beans.property.SimpleDoubleProperty(data.getValue().ingresos));
             tablaPreview.getColumns().addAll(colFecha, colBoletos, colIngresos);
         }
         // Limpia la tabla y gráfica al iniciar
         tablaPreview.setItems(FXCollections.observableArrayList());
-        if (barChart != null) barChart.getData().clear();
-        if (labelTotales != null) labelTotales.setText("Total: $0.00");
+        if (barChart != null)
+            barChart.getData().clear();
+        if (labelTotales != null)
+            labelTotales.setText("Total: $0.00");
 
         // Configura acciones de exportación en los MenuItem
         if (menuExportarPDF != null) {
@@ -195,7 +214,8 @@ public class ControladorReportesPrincipal {
     @FXML
     private void onBackAction(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -208,10 +228,25 @@ public class ControladorReportesPrincipal {
     @FXML
     private void goToReporteProgramado(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/reportes/ModuloReportesProgramados.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/reportes/ModuloReportesProgramados.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void goToDashboard(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/reportes/ModuloDashboard.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Dashboard de Reportes");
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -245,10 +280,9 @@ public class ControladorReportesPrincipal {
 
         // Si no hay datos reales, usa datos simulados para mostrar en la vista
         List<ReporteVentaDTO> datosParaMostrar = ventas.isEmpty() ? List.of(
-            new ReporteVentaDTO("2024-07-01", 120, 3600.0),
-            new ReporteVentaDTO("2024-07-02", 98, 2940.0),
-            new ReporteVentaDTO("2024-07-03", 156, 4680.0)
-        ) : ventas;
+                new ReporteVentaDTO("2024-07-01", 120, 3600.0),
+                new ReporteVentaDTO("2024-07-02", 98, 2940.0),
+                new ReporteVentaDTO("2024-07-03", 156, 4680.0)) : ventas;
 
         // Actualiza la tabla
         tablaPreview.setItems(FXCollections.observableArrayList(datosParaMostrar));
@@ -265,7 +299,8 @@ public class ControladorReportesPrincipal {
 
         // Actualiza el label de totales
         double total = datosParaMostrar.stream().mapToDouble(v -> v.ingresos).sum();
-        if (labelTotales != null) labelTotales.setText(String.format("Total: $%.2f", total));
+        if (labelTotales != null)
+            labelTotales.setText(String.format("Total: $%.2f", total));
     }
 
     // Métodos para exportar PDF y CSV
@@ -286,10 +321,9 @@ public class ControladorReportesPrincipal {
             if (datos == null || datos.isEmpty()) {
                 // Si la tabla está vacía, usa datos simulados
                 datos = List.of(
-                    new ReporteVentaDTO("2024-07-01", 120, 3600.0),
-                    new ReporteVentaDTO("2024-07-02", 98, 2940.0),
-                    new ReporteVentaDTO("2024-07-03", 156, 4680.0)
-                );
+                        new ReporteVentaDTO("2024-07-01", 120, 3600.0),
+                        new ReporteVentaDTO("2024-07-02", 98, 2940.0),
+                        new ReporteVentaDTO("2024-07-03", 156, 4680.0));
             }
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
