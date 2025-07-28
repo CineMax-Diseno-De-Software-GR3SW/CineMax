@@ -13,52 +13,68 @@ import java.io.IOException;
 
 public class ControladorDashboard {
 
-    @FXML private AreaChart<String, Number> areaChart;
-    @FXML private BarChart<String, Number> barChart;
-    @FXML private PieChart pieChart;
+    @FXML private AreaChart<String, Number> areaChartIngresos;
+    @FXML private BarChart<String, Number> barChartEntradas;
+    @FXML private PieChart pieChartCategorias;
+    @FXML private BarChart<String, Number> barChartTopPeliculas;
 
     @FXML
     public void initialize() {
-        // Gráfico de barras
-        XYChart.Series<String, Number> barData = new XYChart.Series<>();
-        barData.setName("Entradas");
-        barData.getData().add(new XYChart.Data<>("Enero", 300));
-        barData.getData().add(new XYChart.Data<>("Febrero", 200));
-        barData.getData().add(new XYChart.Data<>("Marzo", 400));
-        barChart.getData().add(barData);
-
-        // Gráfico de área
-        XYChart.Series<String, Number> areaData = new XYChart.Series<>();
-        areaData.setName("Ventas");
-        areaData.getData().add(new XYChart.Data<>("Enero", 1200));
-        areaData.getData().add(new XYChart.Data<>("Febrero", 1600));
-        areaData.getData().add(new XYChart.Data<>("Marzo", 1300));
-        areaChart.getData().add(areaData);
-
-        // Gráfico de pastel
-        pieChart.getData().add(new PieChart.Data("Taquilla", 60));
-        pieChart.getData().add(new PieChart.Data("Snacks", 30));
-        pieChart.getData().add(new PieChart.Data("Otros", 10));
+        cargarGraficoIngresosMensuales();
+        cargarGraficoEntradasPorMes();
+        cargarGraficoCategorias();
+        cargarGraficoTopPeliculas();
     }
 
-    @FXML
-    private void onGoToReportes(ActionEvent event) {
+    private void cargarGraficoIngresosMensuales() {
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        serie.setName("Ingresos ($)");
+        serie.getData().add(new XYChart.Data<>("Enero", 1200));
+        serie.getData().add(new XYChart.Data<>("Febrero", 1600));
+        serie.getData().add(new XYChart.Data<>("Marzo", 1300));
+        areaChartIngresos.getData().add(serie);
+    }
+
+    private void cargarGraficoEntradasPorMes() {
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        serie.setName("Entradas");
+        serie.getData().add(new XYChart.Data<>("Enero", 300));
+        serie.getData().add(new XYChart.Data<>("Febrero", 200));
+        serie.getData().add(new XYChart.Data<>("Marzo", 400));
+        barChartEntradas.getData().add(serie);
+    }
+
+    private void cargarGraficoCategorias() {
+        pieChartCategorias.getData().add(new PieChart.Data("Taquilla", 65));
+        pieChartCategorias.getData().add(new PieChart.Data("Snacks", 25));
+        pieChartCategorias.getData().add(new PieChart.Data("Otros", 10));
+    }
+
+    private void cargarGraficoTopPeliculas() {
+        XYChart.Series<String, Number> serie = new XYChart.Series<>();
+        serie.setName("Películas más vistas");
+        serie.getData().add(new XYChart.Data<>("Batman", 120));
+        serie.getData().add(new XYChart.Data<>("Avatar", 110));
+        serie.getData().add(new XYChart.Data<>("Oppenheimer", 95));
+        serie.getData().add(new XYChart.Data<>("Spiderman", 90));
+        serie.getData().add(new XYChart.Data<>("Mario Bros", 80));
+        barChartTopPeliculas.getData().add(serie);
+    }
+
+    // Navegación entre pantallas
+    @FXML private void onGoToReportes(ActionEvent event) {
         cambiarEscena(event, "/vistas/reportes/PantallaModuloReportesPrincipal.fxml", "Gestión de Reportes");
     }
 
-    @FXML
-    private void onGoToGeneracion(ActionEvent event) {
+    @FXML private void onGoToGeneracion(ActionEvent event) {
         cambiarEscena(event, "/vistas/reportes/ReporteProgramado.fxml", "Generación de Reportes");
     }
 
-    @FXML
-    private void goToDashboard(ActionEvent event) {
-        // Ya estás en el dashboard. Puedes mostrar un mensaje o no hacer nada.
+    @FXML private void goToDashboard(ActionEvent event) {
         System.out.println("Ya estás en el Dashboard.");
     }
 
-    @FXML
-    private void onSalir(ActionEvent event) {
+    @FXML private void onSalir(ActionEvent event) {
         cambiarEscena(event, "/vistas/PantallaPortalPrincipal.fxml", "Portal Principal");
     }
 

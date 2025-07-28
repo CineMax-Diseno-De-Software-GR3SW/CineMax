@@ -1,57 +1,62 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.AreaChart?>
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.chart.PieChart?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.chart.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="600" prefWidth="1000" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.reportes.controladores.ControladorDashboard">
+<BorderPane prefHeight="600" prefWidth="1000" stylesheets="@../temas/ayu-theme.css"
+            xmlns="http://javafx.com/javafx/24.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.cinemax.reportes.controladores.ControladorDashboard">
 
+    <!-- ░░░ BARRA SUPERIOR ░░░ -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #1e1e2f; -fx-padding: 15;">
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
             <children>
-                <Label text="Gestión de Reportes - Dashboard">
-                    <font>
-                        <Font name="Arial Black" size="20" />
-                    </font>
+                <Label text="Gestión de Reportes - Dashboard" styleClass="section-title">
+                    <font><Font name="Arial Black" size="20"/></font>
                 </Label>
             </children>
         </HBox>
     </top>
 
+    <!-- ░░░ MENÚ LATERAL ░░░ -->
     <left>
-        <VBox prefWidth="200" spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 20;">
+        <VBox spacing="10" styleClass="summary-pane">
             <children>
-                <Button fx:id="btnReportes" maxWidth="Infinity" onAction="#onGoToReportes" text="ReportesPrincipal" />
-                <Button fx:id="btnGeneracion" maxWidth="Infinity" onAction="#onGoToGeneracion" text="Generacion Reportes" />
-                <Button fx:id="btnDashboard" maxWidth="Infinity" onAction="#goToDashboard" text="Dashboard" />
-                <Region VBox.vgrow="ALWAYS" />
-                <Button fx:id="btnSalir" maxWidth="Infinity" onAction="#onSalir" text="Log Out" />
+                <Button text="ReportesPrincipal" onAction="#onGoToReportes" maxWidth="Infinity"/>
+                <Button text="Reportes Programados" onAction="#onGoToGeneracion" maxWidth="Infinity"/>
+                <Button text="Dashboard" onAction="#goToDashboard" maxWidth="Infinity"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button text="Log Out" onAction="#onSalir" styleClass="logout-btn" maxWidth="Infinity"/>
             </children>
         </VBox>
     </left>
 
+    <!-- ░░░ DASHBOARD DE GRÁFICOS ░░░ -->
     <center>
-        <HBox alignment="CENTER" spacing="20" style="-fx-padding: 20; -fx-background-color: #1c1c1c;">
-            <children>
-                <AreaChart fx:id="areaChart" prefHeight="300" prefWidth="300">
-                    <xAxis><CategoryAxis /></xAxis>
-                    <yAxis><NumberAxis /></yAxis>
+        <VBox spacing="20" style="-fx-padding: 20;">
+            <!-- Fila 1: Ingresos y categorías -->
+            <HBox spacing="20" alignment="CENTER">
+                <AreaChart fx:id="areaChartIngresos" prefHeight="250" prefWidth="450">
+                    <xAxis><CategoryAxis/></xAxis>
+                    <yAxis><NumberAxis/></yAxis>
                 </AreaChart>
-                <PieChart fx:id="pieChart" prefHeight="300" prefWidth="300" />
-                <BarChart fx:id="barChart" prefHeight="300" prefWidth="300">
-                    <xAxis><CategoryAxis /></xAxis>
-                    <yAxis><NumberAxis /></yAxis>
+                <PieChart fx:id="pieChartCategorias" prefHeight="250" prefWidth="400"/>
+            </HBox>
+
+            <!-- Fila 2: Entradas y películas -->
+            <HBox spacing="20" alignment="CENTER">
+                <BarChart fx:id="barChartEntradas" prefHeight="250" prefWidth="450">
+                    <xAxis><CategoryAxis/></xAxis>
+                    <yAxis><NumberAxis/></yAxis>
                 </BarChart>
-            </children>
-        </HBox>
+                <BarChart fx:id="barChartTopPeliculas" prefHeight="250" prefWidth="400">
+                    <xAxis><CategoryAxis/></xAxis>
+                    <yAxis><NumberAxis/></yAxis>
+                </BarChart>
+            </HBox>
+        </VBox>
     </center>
 </BorderPane>
