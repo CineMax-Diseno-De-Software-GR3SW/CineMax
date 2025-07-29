@@ -1,5 +1,6 @@
 package com.cinemax.empleados.controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 import com.cinemax.empleados.modelos.entidades.Usuario;
@@ -222,11 +223,12 @@ public class ControladorGestionUsuarios {
 
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error de Carga");
-            alert.setHeaderText("No se pudo abrir la ventana de registro.");
-            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
-            alert.showAndWait();
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setTitle("Error de Carga");
+//            alert.setHeaderText("No se pudo abrir la ventana de registro.");
+//            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
+//            alert.showAndWait();
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo abrir la ventana de registro.");
         }
     }
 
