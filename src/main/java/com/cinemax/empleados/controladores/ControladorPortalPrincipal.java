@@ -100,7 +100,7 @@ public class ControladorPortalPrincipal {
     @FXML
     private void onVenderBoleto(ActionEvent event) {
         System.out.println("Navegar a Vender Boleto");
-        navegarA("/vistas/venta_boletos/cartelera-view.fxml", "Gestión de Películas", event);
+        navegarA("/vistas/venta_boletos/cartelera-view.fxml", "Venta de Boletos", event);
     }
 
     @FXML
