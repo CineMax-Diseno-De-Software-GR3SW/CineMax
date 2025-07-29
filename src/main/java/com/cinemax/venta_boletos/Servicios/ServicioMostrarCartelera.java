@@ -2,51 +2,76 @@ package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones;
-import javafx.event.ActionEvent;
+import com.cinemax.peliculas.controladores.ControladorCartelera;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.stage.Stage;
+import javafx.stage.Stage; // Importa Stage
 import javafx.scene.Node;
+import javafx.event.ActionEvent;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ServicioMostrarCartelera {
 
-    private final String[] PELICULAS = {
-            "Avengers: Endgame",
-            "The Batman",
-            "Dune: Parte 2",
-            "Spider-Man: No Way Home"
-    };
+    private final ControladorCartelera controladorCartelera = new ControladorCartelera();
+    private ObservableList<Pelicula> peliculas = FXCollections.observableArrayList();
+    private Pelicula selectedPelicula;
 
-    public void inicializarListaPeliculas(ListView<String> listViewPeliculas) {
-        listViewPeliculas.getItems().addAll(PELICULAS);
-        listViewPeliculas.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        listViewPeliculas.setStyle("-fx-selection-bar: #2a9df4; -fx-selection-bar-non-focused: #d0e6f5;");
+    public ObservableList<Pelicula> getPeliculas() {
+        return peliculas;
     }
 
-    public void seleccionarPelicula(ListView<String> listViewPeliculas) {
-        String peliculaSeleccionada = listViewPeliculas.getSelectionModel().getSelectedItem();
+    public Pelicula getSelectedPelicula() {
+        return selectedPelicula;
+    }
 
+    public void setSelectedPelicula(Pelicula selectedPelicula) {
+        this.selectedPelicula = selectedPelicula;
+    }
+
+    public void inicializarListaPeliculas() {
+        try {
+            List<Pelicula> peliculasCargadas = controladorCartelera.obtenerCartelera();
+            peliculas.setAll(peliculasCargadas);
+        } catch (Exception e) {
+            System.err.println("Error al obtener cartelera: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar películas: " + e.getMessage());
+            peliculas.clear();
+        }
+    }
+
+    // MODIFICADO: Ahora el servicio recibe el Stage directamente
+    public void seleccionarPelicula(Pelicula peliculaSeleccionada, Stage currentStage) {
         if (peliculaSeleccionada == null) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Campos Incompletos, Por favor seleccione una película");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, selecciona una película.");
             return;
         }
 
         try {
+            // Aquí puedes usar tu método de cambio de ventana existente
+            ManejadorMetodosComunes.cambiarVentana(currentStage, "/vistas/venta_boletos/funciones-view.fxml",
+                    "Funciones de " + peliculaSeleccionada.getTitulo());
+
+            // Si necesitas pasar el objeto Pelicula al controlador de funciones-view.fxml:
+            // Tienes que cargar el loader de nuevo para obtener el controlador.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/funciones-view.fxml"));
-            Parent root = loader.load();
-
+            loader.load(); // Esto carga la jerarquía de nodos, pero no la muestra.
             ControladorMostrarFunciones controller = loader.getController();
-            controller.setPelicula(peliculaSeleccionada);
+            controller.setPelicula(peliculaSeleccionada.getTitulo()); // Asume que necesitas el título.
+            // Si el controlador necesita el objeto Pelicula completo:
+            // controller.setPeliculaObjeto(peliculaSeleccionada); // Necesitarías un setter
+            // así en tu controlador
 
-            Stage stage = (Stage) listViewPeliculas.getScene().getWindow();
-            Scene newScene = new Scene(root, 800, 600);
-            stage.setScene(newScene);
-            stage.centerOnScreen();
+            // NOTA: El método cambiarVentana de ManejadorMetodosComunes ya establece la
+            // escena y muestra el Stage.
+            // Por lo tanto, no necesitas las líneas de Scene y stage.show() aquí.
+            // Lo importante es que el Stage que le pasas a cambiarVentana sea el mismo que
+            // tienes activo.
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("No se pudo cargar la pantalla de funciones");
@@ -56,14 +81,12 @@ public class ServicioMostrarCartelera {
 
     public void regresarPantallaPrincipal(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
+            // Aquí ya usas ManejadorMetodosComunes.cambiarVentana
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            ManejadorMetodosComunes.cambiarVentana(currentStage, "/vistas/empleados/PantallaPortalPrincipal.fxml");
+        } catch (Exception e) { // Cambiado a Exception para capturar cualquier error al obtener el Stage
             e.printStackTrace();
+            ManejadorMetodosComunes.mostrarVentanaError("Error al regresar a la pantalla principal.");
         }
     }
 }
