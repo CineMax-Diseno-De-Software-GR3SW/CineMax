@@ -116,7 +116,6 @@
     <bottom>
         <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
             <children>
-                <Button fx:id="btnLogOut" text="Log Out" styleClass="logout-button" onAction="#onLogOut" />
                 <Region HBox.hgrow="ALWAYS" />
                 <Label fx:id="lblModoEdicion" text="" styleClass="summary-details" />
             </children>
