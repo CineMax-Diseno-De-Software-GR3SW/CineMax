@@ -68,8 +68,6 @@
                 <!-- Fila 5 -->
                 <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" text="Venta de Boletos"
                         styleClass="primary-button" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
-                <Button fx:id="btnConfiguracionFunciones" onAction="#onConfiguracionFunciones"
-                        text="Config. Funciones" styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
             </GridPane>
         </VBox>
     </center>
