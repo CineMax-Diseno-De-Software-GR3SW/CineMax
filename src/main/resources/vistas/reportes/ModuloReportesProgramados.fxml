@@ -64,9 +64,8 @@
       <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="235.0" spacing="10" styleClass="summary-pane">
          <children>
             <Button mnemonicParsing="false" onAction="#goToReportesPrincipal" styleClass="primary-button" text="ReportesPrincipal" />
-            <Button mnemonicParsing="false" styleClass="primary-button" text="Generacion Reportes" />
             <Region VBox.vgrow="ALWAYS" />
-            <Button onAction="#onCerrarSesion" text="Log Out" />
+            <Button onAction="#onCerrarSesion" styleClass="primary-button" text="Log Out" />
          </children>
       </VBox>
    </left>
