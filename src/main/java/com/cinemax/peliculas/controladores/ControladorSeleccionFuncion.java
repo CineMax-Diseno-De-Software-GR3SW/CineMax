@@ -107,7 +107,7 @@ public class ControladorSeleccionFuncion implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configurarIndicadoresCarga();
-        configurarFiltrosAsync();
+        configurarFiltros();
         configurarGrupoFechas();
         configurarEventos();
         actualizarCarteleraAsync();
@@ -188,66 +188,45 @@ public class ControladorSeleccionFuncion implements Initializable {
         });
     }
 
-    private void configurarFiltrosAsync() {
+    private void configurarFiltros() {
         // Configurar filtro de formato
-        Platform.runLater(() -> {
-            cmbFiltroFormato.getItems().clear();
-            cmbFiltroFormato.getItems().add(null); // Opción "Todos"
-            for (FormatoFuncion formato : FormatoFuncion.values()) {
-                cmbFiltroFormato.getItems().add(formato);
+        cmbFiltroFormato.getItems().clear();
+        cmbFiltroFormato.getItems().add(null); // Opción "Todos"
+        for (FormatoFuncion formato : FormatoFuncion.values()) {
+            cmbFiltroFormato.getItems().add(formato);
+        }
+        cmbFiltroFormato.setConverter(new StringConverter<FormatoFuncion>() {
+            @Override
+            public String toString(FormatoFuncion formato) {
+                return formato != null ? formato.toString() : "Todos";
             }
-            cmbFiltroFormato.setConverter(new StringConverter<FormatoFuncion>() {
+
+            @Override
+            public FormatoFuncion fromString(String string) {
+                return null;
+            }
+        });
+
+        // Configurar filtro de sala de forma síncrona
+        try {
+            List<Sala> salas = salaService.listarSalas();
+            cmbFiltroSala.getItems().clear();
+            cmbFiltroSala.getItems().add(null); // Opción "Todas"
+            cmbFiltroSala.getItems().addAll(salas);
+            cmbFiltroSala.setConverter(new StringConverter<Sala>() {
                 @Override
-                public String toString(FormatoFuncion formato) {
-                    return formato != null ? formato.toString() : "Todos";
+                public String toString(Sala sala) {
+                    return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "Todas";
                 }
 
                 @Override
-                public FormatoFuncion fromString(String string) {
+                public Sala fromString(String string) {
                     return null;
                 }
             });
-        });
-
-        // Configurar filtro de sala
-        Task<List<Sala>> task = new Task<List<Sala>>() {
-            @Override
-            protected List<Sala> call() throws Exception {
-                updateMessage("Cargando salas para filtros...");
-                return salaService.listarSalas();
-            }
-        };
-
-        task.setOnSucceeded(e -> {
-            List<Sala> salas = task.getValue();
-            Platform.runLater(() -> {
-                cmbFiltroSala.getItems().clear();
-                cmbFiltroSala.getItems().add(null); // Opción "Todas"
-                cmbFiltroSala.getItems().addAll(salas);
-                cmbFiltroSala.setConverter(new StringConverter<Sala>() {
-                    @Override
-                    public String toString(Sala sala) {
-                        return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "Todas";
-                    }
-
-                    @Override
-                    public Sala fromString(String string) {
-                        return null;
-                    }
-                });
-            });
-        });
-
-        task.setOnFailed(e -> {
-            Platform.runLater(() -> {
-                ManejadorMetodosComunes.mostrarVentanaError("No se pudieron cargar las salas: " +
-                    task.getException().getMessage());
-            });
-        });
-
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudieron cargar las salas: " + e.getMessage());
+        }
     }
 
     private void actualizarCarteleraAsync() {

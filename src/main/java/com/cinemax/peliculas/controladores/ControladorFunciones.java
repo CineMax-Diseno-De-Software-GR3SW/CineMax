@@ -399,7 +399,7 @@ public class ControladorFunciones implements Initializable {
         configurarTabla();
         configurarEventos();
         cargarFuncionesAsync();
-        configurarFiltrosAsync();
+        configurarFiltros();
     }
 
     private void configurarIndicadorCarga() {
@@ -524,54 +524,35 @@ public class ControladorFunciones implements Initializable {
         thread.start();
     }
 
-    private void configurarFiltrosAsync() {
+    private void configurarFiltros() {
         // Solo configurar filtros si el ComboBox existe
         if (cmbFiltroSala == null) {
             return;
         }
 
-        Task<List<Sala>> task = new Task<List<Sala>>() {
-            @Override
-            protected List<Sala> call() throws Exception {
-                updateMessage("Cargando salas para filtros...");
-                return salaService.listarSalas();
-            }
-        };
+        try {
+            // Cargar salas de forma síncrona - es una operación rápida
+            List<Sala> salas = salaService.listarSalas();
+            
+            cmbFiltroSala.setItems(FXCollections.observableArrayList(salas));
+            cmbFiltroSala.setConverter(new StringConverter<Sala>() {
+                @Override
+                public String toString(Sala sala) {
+                    return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
+                }
 
-        task.setOnSucceeded(e -> {
-            List<Sala> salas = task.getValue();
-            Platform.runLater(() -> {
-                try {
-                    cmbFiltroSala.setItems(FXCollections.observableArrayList(salas));
-                    cmbFiltroSala.setConverter(new StringConverter<Sala>() {
-                        @Override
-                        public String toString(Sala sala) {
-                            return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
-                        }
-
-                        @Override
-                        public Sala fromString(String string) {
-                            return null;
-                        }
-                    });
-
-                    // Configurar evento de cambio en el filtro
-                    cmbFiltroSala.setOnAction(ev -> aplicarFiltros());
-                } catch (Exception ex) {
-                    System.err.println("Error al configurar filtros: " + ex.getMessage());
+                @Override
+                public Sala fromString(String string) {
+                    return null;
                 }
             });
-        });
 
-        task.setOnFailed(e -> {
-            Platform.runLater(() -> {
-                System.err.println("Error al cargar salas para filtros: " + task.getException().getMessage());
-            });
-        });
-
-        Thread thread = new Thread(task);
-        thread.setDaemon(true);
-        thread.start();
+            // Configurar evento de cambio en el filtro
+            cmbFiltroSala.setOnAction(ev -> aplicarFiltros());
+        } catch (Exception ex) {
+            System.err.println("Error al configurar filtros: " + ex.getMessage());
+            mostrarError("Error", "No se pudieron cargar las salas para el filtro: " + ex.getMessage());
+        }
     }
 
     private void configurarTabla() {
@@ -637,30 +618,6 @@ public class ControladorFunciones implements Initializable {
         );
 
         tablaFunciones.setItems(funcionesFiltradas);
-    }
-
-    private void configurarFiltros() {
-        // Configurar combo de salas
-        try {
-            List<Sala> salas = salaService.listarSalas();
-            cmbFiltroSala.setItems(FXCollections.observableArrayList(salas));
-            cmbFiltroSala.setConverter(new StringConverter<Sala>() {
-                @Override
-                public String toString(Sala sala) {
-                    return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
-                }
-
-                @Override
-                public Sala fromString(String string) {
-                    return null;
-                }
-            });
-        } catch (Exception e) {
-            mostrarError("Error", "No se pudieron cargar las salas para el filtro: " + e.getMessage());
-        }
-
-        // Configurar evento de cambio en el filtro
-        cmbFiltroSala.setOnAction(e -> aplicarFiltros());
     }
 
     private void configurarEventos() {
