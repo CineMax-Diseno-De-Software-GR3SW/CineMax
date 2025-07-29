@@ -46,6 +46,6 @@ public class ReporteDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return ventas;
+        return null;
     }
 } 

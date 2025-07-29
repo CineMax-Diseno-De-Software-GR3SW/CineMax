@@ -9,11 +9,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 import java.io.IOException;
-import javafx.stage.FileChooser;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -23,10 +21,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ChoiceBox;
 import java.time.LocalDate;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.Label;
-import javafx.collections.FXCollections;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import com.cinemax.reportes.modelos.ReporteVentaDTO;
@@ -146,10 +140,6 @@ public class ControladorReportesPrincipal {
     @FXML private DatePicker dateDesde;
     @FXML private DatePicker dateHasta;
     @FXML private ChoiceBox<String> choiceHorario;
-    @FXML private ChoiceBox<String> choiceTipoBoleto;
-    @FXML private ChoiceBox<String> choiceSala;
-    @FXML private TableView<ReporteVentaDTO> tablaPreview;
-    @FXML private Label labelTotales;
     @FXML private BarChart<String, Number> barChart;
     @FXML private MenuButton menuExportar;
     @FXML private MenuItem menuExportarPDF;
@@ -161,27 +151,6 @@ public class ControladorReportesPrincipal {
     private void initialize() {
         choiceHorario.getItems().addAll("Todos", "Matutino", "Nocturno");
         choiceHorario.setValue("Todos");
-
-        choiceTipoBoleto.getItems().addAll("Todos", "VIP", "Normal");
-        choiceTipoBoleto.setValue("Todos");
-
-        choiceSala.getItems().addAll("Todas", "Sala A", "Sala B", "Sala C");
-        choiceSala.setValue("Todas");
-
-        // Configuración inicial de la tabla (puedes agregar columnas aquí si no están en FXML)
-        if (tablaPreview != null && tablaPreview.getColumns().isEmpty()) {
-            TableColumn<ReporteVentaDTO, String> colFecha = new TableColumn<>("Fecha");
-            colFecha.setCellValueFactory(data -> new javafx.beans.property.SimpleStringProperty(data.getValue().fecha));
-            TableColumn<ReporteVentaDTO, Number> colBoletos = new TableColumn<>("Boletos Vendidos");
-            colBoletos.setCellValueFactory(data -> new javafx.beans.property.SimpleIntegerProperty(data.getValue().boletosVendidos));
-            TableColumn<ReporteVentaDTO, Number> colIngresos = new TableColumn<>("Ingresos");
-            colIngresos.setCellValueFactory(data -> new javafx.beans.property.SimpleDoubleProperty(data.getValue().ingresos));
-            tablaPreview.getColumns().addAll(colFecha, colBoletos, colIngresos);
-        }
-        // Limpia la tabla y gráfica al iniciar
-        tablaPreview.setItems(FXCollections.observableArrayList());
-        if (barChart != null) barChart.getData().clear();
-        if (labelTotales != null) labelTotales.setText("Total: $0.00");
 
         // Configura acciones de exportación en los MenuItem
         if (menuExportarPDF != null) {
@@ -237,11 +206,9 @@ public class ControladorReportesPrincipal {
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
         String horario = choiceHorario.getValue();
-        String tipoBoleto = choiceTipoBoleto.getValue();
-        String sala = choiceSala.getValue();
 
         // Llama al DAO para obtener los datos filtrados
-        List<ReporteVentaDTO> ventas = reporteDAO.obtenerVentas(desde, hasta, sala, tipoBoleto, horario);
+        List<ReporteVentaDTO> ventas = reporteDAO.obtenerVentas(desde, hasta, null, null, horario);
 
         // Si no hay datos reales, usa datos simulados para mostrar en la vista
         List<ReporteVentaDTO> datosParaMostrar = ventas.isEmpty() ? List.of(
@@ -250,8 +217,6 @@ public class ControladorReportesPrincipal {
             new ReporteVentaDTO("2024-07-03", 156, 4680.0)
         ) : ventas;
 
-        // Actualiza la tabla
-        tablaPreview.setItems(FXCollections.observableArrayList(datosParaMostrar));
 
         // Actualiza el gráfico
         if (barChart != null) {
@@ -265,53 +230,52 @@ public class ControladorReportesPrincipal {
 
         // Actualiza el label de totales
         double total = datosParaMostrar.stream().mapToDouble(v -> v.ingresos).sum();
-        if (labelTotales != null) labelTotales.setText(String.format("Total: $%.2f", total));
     }
 
     // Métodos para exportar PDF y CSV
     @FXML
     private void onExportarPDF(ActionEvent event) {
-        exportarReporte(new ExportPDFStrategy(), "pdf");
+        //exportarReporte(new ExportPDFStrategy(), "pdf");
     }
 
     @FXML
     private void onExportarCSV(ActionEvent event) {
-        exportarReporte(new ExportCSVStrategy(), "csv");
+        //exportarReporte(new ExportCSVStrategy(), "csv");
     }
 
-    private void exportarReporte(ExportStrategy strategy, String tipo) {
-        try {
-            // Usa los datos actualmente mostrados en la tabla para exportar
-            List<ReporteVentaDTO> datos = tablaPreview.getItems();
-            if (datos == null || datos.isEmpty()) {
-                // Si la tabla está vacía, usa datos simulados
-                datos = List.of(
-                    new ReporteVentaDTO("2024-07-01", 120, 3600.0),
-                    new ReporteVentaDTO("2024-07-02", 98, 2940.0),
-                    new ReporteVentaDTO("2024-07-03", 156, 4680.0)
-                );
-            }
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
-            fileChooser.setInitialFileName("reporte_ventas." + tipo);
-            if (tipo.equals("pdf")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
-            } else if (tipo.equals("csv")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
-            }
-            Stage stage = (Stage) btnBack.getScene().getWindow();
-            File archivo = fileChooser.showSaveDialog(stage);
-            if (archivo != null) {
-                Map<String, Object> infoExtra = new HashMap<>();
-                infoExtra.put("subtitulo", "Reporte generado manualmente");
-                strategy.exportar(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
-                mostrarAlerta("Éxito", "El reporte ha sido exportado correctamente.");
-            }
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo exportar el reporte: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+    // private void exportarReporte(ExportStrategy strategy, String tipo) {
+    //     try {
+    //         // Usa los datos actualmente mostrados en la tabla para exportar
+    //         List<ReporteVentaDTO> datos = tablaPreview.getItems();
+    //         if (datos == null || datos.isEmpty()) {
+    //             // Si la tabla está vacía, usa datos simulados
+    //             datos = List.of(
+    //                 new ReporteVentaDTO("2024-07-01", 120, 3600.0),
+    //                 new ReporteVentaDTO("2024-07-02", 98, 2940.0),
+    //                 new ReporteVentaDTO("2024-07-03", 156, 4680.0)
+    //             );
+    //         }
+    //         FileChooser fileChooser = new FileChooser();
+    //         fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
+    //         fileChooser.setInitialFileName("reporte_ventas." + tipo);
+    //         if (tipo.equals("pdf")) {
+    //             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
+    //         } else if (tipo.equals("csv")) {
+    //             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
+    //         }
+    //         Stage stage = (Stage) btnBack.getScene().getWindow();
+    //         File archivo = fileChooser.showSaveDialog(stage);
+    //         if (archivo != null) {
+    //             Map<String, Object> infoExtra = new HashMap<>();
+    //             infoExtra.put("subtitulo", "Reporte generado manualmente");
+    //             strategy.exportar(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
+    //             mostrarAlerta("Éxito", "El reporte ha sido exportado correctamente.");
+    //         }
+    //     } catch (Exception e) {
+    //         mostrarAlerta("Error", "No se pudo exportar el reporte: " + e.getMessage());
+    //         e.printStackTrace();
+    //     }
+    // }
 
     private void mostrarAlerta(String titulo, String mensaje) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
