@@ -10,7 +10,7 @@
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
-                <Button fx:id="btnVolver" text="←" styleClass="icon-button" onAction="#onVolver" />
+                <Button fx:id="btnVolver" text="←" styleClass="stepper-button" onAction="#onVolver" />
                 <Label text="Detalles de la Función" styleClass="section-title" />
                 <Region HBox.hgrow="ALWAYS" />
             </children>
