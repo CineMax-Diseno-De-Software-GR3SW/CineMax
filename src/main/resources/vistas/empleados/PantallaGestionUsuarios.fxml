@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefWidth="800" prefHeight="550" stylesheets="@../temas/styles.css"
+<BorderPane prefWidth="800" prefHeight="500" stylesheets="@../temas/styles.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cinemax.empleados.controladores.ControladorGestionUsuarios">
@@ -30,7 +30,7 @@
 
     <!-- ░░░ PANEL CENTRAL ░░░ -->
     <center>
-        <VBox spacing="12">
+        <VBox spacing="10">
             <!-- Botón Nuevo Usuario alineado a la derecha -->
             <HBox alignment="CENTER_RIGHT">
                 <Button fx:id="btnAgregarUsuario"
@@ -40,10 +40,10 @@
                 <Label text="" minWidth="10"/> <!-- Espacio simulado -->
             </HBox>
 
-            <VBox spacing="12" prefWidth="620" maxWidth="620">
+            <VBox spacing="10" prefWidth="620" maxWidth="620">
 
             <!--             Tabla de usuarios -->
-            <TableView fx:id="tableUsuarios" prefHeight="400" prefWidth="400" styleClass="tabla">
+            <TableView fx:id="tableUsuarios" prefHeight="320" prefWidth="400" styleClass="tabla">
                 <columns>
                     <TableColumn fx:id="colUsuario"  text="Usuario"        prefWidth="85"/>
                     <TableColumn fx:id="colNombre" text="Nombre"    prefWidth="130"/>
@@ -62,16 +62,16 @@
 
     <!-- ░░░ FRANJA IZQUIERDA CON DATOS DE SESIÓN ░░░ -->
     <left>
-        <VBox spacing="10" prefWidth="170" styleClass="summary-pane" alignment="TOP_CENTER">
+        <VBox spacing="8" prefWidth="160" styleClass="summary-pane" alignment="TOP_CENTER">
             <children>
                 <!-- Etiquetas de usuario activo -->
-                <Label fx:id="lblNombreUsuario" prefHeight="26.0" prefWidth="172.0" text="-----" textAlignment="CENTER" styleClass="section-title">
+                <Label fx:id="lblNombreUsuario" prefHeight="24.0" prefWidth="160.0" text="-----" textAlignment="CENTER" styleClass="section-title">
                     <font>
-                        <Font size="20.0" />
+                        <Font size="18.0" />
                     </font></Label>
-                <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="150.0" text="-------" textAlignment="CENTER" styleClass="summary-details">
+                <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="40.0" prefWidth="140.0" text="-------" textAlignment="CENTER" styleClass="summary-details">
                     <font>
-                        <Font name="System Bold Italic" size="15.0" />
+                        <Font name="System Bold Italic" size="14.0" />
                     </font></Label>
                 <!-- Espaciador que empuja el botón Log Out al fondo -->
                 <Region VBox.vgrow="ALWAYS"/>

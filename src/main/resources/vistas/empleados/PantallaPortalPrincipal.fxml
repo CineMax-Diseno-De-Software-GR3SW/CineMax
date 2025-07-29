@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" stylesheets="@../temas/styles.css"
+<BorderPane prefHeight="500.0" prefWidth="800.0" stylesheets="@../temas/styles.css"
             xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cinemax.empleados.controladores.ControladorPortalPrincipal">
     <top>
@@ -21,70 +21,80 @@
     </top>
 
     <center>
-        <VBox spacing="15.0">
+        <VBox spacing="10.0">
             <padding>
-                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0"/>
+                <Insets bottom="15.0" left="25.0" right="25.0" top="15.0"/>
             </padding>
             <Label styleClass="section-title" text="Panel Principal"/>
-            <GridPane hgap="10.0" vgap="15.0">
+            
+            <!-- GridPane con 2 columnas para distribuir mejor los botones -->
+            <GridPane hgap="15.0" vgap="12.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="275.0"/>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="275.0"/>
                 </columnConstraints>
                 <rowConstraints>
-                    <RowConstraints/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
+                    <RowConstraints minHeight="10.0" vgrow="SOMETIMES"/>
                 </rowConstraints>
+
+                <!-- Fila 1 -->
+                <Button fx:id="btnGestionPeliculas" onAction="#onGestionPeliculas" text="Gestión de Películas"
+                        styleClass="primary-button" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+                <Button fx:id="btnGestionCartelera" onAction="#onGestionCartelera" text="Gestión de Cartelera"
+                        styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <!-- Fila 2 -->
+                <Button fx:id="btnGestionFunciones" onAction="#onGestionFunciones" text="Gestión de Funciones"
+                        styleClass="primary-button" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+                <Button fx:id="btnSeleccionFuncion" onAction="#onSeleccionFuncion" text="Selección de Función"
+                        styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+                <!-- Fila 3 -->
+                <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" text="Gestión de Usuarios"
+                        styleClass="primary-button" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+                <Button fx:id="btnVerReportes" onAction="#onVerReportes" text="Reportes" 
+                        styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+                <!-- Fila 4 -->
+                <Button fx:id="btnConfiguracionSalas" onAction="#onConfiguracionSalas" text="Configuración de Salas"
+                        styleClass="primary-button" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+                <Button fx:id="btnConfiguracionButacas" onAction="#onConfiguracionButacas" text="Configuración de Butacas"
+                        styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+
+                <!-- Fila 5 -->
+                <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" text="Venta de Boletos"
+                        styleClass="primary-button" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+                <Button fx:id="btnConfiguracionFunciones" onAction="#onConfiguracionFunciones"
+                        text="Config. Funciones" styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
             </GridPane>
-
-            <!-- Botones de Navegación Principal -->
-            <Button fx:id="btnGestionPeliculas" onAction="#onGestionPeliculas" text="Gestión de Películas"
-                    styleClass="primary-button"/>
-            <Button fx:id="btnGestionCartelera" onAction="#onGestionCartelera" text="Gestión de Cartelera"
-                    styleClass="primary-button"/>
-            <Button fx:id="btnGestionFunciones" onAction="#onGestionFunciones" text="Gestión de Funciones"
-                    styleClass="primary-button"/>
-            <Button fx:id="btnSeleccionFuncion" onAction="#onSeleccionFuncion" text="Selección de Función"
-                    styleClass="primary-button"/>
-
-            <!-- Separador -->
-            <Label text=""/>
-
-            <!-- Otros Botones del Sistema -->
-            <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" text="Gestión de Usuarios"
-                    styleClass="primary-button"/>
-            <Button fx:id="btnVerReportes" onAction="#onVerReportes" text="Reportes" styleClass="primary-button"/>
-            <Button fx:id="btnConfiguracionFunciones" onAction="#onConfiguracionFunciones"
-                    text="Configuración de Funciones" styleClass="primary-button"/>
-            <Button fx:id="btnConfiguracionSalas" onAction="#onConfiguracionSalas" text="Configuración de Salas"
-                    styleClass="primary-button"/>
-            <Button fx:id="btnConfiguracionButacas" onAction="#onConfiguracionButacas" text="Configuración de Butacas"
-                    styleClass="primary-button"/>
-            <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" text="Venta de Boletos"
-                    styleClass="primary-button"/>
         </VBox>
     </center>
 
     <left>
-        <VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="180.0" spacing="15.0"
+        <VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="160.0" spacing="12.0"
               styleClass="summary-pane">
-            <HBox alignment="BOTTOM_LEFT" maxWidth="175.0" prefWidth="90.0">
+            <HBox alignment="BOTTOM_LEFT" maxWidth="155.0" prefWidth="90.0">
                 <!-- Datos de sesión -->
-                <VBox alignment="TOP_CENTER" maxWidth="153.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="468.0"
-                      prefWidth="153.0" spacing="2" styleClass="side-bar">
-                    <Label fx:id="lblNombreUsuario" prefHeight="26.0" prefWidth="172.0" text="-----"
+                <VBox alignment="TOP_CENTER" maxWidth="145.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0"
+                      prefWidth="145.0" spacing="2" styleClass="side-bar">
+                    <Label fx:id="lblNombreUsuario" prefHeight="24.0" prefWidth="140.0" text="-----"
                            textAlignment="CENTER" styleClass="section-title">
                         <font>
-                            <Font size="20.0"/>
+                            <Font size="18.0"/>
                         </font>
                     </Label>
-                    <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0"
-                           prefWidth="150.0" text="-------" textAlignment="CENTER" styleClass="summary-details">
+                    <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="40.0"
+                           prefWidth="140.0" text="-------" textAlignment="CENTER" styleClass="summary-details">
                         <font>
-                            <Font name="System Bold Italic" size="15.0"/>
+                            <Font name="System Bold Italic" size="14.0"/>
                         </font>
                     </Label>
                     <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onAction="#onMiPerfil"
-                            prefHeight="6.0" prefWidth="87.0" text="Mi Perfil" styleClass="primary-button"/>
+                            prefHeight="6.0" prefWidth="85.0" text="Mi Perfil" styleClass="primary-button"/>
                 </VBox>
             </HBox>
             <Button onAction="#onCerrarSesion" text="Cerrar Sesión" styleClass="primary-button"/>

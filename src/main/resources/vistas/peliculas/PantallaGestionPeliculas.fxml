@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula" styleClass="root">
+<BorderPane prefHeight="500.0" prefWidth="800.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula" styleClass="root">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
@@ -21,40 +21,40 @@
     </top>
 
     <center>
-        <VBox spacing="20.0">
+        <VBox spacing="12.0">
             <padding>
-                <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
             </padding>
             
             <!-- Sección de búsqueda y filtros -->
-            <VBox spacing="15.0" styleClass="ticket-card">
+            <VBox spacing="10.0" styleClass="ticket-card">
                 <Label text="Búsqueda y Filtros" styleClass="section-title" />
-                <HBox spacing="15.0" alignment="CENTER_LEFT">
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
                     <children>
                         <Label text="Buscar:" />
-                        <TextField fx:id="txtBuscar" promptText="Título, género..." prefWidth="300.0" styleClass="text-field" />
+                        <TextField fx:id="txtBuscar" promptText="Título, género..." prefWidth="200.0" styleClass="text-field" />
                         <Button fx:id="btnBuscar" onAction="#onBuscar" text="Buscar" styleClass="stepper-button" />
                         <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="link-button" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <ComboBox fx:id="cmbFiltroGenero" promptText="Filtrar por género" prefWidth="150.0" styleClass="combo-box" />
+                        <ComboBox fx:id="cmbFiltroGenero" promptText="Filtrar por género" prefWidth="130.0" styleClass="combo-box" />
                     </children>
                 </HBox>
             </VBox>
 
             <!-- Tabla de películas -->
-            <TableView fx:id="tablaPeliculas" prefHeight="400.0" styleClass="table-view">
+            <TableView fx:id="tablaPeliculas" prefHeight="280.0" styleClass="table-view">
                 <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="50.0" />
-                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="250.0" />
-                    <TableColumn fx:id="colAnio" text="Año" prefWidth="80.0" />
-                    <TableColumn fx:id="colGenero" text="Género" prefWidth="120.0" />
-                    <TableColumn fx:id="colDuracion" text="Duración" prefWidth="100.0" />
-                    <TableColumn fx:id="colIdioma" text="Idioma" prefWidth="100.0" />
+                    <TableColumn fx:id="colId" text="ID" prefWidth="40.0" />
+                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="200.0" />
+                    <TableColumn fx:id="colAnio" text="Año" prefWidth="70.0" />
+                    <TableColumn fx:id="colGenero" text="Género" prefWidth="100.0" />
+                    <TableColumn fx:id="colDuracion" text="Duración" prefWidth="80.0" />
+                    <TableColumn fx:id="colIdioma" text="Idioma" prefWidth="80.0" />
                 </columns>
             </TableView>
 
             <!-- Botones de acción -->
-            <HBox spacing="15.0" alignment="CENTER">
+            <HBox spacing="12.0" alignment="CENTER">
                 <children>
                     <Button fx:id="btnEditar" onAction="#onEditarPelicula" text="Editar" disable="true" styleClass="primary-button" />
                     <Button fx:id="btnEliminar" onAction="#onEliminarPelicula" text="Eliminar" disable="true" styleClass="stepper-button" />
@@ -63,7 +63,7 @@
             </HBox>
 
             <!-- Información adicional -->
-            <HBox spacing="20.0" alignment="CENTER_LEFT" styleClass="summary-pane">
+            <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="summary-pane">
                 <children>
                     <Label fx:id="lblTotalPeliculas" text="Total de películas: 0" styleClass="summary-details" />
                     <Region HBox.hgrow="ALWAYS" />
@@ -72,16 +72,4 @@
             </HBox>
         </VBox>
     </center>
-    
-    <bottom>
-        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
-            <children>
-                <Button fx:id="btnLogOut" text="Log Out" styleClass="logout-button" onAction="#onLogOut" />
-                <Region HBox.hgrow="ALWAYS" />
-            </children>
-            <padding>
-                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
-            </padding>
-        </HBox>
-    </bottom>
 </BorderPane>

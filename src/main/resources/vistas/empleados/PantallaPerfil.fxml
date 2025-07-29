@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorPerfil">
+<BorderPane prefHeight="500.0" prefWidth="800.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorPerfil">
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
@@ -19,17 +19,17 @@
     </top>
 
     <center>
-        <VBox spacing="20.0">
+        <VBox spacing="15.0">
             <padding>
-                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+                <Insets bottom="15.0" left="30.0" right="30.0" top="15.0" />
             </padding>
 
             <Label styleClass="section-title" text="Información del Perfil" />
 
-            <GridPane hgap="15.0" vgap="20.0">
+            <GridPane hgap="12.0" vgap="15.0">
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="140.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="280.0" />
                 </columnConstraints>
 
                 <rowConstraints>
@@ -54,7 +54,7 @@
                 <Label fx:id="lblRol" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="label" />
 
                 <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="label" />
-                <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                <HBox spacing="8.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <children>
                         <TextField fx:id="txtEmail" promptText="Correo electrónico" editable="false" styleClass="text-field" />
                         <Button text="✎" onAction="#onEditarEmail" styleClass="icon-button" />
@@ -62,7 +62,7 @@
                 </HBox>
 
                 <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="label" />
-                <HBox spacing="10.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                <HBox spacing="8.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
                     <children>
                         <TextField fx:id="txtTelefono" promptText="Teléfono" editable="false" styleClass="text-field" />
                         <Button text="✎" onAction="#onEditarTelefono" styleClass="icon-button" />
@@ -70,7 +70,7 @@
                 </HBox>
             </GridPane>
 
-            <HBox spacing="15.0" alignment="CENTER">
+            <HBox spacing="12.0" alignment="CENTER">
                 <Button fx:id="btnCambiarContrasena" onAction="#onCambiarContrasena" text="Cambiar Contraseña" styleClass="primary-button" />
             </HBox>
         </VBox>
