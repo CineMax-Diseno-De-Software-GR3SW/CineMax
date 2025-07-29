@@ -9,7 +9,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Stage; // Importa Stage
+import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
 
@@ -45,7 +45,8 @@ public class ServicioMostrarCartelera {
         }
     }
 
-    // MODIFICADO: Ahora el servicio recibe el Stage directamente
+    // Método corregido para cargar el FXML una sola vez y pasar la película antes
+    // de mostrar
     public void seleccionarPelicula(Pelicula peliculaSeleccionada, Stage currentStage) {
         if (peliculaSeleccionada == null) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, selecciona una película.");
@@ -53,25 +54,16 @@ public class ServicioMostrarCartelera {
         }
 
         try {
-            // Aquí puedes usar tu método de cambio de ventana existente
-            ManejadorMetodosComunes.cambiarVentana(currentStage, "/vistas/venta_boletos/funciones-view.fxml",
-                    "Funciones de " + peliculaSeleccionada.getTitulo());
-
-            // Si necesitas pasar el objeto Pelicula al controlador de funciones-view.fxml:
-            // Tienes que cargar el loader de nuevo para obtener el controlador.
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/funciones-view.fxml"));
-            loader.load(); // Esto carga la jerarquía de nodos, pero no la muestra.
-            ControladorMostrarFunciones controller = loader.getController();
-            controller.setPelicula(peliculaSeleccionada.getTitulo()); // Asume que necesitas el título.
-            // Si el controlador necesita el objeto Pelicula completo:
-            // controller.setPeliculaObjeto(peliculaSeleccionada); // Necesitarías un setter
-            // así en tu controlador
+            Parent root = loader.load();
 
-            // NOTA: El método cambiarVentana de ManejadorMetodosComunes ya establece la
-            // escena y muestra el Stage.
-            // Por lo tanto, no necesitas las líneas de Scene y stage.show() aquí.
-            // Lo importante es que el Stage que le pasas a cambiarVentana sea el mismo que
-            // tienes activo.
+            ControladorMostrarFunciones controller = loader.getController();
+            controller.setPelicula(peliculaSeleccionada.getTitulo());
+
+            currentStage.setScene(new Scene(root));
+            currentStage.setTitle("Funciones de " + peliculaSeleccionada.getTitulo());
+            currentStage.centerOnScreen();
+            currentStage.show();
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("No se pudo cargar la pantalla de funciones");
@@ -81,10 +73,9 @@ public class ServicioMostrarCartelera {
 
     public void regresarPantallaPrincipal(ActionEvent event) {
         try {
-            // Aquí ya usas ManejadorMetodosComunes.cambiarVentana
             Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             ManejadorMetodosComunes.cambiarVentana(currentStage, "/vistas/empleados/PantallaPortalPrincipal.fxml");
-        } catch (Exception e) { // Cambiado a Exception para capturar cualquier error al obtener el Stage
+        } catch (Exception e) {
             e.printStackTrace();
             ManejadorMetodosComunes.mostrarVentanaError("Error al regresar a la pantalla principal.");
         }

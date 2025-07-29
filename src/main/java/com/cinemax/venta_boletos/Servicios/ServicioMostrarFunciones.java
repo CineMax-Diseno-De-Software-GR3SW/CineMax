@@ -4,9 +4,6 @@ import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Controladores.ControladorBoleto;
 import com.cinemax.peliculas.controladores.ControladorFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
-import com.cinemax.peliculas.modelos.entidades.TipoEstreno;
-import com.cinemax.salas.modelos.entidades.Sala;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -20,7 +17,6 @@ import javafx.scene.Node;
 import javafx.application.Platform;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
@@ -30,62 +26,50 @@ public class ServicioMostrarFunciones {
 
     private final ControladorFunciones controladorFunciones = new ControladorFunciones();
 
-   public void cargarFunciones(TableView<Funcion> tabla,
-        TableColumn<Funcion, String> colHora,
-        TableColumn<Funcion, String> colSala,
-        TableColumn<Funcion, String> colFormato,
-        TableColumn<Funcion, String> colTipoEstreno,
-        TableColumn<Funcion, String> colPrecio,
-        TableColumn<Funcion, String> colFecha,
-        String nombrePelicula) {
+    public void cargarFunciones(TableView<Funcion> tabla,
+            TableColumn<Funcion, String> colHora,
+            TableColumn<Funcion, String> colSala,
+            TableColumn<Funcion, String> colFormato,
+            TableColumn<Funcion, String> colTipoEstreno,
+            TableColumn<Funcion, String> colPrecio,
+            TableColumn<Funcion, String> colFecha,
+            String nombrePelicula) {
 
-    // Configurar columnas primero
-    configurarColumnas(colHora, colSala, colFormato, colTipoEstreno, colPrecio, colFecha);
+        // Configurar columnas primero
+        configurarColumnas(colHora, colSala, colFormato, colTipoEstreno, colPrecio, colFecha);
 
-    // DATOS QUEMADOS PARA PRUEBAS
-    List<Funcion> funcionesQuemadas = Arrays.asList(
-        new Funcion(1, LocalDateTime.now().plusHours(2), // ID y fecha+hora
-        new Funcion(2, LocalDateTime.now().plusHours(4)),
-        new Funcion(3, LocalDateTime.now().plusHours(6))
-    );
+        try {
+            List<Funcion> funcionesObtenidas = controladorFunciones.obtenerFuncionesPorNombrePelicula(nombrePelicula);
 
-    // Configurar datos quemados
-    funcionesQuemadas.get(0).setFormato(FormatoPelicula._3D);
-    funcionesQuemadas.get(0).setTipoEstreno(TipoEstreno.ESTRENO);
-    funcionesQuemadas.get(0).setPrecioBase(new BigDecimal("12.50"));
-    
-    funcionesQuemadas.get(1).setFormato(FormatoPelicula._2D);
-    funcionesQuemadas.get(1).setTipoEstreno(TipoEstreno.NORMAL);
-    funcionesQuemadas.get(1).setPrecioBase(new BigDecimal("9.00"));
-    
-    funcionesQuemadas.get(2).setFormato(FormatoPelicula._4DX);
-    funcionesQuemadas.get(2).setTipoEstreno(TipoEstreno.PREESTRENO);
-    funcionesQuemadas.get(2).setPrecioBase(new BigDecimal("15.00"));
+            // Debug detallado
+            System.out.println("\n=== DEBUG: Funciones obtenidas ===");
+            funcionesObtenidas.forEach(f -> {
+                System.out.println(
+                        "ID: " + f.getId() +
+                                " | Película: " + (f.getPelicula() != null ? f.getPelicula().getTitulo() : "null") +
+                                " | Sala: " + (f.getSala() != null ? f.getSala().getNombre() : "null") +
+                                " | Fecha: " + f.getFechaHoraInicio());
+            });
 
-    // Simular sala
-    Sala salaPrueba = new Sala();
-    salaPrueba.setNombre("Sala Premium");
-    funcionesQuemadas.forEach(f -> f.setSala(salaPrueba));
+            ObservableList<Funcion> listaFunciones = FXCollections.observableArrayList(funcionesObtenidas);
 
-    System.out.println("=== USANDO DATOS QUEMADOS PARA PRUEBAS ===");
-    System.out.println("Total funciones quemadas: " + funcionesQuemadas.size());
+            Platform.runLater(() -> {
+                tabla.setItems(listaFunciones);
+                System.out.println("Funciones cargadas en tabla: " + listaFunciones.size());
 
-    ObservableList<Funcion> listaFunciones = FXCollections.observableArrayList(funcionesQuemadas);
+                if (listaFunciones.isEmpty()) {
+                    tabla.setPlaceholder(new Label("No hay funciones disponibles para " + nombrePelicula));
+                }
+            });
 
-    Platform.runLater(() -> {
-        tabla.setItems(listaFunciones);
-        System.out.println("Funciones quemadas cargadas en tabla: " + listaFunciones.size());
-        
-        if (listaFunciones.isEmpty()) {
-            tabla.setPlaceholder(new Label("No se cargaron funciones (pero deberían estar las quemadas)"));
-        } else {
-            System.out.println("Contenido de la tabla:");
-            tabla.getItems().forEach(f -> System.out.println(
-                "Hora: " + f.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("HH:mm")) + 
-                " | Sala: " + f.getSala().getNombre()));
+        } catch (Exception e) {
+            Platform.runLater(() -> {
+                tabla.setPlaceholder(new Label("Error al cargar funciones"));
+                ManejadorMetodosComunes.mostrarVentanaError("Error al cargar funciones: " + e.getMessage());
+            });
+            e.printStackTrace();
         }
-    });
-}
+    }
 
     private void configurarColumnas(TableColumn<Funcion, String> colHora,
             TableColumn<Funcion, String> colSala,
@@ -93,7 +77,7 @@ public class ServicioMostrarFunciones {
             TableColumn<Funcion, String> colTipoEstreno,
             TableColumn<Funcion, String> colPrecio,
             TableColumn<Funcion, String> colFecha) {
-        // Configuración de columnas (igual que antes)
+
         colHora.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getFechaHoraInicio() != null
                         ? cellData.getValue().getFechaHoraInicio().format(DateTimeFormatter.ofPattern("HH:mm"))
@@ -103,7 +87,24 @@ public class ServicioMostrarFunciones {
                 cellData.getValue().getSala() != null ? cellData.getValue().getSala().getNombre()
                         : "Sala no disponible"));
 
-        // ... (resto de configuraciones de columnas igual que antes)
+        colFormato.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getFormato() != null ? cellData.getValue().getFormato().name().replace("_", " ")
+                        : ""));
+
+        colTipoEstreno.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getTipoEstreno() != null
+                        ? cellData.getValue().getTipoEstreno().name().replace("_", " ")
+                        : ""));
+
+        colPrecio.setCellValueFactory(cellData -> {
+            BigDecimal precio = cellData.getValue().calcularPrecioFinal();
+            return new SimpleStringProperty(precio != null ? String.format("$%.2f", precio) : "$0.00");
+        });
+
+        colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getFechaHoraInicio() != null
+                        ? cellData.getValue().getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                        : ""));
     }
 
     public void regresarPantallaCartelera(ActionEvent event) {
