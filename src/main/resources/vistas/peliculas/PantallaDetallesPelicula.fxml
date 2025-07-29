@@ -75,42 +75,7 @@
                     </ScrollPane>
                 </VBox>
                 
-                <!-- Información técnica -->
-                <VBox spacing="15.0" styleClass="ticket-card">
-                    <Label text="Información Técnica" styleClass="section-title" />
-                    <GridPane hgap="30.0" vgap="10.0">
-                        <columnConstraints>
-                            <ColumnConstraints minWidth="150.0" />
-                            <ColumnConstraints minWidth="200.0" />
-                            <ColumnConstraints minWidth="150.0" />
-                            <ColumnConstraints minWidth="200.0" />
-                        </columnConstraints>
-                        
-                        <Label text="Fecha de creación:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                        <Label fx:id="lblFechaCreacion" text="Información no disponible" styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                        
-                        <Label text="Estado:" styleClass="detail-label" GridPane.columnIndex="2" GridPane.rowIndex="0" />
-                        <Label fx:id="lblEstado" text="Activa" styleClass="detail-value" GridPane.columnIndex="3" GridPane.rowIndex="0" />
-                        
-                        <Label text="Total de funciones:" styleClass="detail-label" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                        <Label fx:id="lblTotalFunciones" text="Cargando..." styleClass="detail-value" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        
-                        <Label text="Próxima función:" styleClass="detail-label" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label fx:id="lblProximaFuncion" text="Cargando..." styleClass="detail-value" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                    </GridPane>
-                </VBox>
-                
-                <!-- Botones de acción adicionales -->
-                <HBox spacing="15.0" alignment="CENTER">
-                    <children>
-                        <Button fx:id="btnVerFunciones" text="Ver Funciones" styleClass="primary-button" 
-                                onAction="#onVerFunciones" prefWidth="140.0" />
-                        <Button fx:id="btnEliminar" text="Eliminar Película" styleClass="stepper-button" 
-                                onAction="#onEliminar" prefWidth="140.0" />
-                        <Button fx:id="btnCompartir" text="Exportar Info" styleClass="link-button" 
-                                onAction="#onCompartir" prefWidth="120.0" />
-                    </children>
-                </HBox>
+                <!-- Información técnica y botones eliminados -->
             </VBox>
         </ScrollPane>
     </center>

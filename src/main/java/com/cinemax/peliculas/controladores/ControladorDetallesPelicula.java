@@ -29,17 +29,8 @@ public class ControladorDetallesPelicula implements Initializable {
     @FXML private Label lblGeneros;
     @FXML private Label lblSinopsis;
     @FXML private Label lblUrlImagen;
-    @FXML private Label lblFechaCreacion;
-    @FXML private Label lblEstado;
-    @FXML private Label lblTotalFunciones;
-    @FXML private Label lblProximaFuncion;
-    @FXML private Label lblUltimaModificacion;
-
     @FXML private Button btnVolver;
     @FXML private Button btnEditar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnVerFunciones;
-    @FXML private Button btnCompartir;
     @FXML private Button btnLogOut;
 
     private ServicioPelicula servicioPelicula;
@@ -90,12 +81,10 @@ public class ControladorDetallesPelicula implements Initializable {
         }
 
         // Información técnica (valores estáticos por ahora)
-        lblFechaCreacion.setText("Información no disponible");
-        lblEstado.setText("Activa");
-        lblUltimaModificacion.setText("Información no disponible");
+        // Eliminado: referencias a labels eliminados del FXML
 
         // Cargar información de funciones de forma asíncrona
-        cargarInformacionFunciones();
+        // Eliminado: llamada a cargarInformacionFunciones()
     }
 
     private void cargarImagen(String urlImagen) {
@@ -117,11 +106,7 @@ public class ControladorDetallesPelicula implements Initializable {
         }
     }
 
-    private void cargarInformacionFunciones() {
-        // Por ahora valores estáticos, se puede implementar con DAO de funciones
-        lblTotalFunciones.setText("Por implementar");
-        lblProximaFuncion.setText("Por implementar");
-    }
+    // Eliminado: método cargarInformacionFunciones()
 
     @FXML
     private void onVolver(ActionEvent event) {
@@ -145,43 +130,7 @@ public class ControladorDetallesPelicula implements Initializable {
         }
     }
 
-    @FXML
-    private void onEliminar(ActionEvent event) {
-        try {
-            // Mostrar advertencia de confirmación
-            String mensaje = "¿Está seguro de eliminar esta película?\n\n" +
-                           "Título: " + pelicula.getTitulo() + 
-                           "\n\nATENCIÓN: Esta acción no se puede deshacer.";
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
-            
-            // Proceder con la eliminación
-            servicioPelicula.eliminarPelicula(pelicula.getId());
-            mostrarInformacion("Éxito", "Película eliminada correctamente");
-            
-            // Volver a la pantalla principal
-            volverAPantallaPrincipal();
-            
-        } catch (Exception e) {
-            String mensajeError = e.getMessage();
-            if (mensajeError.contains("foreign key constraint") || mensajeError.contains("violates")) {
-                mostrarErrorRestriccion();
-            } else {
-                mostrarError("Error", "No se pudo eliminar la película: " + mensajeError);
-            }
-        }
-    }
-
-    @FXML
-    private void onVerFunciones(ActionEvent event) {
-        // TODO: Implementar navegación a funciones
-        mostrarInformacion("Funciones", "Navegación a funciones por implementar");
-    }
-
-    @FXML
-    private void onCompartir(ActionEvent event) {
-        // TODO: Implementar exportar información
-        mostrarInformacion("Exportar", "Funcionalidad de exportar por implementar");
-    }
+    // Métodos eliminados: onEliminar, onVerFunciones, onCompartir
 
     @FXML
     private void onLogOut(ActionEvent event) {
@@ -200,19 +149,7 @@ public class ControladorDetallesPelicula implements Initializable {
         }
     }
 
-    private void mostrarErrorRestriccion() {
-        String mensaje = "No se puede eliminar la película '" + pelicula.getTitulo() + 
-                        "' porque está asociada con:\n\n" +
-                        "• Funciones programadas\n" +
-                        "• Cartelera\n" +
-                        "• Boletos vendidos\n" +
-                        "• Reservas existentes\n\n" +
-                        "ACCIÓN REQUERIDA:\n" +
-                        "Para eliminar esta película, primero debe eliminar todas las funciones\n" +
-                        "y entradas de cartelera asociadas en el gestor correspondiente.";
-        
-        ManejadorMetodosComunes.mostrarVentanaError(mensaje);
-    }
+    // Eliminado: método mostrarErrorRestriccion()
 
     private void mostrarError(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");

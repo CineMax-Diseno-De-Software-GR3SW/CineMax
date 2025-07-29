@@ -98,16 +98,7 @@
                 </VBox>
                 
                 <!-- Botones de acción -->
-                <HBox spacing="15.0" alignment="CENTER">
-                    <children>
-                        <Button fx:id="btnGestionarFunciones" text="Gestionar Funciones" styleClass="primary-button" 
-                                onAction="#onGestionarFunciones" prefWidth="150.0" />
-                        <Button fx:id="btnEditarPelicula" text="Editar Película" styleClass="stepper-button" 
-                                onAction="#onEditarPelicula" prefWidth="120.0" />
-                        <Button fx:id="btnActualizarInfo" text="Actualizar Info" styleClass="link-button" 
-                                onAction="#onActualizarInfo" prefWidth="120.0" />
-                    </children>
-                </HBox>
+               
             </VBox>
         </ScrollPane>
     </center>

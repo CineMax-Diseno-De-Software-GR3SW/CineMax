@@ -126,16 +126,7 @@
                 </VBox>
                 
                 <!-- Botones de acción -->
-                <HBox spacing="15.0" alignment="CENTER">
-                    <children>
-                        <Button fx:id="btnEditarFuncion" text="Editar Función" styleClass="primary-button" 
-                                onAction="#onEditarFuncion" prefWidth="130.0" />
-                        <Button fx:id="btnGestionarBoletos" text="Gestionar Boletos" styleClass="stepper-button" 
-                                onAction="#onGestionarBoletos" prefWidth="140.0" />
-                        <Button fx:id="btnActualizar" text="Actualizar Info" styleClass="link-button" 
-                                onAction="#onActualizar" prefWidth="120.0" />
-                    </children>
-                </HBox>
+               
             </VBox>
         </ScrollPane>
     </center>
