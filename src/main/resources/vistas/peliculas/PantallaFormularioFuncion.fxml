@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorFormularioFuncion" styleClass="root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button fx:id="btnVolver" text="←" styleClass="stepper-button" onAction="#onVolver" />
+                <Label fx:id="lblTituloPantalla" text="Nueva Función" styleClass="section-title" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="20.0">
+                <padding>
+                    <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                </padding>
+                
+                <!-- Formulario de función -->
+                <VBox spacing="25.0" styleClass="ticket-card">
+                    <Label text="Información de la Función" styleClass="section-title" />
+                    
+                    <!-- Fila 1: Película y Sala -->
+                    <HBox spacing="20.0" alignment="CENTER_LEFT">
+                        <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                            <Label text="Película *" styleClass="form-label" />
+                            <ComboBox fx:id="cmbPelicula" promptText="Seleccione una película" styleClass="combo-box" />
+                        </VBox>
+                        <VBox spacing="8.0" prefWidth="200.0">
+                            <Label text="Sala *" styleClass="form-label" />
+                            <ComboBox fx:id="cmbSala" promptText="Seleccione sala" styleClass="combo-box" />
+                        </VBox>
+                    </HBox>
+                    
+                    <!-- Fila 2: Fecha y Hora -->
+                    <HBox spacing="20.0" alignment="CENTER_LEFT">
+                        <VBox spacing="8.0" prefWidth="180.0">
+                            <Label text="Fecha *" styleClass="form-label" />
+                            <DatePicker fx:id="dateFecha" promptText="dd/mm/aaaa" styleClass="date-picker" />
+                        </VBox>
+                        <VBox spacing="8.0" prefWidth="120.0">
+                            <Label text="Hora Inicio *" styleClass="form-label" />
+                            <TextField fx:id="txtHoraInicio" promptText="HH:MM" styleClass="text-field" />
+                        </VBox>
+                        <VBox spacing="8.0" prefWidth="120.0">
+                            <Label text="Hora Fin" styleClass="form-label" />
+                            <TextField fx:id="txtHoraFin" promptText="HH:MM" styleClass="text-field" editable="false" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+                    
+                    <!-- Fila 3: Formato y Tipo de Estreno -->
+                    <HBox spacing="20.0" alignment="CENTER_LEFT">
+                        <VBox spacing="8.0" prefWidth="200.0">
+                            <Label text="Formato *" styleClass="form-label" />
+                            <ComboBox fx:id="cmbFormato" promptText="Seleccione formato" styleClass="combo-box" />
+                        </VBox>
+                        <VBox spacing="8.0" prefWidth="200.0">
+                            <Label text="Tipo de Estreno *" styleClass="form-label" />
+                            <ComboBox fx:id="cmbTipoEstreno" promptText="Seleccione tipo" styleClass="combo-box" />
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+                    
+                    <!-- Información adicional -->
+                    <VBox spacing="8.0">
+                        <Label text="Información Calculada" styleClass="form-label" />
+                        <GridPane hgap="15.0" vgap="8.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="120.0" prefWidth="120.0" />
+                                <ColumnConstraints hgrow="ALWAYS" />
+                            </columnConstraints>
+                            
+                            <Label text="Duración:" styleClass="help-text" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                            <Label fx:id="lblDuracionCalculada" text="Se calculará automáticamente" styleClass="help-text" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                            
+                            <Label text="Capacidad Sala:" styleClass="help-text" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                            <Label fx:id="lblCapacidadSala" text="Seleccione una sala" styleClass="help-text" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        </GridPane>
+                    </VBox>
+                    
+                    <!-- Información de campos obligatorios -->
+                    <Label text="* Campos obligatorios" styleClass="help-text" />
+                </VBox>
+                
+                <!-- Botones de acción -->
+                <HBox spacing="15.0" alignment="CENTER">
+                    <children>
+                        <Button fx:id="btnGuardar" text="Guardar Función" styleClass="primary-button" 
+                                onAction="#onGuardar" disable="true" prefWidth="150.0" />
+                        <Button fx:id="btnCancelar" text="Cancelar" styleClass="stepper-button" 
+                                onAction="#onCancelar" prefWidth="100.0" />
+                        <Button fx:id="btnLimpiar" text="Limpiar Formulario" styleClass="link-button" 
+                                onAction="#onLimpiar" prefWidth="150.0" />
+                    </children>
+                </HBox>
+                
+                <!-- Estado del formulario -->
+                <HBox alignment="CENTER" styleClass="summary-pane">
+                    <Label fx:id="lblEstadoFormulario" text="Complete todos los campos obligatorios" styleClass="summary-details" />
+                </HBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
+            <children>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblModoEdicion" text="" styleClass="summary-details" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>
