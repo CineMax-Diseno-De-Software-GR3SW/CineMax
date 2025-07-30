@@ -1,0 +1,186 @@
+@startuml ModuloReportes_DiagramaDeClases
+
+' Estilos
+skinparam classAttributeIconSize 0
+skinparam classFontSize 12
+skinparam classFontStyle bold
+skinparam packageStyle rectangle
+
+package "com.cinemax.reportes" {
+    
+    package "controladores" {
+        class ControladorReportesPrincipal {
+            -btnBack: Button
+            -dateDesde: DatePicker
+            -dateHasta: DatePicker
+            -choiceHorario: ChoiceBox<String>
+            -choiceTipoBoleto: ChoiceBox<String>
+            -choiceSala: ChoiceBox<String>
+            -tablaPreview: TableView<ReporteVentaDTO>
+            -labelTotales: Label
+            -barChart: BarChart<String, Number>
+            -menuExportar: MenuButton
+            -menuExportarPDF: MenuItem
+            -menuExportarCSV: MenuItem
+            -reporteDAO: ReporteDAO
+            --
+            +initialize(): void
+            +onBackAction(event: ActionEvent): void
+            +goToReporteProgramado(event: ActionEvent): void
+            +onCerrarSesion(event: ActionEvent): void
+            +onFiltrar(event: ActionEvent): void
+            +onExportarPDF(event: ActionEvent): void
+            +onExportarCSV(event: ActionEvent): void
+            -exportarReporte(strategy: ExportStrategy, tipo: String): void
+            -mostrarAlerta(titulo: String, mensaje: String): void
+        }
+        
+        class ControladorReportesProgramados {
+            -btnBack: Button
+            -choiceFrecuencia: ChoiceBox<String>
+            -tablaReportesGenerados: TableView<ReporteGenerado>
+            -columnaNombre: TableColumn<ReporteGenerado, String>
+            -columnaEstado: TableColumn<ReporteGenerado, String>
+            -columnaFecha: TableColumn<ReporteGenerado, LocalDate>
+            -columnaAcciones: TableColumn<ReporteGenerado, Void>
+            -schedulerService: ReportesSchedulerService
+            --
+            +initialize(): void
+            +confirmarReporteProgramado(event: ActionEvent): void
+            +goToReportesPrincipal(event: ActionEvent): void
+            +onBackAction(event: ActionEvent): void
+            +onCerrarSesion(event: ActionEvent): void
+            -inicializarTablaReportes(): void
+            -existeReporteConFrecuencia(frecuencia: String): boolean
+            -mostrarVentanaPrevia(): void
+            -agregarReporteATabla(fechaEjecucion: String): void
+            +eliminarReporteProgramado(reporte: ReporteGenerado): void
+            -mostrarVistaPrevia(reporte: ReporteGenerado): void
+            -descargarReportePDF(reporte: ReporteGenerado): void
+            -generarPDFConPDFBox(reporte: ReporteGenerado, archivo: File): void
+            -mostrarAlerta(titulo: String, mensaje: String): void
+        }
+    }
+    
+    package "modelos" {
+        class ReporteVentaDTO {
+            +fecha: String
+            +boletosVendidos: int
+            +ingresos: double
+            --
+            +ReporteVentaDTO(fecha: String, boletosVendidos: int, ingresos: double)
+        }
+        
+        class ReporteGenerado {
+            -nombreReporte: String
+            -fechaGeneracion: LocalDateTime
+            -estado: String
+            -frecuencia: String
+            -rutaArchivo: String
+            --
+            +ReporteGenerado(nombreReporte: String, fechaGeneracion: LocalDateTime, estado: String, rutaArchivo: String, frecuencia: String)
+            +ReporteGenerado()
+            +getNombreReporte(): String
+            +setNombreReporte(nombreReporte: String): void
+            +getFechaGeneracion(): LocalDateTime
+            +setFechaGeneracion(fechaGeneracion: LocalDateTime): void
+            +getEstado(): String
+            +setEstado(estado: String): void
+            +getRutaArchivo(): String
+            +setRutaArchivo(rutaArchivo: String): void
+            +getFrecuencia(): String
+        }
+        
+        package "persistencia" {
+            class ReporteDAO {
+                --
+                +obtenerVentas(desde: LocalDate, hasta: LocalDate, sala: String, tipoBoleto: String, horario: String): List<ReporteVentaDTO>
+            }
+        }
+        
+        ' Strategy Pattern para frecuencias
+        interface FrecuenciaStrategy {
+            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
+        }
+        
+        class DiarioStrategy {
+            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
+        }
+        
+        class SemanalStrategy {
+            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
+        }
+        
+        class MensualStrategy {
+            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
+        }
+        
+        class TrimestralStrategy {
+            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
+        }
+        
+        class AnualStrategy {
+            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
+        }
+    }
+    
+    package "servicios" {
+        class ReportesSchedulerService {
+            -instance: ReportesSchedulerService
+            -reportesPendientes: List<ReporteGenerado>
+            -reportesEjecutados: ObservableList<ReporteGenerado>
+            -scheduler: ScheduledExecutorService
+            --
+            -ReportesSchedulerService()
+            +getInstance(): ReportesSchedulerService
+            +iniciarScheduler(): void
+            +detenerScheduler(): void
+            +getReportesPendientes(): List<ReporteGenerado>
+            +getReportesEjecutados(): ObservableList<ReporteGenerado>
+            -revisarReportesPendientes(): void
+            -getStrategy(frecuencia: String): FrecuenciaStrategy
+            -calcularSiguienteEjecucion(fechaGeneracion: LocalDateTime, frecuencia: String): LocalDateTime
+            +calcularProximaEjecucion(fechaGeneracionStr: String, frecuencia: String): String
+        }
+    }
+    
+    ' Interfaces para Strategy Pattern de exportación
+    interface ExportStrategy {
+        +exportar(datos: List<ReporteVentaDTO>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+    }
+    
+    class ExportPDFStrategy {
+        +exportar(datos: List<ReporteVentaDTO>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+    }
+    
+    class ExportCSVStrategy {
+        +exportar(datos: List<ReporteVentaDTO>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+    }
+}
+
+' Relaciones
+ControladorReportesPrincipal --> ReporteDAO : usa
+ControladorReportesPrincipal --> ReporteVentaDTO : maneja
+ControladorReportesPrincipal --> ExportStrategy : usa
+ControladorReportesProgramados --> ReporteGenerado : maneja
+ControladorReportesProgramados --> ReportesSchedulerService : usa
+
+ReportesSchedulerService --> ReporteGenerado : gestiona
+ReportesSchedulerService --> FrecuenciaStrategy : usa
+ReporteDAO --> ReporteVentaDTO : retorna
+
+' Strategy Pattern para frecuencias
+FrecuenciaStrategy <|.. DiarioStrategy
+FrecuenciaStrategy <|.. SemanalStrategy
+FrecuenciaStrategy <|.. MensualStrategy
+FrecuenciaStrategy <|.. TrimestralStrategy
+FrecuenciaStrategy <|.. AnualStrategy
+
+' Strategy Pattern para exportación
+ExportStrategy <|.. ExportPDFStrategy
+ExportStrategy <|.. ExportCSVStrategy
+
+' Singleton pattern
+ReportesSchedulerService --> ReportesSchedulerService : instance
+
+@enduml 

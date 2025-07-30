@@ -1,22 +1,22 @@
 package com.cinemax.reportes.modelos;
 
-
 import java.time.LocalDateTime;
 
-
 public class ReporteGenerado {
-    private String nombreReporte;
-    private LocalDateTime fechaGeneracion; // Esta propiedad causa el problema
-    private String estado;
-    private String frecuencia;
+    private int id;
+    private String nombre;
+    private String tipo;
+    private LocalDateTime fechaGeneracion;
     private String rutaArchivo;
+    private String descripcion;
     
-    public ReporteGenerado(String nombreReporte, LocalDateTime fechaGeneracion, String estado, String rutaArchivo, String frecuencia) {
-        this.nombreReporte = nombreReporte;
+    public ReporteGenerado(int id, String nombre, String tipo, LocalDateTime fechaGeneracion, String rutaArchivo, String descripcion) {
+        this.id = id;
+        this.nombre = nombre;
+        this.tipo = tipo;
         this.fechaGeneracion = fechaGeneracion;
-        this.estado = estado;
         this.rutaArchivo = rutaArchivo;
-        this.frecuencia = frecuencia;
+        this.descripcion = descripcion;
     }
     
     // Constructor vacío
@@ -24,12 +24,28 @@ public class ReporteGenerado {
     }
     
     // Getters y Setters
-    public String getNombreReporte() { 
-        return nombreReporte; 
+    public int getId() {
+        return id;
     }
     
-    public void setNombreReporte(String nombreReporte) { 
-        this.nombreReporte = nombreReporte; 
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    public String getNombre() { 
+        return nombre; 
+    }
+    
+    public void setNombre(String nombre) { 
+        this.nombre = nombre; 
+    }
+    
+    public String getTipo() {
+        return tipo;
+    }
+    
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
     
     public LocalDateTime getFechaGeneracion() { 
@@ -40,14 +56,6 @@ public class ReporteGenerado {
         this.fechaGeneracion = fechaGeneracion; 
     }
     
-    public String getEstado() {
-        return estado;
-    }
-    
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-    
     public String getRutaArchivo() {
         return rutaArchivo;
     }
@@ -56,7 +64,11 @@ public class ReporteGenerado {
         this.rutaArchivo = rutaArchivo;
     }
 
-    public String getFrecuencia() {
-        return frecuencia;
+    public String getDescripcion() {
+        return descripcion;
+    }
+    
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 }

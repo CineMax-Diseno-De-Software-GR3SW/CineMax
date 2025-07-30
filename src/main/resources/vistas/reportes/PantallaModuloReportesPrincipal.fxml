@@ -3,19 +3,24 @@
 <?import javafx.scene.chart.BarChart?>
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import java.time.LocalDateTime?>
 
-<BorderPane prefHeight="550" prefWidth="800" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.reportes.controladores.ControladorReportesPrincipal">
+<BorderPane prefHeight="700" prefWidth="1200" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.reportes.controladores.ControladorReportesPrincipal">
 
     <!-- ░░░ TOP BAR ░░░ -->
     <top>
@@ -34,45 +39,59 @@
 
     <!-- ░░░ PANEL CENTRAL ░░░ -->
     <center>
-        <VBox alignment="TOP_CENTER" spacing="16">
-            <!-- Filtros -->
-            <HBox alignment="CENTER_LEFT" spacing="10">
-                <Label text="Desde:" />
-                <DatePicker fx:id="dateDesde" />
-                <Label text="Hasta:" />
-                <DatePicker fx:id="dateHasta" styleClass="date-picker" />
-                <Label text="Horario:" />
-                <ChoiceBox fx:id="choiceHorario" prefWidth="100" />
-                <!--<Button text="Filtrar" onAction="#onFiltrar"/>-->
-                <Button styleClass="primary-button" text="Filtrar" />
+        <ScrollPane fitToWidth="true" fitToHeight="true">
+            <VBox alignment="TOP_CENTER" spacing="16" style="-fx-padding: 20;">
+                <!-- Filtros -->
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label text="Desde:" />
+                    <DatePicker fx:id="dateDesde" />
+                    <Label text="Hasta:" />
+                    <DatePicker fx:id="dateHasta" styleClass="date-picker" />
+                    <Label text="Horario:" />
+                    <ChoiceBox fx:id="choiceHorario" prefWidth="100" />
+                    <Button fx:id="btnFiltrar" styleClass="primary-button" text="Filtrar" onAction="#onFiltrar"/>
+                </HBox>
 
-            </HBox>
+                <!-- Gráficas -->
+                <HBox alignment="TOP_CENTER" spacing="20">
+                    <VBox spacing="8">
+                        <Label text="Ventas por Tipo de Boleto" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                        <BarChart fx:id="barChart" prefHeight="300" prefWidth="500">
+                            <xAxis>
+                                <CategoryAxis label="Fecha" />
+                            </xAxis>
+                            <yAxis>
+                                <NumberAxis label="Cantidad de Boletos" />
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                    
+                    <VBox spacing="8">
+                        <Label text="Distribución 2D vs 3D" style="-fx-font-weight: bold; -fx-font-size: 14px;" />
+                        <PieChart fx:id="pieChart" prefHeight="300" prefWidth="300" />
+                    </VBox>
+                </HBox>
 
-            <!-- Vista previa: Tabla y gráfica -->
-            <HBox alignment="TOP_CENTER" spacing="16">
-                <VBox spacing="8" />
-                <VBox spacing="8">
-                    <Label text="Gráfica de ventas" />
-                    <BarChart fx:id="barChart" prefHeight="250" prefWidth="300">
-                        <xAxis>
-                            <CategoryAxis label="Categoría" />
-                        </xAxis>
-                        <yAxis>
-                            <NumberAxis label="Cantidad" />
-                        </yAxis>
-                    </BarChart>
+                <!-- Botón de confirmación -->
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Button fx:id="btnConfirmar" styleClass="primary-button" text="Confirmar" onAction="#onConfirmarReporte"/>
+                </HBox>
+
+                <!-- Tabla de Reportes Generados -->
+                <VBox spacing="10">
+                    <Label text="Reportes Generados" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
+                    <TableView fx:id="tablaReportes" prefHeight="200" styleClass="report-table">
+                        <columns>
+                            <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200" />
+                            <TableColumn fx:id="colTipo" text="Tipo" prefWidth="80" />
+                            <TableColumn fx:id="colFecha" text="Fecha Generación" prefWidth="150" />
+                            <TableColumn fx:id="colDescripcion" text="Descripción" prefWidth="300" />
+                            <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="100" />
+                        </columns>
+                    </TableView>
                 </VBox>
-            </HBox>
-            <!-- Botón de exportar debajo, alineado a la derecha -->
-            <HBox alignment="CENTER_RIGHT" spacing="10">
-                <MenuButton fx:id="menuExportar" styleClass="primary-button" text="Exportar">
-                    <items>
-                        <MenuItem fx:id="menuExportarPDF" text="Exportar como PDF" />
-                        <MenuItem fx:id="menuExportarCSV" text="Exportar como CSV" />
-                    </items>
-                </MenuButton>
-            </HBox>
-        </VBox>
+            </VBox>
+        </ScrollPane>
     </center>
 
     <!-- ░░░ FRANJA IZQUIERDA CON DATOS DE SESIÓN ░░░ -->
@@ -81,7 +100,7 @@
             <children>
             <Button mnemonicParsing="false" styleClass="primary-button" text="Modulo Reporte" />
             <Button mnemonicParsing="false" onAction="#goToReporteProgramado" styleClass="primary-button" text="Reporte Programado" />
-                <!-- Espaciador que empuja el botón Log Out al fondo -->
+                <!-- Espaciador que empuja el botón Log Out al fondo -->
                 <Region VBox.vgrow="ALWAYS" />
 
                 <Button onAction="#onCerrarSesion" styleClass="primary-button" text="Log Out" />

@@ -8,9 +8,10 @@
 }
 
 .label {
-    -fx-text-fill: #EAEAEA;
-    /* Texto principal casi blanco */
+    -fx-text-fill: #FFFFFF;
+    /* Texto principal blanco para mejor legibilidad */
     -fx-font-size: 14px;
+    -fx-font-weight: bold;
 }
 
 
@@ -507,5 +508,134 @@
 
 .detail-value {
     -fx-font-size: 14px;
-    -fx-text-fill: #EAEAEA;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+/* Estilos para gráficas - Mejorar legibilidad */
+.chart {
+    -fx-background-color: #2B2B2B;
+    -fx-padding: 10px;
+    -fx-background-radius: 8px;
+}
+
+.chart-title {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.chart-plot-background {
+    -fx-background-color: #2B2B2B;
+}
+
+.axis {
+    -fx-tick-label-fill: #FFFFFF;
+    -fx-tick-label-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.axis-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.chart-legend {
+    -fx-background-color: #2B2B2B;
+    -fx-text-fill: #FFFFFF;
+}
+
+.chart-legend-item {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.chart-legend-item .label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+/* Estilos para gráfica de pastel */
+.pie-chart {
+    -fx-background-color: #2B2B2B;
+    -fx-padding: 10px;
+    -fx-background-radius: 8px;
+}
+
+.pie-chart-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.pie-chart .chart-pie-label {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+}
+
+/* Estilos para DatePicker y ChoiceBox - Mejorar legibilidad */
+.date-picker .text-field {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.choice-box .label {
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+    -fx-background-color: #FFFFFF;
+}
+
+.choice-box {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #4A4A4A;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+.choice-box .arrow-button {
+    -fx-background-color: #02487B;
+    -fx-border-color: #02487B;
+}
+
+.choice-box .arrow-button:hover {
+    -fx-background-color: #F25F00;
+}
+
+/* Estilos para el popup del ChoiceBox */
+.choice-box-popup .list-view {
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #4A4A4A;
+}
+
+.choice-box-popup .list-view .list-cell {
+    -fx-background-color: #FFFFFF;
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+}
+
+.choice-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #E0E0E0;
+    -fx-text-fill: #000000;
+}
+
+.choice-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: #02487B;
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Botón Confirmar específico */
+#btnConfirmar {
+    -fx-background-color: #27AE60;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-padding: 10 20;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+#btnConfirmar:hover {
+    -fx-background-color: #229954;
 }
