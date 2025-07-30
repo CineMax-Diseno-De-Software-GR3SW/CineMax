@@ -96,28 +96,8 @@ public class ControladorPortalPrincipal {
 
     @FXML
     private void onVerReportes(ActionEvent event) {
-        // TODO: Implementar navegación a la pantalla de reportes
         System.out.println("Navegar a Ver Reportes");
-
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/vistas/reportes/PantallaModuloReportesPrincipal.fxml"));
-        try {
-            Parent root = loader.load();
-
-            // Obtener el stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Módulo de Reportes");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            System.err.println("Error al cargar FXML: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println("Error inesperado: " + e.getMessage());
-            e.printStackTrace();
-        }
-
+        navegarA("/vistas/reportes/PantallaModuloReportesPrincipal.fxml", "Módulo de Reportes", event);
     }
 
     @FXML
@@ -126,9 +106,15 @@ public class ControladorPortalPrincipal {
         // TODO: Implementar navegación a la pantalla de configuración
     }
 
+    @FXML
     public void onConfiguracionSalas(ActionEvent event) {
+        navegarA("/vistas/salas/VistaGSalas.fxml", "Configuración de Salas", event);
     }
 
+    @FXML
+    public void onConfiguracionButacas(ActionEvent event) {
+        navegarA("/vistas/salas/VistaGButacas.fxml", "Configuración de Butacas", event);
+    }
     @FXML
     private void onVenderBoleto(ActionEvent event) {
         System.out.println("Navegar a Vender Boleto");
