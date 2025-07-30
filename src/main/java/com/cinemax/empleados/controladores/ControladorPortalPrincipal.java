@@ -75,26 +75,58 @@ public class ControladorPortalPrincipal {
         nodo.setManaged(visible); // evita huecos
     }
 
-    // Métodos de navegación para módulos
     @FXML
     private void onGestionUsuarios(ActionEvent event) {
-        navegarA("/vistas/empleados/PantallaGestionUsuarios.fxml", "Gestión de Usuarios", event);
+        System.out.println("Navegar a Gestión de Usuarios");
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaGestionUsuarios.fxml"));
+        try {
+            Parent root = loader.load();
+
+            // Obtener el Stage actual desde el botón o cualquier nodo
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Portal del Administrador");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     @FXML
     private void onVerReportes(ActionEvent event) {
-        System.out.println("Navegar a Ver Reportes");
         // TODO: Implementar navegación a la pantalla de reportes
+        System.out.println("Navegar a Ver Reportes");
+
+        FXMLLoader loader = new FXMLLoader(
+                getClass().getResource("/vistas/reportes/PantallaModuloReportesPrincipal.fxml"));
+        try {
+            Parent root = loader.load();
+
+            // Obtener el stage actual desde el botón o cualquier nodo
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Módulo de Reportes");
+            stage.setScene(new Scene(root));
+            stage.show();
+
+        } catch (IOException e) {
+            System.err.println("Error al cargar FXML: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.err.println("Error inesperado: " + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
 
     @FXML
+    private void onConfiguracionFunciones(ActionEvent event) {
+        System.out.println("Navegar a Configuración");
+        // TODO: Implementar navegación a la pantalla de configuración
+    }
+
     public void onConfiguracionSalas(ActionEvent event) {
-        navegarA("/vistas/salas/VistaGSalas.fxml", "Configuración de Salas", event);
-    }
-
-    @FXML
-    public void onConfiguracionButacas(ActionEvent event) {
-        navegarA("/vistas/salas/VistaGButacas.fxml", "Configuración de Butacas", event);
     }
 
     @FXML

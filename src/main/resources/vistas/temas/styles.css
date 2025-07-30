@@ -11,6 +11,7 @@
     -fx-text-fill: #EAEAEA;
     /* Texto principal casi blanco */
     -fx-font-size: 14px;
+    -fx-font-weight: bold;
 }
 
 
