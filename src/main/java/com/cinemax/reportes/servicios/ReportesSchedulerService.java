@@ -64,14 +64,16 @@ public class ReportesSchedulerService {
         for (ReporteGenerado reporte : reportesPendientes) {
             if (!reporte.getFechaGeneracion().isAfter(ahora)) {
                 reportesEjecutados.add(0, new ReporteGenerado(
-                        reporte.getNombreReporte(),
-                        reporte.getFechaGeneracion(),
+                        reporte.getId(),
+                        reporte.getNombre(),
                         "Ejecutado",
-                        reporte.getRutaArchivo(),
-                        reporte.getFrecuencia()));
+                        reporte.getFechaGeneracion(),
+                        reporte.getTipo(),
+                        reporte.getRutaArchivo()));
+                        
                 // Reprogramar la próxima ejecución
                 reporte.setFechaGeneracion(
-                        calcularSiguienteEjecucion(reporte.getFechaGeneracion(), reporte.getFrecuencia()));
+                        calcularSiguienteEjecucion(reporte.getFechaGeneracion(), null));
                 ejecutados.add(reporte);
             }
         }

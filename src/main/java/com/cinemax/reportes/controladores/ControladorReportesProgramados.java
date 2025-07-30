@@ -376,11 +376,12 @@ public class ControladorReportesProgramados {
         LocalDateTime fecha = LocalDateTime.parse(fechaEjecucion);
 
         ReporteGenerado nuevoReporte = new ReporteGenerado(
-                "Reporte de Ventas - " + frecuencia,
-                fecha,
-                "Programado",
-                "/reportes/ventas_" + frecuencia.toLowerCase() + "_" + fechaEjecucion.replace("-", "_") + ".pdf",
-                frecuencia);
+            0,
+            "Reporte de Ventas - " + frecuencia,
+            "Programado",
+            fecha,
+            "/reportes/ventas_" + frecuencia.toLowerCase() + "_" + fechaEjecucion.replace("-", "_") + ".pdf",
+            frecuencia);
 
         schedulerService.getReportesPendientes().add(nuevoReporte);
 
@@ -404,7 +405,7 @@ public class ControladorReportesProgramados {
         confirmacion.setTitle("Confirmar Eliminación");
         confirmacion.setHeaderText(null);
         confirmacion.setContentText("¿Está seguro que desea eliminar el reporte '" +
-                reporte.getNombreReporte() + "'?");
+                reporte.getNombre() + "'?");
 
         Optional<ButtonType> resultado = confirmacion.showAndWait();
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
@@ -418,7 +419,7 @@ public class ControladorReportesProgramados {
     private void mostrarVistaPrevia(ReporteGenerado reporte) {
         try {
             Stage ventanaPrevia = new Stage();
-            ventanaPrevia.setTitle("Vista Previa PDF - " + reporte.getNombreReporte());
+            ventanaPrevia.setTitle("Vista Previa PDF - " + reporte.getNombre());
             ventanaPrevia.setResizable(true);
 
             VBox contenido = new VBox(15);
@@ -548,7 +549,7 @@ public class ControladorReportesProgramados {
             fileChooser.setTitle("Guardar Reporte PDF");
 
             // Configurar el nombre por defecto del archivo
-            String nombreArchivo = reporte.getNombreReporte().replaceAll("[^a-zA-Z0-9\\s]", "_") + "_" +
+            String nombreArchivo = reporte.getNombre().replaceAll("[^a-zA-Z0-9\\s]", "_") + "_" +
                     reporte.getFechaGeneracion().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
             fileChooser.setInitialFileName(nombreArchivo + ".pdf");
 
@@ -565,7 +566,7 @@ public class ControladorReportesProgramados {
                 generarPDFConPDFBox(reporte, archivo);
 
                 mostrarAlerta("✅ Descarga Exitosa",
-                        "El reporte PDF '" + reporte.getNombreReporte() + "' ha sido guardado exitosamente en:\n" +
+                        "El reporte PDF '" + reporte.getNombre() + "' ha sido guardado exitosamente en:\n" +
                                 archivo.getAbsolutePath());
 
             } else {
@@ -606,7 +607,7 @@ public class ControladorReportesProgramados {
                 contentStream.setFont(fontNormal, fontSize);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("Nombre del Reporte: " + reporte.getNombreReporte());
+                contentStream.showText("Nombre del Reporte: " + reporte.getNombre());
                 contentStream.newLineAtOffset(0, -20);
                 contentStream.showText("Fecha de Generacion: "
                         + reporte.getFechaGeneracion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));

@@ -71,4 +71,13 @@ public class ReporteGenerado {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
+    public String getEstado() {
+        return "";
+    }
+
+    public Object getFrecuencia() {
+        return "";
+    }
+
 }
