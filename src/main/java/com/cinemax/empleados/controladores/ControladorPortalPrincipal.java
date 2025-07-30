@@ -100,7 +100,7 @@ public class ControladorPortalPrincipal {
     @FXML
     private void onVenderBoleto(ActionEvent event) {
         System.out.println("Navegar a Vender Boleto");
-        // TODO: Implementar navegación a la pantalla de venta de boletos
+        navegarA("/vistas/venta_boletos/cartelera-view.fxml", "Venta de Boletos", event);
     }
 
     @FXML

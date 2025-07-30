@@ -36,5 +36,10 @@ module com.cinemax {
         exports com.cinemax to javafx.graphics;
         opens com.cinemax to javafx.fxml;
 
-        requires org.apache.pdfbox;
+        requires org.apache.pdfbox; 
+
+        // Paquetes del módulo venta-boletos
+        exports com.cinemax.venta_boletos.Controladores;
+        opens com.cinemax.venta_boletos.Controladores to javafx.fxml;
+        opens com.cinemax.venta_boletos.Servicios to javafx.base, javafx.fxml;
     }
