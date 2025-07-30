@@ -52,6 +52,7 @@ class Rol {
 }
 
 Usuario  *-- "1" Rol
+Permiso "0..*" -o  Rol
 
 ' ============================== SERVICIOS / CONTROLADORES ==============================
 
