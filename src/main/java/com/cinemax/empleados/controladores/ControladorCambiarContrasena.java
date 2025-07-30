@@ -1,8 +1,16 @@
 package com.cinemax.empleados.controladores;
 
+
+import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
+import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
+import java.sql.SQLException;
+
+
 
 public class ControladorCambiarContrasena {
 
@@ -15,6 +23,10 @@ public class ControladorCambiarContrasena {
     @FXML
     private PasswordField txtConfirmarContrasena;
 
+    private ServicioSesionSingleton sesionSingleton;
+
+    private ServicioPerfilUsuario servicioPerfilUsuario;
+
     @FXML
     private void onCancelar() {
         ((Stage) txtContrasenaActual.getScene().getWindow()).close();
@@ -22,19 +34,32 @@ public class ControladorCambiarContrasena {
 
     @FXML
     private void onGuardar() {
+        sesionSingleton = ServicioSesionSingleton.getInstancia();
+        servicioPerfilUsuario = new ServicioPerfilUsuario();
+
         String actual = txtContrasenaActual.getText();
         String nueva = txtNuevaContrasena.getText();
         String confirmar = txtConfirmarContrasena.getText();
 
         if (!nueva.equals(confirmar)) {
-            System.out.println("Las contraseñas no coinciden");
+            mostrarAlerta(Alert.AlertType.WARNING, "Error", "Las contraseñas no coinciden", "Verifica que la nueva contraseña y su confirmación sean iguales.");
             return;
         }
 
-        // Aquí iría la lógica real para validar y guardar la contraseña
-        System.out.println("Contraseña actual: " + actual);
-        System.out.println("Nueva contraseña guardada: " + nueva);
+        try {
+            servicioPerfilUsuario.actualizarClave(sesionSingleton.getUsuarioActivo(), actual, nueva);
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Éxito", "Contraseña actualizada", "Tu contraseña se ha actualizado correctamente.");
+            ((Stage) txtContrasenaActual.getScene().getWindow()).close();
+        } catch (SQLException e) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo actualizar la contraseña", e.getMessage());
+        }
+    }
 
-        ((Stage) txtContrasenaActual.getScene().getWindow()).close();
+    private void mostrarAlerta(Alert.AlertType type, String title, String header, String content) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 }

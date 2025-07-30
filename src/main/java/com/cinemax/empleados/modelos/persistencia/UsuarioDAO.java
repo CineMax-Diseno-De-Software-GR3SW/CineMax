@@ -23,11 +23,8 @@ public class UsuarioDAO {
 
     public void crearUsuario(Usuario u) throws Exception {
         String sql = """
-            INSERT INTO USUARIO (IDUSUARIO, IDROL, NOMBREUSUARIO, CORREO, CLAVE,
-                                 NOMBRECOMPLETO, CEDULA, CELULAR, ACTIVO,
-                                 FECHACREACION, FECHAULTIMAMODIFICACION)
-            VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %b, '%s', '%s')
-            """.formatted(
+        CALL crear_usuario(%d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %b, '%s', '%s')
+        """.formatted(
                 u.getId(), u.getRol().getId(), u.getNombreUsuario(), u.getCorreo(),
                 u.getClave(), u.getNombreCompleto(), u.getCedula(), u.getCelular(),
                 u.isActivo(),
@@ -41,23 +38,18 @@ public class UsuarioDAO {
 
     public void actualizarUsuario(Usuario u) throws Exception {
         String sql = """
-            UPDATE USUARIO SET
-                IDROL = %d,
-                NOMBREUSUARIO = '%s',
-                CORREO = '%s',
-                CLAVE = '%s',
-                NOMBRECOMPLETO = '%s',
-                CEDULA = '%s',
-                CELULAR = '%s',
-                ACTIVO = %b,
-                FECHAULTIMAMODIFICACION = '%s'
-            WHERE IDUSUARIO = %d
-            """.formatted(
-                u.getRol().getId(), u.getNombreUsuario(), u.getCorreo(), u.getClave(),
-                u.getNombreCompleto(), u.getCedula(), u.getCelular(),
+                CALL actualizar_usuario(%d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %b, '%s')
+                """.formatted(
+                u.getId(),
+                u.getRol().getId(),
+                u.getNombreUsuario(),
+                u.getCorreo(),
+                u.getClave(),
+                u.getNombreCompleto(),
+                u.getCedula(),
+                u.getCelular(),
                 u.isActivo(),
-                LocalDateTime.now().format(formatter),
-                u.getId()
+                LocalDateTime.now().format(formatter)
         );
 
         db.ejecutarActualizacion(sql);
@@ -68,13 +60,7 @@ public class UsuarioDAO {
     /* ======================= BÚSQUEDAS ======================= */
 
     public Usuario buscarPorId(Long id) throws Exception {
-        String sql = """
-            SELECT u.*, r.IDROL, r.NOMBRE AS NOMBRE_ROL, r.DESCRIPCION, r.ROLACTIVO
-            FROM USUARIO u
-            INNER JOIN ROL r ON u.IDROL = r.IDROL
-            WHERE u.IDUSUARIO = %d
-            """.formatted(id);
-
+        String sql = "SELECT * FROM buscar_usuario_por_id(" + id + ")";
         // SELECT
         ResultSet rs = null;
         Statement st  = null;
@@ -91,12 +77,7 @@ public class UsuarioDAO {
     }
 
     public Usuario buscarPorNombreUsuario(String nombre) throws Exception {
-        String sql = """
-            SELECT u.*, r.IDROL, r.NOMBRE AS NOMBRE_ROL, r.DESCRIPCION, r.ROLACTIVO
-            FROM USUARIO u
-            INNER JOIN ROL r ON u.IDROL = r.IDROL
-            WHERE u.NOMBREUSUARIO = '%s'
-            """.formatted(nombre);
+        String sql = "SELECT * FROM buscar_usuario_por_nombre_usuario('" + nombre + "')";
 
         // SELECT
         ResultSet rs = null;
@@ -114,12 +95,7 @@ public class UsuarioDAO {
     }
 
     public Usuario buscarPorCorreo(String correo) throws Exception {
-        String sql = """
-            SELECT u.*, r.IDROL, r.NOMBRE AS NOMBRE_ROL, r.DESCRIPCION, r.ROLACTIVO
-            FROM USUARIO u
-            INNER JOIN ROL r ON u.IDROL = r.IDROL
-            WHERE u.CORREO = '%s'
-            """.formatted(correo);
+        String sql = "SELECT * FROM buscar_usuario_por_correo('" + correo + "')";
 
         // SELECT
         ResultSet rs = null;
@@ -139,12 +115,7 @@ public class UsuarioDAO {
     /* ======================= LISTADOS ======================= */
 
     public List<Usuario> listarTodos() throws Exception {
-        String sql = """
-            SELECT u.*, r.IDROL, r.NOMBRE AS NOMBRE_ROL, r.DESCRIPCION, r.ROLACTIVO
-            FROM USUARIO u
-            INNER JOIN ROL r ON u.IDROL = r.IDROL
-            ORDER BY u.NOMBREUSUARIO
-            """;
+        String sql = "SELECT * FROM listar_usuarios()";
 
         // SELECT
         ResultSet rs = null;
@@ -158,42 +129,42 @@ public class UsuarioDAO {
 //        db.consultarBase(sql);
 //        return mapearLista(db.getResultado());
     }
-
-    public List<Usuario> listarActivos() throws Exception {
-        String sql = """
-            SELECT u.*, r.IDROL, r.NOMBRE AS NOMBRE_ROL, r.DESCRIPCION, r.ROLACTIVO
-            FROM USUARIO u
-            INNER JOIN ROL r ON u.IDROL = r.IDROL
-            WHERE u.ACTIVO = 1
-            ORDER BY u.NOMBREUSUARIO
-            """;
-
-        // SELECT
-        ResultSet rs = null;
-        Statement st  = null;
-        try {
-            rs = db.ejecutarConsulta(sql);
-            return mapearLista(rs);
-        } finally {
-            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
-        }
-
-//        db.consultarBase(sql);
-//        return mapearLista(db.getResultado());
-    }
+//
+//    public List<Usuario> listarActivos() throws Exception {
+//        String sql = """
+//            SELECT u.*, r.IDROL, r.NOMBRE AS NOMBRE_ROL, r.DESCRIPCION, r.ROLACTIVO
+//            FROM USUARIO u
+//            INNER JOIN ROL r ON u.IDROL = r.IDROL
+//            WHERE u.ACTIVO = 1
+//            ORDER BY u.NOMBREUSUARIO
+//            """;
+//
+//        // SELECT
+//        ResultSet rs = null;
+//        Statement st  = null;
+//        try {
+//            rs = db.ejecutarConsulta(sql);
+//            return mapearLista(rs);
+//        } finally {
+//            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+//        }
+//
+////        db.consultarBase(sql);
+////        return mapearLista(db.getResultado());
+//    }
 
     /* ======================= ESTADO ======================= */
 
-    public void activarUsuario(Long id) throws Exception {
-        cambiarEstado(id, true);
-    }
-
-    public void desactivarUsuario(Long id) throws Exception {
-        cambiarEstado(id, false);
-    }
+//    public void activarUsuario(Long id) throws Exception {
+//        cambiarEstado(id, true);
+//    }
+//
+//    public void desactivarUsuario(Long id) throws Exception {
+//        cambiarEstado(id, false);
+//    }
 
     public void eliminarUsuario(Long id) throws Exception {
-        String sql = "DELETE FROM USUARIO WHERE IDUSUARIO = " + id;
+        String sql = "CALL eliminar_usuario(" + id + ")";
         db.ejecutarActualizacion(sql);
 
 //        db.insertarModificarEliminar(sql);
@@ -202,7 +173,7 @@ public class UsuarioDAO {
     /* ======================= UTIL ======================= */
 
     public Long obtenerSiguienteId() throws Exception {
-        String sql = "SELECT COALESCE(MAX(IDUSUARIO),0)+1 AS SIGUIENTE_ID FROM USUARIO";
+        String sql = "SELECT obtener_siguiente_id_usuario() AS SIGUIENTE_ID";
 
         // SELECT
         ResultSet rs = null;
@@ -223,14 +194,11 @@ public class UsuarioDAO {
 
     public void cambiarEstado(Long id, boolean activo) throws Exception {
         String sql = """
-            UPDATE USUARIO SET ACTIVO = %b,
-                FECHAULTIMAMODIFICACION = '%s'
-            WHERE IDUSUARIO = %d
-            """.formatted(
-//                activo ? 1 : 0,
+        CALL cambiar_estado_usuario(%d, %b, '%s')
+        """.formatted(
+                id,
                 activo,
-                LocalDateTime.now().format(formatter),
-                id
+                LocalDateTime.now().format(formatter)
         );
         db.ejecutarActualizacion(sql);
 
@@ -270,19 +238,53 @@ public class UsuarioDAO {
         return u;
     }
 
-    public void actualizarEstado(Long idUsuario, Boolean nuevoEstado) {
-
-    }
+//    public void actualizarEstado(Long idUsuario, Boolean nuevoEstado) {
+//
+//    }
 
     public void actualizarRol(Long idUsuario, Long idRol) throws Exception {
         String sql = """
-            UPDATE USUARIO SET IDROL = %d,
-                FECHAULTIMAMODIFICACION = '%s'
-            WHERE IDUSUARIO = %d
-            """.formatted(
+        CALL actualizar_rol_usuario(%d, %d, '%s')
+        """.formatted(
+                idUsuario,
                 idRol,
-                LocalDateTime.now().format(formatter),
-                idUsuario
+                LocalDateTime.now().format(formatter)
+        );
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
+    }
+
+    public void actualizarCorreo(Long idUsuario, String nuevoEmail) throws SQLException {
+        String sql = """
+                CALL actualizar_correo_usuario(%d,'%s')
+                """.formatted(
+                idUsuario,
+                nuevoEmail
+        );
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
+    }
+
+    public void actualizarCelular(Long idUsuario, String nuevoCelular) throws SQLException {
+        String sql = """
+                CALL actualizar_celular_usuario(%d,'%s')
+                """.formatted(
+                idUsuario,
+                nuevoCelular
+        );
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
+    }
+
+    public void actualizarClave(Long idUsuario, String nuevaClave) throws SQLException {
+        String sql = """
+                CALL actualizar_clave_usuario(%d,'%s')
+                """.formatted(
+                idUsuario,
+                nuevaClave
         );
         db.ejecutarActualizacion(sql);
 
