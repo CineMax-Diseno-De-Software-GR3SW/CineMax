@@ -4,7 +4,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml" prefHeight="550.0" prefWidth="800.0"
+<BorderPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.cinemax.salas.controladores.ControladorButacas"
             stylesheets="@../temas/styles.css"
             styleClass="root">
@@ -24,7 +24,7 @@
     </top>
 
     <center>
-        <SplitPane dividerPositions="0.36">
+        <SplitPane dividerPositions="0.43">
             <VBox spacing="18" styleClass="ticket-card">
                 <TitledPane text="Datos de la Butaca" expanded="true" styleClass="ticket-details-card">
                     <content>
@@ -64,7 +64,7 @@
                 </HBox>
 
                 <TableView fx:id="tablaButacas" prefHeight="400" prefWidth="400" styleClass="tabla">
-                <columns>
+                    <columns>
                         <TableColumn fx:id="colId" prefWidth="50">
                             <graphic>
                                 <Label text="ID" />
