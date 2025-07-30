@@ -19,10 +19,17 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
     private static final float MARGIN = 50;
     private static final PDType1Font FONT_BOLD = PDType1Font.HELVETICA_BOLD;
     private static final PDType1Font FONT_NORMAL = PDType1Font.HELVETICA;
-    private static final String CARPETA_BASE = "venta_boletos";
+    private static final String CARPETA_BASE = "PDFsGenerados_BoletoFactura";
 
     private static final String CARPETA_FACTURAS = CARPETA_BASE + File.separator + "FacturasGeneradas";
     private static final String CARPETA_BOLETOS = CARPETA_BASE + File.separator + "BoletosGenerados";
+
+    // Información del cine
+    private static final String[] CINE_INFO = {
+            "CineMax - Donde vive el cine",
+            "Dirección: Av. Principal 123, Ciudad",
+            "Tel: (555) 123-456"
+    };
 
     @Override
     public void generarFacturaPDF(Factura factura) {
@@ -33,16 +40,45 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
             document.addPage(page);
 
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                float pageWidth = page.getMediaBox().getWidth();
                 float y = page.getMediaBox().getHeight() - MARGIN;
 
-                // Título
-                contentStream.setFont(FONT_BOLD, 18);
+                // Título principal centrado
+                String titulo = "CINEMAX - FACTURA";
+                contentStream.setFont(FONT_BOLD, 20);
+                float titleWidth = FONT_BOLD.getStringWidth(titulo) / 1000 * 20;
                 contentStream.beginText();
-                contentStream.newLineAtOffset(MARGIN, y);
-                contentStream.showText("CINEMAX - FACTURA");
+                contentStream.newLineAtOffset((pageWidth - titleWidth) / 2, y);
+                contentStream.showText(titulo);
                 contentStream.endText();
 
-                y -= 40;
+                // Línea separadora
+                y -= 30;
+                contentStream.setStrokingColor(100, 100, 100); // gris tenue
+                contentStream.moveTo(MARGIN, y);
+                contentStream.lineTo(pageWidth - MARGIN, y);
+                contentStream.stroke();
+
+                // Información CineMax centrada
+                y -= 20;
+                contentStream.setFont(FONT_NORMAL, 10);
+                for (String info : CINE_INFO) {
+                    float infoWidth = FONT_NORMAL.getStringWidth(info) / 1000 * 10;
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset((pageWidth - infoWidth) / 2, y);
+                    contentStream.showText(info);
+                    contentStream.endText();
+                    y -= 14;
+                }
+
+                // Otra línea separadora
+                y -= 10;
+                contentStream.moveTo(MARGIN, y);
+                contentStream.lineTo(pageWidth - MARGIN, y);
+                contentStream.stroke();
+
+                // Datos Factura (alineados a la izquierda con margen)
+                y -= 30;
                 contentStream.setFont(FONT_BOLD, 12);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(MARGIN, y);
@@ -56,26 +92,29 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
                 contentStream.showText("Fecha: " + factura.getFecha());
                 contentStream.endText();
 
-                // Datos cliente
+                // Datos Cliente
                 Cliente cliente = factura.getCliente();
-                y -= 40;
-                contentStream.beginText();
-                contentStream.newLineAtOffset(MARGIN, y);
-                contentStream.showText("Cliente: " + cliente.getNombre() + " " + cliente.getApellido());
-                contentStream.endText();
-
-                y -= 20;
-                contentStream.beginText();
-                contentStream.newLineAtOffset(MARGIN, y);
-                contentStream.showText("Cédula: " + cliente.getIdCliente());
-                contentStream.endText();
-
-                // Boletos detalle
                 y -= 40;
                 contentStream.setFont(FONT_BOLD, 14);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(MARGIN, y);
-                contentStream.showText("BOLETOS:");
+                contentStream.showText("DATOS DEL CLIENTE:");
+                contentStream.endText();
+
+                y -= 20;
+                contentStream.setFont(FONT_NORMAL, 12);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(MARGIN, y);
+                contentStream.showText(
+                        cliente.getNombre() + " " + cliente.getApellido() + " | Cédula: " + cliente.getIdCliente());
+                contentStream.endText();
+
+                // Detalle de Boletos
+                y -= 40;
+                contentStream.setFont(FONT_BOLD, 14);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(MARGIN, y);
+                contentStream.showText("DETALLE DE BOLETOS:");
                 contentStream.endText();
 
                 y -= 20;
@@ -85,14 +124,21 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
                         Boleto boleto = (Boleto) producto;
                         contentStream.beginText();
                         contentStream.newLineAtOffset(MARGIN + 10, y);
-                        contentStream.showText("• " + boleto.getFuncion() + " - Butaca " + boleto.getButaca() +
-                                ": $" + boleto.getPrecio());
+                        contentStream.showText("• " + boleto.getFuncion() + " - Butaca " + boleto.getButaca() + ": $"
+                                + boleto.getPrecio());
                         contentStream.endText();
                         y -= 15;
                     }
                 }
 
-                y -= 20;
+                // Línea separadora antes de totales
+                y -= 15;
+                contentStream.moveTo(MARGIN, y);
+                contentStream.lineTo(pageWidth - MARGIN, y);
+                contentStream.stroke();
+
+                // Totales
+                y -= 25;
                 contentStream.setFont(FONT_BOLD, 12);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(MARGIN, y);
@@ -123,26 +169,57 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
                 Boleto boleto = (Boleto) producto;
 
                 try (PDDocument document = new PDDocument()) {
-                    PDPage page = new PDPage(PDRectangle.A4);
+                    PDPage page = new PDPage(new PDRectangle(298, 420));
                     document.addPage(page);
 
                     try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                        float pageWidth = page.getMediaBox().getWidth();
                         float y = page.getMediaBox().getHeight() - MARGIN;
 
+                        // Encabezado centrado
+                        String titulo = "CINEMAX - BOLETO";
                         contentStream.setFont(FONT_BOLD, 18);
+                        float titleWidth = FONT_BOLD.getStringWidth(titulo) / 1000 * 18;
                         contentStream.beginText();
-                        contentStream.newLineAtOffset(MARGIN, y);
-                        contentStream.showText("CINEMAX - BOLETO");
+                        contentStream.newLineAtOffset((pageWidth - titleWidth) / 2, y);
+                        contentStream.showText(titulo);
                         contentStream.endText();
 
-                        y -= 40;
-                        contentStream.setFont(FONT_NORMAL, 14);
+                        // Línea separadora
+                        y -= 25;
+                        contentStream.setStrokingColor(100, 100, 100);
+                        contentStream.moveTo(MARGIN, y);
+                        contentStream.lineTo(pageWidth - MARGIN, y);
+                        contentStream.stroke();
+
+                        // Info cine centrada
+                        y -= 20;
+                        contentStream.setFont(FONT_NORMAL, 9);
+                        for (String info : CINE_INFO) {
+                            float infoWidth = FONT_NORMAL.getStringWidth(info) / 1000 * 9;
+                            contentStream.beginText();
+                            contentStream.newLineAtOffset((pageWidth - infoWidth) / 2, y);
+                            contentStream.showText(info);
+                            contentStream.endText();
+                            y -= 12;
+                        }
+
+                        // Línea separadora
+                        y -= 10;
+                        contentStream.moveTo(MARGIN, y);
+                        contentStream.lineTo(pageWidth - MARGIN, y);
+                        contentStream.stroke();
+
+                        // Datos boleto alineados a la izquierda
+                        y -= 25;
+                        contentStream.setFont(FONT_BOLD, 8);
                         contentStream.beginText();
                         contentStream.newLineAtOffset(MARGIN, y);
                         contentStream.showText("Función: " + boleto.getFuncion());
                         contentStream.endText();
 
                         y -= 20;
+                        contentStream.setFont(FONT_NORMAL, 8);
                         contentStream.beginText();
                         contentStream.newLineAtOffset(MARGIN, y);
                         contentStream.showText("Butaca: " + boleto.getButaca());
@@ -152,12 +229,6 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
                         contentStream.beginText();
                         contentStream.newLineAtOffset(MARGIN, y);
                         contentStream.showText("Precio: $" + boleto.getPrecio());
-                        contentStream.endText();
-
-                        y -= 40;
-                        contentStream.beginText();
-                        contentStream.newLineAtOffset(MARGIN, y);
-                        contentStream.showText("[CÓDIGO QR]");
                         contentStream.endText();
                     }
 
@@ -174,8 +245,7 @@ public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
     private void crearCarpetaSiNoExiste(String carpeta) {
         File dir = new File(carpeta);
         if (!dir.exists()) {
-            boolean creada = dir.mkdirs();
-            if (creada) {
+            if (dir.mkdirs()) {
                 System.out.println("Carpeta creada: " + carpeta);
             }
         }

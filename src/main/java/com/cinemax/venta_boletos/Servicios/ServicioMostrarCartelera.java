@@ -2,37 +2,54 @@ package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones;
-import javafx.event.ActionEvent;
+import com.cinemax.peliculas.controladores.ControladorCartelera;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
 import javafx.stage.Stage;
 import javafx.scene.Node;
+import javafx.event.ActionEvent;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ServicioMostrarCartelera {
 
-    private final String[] PELICULAS = {
-            "Avengers: Endgame",
-            "The Batman",
-            "Dune: Parte 2",
-            "Spider-Man: No Way Home"
-    };
+    private final ControladorCartelera controladorCartelera = new ControladorCartelera();
+    private ObservableList<Pelicula> peliculas = FXCollections.observableArrayList();
+    private Pelicula selectedPelicula;
 
-    public void inicializarListaPeliculas(ListView<String> listViewPeliculas) {
-        listViewPeliculas.getItems().addAll(PELICULAS);
-        listViewPeliculas.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-        listViewPeliculas.setStyle("-fx-selection-bar: #2a9df4; -fx-selection-bar-non-focused: #d0e6f5;");
+    public ObservableList<Pelicula> getPeliculas() {
+        return peliculas;
     }
 
-    public void seleccionarPelicula(ListView<String> listViewPeliculas) {
-        String peliculaSeleccionada = listViewPeliculas.getSelectionModel().getSelectedItem();
+    public Pelicula getSelectedPelicula() {
+        return selectedPelicula;
+    }
 
+    public void setSelectedPelicula(Pelicula selectedPelicula) {
+        this.selectedPelicula = selectedPelicula;
+    }
+
+    public void inicializarListaPeliculas() {
+        try {
+            List<Pelicula> peliculasCargadas = controladorCartelera.obtenerCartelera();
+            peliculas.setAll(peliculasCargadas);
+        } catch (Exception e) {
+            System.err.println("Error al obtener cartelera: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar películas: " + e.getMessage());
+            peliculas.clear();
+        }
+    }
+
+    // Método corregido para cargar el FXML una sola vez y pasar la película antes
+    // de mostrar
+    public void seleccionarPelicula(Pelicula peliculaSeleccionada, Stage currentStage) {
         if (peliculaSeleccionada == null) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Campos Incompletos, Por favor seleccione una película");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, selecciona una película.");
             return;
         }
 
@@ -41,12 +58,12 @@ public class ServicioMostrarCartelera {
             Parent root = loader.load();
 
             ControladorMostrarFunciones controller = loader.getController();
-            controller.setPelicula(peliculaSeleccionada);
+            controller.setPelicula(peliculaSeleccionada.getTitulo());
 
-            Stage stage = (Stage) listViewPeliculas.getScene().getWindow();
-            Scene newScene = new Scene(root, 800, 600);
-            stage.setScene(newScene);
-            stage.centerOnScreen();
+            currentStage.setScene(new Scene(root));
+            currentStage.setTitle("Funciones de " + peliculaSeleccionada.getTitulo());
+            currentStage.centerOnScreen();
+            currentStage.show();
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("No se pudo cargar la pantalla de funciones");
@@ -56,14 +73,11 @@ public class ServicioMostrarCartelera {
 
     public void regresarPantallaPrincipal(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
+            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            ManejadorMetodosComunes.cambiarVentana(currentStage, "/vistas/empleados/PantallaPortalPrincipal.fxml");
+        } catch (Exception e) {
             e.printStackTrace();
+            ManejadorMetodosComunes.mostrarVentanaError("Error al regresar a la pantalla principal.");
         }
     }
 }
