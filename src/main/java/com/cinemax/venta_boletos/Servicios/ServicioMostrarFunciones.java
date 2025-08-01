@@ -1,9 +1,13 @@
 package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.venta_boletos.Controladores.ControladorAsignadorButacas;
 import com.cinemax.venta_boletos.Controladores.ControladorBoleto;
+import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
 import com.cinemax.peliculas.controladores.ControladorFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.salas.modelos.entidades.TipoSala;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,6 +29,7 @@ import java.time.LocalDateTime;
 public class ServicioMostrarFunciones {
 
     private final ControladorFunciones controladorFunciones = new ControladorFunciones();
+    private final BoletoDAO daoBoleto = new BoletoDAO();
 
     public void cargarFunciones(TableView<Funcion> tabla,
             TableColumn<Funcion, String> colHora,
@@ -121,25 +126,35 @@ public class ServicioMostrarFunciones {
     }
 
     public void confirmarFuncion(TableView<Funcion> tabla, String pelicula) {
-        Funcion seleccion = tabla.getSelectionModel().getSelectedItem();
+        Funcion funcionSeleccionada = tabla.getSelectionModel().getSelectedItem();
 
-        if (seleccion == null) {
+        if (funcionSeleccionada == null) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Seleccione una función primero");
             return;
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/boleto-view.fxml"));
+            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/boleto-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/VistaSeleccionButacas.fxml"));
             Parent root = loader.load();
 
             ControladorBoleto controller = loader.getController();
-            String funcionTexto = String.format("%s - %s (%s, %s)",
-                    seleccion.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM HH:mm")),
-                    seleccion.getSala() != null ? seleccion.getSala().getNombre() : "Sala no disponible",
-                    seleccion.getFormato() != null ? seleccion.getFormato().name().replace("_", " ") : "",
-                    seleccion.getTipoEstreno() != null ? seleccion.getTipoEstreno().name().replace("_", " ") : "");
+            //ControladorAsignadorButacas controladorAsignadorButacas = loader.getController();
+            //String funcionTexto = String.format("%s-%s-%s-%s",
+            //        seleccion.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM HH:mm")),
+            //        seleccion.getSala() != null ? seleccion.getSala().getNombre() : "Sala no disponible",
+            //        seleccion.getFormato() != null ? seleccion.getFormato().name().replace("_", " ") : "",
+            //
+            
+            controller.inicializarInformacion(funcionSeleccionada);
+            
+            //Funcion funcionEnSalaVIP = daoBoleto.listarFuncionPorTipoDeSala(seleccion, TipoSala.VIP);
+            //Funcion funcionEnSalaNormal = daoBoleto.listarFuncionPorTipoDeSala(seleccion, TipoSala.NORMAL);
 
-            controller.initData(pelicula, funcionTexto);
+
+            //controller.initData(pelicula, funcionTexto);
+            //System.out.println("Confirmando función: " + funcionTexto);
+            //controller.initData(pelicula, funcionTexto, funcionSeleccionada, null, null);
 
             Stage stage = (Stage) tabla.getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));

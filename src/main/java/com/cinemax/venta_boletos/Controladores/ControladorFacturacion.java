@@ -1,6 +1,7 @@
 package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
@@ -90,6 +91,9 @@ public class ControladorFacturacion {
         this.pelicula = pelicula;
         this.sala = sala;
         this.boletos = boletos;
+        //ControladorAsignadorButacas controladorAsignadorButacas = new ControladorAsignadorButacas();
+        //List<Butaca> butacasAsignadas = controladorAsignadorButacas.asignarButacas("", funcion, butacasAsignadas, totalBoletos);
+        //List<Producto> boletosGenerados = servicioBoleto.generarBoleto(this.funcion, butacasAsignadas);
 
         // Crear una instancia de Factura para usar su lógica de cálculo
         // Factura facturaTemporal = new Factura();
@@ -217,7 +221,7 @@ public class ControladorFacturacion {
 
     @FXML
     protected void onCloseAction() {
-        ((Stage) headerBar.getScene().getWindow()).close();
+        //((Stage) headerBar.getScene().getWindow()).close();
     }
 
     @FXML
