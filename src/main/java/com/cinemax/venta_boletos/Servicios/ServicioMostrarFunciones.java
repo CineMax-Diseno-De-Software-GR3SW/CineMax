@@ -29,7 +29,7 @@ import java.time.LocalDateTime;
 public class ServicioMostrarFunciones {
 
     private final ControladorFunciones controladorFunciones = new ControladorFunciones();
-    private final BoletoDAO daoBoleto = new BoletoDAO();
+    //private final BoletoDAO daoBoleto = new BoletoDAO();
 
     public void cargarFunciones(TableView<Funcion> tabla,
             TableColumn<Funcion, String> colHora,
@@ -138,7 +138,7 @@ public class ServicioMostrarFunciones {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/VistaSeleccionButacas.fxml"));
             Parent root = loader.load();
 
-            ControladorBoleto controller = loader.getController();
+            ControladorAsignadorButacas controller = loader.getController();
             //ControladorAsignadorButacas controladorAsignadorButacas = loader.getController();
             //String funcionTexto = String.format("%s-%s-%s-%s",
             //        seleccion.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM HH:mm")),
@@ -146,7 +146,7 @@ public class ServicioMostrarFunciones {
             //        seleccion.getFormato() != null ? seleccion.getFormato().name().replace("_", " ") : "",
             //
             
-            controller.inicializarInformacion(funcionSeleccionada);
+            controller.inicializarDatos(funcionSeleccionada);
             
             //Funcion funcionEnSalaVIP = daoBoleto.listarFuncionPorTipoDeSala(seleccion, TipoSala.VIP);
             //Funcion funcionEnSalaNormal = daoBoleto.listarFuncionPorTipoDeSala(seleccion, TipoSala.NORMAL);

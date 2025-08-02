@@ -8,6 +8,7 @@ import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.controladores.ControladorDeConsultaSalas;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
+import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.ButacaService;
 import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
 
@@ -25,6 +26,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -34,7 +36,7 @@ public class ControladorAsignadorButacas {
 
     // FXML
      @FXML
-    private VBox boletosVipContainer;
+    private VBox boletosContainer;
 
     @FXML
     private Button buttonVolver;
@@ -76,35 +78,36 @@ public class ControladorAsignadorButacas {
     private Label labelTipoSala;
 
     @FXML
-    private VBox listaBoletosVip;
+    private VBox listaBoletos;
 
     @FXML
     private VBox mapaButacasContainer;
 
     @FXML
-    private ScrollPane scrollBoletosVip;
+    private ScrollPane scrollBoletos;
 
     @FXML
     private Label totalLabel;
 
-    ControladorDeConsultaSalas controladorConsultaSalas;
-    //List<Butaca> butacasSeleccionadasNormal;
-    //List<Butaca> butacasSeleccionadasVIP;
+    private ControladorDeConsultaSalas controladorConsultaSalas;
+    private List<Butaca> butacasSeleccionadas = new ArrayList<>();
+
+    private BoletoDAO boletoDAO;
+    private List<Butaca> butacasOcupadas;
 
     public ControladorAsignadorButacas() {
-        //this.butacasSeleccionadasNormal = new ArrayList<>();
-        //this.butacasSeleccionadasVIP = new ArrayList<>();
-        //controladorConsultaSalas = new ControladorDeConsultaSalas();
+        boletoDAO = new BoletoDAO();
+        butacasOcupadas = new ArrayList<>();
     }
 
     @FXML
     private void initialize() {
-        cargarMapaButacas();
+        //cargarMapaButacas();
         butacaService = new ButacaService();
         
     }
     
-    private void cargarMapaButacas() {
+    private void cargarMapaButacas(Sala sala) {
         try {
             // Cargar el FXML del mapa de butacas
             FXMLLoader loader = new FXMLLoader();
@@ -116,7 +119,9 @@ public class ControladorAsignadorButacas {
             
             // Obtener referencia al controlador del mapa
             controladorConsultaSalas = loader.getController();
-            
+            controladorConsultaSalas.setSala(sala); // Asignar la sala seleccionada
+            controladorConsultaSalas.setControladorAsignadorButacas(this); // Pasar el controlador de asignación de butacas
+
         } catch (IOException e) {
             System.err.println("Error al cargar MapaButacas.fxml: " + e.getMessage());
             e.printStackTrace();
@@ -131,7 +136,7 @@ public class ControladorAsignadorButacas {
 
     @FXML
     void onBackAction(ActionEvent event) {
-        ManejadorMetodosComunes.cambiarVentana((Stage) buttonVolver.getScene().getWindow(), "/vistas/venta_boletos/cartelera-view.fxml", "Cartelera");
+        ManejadorMetodosComunes.cambiarVentana((Stage) buttonVolver.getScene().getWindow(), "/vistas/venta_boletos/funciones-view.fxml", "Cartelera");
 
     }
 
@@ -165,10 +170,17 @@ public class ControladorAsignadorButacas {
         return butacas; // Retorna la lista de butacas asignadas
     }
 
-    public void inicializarDatos(Funcion funcionSeleccionada, List<Butaca> butacasOcupadas) {
-
-        //List<String> datosFuncion = java.util.Arrays.asList(funcionTexto.split("-"));        
+    public void inicializarDatos(Funcion funcionSeleccionada) { 
         System.out.println("Inicializando datos en ControladorAsignadorButacas");
+
+        try {
+            butacasOcupadas = boletoDAO.listarButacasDeBoletosPorFuncion(funcionSeleccionada);
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas ocupadas: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
         
         // encabezado
         labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name());
@@ -198,6 +210,8 @@ public class ControladorAsignadorButacas {
                 }
             }
         }
+
+        cargarMapaButacas(funcionSeleccionada.getSala());
     }
 
     private void colocarInformacionFuncion(Funcion funcionSeleccionada) {
@@ -207,7 +221,73 @@ public class ControladorAsignadorButacas {
         labelFechaFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Fecha no disponible");
         labelHoraFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("HH:mm")) : "Hora no disponible");
         labelFormato.setText(funcionSeleccionada.getFormato() != null ? funcionSeleccionada.getFormato().name().replace("_", " ") : "Formato no disponible");
+        imagenPelicula.setImage(new Image(funcionSeleccionada.getPelicula() != null && funcionSeleccionada.getPelicula().getImagenUrl() != null ? funcionSeleccionada.getPelicula().getImagenUrl() : "/images/no-image.png"));
         labelTipoEstreno.setText(funcionSeleccionada.getTipoEstreno() != null ? funcionSeleccionada.getTipoEstreno().name().replace("_", " ") : "Tipo de estreno no disponible");
+    }
+
+    public void agregarButacaSeleccionada(Butaca butaca) {
+        if (butaca != null && !butacasSeleccionadas.contains(butaca)) {
+            butacasSeleccionadas.add(butaca);
+            mostrarButacaSeleccionada(butaca);
+            calcularTotalBoletos();
+        }
+    }
+
+    private void calcularTotalBoletos() {
+        System.out.println("Calculando total de boletos seleccionados: " + butacasSeleccionadas.size());
+    }
+
+    public void quitarButacaDeseleccionada(Butaca butaca) {
+        if (butaca != null && butacasSeleccionadas.contains(butaca)) {
+            butacasSeleccionadas.remove(butaca);
+            removerButacaDeLista(butaca);
+            calcularTotalBoletos();
+        }
+    }
+
+    private void mostrarButacaSeleccionada(Butaca butaca) {
+        // Crear el contenedor principal como un rectángulo
+        HBox butacaItem = new HBox();
+        butacaItem.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
+        butacaItem.setSpacing(10);
+        butacaItem.setPrefHeight(40);
+        butacaItem.setStyle(
+            "-fx-background-color: #e8f4f8; " +
+            "-fx-background-radius: 8; " +
+            "-fx-border-color: #b3d9e6; " +
+            "-fx-border-radius: 8; " +
+            "-fx-border-width: 1; " +
+            "-fx-padding: 8 12 8 12;"
+        );
+        
+        // Label con el código alfanumérico en la parte izquierda
+        Label labelButaca = new Label(butaca.getFila().toUpperCase() + butaca.getColumna());
+        labelButaca.setStyle(
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 16px; " +
+            "-fx-text-fill: #2c5aa0; " +
+            "-fx-min-width: 50px;"
+        );
+        
+        // Separador visual
+        Region spacer = new Region();
+        spacer.setPrefWidth(10);
+        spacer.setStyle("-fx-background-color: #b3d9e6; -fx-pref-height: 20px; -fx-max-width: 1px;");
+        
+        // Agregar todos los elementos al contenedor
+        butacaItem.getChildren().addAll(labelButaca, spacer);
+        
+        // Asignar un ID único para poder encontrar y eliminar el elemento después
+        butacaItem.setId("butaca-" + butaca.getId());
+        
+        // Agregar al contenedor de boletos
+        listaBoletos.getChildren().add(butacaItem);
+    }
+
+    private void removerButacaDeLista(Butaca butaca) {
+        // Remover el elemento con el ID correspondiente
+        listaBoletos.getChildren().removeIf(node ->
+            ("butaca-" + butaca.getId()).equals(node.getId()));
     }
 
     //public List<Butaca> asignarButacas(Funcion funcionEnSalaVIP, Funcion funcionEnSalaNormal,

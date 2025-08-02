@@ -264,7 +264,7 @@ public class ControladorBoleto {
             Parent root = loader.load();
             ControladorAsignadorButacas controladorAsignadorButacas = loader.getController();
 
-            controladorAsignadorButacas.inicializarDatos(funcionSeleccionada, butacasOcupadas);
+            controladorAsignadorButacas.inicializarDatos(funcionSeleccionada);
             //controllerSeleccionButacas.initData(this.pelicula, this.funcion, boletosGenerados, subtotal);
             //controllerSeleccionButacas.setPreviousScene(continueButton.getScene());
 
@@ -287,14 +287,6 @@ public class ControladorBoleto {
         labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name());
         labelPrecio.setText(String.format("$%.2f", ":D"));//funcionSeleccionada.getSala().getTipo()));
         colocarInformacionFuncion(funcionSeleccionada);
-
-        try {
-            butacasOcupadas = boletoDAO.listarButacasDeBoletosPorFuncion(funcionSeleccionada);
-        } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas ocupadas: " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
         
         labelCantidadButacasDisponiboes.setText(String.valueOf(funcionSeleccionada.getSala().getCapacidad() - butacasOcupadas.size()));       
     }

@@ -35,7 +35,7 @@
                </children>
             </HBox>
             <!-- Contenedor donde se cargará programáticamente el mapa de butacas -->
-            <VBox fx:id="mapaButacasContainer" />
+            <VBox fx:id="mapaButacasContainer" prefHeight="416.0" prefWidth="494.0" spacing="10.0" styleClass="tickets-section" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </center>
@@ -47,7 +47,7 @@
          <children>
             <VBox fx:id="funcionInfoContainer" prefWidth="238.0" spacing="10.0" styleClass="info-section">
                <children>
-                  <Label styleClass="section-header" text="Información de la función" />
+                  <Label styleClass="section-header" text="Información de la función :D" />
                   <Label fx:id="labelNombrePelicula" prefHeight="0.0" prefWidth="238.0" styleClass="movie-title" text="Nombre de la película" textAlignment="CENTER" wrapText="true" />
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
@@ -67,17 +67,16 @@
                </children>
             </VBox>
             <Separator />
-            <VBox fx:id="boletosVipContainer" spacing="10.0" styleClass="tickets-section">
+            <VBox fx:id="boletosContainer" prefHeight="390.0" prefWidth="238.0" spacing="10.0" styleClass="tickets-section">
                <children>
-                  <ScrollPane fx:id="scrollBoletosVip" fitToWidth="true" maxHeight="120.0" styleClass="tickets-scroll">
+                  <ScrollPane fx:id="scrollBoletos" fitToWidth="true" maxHeight="600.0" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="238.0" styleClass="tickets-scroll">
                      <content>
-                        <VBox fx:id="listaBoletosVip" spacing="5.0" />
+                        <VBox fx:id="listaBoletos" prefWidth="300.0" spacing="5.0" />
                      </content>
                   </ScrollPane>
                </children>
             </VBox>
-            <Region VBox.vgrow="ALWAYS" />
-            <HBox>
+            <HBox alignment="BASELINE_CENTER">
                <children>
                   <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Total:" />
                   <Region HBox.hgrow="ALWAYS" />
