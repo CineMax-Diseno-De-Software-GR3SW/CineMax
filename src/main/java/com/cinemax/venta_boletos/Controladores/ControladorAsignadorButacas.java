@@ -9,6 +9,7 @@ import com.cinemax.salas.controladores.ControladorDeConsultaSalas;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.salas.modelos.entidades.TipoSala;
 import com.cinemax.salas.servicios.ButacaService;
 import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
 
@@ -32,9 +33,7 @@ import javafx.stage.Stage;
 
 public class ControladorAsignadorButacas {
 
-    ButacaService butacaService = new ButacaService();
-
-    // FXML
+    // ------FXML------
      @FXML
     private VBox boletosContainer;
 
@@ -89,24 +88,23 @@ public class ControladorAsignadorButacas {
     @FXML
     private Label totalLabel;
 
+    // ------Atributos------
     private ControladorDeConsultaSalas controladorConsultaSalas;
-    private List<Butaca> butacasSeleccionadas = new ArrayList<>();
-
+    private List<Butaca> butacasSeleccionadas;
     private BoletoDAO boletoDAO;
     private List<Butaca> butacasOcupadas;
+    private int cantidad;
+    private ButacaService butacaService;
 
     public ControladorAsignadorButacas() {
         boletoDAO = new BoletoDAO();
         butacasOcupadas = new ArrayList<>();
+        butacasSeleccionadas = new ArrayList<>();
+        butacaService = new ButacaService();
+        cantidad = 1;
+        butacaService = new ButacaService();
     }
 
-    @FXML
-    private void initialize() {
-        //cargarMapaButacas();
-        butacaService = new ButacaService();
-        
-    }
-    
     private void cargarMapaButacas(Sala sala) {
         try {
             // Cargar el FXML del mapa de butacas
@@ -123,13 +121,8 @@ public class ControladorAsignadorButacas {
             controladorConsultaSalas.setControladorAsignadorButacas(this); // Pasar el controlador de asignación de butacas
 
         } catch (IOException e) {
-            System.err.println("Error al cargar MapaButacas.fxml: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
             e.printStackTrace();
-            
-            // Mostrar mensaje de error en caso de fallo
-            Label errorLabel = new Label("Error al cargar el mapa de butacas");
-            errorLabel.setStyle("-fx-text-fill: red;");
-            mapaButacasContainer.getChildren().add(errorLabel);
         }
     }
     
@@ -137,15 +130,11 @@ public class ControladorAsignadorButacas {
     @FXML
     void onBackAction(ActionEvent event) {
         ManejadorMetodosComunes.cambiarVentana((Stage) buttonVolver.getScene().getWindow(), "/vistas/venta_boletos/funciones-view.fxml", "Cartelera");
-
     }
 
     @FXML
     void onContinuarAction(ActionEvent event) {
-        ManejadorMetodosComunes.cambiarVentana((Stage) continueButton.getScene().getWindow(), "/vistas/venta_boletos/resumen-view.fxml", "Resumen");
-        ControladorDeConsultaSalas controlador = new ControladorDeConsultaSalas();
-        //controlador.
-
+        ManejadorMetodosComunes.cambiarVentana((Stage) continueButton.getScene().getWindow(), "/vistas/venta_boletos/datos-cliente-view.fxml", "Resumen");
     }
 
     public List<String> asignarButacas(String controladorDeConsultaSalas, String funcion, List<String> butacasOcupadas, int totalBoletos) {
@@ -173,6 +162,10 @@ public class ControladorAsignadorButacas {
     public void inicializarDatos(Funcion funcionSeleccionada) { 
         System.out.println("Inicializando datos en ControladorAsignadorButacas");
 
+        labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name()); // encabezado
+
+        colocarInformacionFuncion(funcionSeleccionada);
+
         try {
             butacasOcupadas = boletoDAO.listarButacasDeBoletosPorFuncion(funcionSeleccionada);
         } catch (Exception e) {
@@ -180,13 +173,6 @@ public class ControladorAsignadorButacas {
             e.printStackTrace();
             return;
         }
-
-        
-        // encabezado
-        labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name());
-
-        
-        colocarInformacionFuncion(funcionSeleccionada);
 
         List<Butaca> butacasDeSala;
         try {
@@ -226,25 +212,28 @@ public class ControladorAsignadorButacas {
     }
 
     public void agregarButacaSeleccionada(Butaca butaca) {
-        if (butaca != null && !butacasSeleccionadas.contains(butaca)) {
-            butacasSeleccionadas.add(butaca);
-            mostrarButacaSeleccionada(butaca);
-            calcularTotalBoletos();
+        if (butaca == null || butacasSeleccionadas.contains(butaca)) {
+            return; // No agregar si la butaca es nula o ya está seleccionada
         }
+        butacasSeleccionadas.add(butaca);
+        mostrarButacaSeleccionada(butaca);
+        calcularTotalBoletos();
     }
 
-    private void calcularTotalBoletos() {
-        System.out.println("Calculando total de boletos seleccionados: " + butacasSeleccionadas.size());
+    private void calcularTotalBoletos() { 
+        totalLabel.setText(String.format("%.2f", TipoSala.NORMAL.getMultiplicador() * butacasSeleccionadas.size()));
     }
 
     public void quitarButacaDeseleccionada(Butaca butaca) {
-        if (butaca != null && butacasSeleccionadas.contains(butaca)) {
-            butacasSeleccionadas.remove(butaca);
-            removerButacaDeLista(butaca);
-            calcularTotalBoletos();
+        if (butaca == null || !butacasSeleccionadas.contains(butaca)) {
+            return; // No quitar si la butaca es nula o no está seleccionada
         }
+        butacasSeleccionadas.remove(butaca);
+        removerButacaDeLista(butaca);
+        calcularTotalBoletos();
     }
 
+    // Método para mostrar la butaca seleccionada en la lista de boletos
     private void mostrarButacaSeleccionada(Butaca butaca) {
         // Crear el contenedor principal como un rectángulo
         HBox butacaItem = new HBox();
@@ -260,6 +249,20 @@ public class ControladorAsignadorButacas {
             "-fx-padding: 8 12 8 12;"
         );
         
+        // Label de cantidad
+        Label labelCantidad = new Label(String.valueOf(cantidad++));
+        labelCantidad.setStyle(
+            "-fx-font-weight: bold; " +
+            "-fx-font-size: 16px; " +
+            "-fx-text-fill: #2c5aa0; " +
+            "-fx-min-width: 10px;"
+        );
+        
+        // Separador visual
+        Region spacer = new Region();
+        spacer.setPrefWidth(5);
+        spacer.setStyle("-fx-background-color: #b3d9e6; -fx-pref-height: 20px; -fx-max-width: 1px;");
+
         // Label con el código alfanumérico en la parte izquierda
         Label labelButaca = new Label(butaca.getFila().toUpperCase() + butaca.getColumna());
         labelButaca.setStyle(
@@ -268,14 +271,9 @@ public class ControladorAsignadorButacas {
             "-fx-text-fill: #2c5aa0; " +
             "-fx-min-width: 50px;"
         );
-        
-        // Separador visual
-        Region spacer = new Region();
-        spacer.setPrefWidth(10);
-        spacer.setStyle("-fx-background-color: #b3d9e6; -fx-pref-height: 20px; -fx-max-width: 1px;");
-        
+
         // Agregar todos los elementos al contenedor
-        butacaItem.getChildren().addAll(labelButaca, spacer);
+        butacaItem.getChildren().addAll(labelCantidad,spacer,labelButaca);
         
         // Asignar un ID único para poder encontrar y eliminar el elemento después
         butacaItem.setId("butaca-" + butaca.getId());
@@ -288,43 +286,6 @@ public class ControladorAsignadorButacas {
         // Remover el elemento con el ID correspondiente
         listaBoletos.getChildren().removeIf(node ->
             ("butaca-" + butaca.getId()).equals(node.getId()));
+        cantidad--;
     }
-
-    //public List<Butaca> asignarButacas(Funcion funcionEnSalaVIP, Funcion funcionEnSalaNormal,
-    //        List<Butaca> butacasOcupadasNormal, List<Butaca> butacasOcupadasVIP, int boletosSalaVIP,
-    //        int boletosSalaNormal) {
-    //    controladorConsultaSalas.mostrarButacasDeSala(funcionEnSalaNormal, butacasOcupadasNormal);
-    //    controladorConsultaSalas.mostrarButacasDeSala(funcionEnSalaVIP, butacasOcupadasVIP);
-    //    Butaca butacaSeleccionada = controladorConsultaSalas.getButacaSeleccionada();
-    //    int boletosNormalesEscogidos =0;
-    //    int boletosVipEscogidos = 0;
-    //    while (boletosNormalesEscogidos < boletosSalaNormal || boletosVipEscogidos < boletosSalaVIP) {
-    //        
-    //        if (butacaSeleccionada == null) {
-    //            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, seleccione una butaca.");
-    //            continue;
-    //        }
-    //        if(butacaSeleccionada.getIdSala() == funcionEnSalaNormal.getSala().getId()) {
-    //            for (Butaca butaca : butacasSeleccionadasNormal) {
-    //                if(butaca.getId() == butacaSeleccionada.getId()) {
-    //                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("La butaca ya ha sido seleccionada.");
-    //                    butacaSeleccionada = controladorConsultaSalas.getButacaSeleccionada();
-    //                    butacaSeleccionada.setEstado();
-    //                    continue;
-    //                }
-    //            }
-    //            butacasSeleccionadasNormal.add(butacaSeleccionada);
-    //            boletosNormalesEscogidos++;
-    //            continue;
-    //        }
-    //        if(butacaSeleccionada.getIdSala() == funcionEnSalaVIP.getSala().getId()) {
-    //            butacasSeleccionadasVIP.add(butacaSeleccionada);
-    //            boletosVipEscogidos++;
-    //            continue;
-    //        }
-    //        butacaSeleccionada = controladorConsultaSalas.getButacaSeleccionada();
-    //        
-    //    }
-    //}
-
 }

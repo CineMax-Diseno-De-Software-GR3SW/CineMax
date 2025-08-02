@@ -10,58 +10,25 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorAsignadorButacas">
-   <top>
-      <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
-         <children>
-            <Button fx:id="buttonVolver" onAction="#onBackAction" styleClass="icon-button" text="←" />
-            <Label styleClass="section-title" text="Selecciona tus butacas" />
-            <Region HBox.hgrow="ALWAYS" />
-         </children>
-      </HBox>
-   </top>
-   <center>
-      <VBox prefWidth="414.0" spacing="20.0" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
-         </padding>
-         <children>
-            <HBox alignment="CENTER_LEFT">
-               <children>
-                  <Label styleClass="section-title" text="Sala " />
-                  <Label fx:id="labelTipoSala" styleClass="section-title" text="VIP" />
-                  <Region HBox.hgrow="ALWAYS" />
-               </children>
-            </HBox>
-            <!-- Contenedor donde se cargará programáticamente el mapa de butacas -->
-            <VBox fx:id="mapaButacasContainer" prefHeight="416.0" prefWidth="494.0" spacing="10.0" styleClass="tickets-section" VBox.vgrow="ALWAYS" />
-         </children>
-      </VBox>
-   </center>
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" style="-fx-background-color: transparent;" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorAsignadorButacas">
    <right>
-      <VBox maxWidth="323.0" minWidth="280.0" prefHeight="500.0" prefWidth="323.0" spacing="15.0" styleClass="financial-summary-pane">
+      <VBox maxWidth="323.0" minWidth="280.0" prefHeight="550.0" prefWidth="812.0" spacing="15.0" styleClass="financial-summary-pane" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
          </padding>
          <children>
             <VBox fx:id="funcionInfoContainer" prefWidth="238.0" spacing="10.0" styleClass="info-section">
                <children>
-                  <Label styleClass="section-header" text="Información de la función :D" />
+                  <Label styleClass="section-header" text="Información de la venta">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
                   <Label fx:id="labelNombrePelicula" prefHeight="0.0" prefWidth="238.0" styleClass="movie-title" text="Nombre de la película" textAlignment="CENTER" wrapText="true" />
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <ImageView fx:id="imagenPelicula" fitHeight="154.0" fitWidth="141.0" preserveRatio="true" styleClass="movie-poster" />
-                        <VBox prefHeight="170.0" prefWidth="105.0" spacing="5.0">
-                           <children>
-                              <Label fx:id="labelGeneroPelicula1" styleClass="movie-genre" text="Género: " />
-                              <Label fx:id="labelFormato1" styleClass="movie-genre" text="Formato: " />
-                              <Label fx:id="labelTipoEstreno1" styleClass="movie-genre" text="Tipo: " />
-                              <Label fx:id="labelLugarSala1" styleClass="movie-info" text="Sala: " />
-                              <Label fx:id="labelFechaFuncion1" styleClass="movie-info" text="Fecha: " />
-                              <Label fx:id="labelHoraFuncion1" styleClass="movie-info" text="Hora: " />
-                           </children>
-                        </VBox>
+                        <ImageView fx:id="imagenPelicula" fitHeight="154.0" fitWidth="161.0" preserveRatio="true" styleClass="movie-poster" />
                         <VBox prefHeight="170.0" prefWidth="105.0" spacing="5.0" HBox.hgrow="ALWAYS">
                            <children>
                               <Label fx:id="labelGeneroPelicula" styleClass="movie-genre" text="Género: " />
