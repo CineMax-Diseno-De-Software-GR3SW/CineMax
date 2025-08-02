@@ -581,6 +581,15 @@
     -fx-font-weight: bold;
 }
 
+.btn-small {
+    -fx-font-size: 12px;
+    -fx-padding: 4 10;
+    -fx-background-radius: 5px;
+    -fx-font-weight: bold;
+    -fx-background-color: #02487B;
+    -fx-text-fill: white;
+}
+
 .choice-box .label {
     -fx-text-fill: #000000;
     -fx-font-weight: bold;

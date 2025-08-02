@@ -6,6 +6,6 @@ public class DiarioStrategy implements FrecuenciaStrategy {
 
     @Override
     public LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion) {
-        return fechaGeneracion.plusDays(1); // Incrementa un día
+        return fechaGeneracion.plusSeconds(10); // Incrementa un día
     }
 }

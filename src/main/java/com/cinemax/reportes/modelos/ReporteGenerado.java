@@ -6,11 +6,14 @@ public class ReporteGenerado {
     private int id;
     private String nombre;
     private String tipo;
+    private String estado;
     private LocalDateTime fechaGeneracion;
     private String rutaArchivo;
+    private String frecuencia;
     private String descripcion;
-    
-    public ReporteGenerado(int id, String nombre, String tipo, LocalDateTime fechaGeneracion, String rutaArchivo, String descripcion) {
+
+    public ReporteGenerado(int id, String nombre, String tipo, LocalDateTime fechaGeneracion, String rutaArchivo,
+            String descripcion) {
         this.id = id;
         this.nombre = nombre;
         this.tipo = tipo;
@@ -18,66 +21,79 @@ public class ReporteGenerado {
         this.rutaArchivo = rutaArchivo;
         this.descripcion = descripcion;
     }
-    
+
+    public ReporteGenerado(String nombre, String estado, LocalDateTime fechaGeneracion, String rutaArchivo,
+            String frecuencia) {
+        this.nombre = nombre;
+        this.estado = estado;
+        this.fechaGeneracion = fechaGeneracion;
+        this.rutaArchivo = rutaArchivo;
+        this.frecuencia = frecuencia;
+    }
+
     // Constructor vacío
     public ReporteGenerado() {
     }
-    
+
     // Getters y Setters
     public int getId() {
         return id;
     }
-    
+
     public void setId(int id) {
         this.id = id;
     }
-    
-    public String getNombre() { 
-        return nombre; 
+
+    public String getNombre() {
+        return nombre;
     }
-    
-    public void setNombre(String nombre) { 
-        this.nombre = nombre; 
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
-    
+
     public String getTipo() {
         return tipo;
     }
-    
+
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
-    
-    public LocalDateTime getFechaGeneracion() { 
-        return fechaGeneracion; 
+
+    public LocalDateTime getFechaGeneracion() {
+        return fechaGeneracion;
     }
-    
-    public void setFechaGeneracion(LocalDateTime fechaGeneracion) { 
-        this.fechaGeneracion = fechaGeneracion; 
+
+    public void setFechaGeneracion(LocalDateTime fechaGeneracion) {
+        this.fechaGeneracion = fechaGeneracion;
     }
-    
+
     public String getRutaArchivo() {
         return rutaArchivo;
     }
-    
+
     public void setRutaArchivo(String rutaArchivo) {
         this.rutaArchivo = rutaArchivo;
     }
 
-    public String getDescripcion() {
-        return descripcion;
+    public String getFrecuencia() {
+        return frecuencia;
     }
-    
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+
+    public void setFrecuencia(String frecuencia) {
+        this.frecuencia = frecuencia;
     }
 
     public String getEstado() {
-        return "";
+        return estado;
     }
 
-    public Object getFrecuencia() {
-        return "";
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
     }
 
 }
