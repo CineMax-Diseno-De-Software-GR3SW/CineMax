@@ -2,8 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -60,14 +62,22 @@
             </GridPane>
          <Text fx:id="mensajeActualizacionCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
          <Button mnemonicParsing="false" onAction="#onActualizarCliente" styleClass="primary-button" text="Actualizar" textAlignment="CENTER" />
+         <VBox prefHeight="200.0" prefWidth="100.0">
+            <children>
+               <Region prefHeight="210.0" prefWidth="442.0" />
+               <Separator />
+               <Separator visible="false" />
+               <CheckBox fx:id="confirmCheckBox" styleClass="confirmation-checkbox" text="Confirmo la compra en SCALA (Quito)" textFill="#ffa000" />
+            </children>
+         </VBox>
         </VBox>
    </center>
    <right>
       <VBox prefHeight="500.0" prefWidth="278.0" spacing="10.0" styleClass="tickets-section" BorderPane.alignment="CENTER">
-         <children>
+        <children>
             <VBox fx:id="informacionFuncionContainer" prefHeight="650.0" prefWidth="278.0" spacing="10.0" styleClass="tickets-section" />
-            <Region prefHeight="1.0" prefWidth="278.0" />
-            <Button fx:id="buttonPagar" onAction="#onPagarAction" prefHeight="268.0" prefWidth="390.0" styleClass="primary-button" text="Pagar" VBox.vgrow="NEVER"/>
+            <Region VBox.vgrow="NEVER" />
+            <Button fx:id="buttonPagar" onAction="#onPagarAction" prefHeight="268.0" prefWidth="390.0" styleClass="primary-button" text="Pagar" VBox.vgrow="NEVER" />
             <Region prefHeight="0.0" prefWidth="278.0" />
          </children>
       </VBox>

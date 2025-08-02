@@ -27,15 +27,26 @@
                   <Label fx:id="labelNombrePelicula" prefHeight="0.0" prefWidth="274.0" styleClass="movie-title" text="Nombre de la película" textAlignment="CENTER" wrapText="true" />
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <ImageView fx:id="imagenPelicula" fitHeight="154.0" fitWidth="163.0" preserveRatio="true" styleClass="movie-poster" />
-                        <VBox prefHeight="154.0" prefWidth="156.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                        <ImageView fx:id="imagenPelicula" fitHeight="160.0" fitWidth="163.0" preserveRatio="true" styleClass="movie-poster" />
+                        <VBox prefHeight="154.0" prefWidth="75.0" spacing="5.0">
                            <children>
-                              <Label fx:id="labelGeneroPelicula" style="-fx-text-fill: #F25F00;" text="Género: " />
-                              <Label fx:id="labelFormato" style="-fx-text-fill: #F25F00;" text="Formato: " />
-                              <Label fx:id="labelTipoEstreno" style="-fx-text-fill: #F25F00;" text="Tipo: " />
-                              <Label fx:id="labelLugarSala" style="-fx-text-fill: #F25F00;" text="Sala: " />
-                              <Label fx:id="labelFechaFuncion" style="-fx-text-fill: #F25F00;" text="Fecha: " />
-                              <Label fx:id="labelHoraFuncion" style="-fx-text-fill: #F25F00;" text="Hora: " />
+                              <Label fx:id="labelGeneroPelicula1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Género: " />
+                              <Label fx:id="labelFormato1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Formato: " />
+                              <Label fx:id="labelTipoEstreno1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Tipo: " />
+                              <Label fx:id="labelLugarSala1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Sala: " />
+                              <Label fx:id="labelFechaFuncion1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Fecha: " />
+                              <Label fx:id="labelHoraFuncion1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Hora: " />
+                           </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <VBox prefHeight="154.0" prefWidth="158.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="labelGeneroPelicula" style="-fx-text-fill: #EAEAEA;" text="Género: " />
+                              <Label fx:id="labelFormato" style="-fx-text-fill: #EAEAEA;" text="Formato: " />
+                              <Label fx:id="labelTipoEstreno" style="-fx-text-fill: #EAEAEA;" text="Tipo: " />
+                              <Label fx:id="labelLugarSala" style="-fx-text-fill: #EAEAEA;" text="Sala: " />
+                              <Label fx:id="labelFechaFuncion" style="-fx-text-fill: #EAEAEA;" text="Fecha: " />
+                              <Label fx:id="labelHoraFuncion" style="-fx-text-fill: #EAEAEA;" text="Hora: " />
                            </children>
                         </VBox>
                      </children>
@@ -43,9 +54,9 @@
                </children>
             </VBox>
             <Separator />
-            <VBox fx:id="boletosContainer" prefHeight="534.0" prefWidth="238.0" spacing="10.0" styleClass="tickets-section">
+            <VBox fx:id="boletosContainer" prefHeight="250.0" maxHeight="250.0" prefWidth="358.0" spacing="10.0" styleClass="tickets-section" VBox.vgrow="NEVER">
                <children>
-                  <ScrollPane fx:id="scrollBoletos" fitToWidth="true" maxHeight="600.0" maxWidth="1.7976931348623157E308" prefHeight="548.0" prefWidth="238.0" styleClass="tickets-scroll">
+                  <ScrollPane fx:id="scrollBoletos" fitToWidth="true" maxHeight="250.0" prefHeight="250.0" prefWidth="358.0" styleClass="tickets-scroll">
                      <content>
                         <VBox fx:id="listaBoletos" prefWidth="300.0" spacing="5.0" />
                      </content>

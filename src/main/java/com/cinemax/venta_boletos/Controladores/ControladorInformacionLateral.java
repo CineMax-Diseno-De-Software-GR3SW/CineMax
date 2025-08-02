@@ -116,12 +116,12 @@ public class ControladorInformacionLateral {
 
     public void colocarInformacionFuncion(Funcion funcionSeleccionada) {
         labelNombrePelicula.setText(funcionSeleccionada.getPelicula() != null ? funcionSeleccionada.getPelicula().getTitulo() : "Título no disponible");
-        labelGeneroPelicula.setText(funcionSeleccionada.getPelicula() != null && funcionSeleccionada.getPelicula().getGenero() != null ? labelGeneroPelicula.getText()+ funcionSeleccionada.getPelicula().getGenero() : "Género no disponible");
-        labelFormato.setText(funcionSeleccionada.getFormato() != null ? labelFormato.getText()+ funcionSeleccionada.getFormato().name().replace("_", " ") : "Formato no disponible");
-        labelTipoEstreno.setText(funcionSeleccionada.getTipoEstreno() != null ? labelTipoEstreno.getText()+ funcionSeleccionada.getTipoEstreno().name().replace("_", " ").toLowerCase() : "Tipo de estreno no disponible");
-        labelLugarSala.setText(funcionSeleccionada.getSala() != null ? labelLugarSala.getText() + funcionSeleccionada.getSala().getNombre() + " - " + funcionSeleccionada.getSala().getTipo().toString().toLowerCase() : "Sala no disponible");
-        labelFechaFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? labelFechaFuncion.getText()+ funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Fecha no disponible");
-        labelHoraFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? labelHoraFuncion.getText()+ funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("HH:mm")) : "Hora no disponible");
+        labelGeneroPelicula.setText(funcionSeleccionada.getPelicula() != null && funcionSeleccionada.getPelicula().getGenero() != null ? funcionSeleccionada.getPelicula().getGenero() : "Género no disponible");
+        labelFormato.setText(funcionSeleccionada.getFormato() != null ? funcionSeleccionada.getFormato().name().replace("_", " ") : "Formato no disponible");
+        labelTipoEstreno.setText(funcionSeleccionada.getTipoEstreno() != null ? funcionSeleccionada.getTipoEstreno().name().replace("_", " ").toLowerCase() : "Tipo de estreno no disponible");
+        labelLugarSala.setText(funcionSeleccionada.getSala() != null ? funcionSeleccionada.getSala().getNombre() + " - " + funcionSeleccionada.getSala().getTipo().toString().toLowerCase() : "Sala no disponible");
+        labelFechaFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Fecha no disponible");
+        labelHoraFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("HH:mm")) : "Hora no disponible");
         imagenPelicula.setImage(new Image(funcionSeleccionada.getPelicula() != null && funcionSeleccionada.getPelicula().getImagenUrl() != null ? funcionSeleccionada.getPelicula().getImagenUrl() : "/images/no-image.png"));
     }
 

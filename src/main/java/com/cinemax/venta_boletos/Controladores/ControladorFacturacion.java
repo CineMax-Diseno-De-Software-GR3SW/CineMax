@@ -15,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -72,6 +73,9 @@ public class ControladorFacturacion {
     private TextField nombreField;
 
     @FXML
+    private CheckBox confirmCheckBox;
+
+    @FXML
     private ComboBox<String> tipoDocumentoBox;
     //public void setPreviousScene(Scene scene) {
     //    this.previousScene = scene;
@@ -93,7 +97,7 @@ public class ControladorFacturacion {
         });
     }
 
-    public void initData(List<Producto> boletos, double subtotal, double total, double impuestos) {
+    public void initData(List<Producto> boletos) {
         this.boletos = boletos;
         //ControladorAsignadorButacas controladorAsignadorButacas = new ControladorAsignadorButacas();
         //List<Butaca> butacasAsignadas = controladorAsignadorButacas.asignarButacas("", funcion, butacasAsignadas, totalBoletos);
@@ -214,6 +218,11 @@ public class ControladorFacturacion {
             return;
         }
 
+        if(confirmCheckBox.isSelected() == false) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Debe confirmar la compra para continuar.");
+            return;
+        }
+
         ClienteDAO clienteDAO = new ClienteDAO();
         Cliente cliente = null;
         try {
@@ -250,17 +259,26 @@ public class ControladorFacturacion {
     @FXML
     protected void onBackAction() {
         try {
-            ControladorAsignadorButacas controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
-                (Stage) headerBar.getScene().getWindow(),
-                "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
-                "Seleccionar Butacas");
+            Stage currentStage = (Stage) headerBar.getScene().getWindow();
             
-            if (controller != null) {
-                controller.inicializarDatos(((Boleto)boletos.get(0)).getFuncion());
-            }
+            // Cargar la vista SIN mostrarla todavía
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaSeleccionButacas.fxml"));
+            Parent root = loader.load();
+            
+            // Obtener el controlador
+            ControladorAsignadorButacas controller = loader.getController();
+            
+            // Inicializar los datos ANTES de mostrar
+            controller.inicializarDatos(((Boleto) boletos.get(0)).getFuncion());
+            
+            // AHORA sí cambiar la escena con todo ya cargado
+            Scene newScene = new Scene(root);
+            currentStage.setScene(newScene);
+            currentStage.setTitle("Seleccionar Butacas");
 
         } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la ventana: " + e.getMessage());
             e.printStackTrace();
         }
     }

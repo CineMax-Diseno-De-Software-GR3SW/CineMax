@@ -149,13 +149,27 @@ public class ControladorAsignadorButacas {
             List<Producto> boletosGenerados = servicioGeneradorBoleto.generarBoleto(funcionSeleccionada, butacasSeleccionadas);
             
             
-            // 3. Cambiar la escena a la nueva vista con tamaño de pantalla completa
+            // 1. ventana actual
             Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
-            ControladorFacturacion controladorFacturacion = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/datos-cliente-view.fxml", "Datos del Cliente");
+
+            // Cargar la vista SIN mostrarla todavía
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
+            Parent root = loader.load();
             
+            // Obtener el controlador
+            ControladorFacturacion controladorFacturacion = loader.getController();
+
             // 4. Inicializar el controlador de facturación con los datos necesarios
             controladorFacturacion.setControladorInformacionLateral(controladorInformacionLateral);
-            controladorFacturacion.initData(boletosGenerados, 0, 0, 0);
+            // Inicializar los datos ANTES de mostrar
+            controladorFacturacion.initData(boletosGenerados);
+            
+            // AHORA sí cambiar la escena con todo ya cargado
+            Scene newScene = new Scene(root);
+            currentStage.setScene(newScene);
+            currentStage.setTitle("Seleccionar Butacas");
+            
             
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());

@@ -73,6 +73,7 @@ public class ManejadorMetodosComunes {
     }
 
     // Método sobrecargado que permite acceso al controlador antes de mostrar la ventana
+    // Desventaja: Si la siguiente ventana es muy pesada, puede causar un retraso al cargar
     public static <T> T cambiarVentanaConControlador(Stage currentStage, String rutaFXML, String titulo) {
         try {
             // Cargar el archivo FXML

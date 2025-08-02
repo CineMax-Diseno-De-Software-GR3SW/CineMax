@@ -2,12 +2,8 @@ package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.Controladores.ControladorAsignadorButacas;
-import com.cinemax.venta_boletos.Controladores.ControladorBoleto;
-import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
 import com.cinemax.peliculas.controladores.ControladorFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
-import com.cinemax.salas.modelos.entidades.TipoSala;
-
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,7 +20,6 @@ import java.io.IOException;
 import java.util.List;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 public class ServicioMostrarFunciones {
 
@@ -134,14 +129,24 @@ public class ServicioMostrarFunciones {
         }
 
         try {
-            ControladorAsignadorButacas controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
-                (Stage) tabla.getScene().getWindow(),
-                "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
-                "Seleccionar Butacas");
+            // 1. ventana actual
+            Stage currentStage = (Stage) tabla.getScene().getWindow();
             
-            if (controller != null) {
-                controller.inicializarDatos(funcionSeleccionada);
-            }
+            // Cargar la vista SIN mostrarla todavía
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaSeleccionButacas.fxml"));
+            Parent root = loader.load();
+            
+            // Obtener el controlador
+            ControladorAsignadorButacas controller = loader.getController();
+            
+            // Inicializar los datos ANTES de mostrar
+            controller.inicializarDatos(funcionSeleccionada);
+            
+            // AHORA sí cambiar la escena con todo ya cargado
+            Scene newScene = new Scene(root);
+            currentStage.setScene(newScene);
+            currentStage.setTitle("Seleccionar Butacas");
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
