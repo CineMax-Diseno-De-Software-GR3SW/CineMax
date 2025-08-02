@@ -16,4 +16,4 @@
     </Label>
     <Label fx:id="messageLabel" styleClass="alert-message" text="Este es el mensaje detallado de la advertencia." wrapText="true" />
     <Button fx:id="okButton" onAction="#onOkAction" styleClass="primary-button" text="Entendido" />
-</VBox><?xml version="1.0" encoding="UTF-8"?>
+</VBox>

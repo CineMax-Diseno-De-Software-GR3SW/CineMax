@@ -1,7 +1,10 @@
 package com.cinemax.venta_boletos.Controladores;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
@@ -11,11 +14,18 @@ import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.modelos.entidades.TipoSala;
 import com.cinemax.salas.servicios.ButacaService;
+import com.cinemax.venta_boletos.Modelos.Boleto;
+import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
 
 // imports para manejar el mapa de butacas
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Screen;
+import javafx.geometry.Rectangle2D;
+
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 
@@ -34,74 +44,40 @@ import javafx.stage.Stage;
 public class ControladorAsignadorButacas {
 
     // ------FXML------
-     @FXML
-    private VBox boletosContainer;
+    @FXML
+    private Button buttonContinuar;
 
     @FXML
     private Button buttonVolver;
 
     @FXML
-    private Button continueButton;
-
-    @FXML
-    private VBox funcionInfoContainer;
-
-    @FXML
     private HBox headerBar;
 
     @FXML
-    private ImageView imagenPelicula;
-
-    @FXML
-    private Label labelFechaFuncion;
-
-    @FXML
-    private Label labelFormato;
-
-    @FXML
-    private Label labelGeneroPelicula;
-
-    @FXML
-    private Label labelHoraFuncion;
-
-    @FXML
-    private Label labelLugarSala;
-
-    @FXML
-    private Label labelNombrePelicula;
-
-    @FXML
-    private Label labelTipoEstreno;
+    private VBox informacionFuncionContainer;
 
     @FXML
     private Label labelTipoSala;
 
     @FXML
-    private VBox listaBoletos;
-
-    @FXML
     private VBox mapaButacasContainer;
 
-    @FXML
-    private ScrollPane scrollBoletos;
-
-    @FXML
-    private Label totalLabel;
 
     // ------Atributos------
     private ControladorDeConsultaSalas controladorConsultaSalas;
     private List<Butaca> butacasSeleccionadas;
     private BoletoDAO boletoDAO;
     private List<Butaca> butacasOcupadas;
-    private int cantidad;
+    private Funcion funcionSeleccionada;
+    
     private ButacaService butacaService;
+    ControladorInformacionLateral controladorInformacionLateral;
 
     public ControladorAsignadorButacas() {
         boletoDAO = new BoletoDAO();
         butacasOcupadas = new ArrayList<>();
         butacasSeleccionadas = new ArrayList<>();
         butacaService = new ButacaService();
-        cantidad = 1;
         butacaService = new ButacaService();
     }
 
@@ -125,17 +101,70 @@ public class ControladorAsignadorButacas {
             e.printStackTrace();
         }
     }
+
+    private void cargarInformacionFuncion(Funcion funcion) {
+         try {
+            // Cargar el FXML del mapa de butacas
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaInformacionLateral.fxml"));
+            Parent vistaInformacionLateral = loader.load();
+            
+            // Agregar el mapa al contenedor
+            informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
+
+            // Obtener referencia al controlador del mapa
+            controladorInformacionLateral = loader.getController();
+            controladorInformacionLateral.setRoot(vistaInformacionLateral); // Establecer la vista en el controlador
+            controladorInformacionLateral.colocarInformacionFuncion(funcion); // Asignar la función seleccionada
+            controladorInformacionLateral.mostrarSoloPrecio();
+
+        } catch (IOException e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+    }
     
 
     @FXML
     void onBackAction(ActionEvent event) {
-        ManejadorMetodosComunes.cambiarVentana((Stage) buttonVolver.getScene().getWindow(), "/vistas/venta_boletos/funciones-view.fxml", "Cartelera");
+        // Regresar a la pantalla de funciones con la información de la película seleccionada
+        
+        Stage currentStage = (Stage) buttonContinuar.getScene().getWindow(); // ventana actual
+        // Cambiar a la vista de funciones y pasar el título de la película seleccionada
+        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/funciones-view.fxml", "funciones de " + funcionSeleccionada.getPelicula().getTitulo());
+        controladorFunciones.setPelicula(funcionSeleccionada.getPelicula().getTitulo());
     }
 
     @FXML
     void onContinuarAction(ActionEvent event) {
-        ManejadorMetodosComunes.cambiarVentana((Stage) continueButton.getScene().getWindow(), "/vistas/venta_boletos/datos-cliente-view.fxml", "Resumen");
+        if(butacasSeleccionadas.isEmpty()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Debe seleccionar al menos una butaca.");
+            return;
+        }
+
+        try {
+            // 1. Generar los boletos
+            ServicioGeneradorBoleto servicioGeneradorBoleto = new ServicioGeneradorBoleto();
+            List<Producto> boletosGenerados = servicioGeneradorBoleto.generarBoleto(funcionSeleccionada, butacasSeleccionadas);
+            
+            
+            // 3. Cambiar la escena a la nueva vista con tamaño de pantalla completa
+            Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
+            ControladorFacturacion controladorFacturacion = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/datos-cliente-view.fxml", "Datos del Cliente");
+            
+            // 4. Inicializar el controlador de facturación con los datos necesarios
+            controladorFacturacion.setControladorInformacionLateral(controladorInformacionLateral);
+            controladorFacturacion.initData(boletosGenerados, 0, 0, 0);
+            
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
+            System.err.println("Error al cargar la vista de datos del cliente: " + e.getMessage());
+            e.printStackTrace();
+        }
+
     }
+
 
     public List<String> asignarButacas(String controladorDeConsultaSalas, String funcion, List<String> butacasOcupadas, int totalBoletos) {
         /*
@@ -164,7 +193,7 @@ public class ControladorAsignadorButacas {
 
         labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name()); // encabezado
 
-        colocarInformacionFuncion(funcionSeleccionada);
+        cargarInformacionFuncion(funcionSeleccionada);
 
         try {
             butacasOcupadas = boletoDAO.listarButacasDeBoletosPorFuncion(funcionSeleccionada);
@@ -198,94 +227,30 @@ public class ControladorAsignadorButacas {
         }
 
         cargarMapaButacas(funcionSeleccionada.getSala());
+        this.funcionSeleccionada = funcionSeleccionada;
+        
     }
 
-    private void colocarInformacionFuncion(Funcion funcionSeleccionada) {
-        labelNombrePelicula.setText(funcionSeleccionada.getPelicula() != null ? funcionSeleccionada.getPelicula().getTitulo() : "Título no disponible");
-        labelGeneroPelicula.setText(funcionSeleccionada.getPelicula() != null && funcionSeleccionada.getPelicula().getGenero() != null ? funcionSeleccionada.getPelicula().getGenero() : "Género no disponible");
-        labelLugarSala.setText(funcionSeleccionada.getSala() != null ? funcionSeleccionada.getSala().getNombre() : "Sala no disponible");
-        labelFechaFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Fecha no disponible");
-        labelHoraFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("HH:mm")) : "Hora no disponible");
-        labelFormato.setText(funcionSeleccionada.getFormato() != null ? funcionSeleccionada.getFormato().name().replace("_", " ") : "Formato no disponible");
-        imagenPelicula.setImage(new Image(funcionSeleccionada.getPelicula() != null && funcionSeleccionada.getPelicula().getImagenUrl() != null ? funcionSeleccionada.getPelicula().getImagenUrl() : "/images/no-image.png"));
-        labelTipoEstreno.setText(funcionSeleccionada.getTipoEstreno() != null ? funcionSeleccionada.getTipoEstreno().name().replace("_", " ") : "Tipo de estreno no disponible");
-    }
+    
 
     public void agregarButacaSeleccionada(Butaca butaca) {
         if (butaca == null || butacasSeleccionadas.contains(butaca)) {
             return; // No agregar si la butaca es nula o ya está seleccionada
         }
         butacasSeleccionadas.add(butaca);
-        mostrarButacaSeleccionada(butaca);
-        calcularTotalBoletos();
+        controladorInformacionLateral.mostrarButacaSeleccionada(butaca);
+        controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
-    private void calcularTotalBoletos() { 
-        totalLabel.setText(String.format("%.2f", TipoSala.NORMAL.getMultiplicador() * butacasSeleccionadas.size()));
-    }
+    
 
     public void quitarButacaDeseleccionada(Butaca butaca) {
         if (butaca == null || !butacasSeleccionadas.contains(butaca)) {
             return; // No quitar si la butaca es nula o no está seleccionada
         }
         butacasSeleccionadas.remove(butaca);
-        removerButacaDeLista(butaca);
-        calcularTotalBoletos();
+        controladorInformacionLateral.removerButacaDeLista(butaca);
+        controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
-
-    // Método para mostrar la butaca seleccionada en la lista de boletos
-    private void mostrarButacaSeleccionada(Butaca butaca) {
-        // Crear el contenedor principal como un rectángulo
-        HBox butacaItem = new HBox();
-        butacaItem.setAlignment(javafx.geometry.Pos.CENTER_LEFT);
-        butacaItem.setSpacing(10);
-        butacaItem.setPrefHeight(40);
-        butacaItem.setStyle(
-            "-fx-background-color: #e8f4f8; " +
-            "-fx-background-radius: 8; " +
-            "-fx-border-color: #b3d9e6; " +
-            "-fx-border-radius: 8; " +
-            "-fx-border-width: 1; " +
-            "-fx-padding: 8 12 8 12;"
-        );
-        
-        // Label de cantidad
-        Label labelCantidad = new Label(String.valueOf(cantidad++));
-        labelCantidad.setStyle(
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 16px; " +
-            "-fx-text-fill: #2c5aa0; " +
-            "-fx-min-width: 10px;"
-        );
-        
-        // Separador visual
-        Region spacer = new Region();
-        spacer.setPrefWidth(5);
-        spacer.setStyle("-fx-background-color: #b3d9e6; -fx-pref-height: 20px; -fx-max-width: 1px;");
-
-        // Label con el código alfanumérico en la parte izquierda
-        Label labelButaca = new Label(butaca.getFila().toUpperCase() + butaca.getColumna());
-        labelButaca.setStyle(
-            "-fx-font-weight: bold; " +
-            "-fx-font-size: 16px; " +
-            "-fx-text-fill: #2c5aa0; " +
-            "-fx-min-width: 50px;"
-        );
-
-        // Agregar todos los elementos al contenedor
-        butacaItem.getChildren().addAll(labelCantidad,spacer,labelButaca);
-        
-        // Asignar un ID único para poder encontrar y eliminar el elemento después
-        butacaItem.setId("butaca-" + butaca.getId());
-        
-        // Agregar al contenedor de boletos
-        listaBoletos.getChildren().add(butacaItem);
-    }
-
-    private void removerButacaDeLista(Butaca butaca) {
-        // Remover el elemento con el ID correspondiente
-        listaBoletos.getChildren().removeIf(node ->
-            ("butaca-" + butaca.getId()).equals(node.getId()));
-        cantidad--;
-    }
+    
 }

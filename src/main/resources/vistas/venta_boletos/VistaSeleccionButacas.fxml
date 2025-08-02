@@ -3,9 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
@@ -21,8 +18,19 @@
          </children>
       </HBox>
    </top>
+   
+   <right>
+      <VBox prefHeight="500.0" prefWidth="277.0" spacing="10.0" styleClass="tickets-section" BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="informacionFuncionContainer" prefHeight="650.0" prefWidth="278.0" spacing="10.0" styleClass="tickets-section" />
+            <Region VBox.vgrow="NEVER" />
+            <Button fx:id="buttonContinuar" onAction="#onContinuarAction" prefHeight="268.0" prefWidth="390.0" styleClass="primary-button" text="Continuar" VBox.vgrow="NEVER" />
+            <Region prefHeight="0.0" prefWidth="278.0" />
+         </children>
+      </VBox>
+   </right>
    <center>
-      <VBox prefWidth="414.0" spacing="20.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="500.0" prefWidth="604.0" spacing="20.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
          </padding>
@@ -30,72 +38,13 @@
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label styleClass="section-title" text="Sala " />
-                  <Label fx:id="labelTipoSala" styleClass="section-title" text="VIP" />
+                  <Label fx:id="labelTipoSala" styleClass="movie-title" text="Tipo Sala" textFill="#f25f00" />
                   <Region HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <!-- Contenedor donde se cargará programáticamente el mapa de butacas -->
-            <VBox fx:id="mapaButacasContainer" prefHeight="416.0" prefWidth="494.0" spacing="10.0" styleClass="tickets-section" VBox.vgrow="ALWAYS" />
+            <VBox fx:id="mapaButacasContainer" spacing="0.0" styleClass="tickets-section" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" />
          </children>
       </VBox>
    </center>
-   <right>
-      <VBox maxWidth="323.0" minWidth="280.0" prefHeight="500.0" prefWidth="323.0" spacing="15.0" styleClass="financial-summary-pane">
-         <padding>
-            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-         </padding>
-         <children>
-            <VBox fx:id="funcionInfoContainer" prefWidth="238.0" spacing="10.0" styleClass="info-section">
-               <children>
-                  <Label styleClass="section-header" text="Información de la función :D" />
-                  <Label fx:id="labelNombrePelicula" prefHeight="0.0" prefWidth="238.0" styleClass="movie-title" text="Nombre de la película" textAlignment="CENTER" wrapText="true" />
-                  <HBox alignment="CENTER_LEFT" spacing="10.0">
-                     <children>
-                        <ImageView fx:id="imagenPelicula" fitHeight="154.0" fitWidth="141.0" preserveRatio="true" styleClass="movie-poster" />
-                        <VBox prefHeight="170.0" prefWidth="105.0" spacing="5.0">
-                           <children>
-                              <Label fx:id="labelGeneroPelicula1" styleClass="movie-genre" text="Género: " />
-                              <Label fx:id="labelFormato1" styleClass="movie-genre" text="Formato: " />
-                              <Label fx:id="labelTipoEstreno1" styleClass="movie-genre" text="Tipo: " />
-                              <Label fx:id="labelLugarSala1" styleClass="movie-info" text="Sala: " />
-                              <Label fx:id="labelFechaFuncion1" styleClass="movie-info" text="Fecha: " />
-                              <Label fx:id="labelHoraFuncion1" styleClass="movie-info" text="Hora: " />
-                           </children>
-                        </VBox>
-                        <VBox prefHeight="170.0" prefWidth="105.0" spacing="5.0" HBox.hgrow="ALWAYS">
-                           <children>
-                              <Label fx:id="labelGeneroPelicula" styleClass="movie-genre" text="Género: " />
-                              <Label fx:id="labelFormato" styleClass="movie-genre" text="Formato: " />
-                              <Label fx:id="labelTipoEstreno" styleClass="movie-genre" text="Tipo: " />
-                              <Label fx:id="labelLugarSala" styleClass="movie-info" text="Sala: " />
-                              <Label fx:id="labelFechaFuncion" styleClass="movie-info" text="Fecha: " />
-                              <Label fx:id="labelHoraFuncion" styleClass="movie-info" text="Hora: " />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <Separator />
-            <VBox fx:id="boletosContainer" prefHeight="390.0" prefWidth="238.0" spacing="10.0" styleClass="tickets-section">
-               <children>
-                  <ScrollPane fx:id="scrollBoletos" fitToWidth="true" maxHeight="600.0" maxWidth="1.7976931348623157E308" prefHeight="500.0" prefWidth="238.0" styleClass="tickets-scroll">
-                     <content>
-                        <VBox fx:id="listaBoletos" prefWidth="300.0" spacing="5.0" />
-                     </content>
-                  </ScrollPane>
-               </children>
-            </VBox>
-            <HBox alignment="BASELINE_CENTER">
-               <children>
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Total:" />
-                  <Region HBox.hgrow="ALWAYS" />
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="\$ " />
-                  <Label fx:id="totalLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
-               </children>
-            </HBox>
-            <Button fx:id="continueButton" maxWidth="Infinity" onAction="#onContinuarAction" styleClass="primary-button" text="Continuar" />
-         </children>
-      </VBox>
-   </right>
 </BorderPane>

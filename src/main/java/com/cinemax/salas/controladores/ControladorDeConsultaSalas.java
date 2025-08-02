@@ -75,7 +75,9 @@ public class ControladorDeConsultaSalas implements Initializable {
             List<Butaca> butacas = butacaService.listarButacasPorSala(salaSeleccionada.getId());
             for (Butaca butaca : butacas) {
                 Button btn = new Button(butaca.getFila().toUpperCase() + butaca.getColumna());
-                btn.setMinSize(40, 40);
+                btn.setMinSize(60, 60);
+                btn.setPrefSize(60, 60);
+                btn.setMaxSize(60, 60);
                 
                 // Verificar el estado de la butaca
                 if (butacasOcupadas.contains(butaca.getId())) {
@@ -84,7 +86,7 @@ public class ControladorDeConsultaSalas implements Initializable {
                     btn.setDisable(true);
                 } else if (butacasSeleccionadas.contains(butaca)) {
                     // Butaca seleccionada por el usuario actual
-                    btn.setStyle("-fx-background-color: orange; -fx-text-fill: white;");
+                    btn.setStyle("-fx-background-color: #02487B; -fx-text-fill: white;");
                     btn.setOnAction(e -> deseleccionarButaca(butaca, btn));
                 } else {
                     // Butaca disponible
@@ -150,7 +152,7 @@ public class ControladorDeConsultaSalas implements Initializable {
     private void seleccionarButaca(Butaca butaca, Button btn) {
         if (!butacasSeleccionadas.contains(butaca)) {
             butacasSeleccionadas.add(butaca);
-            btn.setStyle("-fx-background-color: orange; -fx-text-fill: white;");
+            btn.setStyle("-fx-background-color: #02487B; -fx-text-fill: white;");
             btn.setOnAction(e -> deseleccionarButaca(butaca, btn));
             
             // Notificar al controlador padre

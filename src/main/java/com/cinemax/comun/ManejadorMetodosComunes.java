@@ -1,9 +1,11 @@
 package com.cinemax.comun;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -17,9 +19,24 @@ public class ManejadorMetodosComunes {
             FXMLLoader loader = new FXMLLoader(ManejadorMetodosComunes.class.getResource(rutaFXML));
             Parent root = loader.load();
 
-            // Cambiar la escena del Stage actual
-            currentStage.setScene(new Scene(root));
+            // Obtener dimensiones de pantalla
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+
+            // Configurar dimensiones antes de la escena
+            currentStage.setX(screenBounds.getMinX());
+            currentStage.setY(screenBounds.getMinY());
+            currentStage.setWidth(screenBounds.getWidth());
+            currentStage.setHeight(screenBounds.getHeight());
+            
+
             currentStage.setTitle(titulo);
+
+            // Cambiar la escena
+            currentStage.setScene(new Scene(root));
+            
+
+            // Maximizar la ventana
+            currentStage.setMaximized(true);
 
         } catch (IOException e) {
             mostrarVentanaError("No se pudo cargar la interfaz de usuario.");
@@ -33,12 +50,58 @@ public class ManejadorMetodosComunes {
             FXMLLoader loader = new FXMLLoader(ManejadorMetodosComunes.class.getResource(rutaFXML));
             Parent root = loader.load();
 
-            // Cambiar la escena del Stage actual
+            // Obtener dimensiones de pantalla
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            
+            // Configurar dimensiones antes de la escena
+            currentStage.setX(screenBounds.getMinX());
+            currentStage.setY(screenBounds.getMinY());
+            currentStage.setWidth(screenBounds.getWidth());
+            currentStage.setHeight(screenBounds.getHeight());
+            
+            // Cambiar la escena
             currentStage.setScene(new Scene(root));
+            
+
+            // Maximizar la ventana
+            currentStage.setMaximized(true);
 
         } catch (IOException e) {
             mostrarVentanaError("No se pudo cargar la interfaz de usuario.");
             e.printStackTrace();
+        }
+    }
+
+    // Método sobrecargado que permite acceso al controlador antes de mostrar la ventana
+    public static <T> T cambiarVentanaConControlador(Stage currentStage, String rutaFXML, String titulo) {
+        try {
+            // Cargar el archivo FXML
+            FXMLLoader loader = new FXMLLoader(ManejadorMetodosComunes.class.getResource(rutaFXML));
+            Parent root = loader.load();
+
+            // Obtener el controlador para permitir configuración
+            T controller = loader.getController();
+
+            // Obtener dimensiones de pantalla
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            
+            // Configurar dimensiones antes de la escena
+            currentStage.setX(screenBounds.getMinX());
+            currentStage.setY(screenBounds.getMinY());
+            currentStage.setWidth(screenBounds.getWidth());
+            currentStage.setHeight(screenBounds.getHeight());
+            
+            // Cambiar la escena
+            currentStage.setScene(new Scene(root));
+            currentStage.setTitle(titulo);
+            currentStage.setMaximized(true); // Maximizar la ventana
+
+            return controller; // Retorna el controlador para configuración adicional
+
+        } catch (IOException e) {
+            mostrarVentanaError("No se pudo cargar la interfaz de usuario.");
+            e.printStackTrace();
+            return null;
         }
     }
 

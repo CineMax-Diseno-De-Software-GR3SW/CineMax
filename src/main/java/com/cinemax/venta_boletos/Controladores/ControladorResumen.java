@@ -98,17 +98,17 @@ public class ControladorResumen {
     private void construirDetalleTickets() {
         ticketDetailsContainer.getChildren().clear();
 
-        String butacasStr = boletos.stream()
-                .map(p -> ((Boleto) p).getButaca())
-                .collect(Collectors.joining(", "));
+        //String butacasStr = boletos.stream()
+        //        .map(p -> ((Boleto) p).getButaca())
+        //        .collect(Collectors.joining(", "));
 
         Label tituloTicket = new Label(String.format("Boletos (%d)", boletos.size()));
         tituloTicket.setStyle("-fx-font-weight: bold; -fx-font-size: 16px;");
 
-        ticketDetailsContainer.getChildren().add(tituloTicket);
-        ticketDetailsContainer.getChildren().add(crearFilaDetalle("▶", pelicula + ", 2D - Esp"));
-        ticketDetailsContainer.getChildren().add(crearFilaDetalle("⚲", sala));
-        ticketDetailsContainer.getChildren().add(crearFilaDetalle("💺", "Butacas: " + butacasStr));
+        //ticketDetailsContainer.getChildren().add(tituloTicket);
+        //ticketDetailsContainer.getChildren().add(crearFilaDetalle("▶", pelicula + ", 2D - Esp"));
+        //ticketDetailsContainer.getChildren().add(crearFilaDetalle("⚲", sala));
+        //ticketDetailsContainer.getChildren().add(crearFilaDetalle("💺", "Butacas: " + butacasStr));
     }
 
     private HBox crearFilaDetalle(String icono, String texto) {
@@ -121,29 +121,29 @@ public class ControladorResumen {
         return fila;
     }
 
-    @FXML
-    protected void onContinuarAction() {
-        if (!confirmCheckBox.isSelected()) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Confirme la compra para continuar.");
-            return;
-        }
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
-            Parent root = loader.load();
-            ControladorFacturacion controllerDatosCliente = loader.getController();
-
-            controllerDatosCliente.initData(this.pelicula, this.sala, this.boletos, this.subtotal, this.total,
-                    this.impuesto);
-            controllerDatosCliente.setPreviousScene(continueButton.getScene());
-
-            Stage stage = (Stage) continueButton.getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    //@FXML
+    //protected void onContinuarAction() {
+    //    if (!confirmCheckBox.isSelected()) {
+    //        ManejadorMetodosComunes.mostrarVentanaAdvertencia("Confirme la compra para continuar.");
+    //        return;
+    //    }
+    //    try {
+    //        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
+    //        Parent root = loader.load();
+    //        ControladorFacturacion controllerDatosCliente = loader.getController();
+//
+    //        controllerDatosCliente.initData(this.pelicula, this.sala, this.boletos, this.subtotal, this.total,
+    //                this.impuesto);
+    //        controllerDatosCliente.setPreviousScene(continueButton.getScene());
+//
+    //        Stage stage = (Stage) continueButton.getScene().getWindow();
+    //        Scene scene = new Scene(root);
+    //        stage.setScene(scene);
+    //        stage.show();
+    //    } catch (IOException e) {
+    //        e.printStackTrace();
+    //    }
+    //}
 
     /**
      * CORRECCIÓN: Este es el método que faltaba.

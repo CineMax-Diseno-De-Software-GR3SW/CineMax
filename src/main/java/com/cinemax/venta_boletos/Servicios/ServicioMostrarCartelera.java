@@ -54,18 +54,18 @@ public class ServicioMostrarCartelera {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/funciones-view.fxml"));
-            Parent root = loader.load();
+            
+            ControladorMostrarFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
+                currentStage, 
+                "/vistas/venta_boletos/funciones-view.fxml", 
+                "Funciones de " + peliculaSeleccionada.getTitulo()
+            );
+            
+            if (controller != null) {
+                controller.setPelicula(peliculaSeleccionada.getTitulo());
+            }
 
-            ControladorMostrarFunciones controller = loader.getController();
-            controller.setPelicula(peliculaSeleccionada.getTitulo());
-
-            currentStage.setScene(new Scene(root));
-            currentStage.setTitle("Funciones de " + peliculaSeleccionada.getTitulo());
-            currentStage.centerOnScreen();
-            currentStage.show();
-
-        } catch (IOException e) {
+        } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("No se pudo cargar la pantalla de funciones");
             e.printStackTrace();
         }

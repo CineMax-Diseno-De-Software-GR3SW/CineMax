@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefWidth="800" prefHeight="600" stylesheets="@../temas/styles.css" 
+<BorderPane stylesheets="@../temas/styles.css" 
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones">
@@ -41,7 +41,7 @@
     <center>
         <VBox alignment="CENTER" spacing="20" styleClass="content-pane">
             <TableView fx:id="tableViewFunciones" styleClass="content-list"
-                      prefWidth="750" prefHeight="400">
+                      VBox.vgrow="ALWAYS">
                 <columns>
                         <TableColumn fx:id="colHora" text="Hora" prefWidth="100"/>
                         <TableColumn fx:id="colSala" text="Sala" prefWidth="120"/>

@@ -1,40 +1,43 @@
 package com.cinemax.venta_boletos.Modelos;
 
+import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.salas.modelos.entidades.Butaca;
+import com.cinemax.salas.modelos.entidades.TipoSala;
 
 public class Boleto extends Producto {
-    private String funcion;
-    private String butaca;
+    private Funcion funcion;
+    private Butaca butaca;
 
-    public Boleto(String funcion, String butaca) {
+    public Boleto(Funcion funcion, Butaca butaca) {
         this.funcion = funcion;
         this.butaca = butaca;
         calcularPrecio();
     }
     
-    public void setFuncion(String funcion) {
+    public void setFuncion(Funcion funcion) {
         this.funcion = funcion;
     }
 
-    public String getFuncion() {
+    public Funcion getFuncion() {
         return funcion;
     }
 
-    public void setButaca(String butaca) {
+    public void setButaca(Butaca butaca) {
         this.butaca = butaca;
     }
 
-    public String getButaca() {
+    public Butaca getButaca() {
         return butaca;
     }
 
     @Override
     public void calcularPrecio() {        
-        //double precioBase = 10.0; // Precio base por boleto
-        double precioTipoDeSala = 1.0;
-        double precioFormatoFuncion = 1.0;
-        double precioTipoFuncion = 1.0;
-        double precioHorario = 1.0;
-        setPrecio(precioTipoDeSala + precioFormatoFuncion + precioTipoFuncion + precioHorario);
+        double precioBase = 1.0; // Precio base por boleto
+        double multiplicadorTipoDeSala = funcion.getSala().getTipo().getMultiplicador();
+        double multiplicadorFormatoFuncion = funcion.getFormato().getMultiplicadorPrecio().doubleValue();
+        double multiplicadorTipoFuncion = funcion.getTipoEstreno().getMultiplicadorPrecio().doubleValue();
+        double multiplicadorHorario = funcion.getDiaSemana().getPrecio().doubleValue();
+        setPrecio(precioBase * multiplicadorTipoDeSala * multiplicadorFormatoFuncion * multiplicadorTipoFuncion * multiplicadorHorario);
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
+import com.cinemax.venta_boletos.Modelos.Boleto;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
@@ -18,6 +19,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -35,42 +37,47 @@ public class ControladorFacturacion {
     // --- Estado ---
     private Scene previousScene;
     private List<Producto> boletos;
-    private String pelicula;
-    private String sala;
     private double xOffset = 0;
     private double yOffset = 0;
 
     // --- Componentes FXML ---
     @FXML
-    private HBox headerBar;
-    @FXML
-    private TextField nombreField;
-    @FXML
     private TextField apellidoField;
+
     @FXML
-    private ComboBox<String> tipoDocumentoBox;
-    @FXML
-    private TextField documentoField;
+    private Button buttonPagar;
+
     @FXML
     private TextField correoField;
+
     @FXML
-    private Label subtotalLabel;
+    private TextField documentoField;
+
     @FXML
-    private Label impuestosLabel;
-    @FXML
-    private Label totalLabel;
-    @FXML
-    private Button finalizarButton;
+    private HBox headerBar;
+
     @FXML
     private TextField identificacionField;
+
+    @FXML
+    private VBox informacionFuncionContainer;
+
     @FXML
     private Text mensajeActualizacionCliente;
+
     @FXML
     private Text mensajeBusquedaCliente;
 
-    public void setPreviousScene(Scene scene) {
-        this.previousScene = scene;
-    }
+    @FXML
+    private TextField nombreField;
+
+    @FXML
+    private ComboBox<String> tipoDocumentoBox;
+    //public void setPreviousScene(Scene scene) {
+    //    this.previousScene = scene;
+    //}
+
+    private ControladorInformacionLateral controladorInformacionLateral;
 
     @FXML
     public void initialize() {
@@ -86,10 +93,7 @@ public class ControladorFacturacion {
         });
     }
 
-    public void initData(String pelicula, String sala, List<Producto> boletos, double subtotal, double total,
-            double impuestos) {
-        this.pelicula = pelicula;
-        this.sala = sala;
+    public void initData(List<Producto> boletos, double subtotal, double total, double impuestos) {
         this.boletos = boletos;
         //ControladorAsignadorButacas controladorAsignadorButacas = new ControladorAsignadorButacas();
         //List<Butaca> butacasAsignadas = controladorAsignadorButacas.asignarButacas("", funcion, butacasAsignadas, totalBoletos);
@@ -103,9 +107,40 @@ public class ControladorFacturacion {
 
         DecimalFormat df = new DecimalFormat("$ #,##0.00");
 
-        subtotalLabel.setText(df.format(subtotal));
-        impuestosLabel.setText(df.format(impuestos));
-        totalLabel.setText(df.format(total));
+        //subtotalLabel.setText(df.format(subtotal));
+        //impuestosLabel.setText(df.format(impuestos));
+        //totalLabel.setText(df.format(total));
+
+        // Cargar el FXML de la vista de información lateral
+        if(controladorInformacionLateral == null) {
+            ManejadorMetodosComunes.mostrarVentanaError("Controlador de información lateral no inicializado.");
+            return;
+        }
+
+        Parent vistaInformacionLateral = controladorInformacionLateral.getRoot(); // Para obtener la vista cargada en el controlador anterior
+
+
+        //FXMLLoader loader = new FXMLLoader();
+        //loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaInformacionLateral.fxml"));
+        //
+        //loader.setController(controladorInformacionLateral);
+        
+        //Parent vistaInformacionLateral;
+        //try {
+        //    vistaInformacionLateral = loader.load();
+        //} catch (IOException e) {
+        //    ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la vista de información lateral: " + e.getMessage());
+        //    e.printStackTrace();
+        //    return; // Salir del método si hay un error
+        //}
+        
+        // Agregar el mapa al contenedor
+        informacionFuncionContainer.getChildren().clear(); // Limpiar el contenedor antes de agregar
+        informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
+        controladorInformacionLateral.calcularTotal(boletos);
+
+        System.out.println("Boletos generados: " + ((Boleto) boletos.get(0)).getFuncion().getPelicula().getTitulo());
+        System.out.println("Butacas asignadas: " + ((Boleto) boletos.get(0)).getButaca().getFila() + " " + ((Boleto) boletos.get(0)).getButaca().getColumna());
 
     }
 
@@ -172,7 +207,7 @@ public class ControladorFacturacion {
     }
 
     @FXML
-    protected void onFinalizarAction() {
+    protected void onPagarAction() {
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -207,25 +242,33 @@ public class ControladorFacturacion {
         System.out.println("--- FACTURA GENERADA ---");
         System.out.println(facturaFinal);
 
-        Stage stage = (Stage) finalizarButton.getScene().getWindow();
-        stage.close();
-        // TODO: En vez de cerrar, redirigir a una vista de cartelera
+        //Stage stage = (Stage) buttonPagar.getScene().getWindow();
+        //stage.close();
+        ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "Cartelera");
     }
 
     @FXML
     protected void onBackAction() {
-        if (previousScene != null) {
-            ((Stage) finalizarButton.getScene().getWindow()).setScene(previousScene);
+        try {
+            ControladorAsignadorButacas controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
+                (Stage) headerBar.getScene().getWindow(),
+                "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
+                "Seleccionar Butacas");
+            
+            if (controller != null) {
+                controller.inicializarDatos(((Boleto)boletos.get(0)).getFuncion());
+            }
+
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    @FXML
-    protected void onCloseAction() {
-        //((Stage) headerBar.getScene().getWindow()).close();
+    public void setControladorInformacionLateral(ControladorInformacionLateral controladorInformacionLateral) {
+        this.controladorInformacionLateral = controladorInformacionLateral;
+        controladorInformacionLateral.mostrarTodaLaInformacionDePago();
+        
     }
 
-    @FXML
-    protected void onVerDetalle() {
-        System.out.println("Acción para ver detalle del pedido...");
-    }
 }

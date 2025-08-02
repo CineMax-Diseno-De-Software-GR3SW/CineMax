@@ -3,6 +3,7 @@ package com.cinemax.empleados.controladores;
 import java.io.IOException;
 import java.net.URL;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
@@ -99,8 +100,8 @@ public class ControladorPortalPrincipal {
 
     @FXML
     private void onVenderBoleto(ActionEvent event) {
-        System.out.println("Navegar a Vender Boleto");
-        navegarA("/vistas/venta_boletos/cartelera-view.fxml", "Venta de Boletos", event);
+        //navegarA("/vistas/venta_boletos/cartelera-view.fxml", "Venta de Boletos", event);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(), "/vistas/venta_boletos/cartelera-view.fxml", "Venta de Boletos");
     }
 
     @FXML
