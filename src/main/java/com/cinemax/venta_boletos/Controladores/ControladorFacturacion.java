@@ -7,7 +7,10 @@ import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
 import com.cinemax.venta_boletos.Modelos.Persistencia.ClienteDAO;
+import com.cinemax.venta_boletos.Servicios.GeneradorArchivoPDF;
 import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorArchivo;
+
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -240,6 +243,9 @@ public class ControladorFacturacion {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        ServicioGeneradorArchivo generador = new GeneradorArchivoPDF();
+        generador.generarBoletosPDF(boletos);
 
         // 2. Usar tu servicio para generar la factura final
         Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
