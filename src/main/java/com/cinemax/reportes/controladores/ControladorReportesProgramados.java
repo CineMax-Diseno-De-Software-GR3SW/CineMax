@@ -1,4 +1,5 @@
 package com.cinemax.reportes.controladores;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import java.io.IOException;
 
@@ -170,26 +171,18 @@ public class ControladorReportesProgramados {
 
     }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
-    }
-
     @FXML
     void confirmarReporteProgramado(ActionEvent event) {
         // Validar que se haya seleccionado una frecuencia
         if (choiceFrecuencia.getValue() == null || choiceFrecuencia.getValue().equals("Seleccione la Ejecucion")) {
-            mostrarAlerta("Error", "Se ha programado un reporte");
+            ManejadorMetodosComunes.mostrarVentanaError("Debe seleccionar una frecuencia de ejecución.");
             return;
         }
 
         // Verificar si ya existe un reporte con la misma frecuencia
         String frecuenciaSeleccionada = choiceFrecuencia.getValue();
         if (existeReporteConFrecuencia(frecuenciaSeleccionada)) {
-            mostrarAlerta("Error", "Ya existe un reporte programado con frecuencia " + frecuenciaSeleccionada + ".\n" +
+            ManejadorMetodosComunes.mostrarVentanaError("Ya existe un reporte programado con frecuencia " + frecuenciaSeleccionada + ".\n" +
                     "Solo puede haber una ejecución por cada tipo de frecuencia.");
             return;
         }
@@ -346,10 +339,12 @@ public class ControladorReportesProgramados {
             btnConfirmar.getStyleClass().add("btn-small");
             btnConfirmar.setOnAction(e -> {
                 agregarReporteATabla(fechaEjecucion);
-                mostrarAlerta("✅ Reporte Programado",
-                        "El reporte ha sido programado exitosamente.\n" +
-                                "Se ejecutará cada: " + frecuenciaSeleccionada +
-                                "\nPróxima ejecución: " + fechaEjecucion);
+                String mensaje = "✅ Reporte Programado\n"
+                        + "El reporte ha sido programado exitosamente.\n"
+                        + "Se ejecutará: " + frecuenciaSeleccionada;
+
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
+
                 ventanaPrevia.close();
             });
 
@@ -376,7 +371,7 @@ public class ControladorReportesProgramados {
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo abrir la previsualización del reporte.");
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo mostrar la previsualización del reporte.");
         }
     }
 
@@ -427,7 +422,7 @@ public class ControladorReportesProgramados {
      */
     public void eliminarReporteProgramado(ReporteGenerado reporte) {
         if (reporte == null) {
-            mostrarAlerta("Error", "No se pudo identificar el reporte a eliminar.");
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo identificar el reporte a eliminar.");
             return;
         }
 
@@ -442,7 +437,7 @@ public class ControladorReportesProgramados {
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             // Eliminar el reporte de la tabla
             tablaReportesGenerados.getItems().remove(reporte);
-            mostrarAlerta("Reporte Eliminado", "El reporte ha sido eliminado exitosamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("El reporte ha sido eliminado exitosamente.");
         }
     }
 
@@ -534,7 +529,7 @@ public class ControladorReportesProgramados {
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo mostrar la vista previa del reporte.");
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo mostrar la vista previa del reporte.");
         }
     }
 
@@ -644,20 +639,22 @@ public class ControladorReportesProgramados {
                 } else if (formato.equalsIgnoreCase("csv")) {
                     exportStrategy = new ExportarCSVStrategy();
                 } else {
-                    mostrarAlerta("Error", "Formato de exportación no soportado.");
+                    ManejadorMetodosComunes.mostrarVentanaError("Formato de exportación no soportado.");
                     return;
                 }
                 // TODO: Aqui exportar los datos del reporte
                 exportStrategy.exportar(reporte, archivo, datos);
 
-                mostrarAlerta("✅ Descarga Exitosa",
-                        "El reporte '" + reporte.getNombre() + "' se ha sido registrado exitosamente\n");
+                String mensaje = "✅ Descarga Exitosa\n"
+                        + "El reporte '" + reporte.getNombre() + "' se ha sido registrado exitosamente\n";
+
+                ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
             } else {
                 System.out.println("Descarga cancelada por el usuario.");
             }
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo descargar el reporte: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo descargar el reporte: " + e.getMessage());
         }
     }
 
