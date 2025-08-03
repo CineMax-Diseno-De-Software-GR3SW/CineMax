@@ -99,13 +99,26 @@ public class ControladorSalas {
     @FXML
     private void crearSala() {
         try {
+            String nombreSala = txtNombre.getText().trim();
+            // Validación: solo letras y espacios
+            if (!nombreSala.matches("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\\s]+")) {
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El nombre de la sala solo puede contener letras y espacios.");
+                return;
+            }
+            boolean existe = salaService.listarSalas().stream()
+                    .anyMatch(s -> s.getNombre().equalsIgnoreCase(nombreSala));
+            if (existe) {
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("Ya existe una sala con el nombre \"" + nombreSala + "\". Por favor elige otro nombre.");
+                return;
+            }
+
             SalaFactory factory = (cmbTipo.getValue() == TipoSala.VIP)
                     ? new SalaVIPFactory()
                     : new SalaNormalFactory();
 
             Sala sala = factory.crearSala(
                     0,
-                    txtNombre.getText(),
+                    nombreSala,
                     cmbCapacidad.getValue(),
                     cmbEstado.getValue()
             );
@@ -148,7 +161,21 @@ public class ControladorSalas {
         Sala seleccionada = tablaSalas.getSelectionModel().getSelectedItem();
         if (seleccionada != null) {
             try {
-                seleccionada.setNombre(txtNombre.getText());
+                String nombreSala = txtNombre.getText().trim();
+                // Validación: solo letras y espacios
+                if (!nombreSala.matches("[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\\s]+")) {
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("El nombre de la sala solo puede contener letras y espacios.");
+                    return;
+                }
+                // Validación de nombre duplicado (excluyendo la sala seleccionada)
+                boolean existe = salaService.listarSalas().stream()
+                        .anyMatch(s -> s.getNombre().equalsIgnoreCase(nombreSala) && s.getId() != seleccionada.getId());
+                if (existe) {
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("Ya existe una sala con el nombre \"" + nombreSala + "\". Por favor elige otro nombre.");
+                    return;
+                }
+
+                seleccionada.setNombre(nombreSala);
                 seleccionada.setCapacidad(cmbCapacidad.getValue());
                 seleccionada.setTipo(cmbTipo.getValue());
                 seleccionada.setEstado(cmbEstado.getValue());
@@ -162,7 +189,7 @@ public class ControladorSalas {
                 if (e instanceof NumberFormatException) {
                     ManejadorMetodosComunes.mostrarVentanaAdvertencia("La capacidad debe ser un número válido.");
                 } else {
-                    ManejadorMetodosComunes.mostrarVentanaError("Error inesperado en actualizarSala: " + e.getMessage());
+                    ManejadorMetodosComunes.mostrarVentanaError("" + e.getMessage());
                 }
             }
         } else {
