@@ -92,7 +92,12 @@ public class ControladorAsignadorButacas {
             mapaButacasContainer.getChildren().add(mapaButacas);
             
             // Obtener referencia al controlador del mapa
+            List<Integer> butacasOcupadasIds = butacasOcupadas.stream() 
+                .map(Butaca::getId)
+                .collect(Collectors.toList());
+
             controladorConsultaSalas = loader.getController();
+            controladorConsultaSalas.setButacasOcupadas(butacasOcupadasIds);
             controladorConsultaSalas.setSala(sala); // Asignar la sala seleccionada
             controladorConsultaSalas.setControladorAsignadorButacas(this); // Pasar el controlador de asignación de butacas
 
@@ -211,11 +216,14 @@ public class ControladorAsignadorButacas {
 
         try {
             butacasOcupadas = boletoDAO.listarButacasDeBoletosPorFuncion(funcionSeleccionada);
+
+
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas ocupadas: " + e.getMessage());
             e.printStackTrace();
             return;
         }
+        System.out.println(butacasOcupadas.size());
 
         List<Butaca> butacasDeSala;
         try {
@@ -230,16 +238,18 @@ public class ControladorAsignadorButacas {
             for (Butaca butacaOcupada : butacasOcupadas) {
                 if (butacaDeSala.getId() == butacaOcupada.getId()) {
                     butacaDeSala.setEstado(EstadoButaca.OCUPADA.name());
+                    System.out.println("Estado de la butaca " + butacaDeSala.getFila() + butacaDeSala.getColumna() + ": " + butacaDeSala.getEstado());
+                    try {
+                        butacaService.actualizarButaca(butacaDeSala);
+                    } catch (Exception e) {
+                        ManejadorMetodosComunes.mostrarVentanaError("Error al actualizar el estado de la butaca: " + e.getMessage());
+                        e.printStackTrace();
+                    }
                 } 
-                try {
-                    butacaService.actualizarButaca(butacaDeSala);
-                } catch (Exception e) {
-                    ManejadorMetodosComunes.mostrarVentanaError("Error al actualizar el estado de la butaca: " + e.getMessage());
-                    e.printStackTrace();
-                }
             }
         }
 
+        
         cargarMapaButacas(funcionSeleccionada.getSala());
         this.funcionSeleccionada = funcionSeleccionada;
         

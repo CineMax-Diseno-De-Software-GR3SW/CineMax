@@ -57,6 +57,11 @@ public class ControladorDeConsultaSalas implements Initializable {
         //}
     }
 
+    public void setButacasOcupadas(List<Integer> butacasOcupadas) {
+        this.butacasOcupadas = butacasOcupadas;
+        System.out.println("Total de butacas ocupadas: " + butacasOcupadas.size());
+    }
+
     public void setSala(Sala sala){
         salaSeleccionada = sala;
         if (sala != null) {
@@ -78,7 +83,9 @@ public class ControladorDeConsultaSalas implements Initializable {
                 btn.setMinSize(60, 60);
                 btn.setPrefSize(60, 60);
                 btn.setMaxSize(60, 60);
-                
+
+                System.out.println("Procesando butaca: " + butaca.getFila() + butaca.getColumna() + " Estado: " + butaca.getEstado() + " ID: " + butaca.getId());
+
                 // Verificar el estado de la butaca
                 if (butacasOcupadas.contains(butaca.getId())) {
                     // Butaca ocupada por boletos existentes
@@ -98,6 +105,7 @@ public class ControladorDeConsultaSalas implements Initializable {
                 int columna = Integer.parseInt(butaca.getColumna()) - 1;
                 gridButacas.add(btn, columna, fila);
             }
+            // System.out.println("Total de butacas ocupadas :D : " + butacasOcupadas.size() + " - Butaca actual: " + butacasOcupadas.get(0).getFila() + butacasOcupadas.get(0).getColumna() + " - Estado: " + butacasOcupadas.get(0).getEstado());
         } catch (Exception e) {
             e.printStackTrace();
         }

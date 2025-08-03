@@ -77,6 +77,7 @@ public class ButacaService {
                         butaca.getColumna() + " de la sala " +
                         butaca.getIdSala() + ".");
             }
+            System.out.println(b.getFila() + b.getColumna() + " " + b.getEstado());
         }
 
         // 3) Validación de capacidad si se está moviendo a una sala distinta
