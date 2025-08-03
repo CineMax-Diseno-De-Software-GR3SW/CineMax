@@ -20,14 +20,25 @@ import javafx.stage.Stage;
 
 public class ControladorPortalPrincipal {
 
+    // Botones de navegación principal
+    @FXML
+    private Button btnGestionPeliculas;
+    @FXML
+    private Button btnGestionCartelera;
+    @FXML
+    private Button btnGestionFunciones;
+    @FXML
+    private Button btnSeleccionFuncion;
+
+    // Otros botones del sistema
     @FXML
     public Button btnConfiguracionSalas;
+    @FXML
+    public Button btnConfiguracionButacas;
     @FXML
     private Button btnGestionUsuarios;
     @FXML
     private Button btnVerReportes;
-    @FXML
-    private Button btnConfiguracionFunciones;
     @FXML
     private Button btnVentaBoleto;
     @FXML
@@ -46,38 +57,16 @@ public class ControladorPortalPrincipal {
     @FXML
     public void initialize() {
         gestorSesion = ServicioSesionSingleton.getInstancia();
-        // cargarDatos();
         Usuario u = gestorSesion.getUsuarioActivo();
         lblNombreUsuario.setText(u.getNombreCompleto());
         lblRolUsuario.setText(u.getDescripcionRol());
 
-        // System.out.println(gestorSesion.getUsuarioActivo().toString());
-        // System.out.println(gestorSesion.getUsuarioActivo().getRol().toString());
-        // for (Permiso i : gestorSesion.getUsuarioActivo().getRol().getPermisos()) {
-        // System.out.println(i);
-        //
-        // }
-        // // Controlar visibilidad de botones según permisos
-        // btnGestionUsuarios.setVisible(gestorSesion.tienePermiso(Permiso.GESTIONAR_USUARIO));
-        // btnVerReportes.setVisible(gestorSesion.tienePermiso(Permiso.GESTIONAR_REPORTES));
-        // btnConfiguracion.setVisible(gestorSesion.tienePermiso(Permiso.GESTIONAR_SALA)
-        // || gestorSesion.tienePermiso(Permiso.GESTIONAR_FUNCION));
-        // btnVentaBoleto.setVisible(gestorSesion.tienePermiso(Permiso.VENDER_BOLETO));
-        // }
-
         habilitarOpcionSiTienePermiso(btnGestionUsuarios, Permiso.GESTIONAR_USUARIO);
         habilitarOpcionSiTienePermiso(btnVerReportes, Permiso.GESTIONAR_REPORTES);
-        habilitarOpcionSiTienePermiso(btnConfiguracionFunciones, Permiso.GESTIONAR_FUNCION);
         habilitarOpcionSiTienePermiso(btnConfiguracionSalas, Permiso.GESTIONAR_SALA);
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
-
+        habilitarOpcionSiTienePermiso(btnConfiguracionButacas, Permiso.GESTIONAR_SALA);
     }
-
-    // // --- Control dinámico de permisos ---
-
-    // // Selecciona la vista por defecto
-    // btnCartelera.setSelected(true);
-    // }
 
     /* Simplifica: si no tiene alguno de los permisos, oculta (sin dejar hueco) */
     private void habilitarOpcionSiTienePermiso(Node nodo, Permiso permiso) {
@@ -107,28 +96,8 @@ public class ControladorPortalPrincipal {
 
     @FXML
     private void onVerReportes(ActionEvent event) {
-        // TODO: Implementar navegación a la pantalla de reportes
         System.out.println("Navegar a Ver Reportes");
-
-        FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/vistas/reportes/PantallaModuloReportesPrincipal.fxml"));
-        try {
-            Parent root = loader.load();
-
-            // Obtener el stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Módulo de Reportes");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            System.err.println("Error al cargar FXML: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            System.err.println("Error inesperado: " + e.getMessage());
-            e.printStackTrace();
-        }
-
+        navegarA("/vistas/reportes/PantallaModuloReportesPrincipal.fxml", "Módulo de Reportes", event);
     }
 
     @FXML
@@ -137,9 +106,15 @@ public class ControladorPortalPrincipal {
         // TODO: Implementar navegación a la pantalla de configuración
     }
 
+    @FXML
     public void onConfiguracionSalas(ActionEvent event) {
+        navegarA("/vistas/salas/VistaGSalas.fxml", "Configuración de Salas", event);
     }
 
+    @FXML
+    public void onConfiguracionButacas(ActionEvent event) {
+        navegarA("/vistas/salas/VistaGButacas.fxml", "Configuración de Butacas", event);
+    }
     @FXML
     private void onVenderBoleto(ActionEvent event) {
         System.out.println("Navegar a Vender Boleto");
@@ -148,40 +123,45 @@ public class ControladorPortalPrincipal {
 
     @FXML
     private void onCerrarSesion(ActionEvent event) {
-        System.out.println("Cerrar sesión y volver al login");
-        // TODO: Implementar cerrar sesión y volver a la pantalla de login
-        URL url = getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml");
-        System.out.println(url); // Si imprime null, el archivo no se encuentra
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
-        try {
-            Parent root = loader.load();
-
-            // Obtener el Stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Portal del Administrador");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-        // Ejemplo de cerrar ventana actual (si fuera necesario)
-        // Stage stage = (Stage) txtBienvenida.getScene().getWindow();
-        // stage.close();
+        navegarA("/vistas/empleados/PantallaLogin.fxml", "Login", event);
     }
 
     @FXML
     private void onMiPerfil(ActionEvent event) {
+        navegarA("/vistas/empleados/PantallaPerfil.fxml", "Mi Perfil", event);
+    }
+
+    @FXML
+    private void onGestionPeliculas(ActionEvent event) {
+        navegarA("/vistas/peliculas/PantallaGestionPeliculas.fxml", "Gestión de Películas", event);
+    }
+
+    @FXML
+    private void onGestionCartelera(ActionEvent event) {
+        navegarA("/vistas/peliculas/PantallaGestionCartelera.fxml", "Gestión de Cartelera", event);
+    }
+
+    @FXML
+    private void onGestionFunciones(ActionEvent event) {
+        navegarA("/vistas/peliculas/PantallaGestionFunciones.fxml", "Gestión de Funciones", event);
+    }
+
+    @FXML
+    private void onSeleccionFuncion(ActionEvent event) {
+        navegarA("/vistas/peliculas/PantallaSeleccionFuncion.fxml", "Selección de Función", event);
+    }
+
+    // Metodo genérico para navegación
+    private void navegarA(String rutaFXML, String titulo, ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPerfil.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle(titulo);
             stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }

@@ -3,6 +3,8 @@ package com.cinemax.empleados.servicios;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
+import java.sql.SQLException;
+
 public class ServicioPerfilUsuario {
     private ValidadorUsuario validador;
     private UsuarioDAO usuarioDAO;
@@ -69,4 +71,24 @@ public class ServicioPerfilUsuario {
         // Un usuario solo puede actualizar su propio perfil
         return usuarioActual != null && usuarioActual.getId().equals(idUsuarioPerfil);
     }
-} 
+
+    public void actualizarCorreo(Usuario usuarioActivo, String nuevoEmail) throws SQLException {
+        usuarioActivo.actualizarCorreo(nuevoEmail);
+        usuarioDAO.actualizarCorreo(usuarioActivo.getId(),nuevoEmail);
+    }
+
+    public void actualizarCelular(Usuario usuarioActivo, String nuevoCelular) throws SQLException {
+        usuarioActivo.actualizarCelular(nuevoCelular);
+        usuarioDAO.actualizarCelular(usuarioActivo.getId(), nuevoCelular);
+    }
+
+    public void actualizarClave(Usuario usuarioActivo, String claveActual,String nuevaClave) throws SQLException {
+        if (!usuarioActivo.getClave().equals(claveActual)) {
+            throw new SQLException("La contraseña actual es incorrecta.");
+        }
+
+        usuarioActivo.actualizarClave(nuevaClave);
+        usuarioDAO.actualizarClave(usuarioActivo.getId(), nuevaClave);
+    }
+
+}

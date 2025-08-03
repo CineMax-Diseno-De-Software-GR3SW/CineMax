@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.cinemax.salas.controladores.ControladorButacas"
+            stylesheets="@../temas/styles.css"
+            styleClass="root">
+    <top>
+        <BorderPane styleClass="header-bar">
+            <left>
+                <Button fx:id="btnBack"
+                        text="←"
+                        onAction="#onBackAction"
+                        styleClass="icon-button"
+                        style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
+            </left>
+            <center>
+                <Label text="Gestión de Butacas" styleClass="section-title"/>
+            </center>
+        </BorderPane>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.43">
+            <VBox spacing="18" styleClass="ticket-card">
+                <TitledPane text="Datos de la Butaca" expanded="true" styleClass="ticket-details-card">
+                    <content>
+                        <GridPane hgap="16" vgap="16" styleClass="ticket-card">
+                            <Label text="Fila:*" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
+                            <TextField fx:id="txtFila" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+                            <Label text="Columna:*" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label"/>
+                            <TextField fx:id="txtColumna" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="text-field"/>
+                            <Label text="Estado:*" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
+                            <ComboBox fx:id="cmbEstado" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="combo-box"/>
+                            <Label text="Sala:*" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="label"/>
+                            <ComboBox fx:id="cmbSala" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="combo-box"/>
+                        </GridPane>
+                    </content>
+                </TitledPane>
+                <HBox spacing="16" alignment="CENTER">
+                    <Button text="Crear" onAction="#crearButaca" styleClass="primary-button"
+                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
+                    <Button text="Actualizar" onAction="#actualizarButaca" styleClass="primary-button"
+                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
+                </HBox>
+                <HBox spacing="16" alignment="CENTER">
+                    <Button text="Eliminar" onAction="#eliminarButaca" styleClass="primary-button"
+                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
+                    <Button text="Limpiar" onAction="#limpiarCampos" styleClass="primary-button"
+                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
+                </HBox>
+            </VBox>
+            <VBox spacing="16" styleClass="ticket-card">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <TextField fx:id="txtBuscarIdSala" promptText="Buscar por ID Sala" styleClass="text-field"/>
+                    <Button text="🔍" onAction="#listarButacasPorSala" styleClass="icon-button"
+                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
+                    <Button text="Listar todas" onAction="#listarTodasButacas" styleClass="primary-button"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Label fx:id="lblEstado" text="Listo" styleClass="label"/>
+                </HBox>
+
+                <TableView fx:id="tablaButacas" prefHeight="400" prefWidth="400" styleClass="tabla">
+                    <columns>
+                        <TableColumn fx:id="colId" prefWidth="50">
+                            <graphic>
+                                <Label text="ID" />
+                            </graphic>
+                            <cellValueFactory>
+                                <PropertyValueFactory property="id"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="colFila" prefWidth="80">
+                            <graphic>
+                                <Label text="Fila"/>
+                            </graphic>
+                            <cellValueFactory>
+                                <PropertyValueFactory property="fila"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="colColumna" prefWidth="80">
+                            <graphic>
+                                <Label text="Columna" />
+                            </graphic>
+                            <cellValueFactory>
+                                <PropertyValueFactory property="columna"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="colEstado" prefWidth="100">
+                            <graphic>
+                                <Label text="Estado" />
+                            </graphic>
+                            <cellValueFactory>
+                                <PropertyValueFactory property="estado"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                        <TableColumn fx:id="colIdSala" prefWidth="100">
+                            <graphic>
+                                <Label text="ID Sala" />
+                            </graphic>
+                            <cellValueFactory>
+                                <PropertyValueFactory property="salaId"/>
+                            </cellValueFactory>
+                        </TableColumn>
+                    </columns>
+                </TableView>
+            </VBox>
+        </SplitPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="header-bar">
+            <Label text="© CineMax" styleClass="label"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblEstado" text="Listo" styleClass="ticket-price"/>
+        </HBox>
+    </bottom>
+</BorderPane>

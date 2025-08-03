@@ -336,20 +336,6 @@ public class ControladorReportesPrincipal {
     }
 
     @FXML
-    private void onBackAction(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
     private void goToReporteProgramado(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
@@ -519,6 +505,20 @@ public class ControladorReportesPrincipal {
 
         // Mostrar previsualización del reporte
         mostrarPrevisualizacionReporte(datosFiltrados, true);
+    }
+
+    @FXML
+    void onBackAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void mostrarPrevisualizacionReporte(List<ReporteVentaDTO> datos, boolean permitirDescarga) {

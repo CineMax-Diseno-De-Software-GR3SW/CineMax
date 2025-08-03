@@ -8,8 +8,8 @@
 }
 
 .label {
-    -fx-text-fill: #FFFFFF;
-    /* Texto principal blanco para mejor legibilidad */
+    -fx-text-fill: #EAEAEA;
+    /* Texto principal casi blanco */
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
@@ -376,7 +376,9 @@
     /* Texto negro */
 }
 
-
+.titled-pane .text {
+    -fx-font-size: 16px;  /* Ajusta este valor según lo necesites */
+}
 /* Ítem resaltado con el mouse */
 
 .combo-box-popup .list-view .list-cell:hover {

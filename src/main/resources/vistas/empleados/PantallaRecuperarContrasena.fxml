@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorRecuperarContrasena">
+
+    <Label styleClass="title" text="Recuperar Contraseña">
+
+    </Label>
+
+    <Label text="Ingresa tu correo electrónico asociado a la cuenta:">
+        <font>
+            <Font size="26.0" />
+        </font>
+    </Label>
+
+    <TextField fx:id="txtEmail" maxWidth="-Infinity" prefHeight="36.0" prefWidth="400.0" promptText="Correo Electrónico" />
+
+    <Button onAction="#onSendClick" prefHeight="45" prefWidth="250.0" styleClass="primary-button" text="Enviar Contaseña Temporal">
+        <font>
+            <Font size="18.0" />
+        </font>
+    </Button>
+
+    <Hyperlink onAction="#onBackToLoginClick" text="Volver al Login">
+        <font>
+            <Font size="14.0" />
+        </font>
+    </Hyperlink>
+
+    <Label fx:id="lblMensaje" maxWidth="350" visible="false" wrapText="true" />
+
+</VBox>
