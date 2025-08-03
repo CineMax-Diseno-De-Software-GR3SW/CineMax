@@ -1,9 +1,12 @@
 package com.cinemax.venta_boletos.Servicios;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import com.cinemax.comun.ServicioCorreoSingleton;
+import com.cinemax.empleados.servicios.ContenidoMensaje;
 import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
 import com.cinemax.venta_boletos.Modelos.CalculadorImpuesto;
 import com.cinemax.venta_boletos.Modelos.Cliente;
@@ -27,8 +30,23 @@ public class ServicioFacturacion {
         factura.setProductos(productos);
         factura.calcularSubTotal();
         factura.calcularTotal(calculadorImpuesto);
+
         ServicioGeneradorArchivo generador = new GeneradorArchivoPDF();
         generador.generarFacturaPDF(factura);
+
+        // Enviar el PDF al correo del cliente usando ServicioCorreoSingleton
+        try {
+            ServicioCorreoSingleton correo = ServicioCorreoSingleton.getInstancia();
+            ContenidoMensaje contenido = ContenidoMensajeFactura.crear(factura);
+            // Construir la ruta del archivo PDF generado
+            String rutaPDF = "PDFsGenerados_BoletoFactura/FacturasGeneradas/Factura_" + factura.getCodigoFactura() + ".pdf";
+            File archivoPDF = new File(rutaPDF);
+            correo.enviarCorreo(cliente.getCorreoElectronico(), contenido, archivoPDF);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Manejo de error si falla el envío de correo
+        }
+
         return factura;
     }
 
