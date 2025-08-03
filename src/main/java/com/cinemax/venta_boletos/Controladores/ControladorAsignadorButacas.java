@@ -67,44 +67,46 @@ public class ControladorAsignadorButacas {
     private ControladorDeConsultaSalas controladorConsultaSalas;
     private List<Butaca> butacasSeleccionadas;
     private BoletoDAO boletoDAO;
-    private List<Butaca> butacasOcupadas;
     private Funcion funcionSeleccionada;
-    
-    private ButacaService butacaService;
-    ControladorInformacionLateral controladorInformacionLateral;
+    private ControladorInformacionLateral controladorInformacionLateral;
 
     public ControladorAsignadorButacas() {
         boletoDAO = new BoletoDAO();
-        butacasOcupadas = new ArrayList<>();
         butacasSeleccionadas = new ArrayList<>();
-        butacaService = new ButacaService();
-        butacaService = new ButacaService();
     }
 
-    private void cargarMapaButacas(Sala sala) {
+    // 1. Inicializar datos de la función seleccionada
+    public void inicializarDatos(Funcion funcionSeleccionada) { 
+
+        // 1. Colocar encabezado de tipo de sala
+        labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name()); // encabezado
+
+        // 2. Cargar información de la función
+        cargarInformacionFuncion(funcionSeleccionada);
+
+        // 3. Cargar butacas ocupadas
+        List<Butaca> butacasOcupadas;
         try {
-            // Cargar el FXML del mapa de butacas
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/vistas/salas/MapaButacas.fxml"));
-            Parent mapaButacas = loader.load();
-            
-            // Agregar el mapa al contenedor
-            mapaButacasContainer.getChildren().add(mapaButacas);
-            
-            // Obtener referencia al controlador del mapa
-            List<Integer> butacasOcupadasIds = butacasOcupadas.stream() 
-                .map(Butaca::getId)
-                .collect(Collectors.toList());
-
-            controladorConsultaSalas = loader.getController();
-            controladorConsultaSalas.setButacasOcupadas(butacasOcupadasIds);
-            controladorConsultaSalas.setSala(sala); // Asignar la sala seleccionada
-            controladorConsultaSalas.setControladorAsignadorButacas(this); // Pasar el controlador de asignación de butacas
-
-        } catch (IOException e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
+            butacasOcupadas = boletoDAO.listarButacasDeBoletosPorFuncion(funcionSeleccionada);
+            System.out.println("=== DEBUG BUTACAS OCUPADAS ===");
+            System.out.println("Butacas ocupadas encontradas: " + butacasOcupadas.size());
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas ocupadas: " + e.getMessage());
             e.printStackTrace();
+            return;
         }
+
+        // 4. Crear un Set de códigos alfanuméricos de butacas ocupadas para búsqueda O(1)
+        Set<Integer> codigosButacasOcupadas = new HashSet<>();
+        for (Butaca butacaOcupada : butacasOcupadas) {
+            codigosButacasOcupadas.add(butacaOcupada.getId());
+        }
+
+        cargarMapaButacas(codigosButacasOcupadas, funcionSeleccionada.getSala());
+
+        // 7. Asignar la función seleccionada al controlador
+        this.funcionSeleccionada = funcionSeleccionada;
+        
     }
 
     private void cargarInformacionFuncion(Funcion funcion) {
@@ -129,7 +131,29 @@ public class ControladorAsignadorButacas {
         }
         
     }
-    
+
+    private void cargarMapaButacas(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada) {
+        try {
+            // 1. Cargar el FXML del mapa de butacas
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/vistas/salas/MapaButacas.fxml"));
+            Parent mapaButacas = loader.load();
+            
+            // 2. Agregar el mapa al contenedor
+            mapaButacasContainer.getChildren().add(mapaButacas);
+            
+            // 3. Obtener referencia al controlador del mapa
+            controladorConsultaSalas = loader.getController();
+
+            // 4. Mostrar las butacas
+            controladorConsultaSalas.setControladorAsignadorButacas(this);
+            controladorConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);
+            
+        } catch (IOException e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
+            e.printStackTrace();
+        }
+    } 
 
     @FXML
     void onBackAction(ActionEvent event) {
@@ -154,26 +178,31 @@ public class ControladorAsignadorButacas {
             List<Producto> boletosGenerados = servicioGeneradorBoleto.generarBoleto(funcionSeleccionada, butacasSeleccionadas);
             
             
-            // 1. ventana actual
+            // 2. ventana actual
             Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
 
-            // Cargar la vista SIN mostrarla todavía
+            // 3. Cargar la vista SIN mostrarla todavía
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
             Parent root = loader.load();
             
-            // Obtener el controlador
+            // 4. Obtener el controlador
             ControladorFacturacion controladorFacturacion = loader.getController();
 
-            // 4. Inicializar el controlador de facturación con los datos necesarios
+            // 5. Inicializar el controlador de facturación con los datos necesarios
             controladorFacturacion.setControladorInformacionLateral(controladorInformacionLateral);
-            // Inicializar los datos ANTES de mostrar
+            
+            // 6. Inicializar los datos ANTES de mostrar
             controladorFacturacion.initData(boletosGenerados);
             
             // AHORA sí cambiar la escena con todo ya cargado
             Scene newScene = new Scene(root);
             currentStage.setScene(newScene);
             currentStage.setTitle("Seleccionar Butacas");
+
+            System.out.println(butacasSeleccionadas.stream()
+                .map(b -> b.getFila() + b.getColumna())
+                .collect(Collectors.joining(", ")));
             
             
         } catch (Exception e) {
@@ -184,79 +213,6 @@ public class ControladorAsignadorButacas {
 
     }
 
-
-    public List<String> asignarButacas(String controladorDeConsultaSalas, String funcion, List<String> butacasOcupadas, int totalBoletos) {
-        /*
-         * TODO: Buscar boletos en la BD usando la "función" para encontrar todos los
-         * boletos asociados. De ahí, extraer en una estructura de datos, los códigos
-         * alfanuméricos de las butacas asociadas a esos boletos. Esa estructura de
-         * datos servirá para saber la cantidad de asientos disponibles y para mostrar
-         * cuáles están ocupados en la pantalla de asignación de butacas.
-         */
-        //BoletoDAO boletoDAO = new BoletoDAO();
-        //bo
-        
-        // iterar sobre el mapa de butacas de funcion buscando cuales coinciden con las ocupadas con respecto a su codigo alfanumérico
-        // mostrar el mapa de butacas disponibles y ocupadas
-        // seleccionar las butacas disponibles para asignar de acuerdo al total de boletos
-        // devolver la lista de butacas asignadas
-
-
-        List<String> butacas = new ArrayList<>();
-        for (int i = 1; i <= totalBoletos; i++) butacas.add("F" + i);
-        return butacas; // Retorna la lista de butacas asignadas
-    }
-
-    public void inicializarDatos(Funcion funcionSeleccionada) { 
-        System.out.println("Inicializando datos en ControladorAsignadorButacas");
-
-        labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name()); // encabezado
-
-        cargarInformacionFuncion(funcionSeleccionada);
-
-        try {
-            butacasOcupadas = boletoDAO.listarButacasDeBoletosPorFuncion(funcionSeleccionada);
-
-
-        } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas ocupadas: " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
-        System.out.println(butacasOcupadas.size());
-
-        List<Butaca> butacasDeSala;
-        try {
-            butacasDeSala = butacaService.listarButacasPorSala(funcionSeleccionada.getSala().getId());
-        } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas de la sala: " + e.getMessage());
-            e.printStackTrace();
-            return;
-        }
-
-        for (Butaca butacaDeSala : butacasDeSala) {
-            for (Butaca butacaOcupada : butacasOcupadas) {
-                if (butacaDeSala.getId() == butacaOcupada.getId()) {
-                    butacaDeSala.setEstado(EstadoButaca.OCUPADA.name());
-                    System.out.println("Estado de la butaca " + butacaDeSala.getFila() + butacaDeSala.getColumna() + ": " + butacaDeSala.getEstado());
-                    try {
-                        butacaService.actualizarButaca(butacaDeSala);
-                    } catch (Exception e) {
-                        ManejadorMetodosComunes.mostrarVentanaError("Error al actualizar el estado de la butaca: " + e.getMessage());
-                        e.printStackTrace();
-                    }
-                } 
-            }
-        }
-
-        
-        cargarMapaButacas(funcionSeleccionada.getSala());
-        this.funcionSeleccionada = funcionSeleccionada;
-        
-    }
-
-    
-
     public void agregarButacaSeleccionada(Butaca butaca) {
         if (butaca == null || butacasSeleccionadas.contains(butaca)) {
             return; // No agregar si la butaca es nula o ya está seleccionada
@@ -265,8 +221,6 @@ public class ControladorAsignadorButacas {
         controladorInformacionLateral.mostrarButacaSeleccionada(butaca);
         controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
-
-    
 
     public void quitarButacaDeseleccionada(Butaca butaca) {
         if (butaca == null || !butacasSeleccionadas.contains(butaca)) {
