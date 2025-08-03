@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +24,18 @@ public class FacturaDAO {
     }
 
     public void crearFactura(Factura factura) throws Exception {
-        String sql = "SELECT crear_factura(?, ?, ?, ?)";
+        String sql = "SELECT crear_factura(?, ?, ?, ?, ?)";
         try (Connection conn = conexionBase.conectar();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setLong(1, factura.getCodigoFactura());
+            ps.setLong(2, factura.getCliente().getIdCliente());
 
-            ps.setLong(1, factura.getCliente().getIdCliente());
-            ps.setTimestamp(2, java.sql.Timestamp.valueOf(factura.getFecha()));
-            ps.setBigDecimal(3, BigDecimal.valueOf(factura.getSubTotal()));
-            ps.setBigDecimal(4, BigDecimal.valueOf(factura.getTotal()));
+            DateTimeFormatter entrada = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDateTime fechaFormateada = LocalDateTime.parse(factura.getFecha(), entrada);
+            ps.setTimestamp(3, Timestamp.valueOf(fechaFormateada));
+
+            ps.setBigDecimal(4, BigDecimal.valueOf(factura.getSubTotal()));
+            ps.setBigDecimal(5, BigDecimal.valueOf(factura.getTotal()));
 
             ps.execute();
         }

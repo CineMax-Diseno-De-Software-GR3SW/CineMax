@@ -2,11 +2,15 @@ package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
+import com.cinemax.salas.modelos.entidades.EstadoButaca;
+import com.cinemax.salas.servicios.ButacaService;
 import com.cinemax.venta_boletos.Modelos.Boleto;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
 import com.cinemax.venta_boletos.Modelos.Producto;
+import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
 import com.cinemax.venta_boletos.Modelos.Persistencia.ClienteDAO;
+import com.cinemax.venta_boletos.Modelos.Persistencia.FacturaDAO;
 import com.cinemax.venta_boletos.Servicios.GeneradorArchivoPDF;
 import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.Servicios.ServicioGeneradorArchivo;
@@ -247,8 +251,41 @@ public class ControladorFacturacion {
         ServicioGeneradorArchivo generador = new GeneradorArchivoPDF();
         generador.generarBoletosPDF(boletos);
 
+        
+        BoletoDAO boletoDAO = new BoletoDAO();
+
+
+        ButacaService butacaService = new ButacaService();
+        for (Producto boleto : boletos) {
+            ((Boleto) boleto).getButaca().setEstado(EstadoButaca.OCUPADA.name());
+            try {
+                butacaService.actualizarButaca(((Boleto) boleto).getButaca());
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+
+        FacturaDAO facturaDAO = new FacturaDAO();
         // 2. Usar tu servicio para generar la factura final
         Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
+        try {
+            facturaDAO.crearFactura(facturaFinal);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        for (Producto boleto : boletos) {
+            try {
+                boletoDAO.crearBoleto((Boleto) boleto, facturaFinal);
+            } catch (Exception e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Error al crear el boleto: " + e.getMessage());
+                e.printStackTrace();
+                return; 
+            }
+        }
+
         // TODO: Dao debe guardar la factura
 
         // 3. Mostrar un mensaje de éxito y cerrar

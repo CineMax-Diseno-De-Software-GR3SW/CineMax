@@ -1,5 +1,6 @@
 package com.cinemax.venta_boletos.Modelos.Persistencia;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,7 +13,9 @@ import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.TipoSala;
+import com.cinemax.venta_boletos.Modelos.Boleto;
 import com.cinemax.venta_boletos.Modelos.Cliente;
+import com.cinemax.venta_boletos.Modelos.Factura;
 
 public class BoletoDAO {
     
@@ -132,4 +135,19 @@ public class BoletoDAO {
     //    }
 //
     //}
+
+    public void crearBoleto(Boleto boleto, Factura factura) throws Exception {
+        String sql = "{ CALL insertar_boleto(?, ?, ?) }";
+        try (Connection conn = conexionBase.conectar();
+             CallableStatement cs = conn.prepareCall(sql)) {
+
+            cs.setInt(1, boleto.getFuncion().getId());
+            cs.setLong(2, factura.getCodigoFactura());
+            cs.setInt(3, boleto.getButaca().getId());
+
+            cs.execute();
+        } catch (SQLException e) {
+            System.err.println("Error al insertar boleto: " + e.getMessage());
+        }
+    }
  }
