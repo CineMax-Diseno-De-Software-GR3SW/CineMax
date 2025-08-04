@@ -4,6 +4,10 @@ import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.servicios.ButacaService;
+import com.cinemax.venta_boletos.Controladores.Strategy.ContextoValidacion;
+import com.cinemax.venta_boletos.Controladores.Strategy.EstrategiaCedulaValidacion;
+import com.cinemax.venta_boletos.Controladores.Strategy.EstrategiaPasaporteValidacion;
+import com.cinemax.venta_boletos.Controladores.Strategy.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.Modelos.Boleto;
 import com.cinemax.venta_boletos.Modelos.Cliente;
 import com.cinemax.venta_boletos.Modelos.Factura;
@@ -194,8 +198,46 @@ public class ControladorFacturacion {
         }
     }
 
+    private boolean validarDocumento() {
+
+        ContextoValidacion contextoValidacion = new ContextoValidacion();
+
+        switch (tipoDocumentoBox.getValue()) {
+            case "Cédula":
+                contextoValidacion.setEstrategia(new EstrategiaCedulaValidacion());
+                break;
+
+            case "RUC":
+                contextoValidacion.setEstrategia(new EstrategiaRucValidacion());
+                break;
+            case "Pasaporte":
+                contextoValidacion.setEstrategia(new EstrategiaPasaporteValidacion());
+                break;
+            default:
+                ManejadorMetodosComunes.mostrarVentanaError("Tipo de documento no soportado.");
+                return false;
+        }
+
+        
+        if(!contextoValidacion.ejecutarEstrategia(documentoField.getText())) {
+            ManejadorMetodosComunes.mostrarVentanaError("Documento inválido: " + documentoField.getText());
+            return false;
+        }
+
+        System.out.println("Validando documento: " + documentoField.getText());
+        System.out.println("Estrategia seleccionada: " + tipoDocumentoBox.getValue());
+        System.out.println("Estrategia ejecutada: " + contextoValidacion.ejecutarEstrategia(documentoField.getText()));
+        return true;
+
+    }
+
     @FXML
     void onActualizarCliente(ActionEvent event) {
+
+        if (!validarDocumento()) {
+            return; // Si el documento no es válido, no continuar con la actualización
+        }
+
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -229,6 +271,17 @@ public class ControladorFacturacion {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Debe confirmar la compra para continuar.");
             return;
         }
+
+        if(!validarDocumento()) {
+            return; // Si el documento no es válido, no continuar con la compra
+        }
+
+        // 1. Validar la cédula
+        //Manejador manejadorCedula = new ManejadorCedula();
+        //Manejador manejadorRUC = new ManejadorRUC();
+//
+        //manejadorCedula.colocarSiguienteManejador(manejadorRUC);
+        //manejadorCedula.manejarPeticion(documentoField.getText());
 
         ClienteDAO clienteDAO = new ClienteDAO();
         Cliente cliente = null;
