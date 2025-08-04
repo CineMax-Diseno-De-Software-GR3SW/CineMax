@@ -4,7 +4,10 @@ import com.cinemax.empleados.servicios.ContenidoMensaje;
 import jakarta.mail.*;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeBodyPart;
+import jakarta.mail.internet.MimeMultipart;
 import java.util.Properties;
+import java.io.File;
 
 public class ServicioCorreoSingleton {
 
@@ -60,6 +63,38 @@ public class ServicioCorreoSingleton {
         } catch (MessagingException e) {
             e.printStackTrace();
 //            System.out.println("❌ Error al enviar el correo a: " + destinatario);
+            return false;
+        }
+    }
+
+    // Nuevo método para enviar correo con adjunto
+    public boolean enviarCorreo(String destinatario, ContenidoMensaje contenido, File adjunto) {
+        try {
+            Message mensaje = new MimeMessage(sesion);
+            mensaje.setFrom(new InternetAddress(remitente));
+            mensaje.setRecipients(Message.RecipientType.TO, InternetAddress.parse(destinatario));
+            mensaje.setSubject(contenido.getAsunto());
+
+            // Cuerpo del mensaje
+            MimeBodyPart cuerpo = new MimeBodyPart();
+            cuerpo.setContent(contenido.getCuerpo(), "text/html; charset=utf-8");
+
+            Multipart multipart = new MimeMultipart();
+            multipart.addBodyPart(cuerpo);
+
+            // Adjuntar archivo si no es null
+            if (adjunto != null && adjunto.exists()) {
+                MimeBodyPart adjuntoPart = new MimeBodyPart();
+                adjuntoPart.attachFile(adjunto);
+                multipart.addBodyPart(adjuntoPart);
+            }
+
+            mensaje.setContent(multipart);
+
+            Transport.send(mensaje);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
