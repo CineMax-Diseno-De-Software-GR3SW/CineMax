@@ -21,14 +21,15 @@ public class ClienteDAO {
     }
 
     public void crearCliente(Cliente cliente) throws Exception {
-        String sql = "{ CALL insertar_cliente(?, ?, ?, ?) }";
+        String sql = "{ CALL crear_cliente(?, ?, ?, ?, ?) }";
         try (Connection conn = conexionBase.conectar();
              CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setLong(1, cliente.getIdCliente());          
-            cs.setString(2, cliente.getNombre());          
-            cs.setString(3, cliente.getApellido());        
-            cs.setString(4, cliente.getCorreoElectronico());
+            cs.setString(1, cliente.getIdCliente());
+            cs.setString(2, cliente.getTipoDocumento());
+            cs.setString(3, cliente.getNombre());
+            cs.setString(4, cliente.getApellido());
+            cs.setString(5, cliente.getCorreoElectronico());
 
             cs.execute();
         } catch (SQLException e) {
@@ -37,11 +38,11 @@ public class ClienteDAO {
     }
 
     public void actualizarCliente(Cliente cliente) throws Exception {
-        String sql = "{ CALL actualizar_cliente(?, ?, ?, ?) }";
+        String sql = "{ CALL actualizar_cliente(?, ?, ?, ?) }"; // solo 4 parámetros
         try (Connection conn = conexionBase.conectar();
-             CallableStatement cs = conn.prepareCall(sql)) {
+            CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setLong(1, cliente.getIdCliente());
+            cs.setString(1, cliente.getIdCliente());
             cs.setString(2, cliente.getNombre());
             cs.setString(3, cliente.getApellido());
             cs.setString(4, cliente.getCorreoElectronico());
@@ -52,19 +53,19 @@ public class ClienteDAO {
         }
     }
 
-    public void eliminarCliente(long cedulaCliente) throws Exception {
+    public void eliminarCliente(String numeroDocumento) throws Exception {
         String sql = "{ CALL eliminar_cliente(?) }";
         try (Connection conn = conexionBase.conectar();
-             CallableStatement cs = conn.prepareCall(sql)) {
+            CallableStatement cs = conn.prepareCall(sql)) {
 
-            cs.setLong(1, cedulaCliente);
+            cs.setString(1, numeroDocumento);
             cs.execute();
         } catch (SQLException e) {
             System.err.println("Error al eliminar cliente: " + e.getMessage());
         }
     }
 
-    public Cliente buscarPorId(long cedulaCliente) throws Exception {
+   public Cliente buscarPorId(String numeroDocumento) throws Exception {
         String sql = "SELECT * FROM obtener_cliente(?)";
         ResultSet rs = null;
         PreparedStatement ps = null;
@@ -72,14 +73,15 @@ public class ClienteDAO {
         try {
             conn = conexionBase.conectar();
             ps = conn.prepareStatement(sql);
-            ps.setLong(1, cedulaCliente);
+            ps.setString(1, numeroDocumento);
             rs = ps.executeQuery();
             if (rs.next()) {
                 return new Cliente(
                         rs.getString("nombre"),
                         rs.getString("apellido"),
-                        rs.getLong("idcliente"),
-                        rs.getString("correo")
+                        rs.getString("idcliente"),
+                        rs.getString("correo"),
+                        rs.getString("tipodocumento")
                 );
             }
             return null;
@@ -106,8 +108,9 @@ public class ClienteDAO {
                 Cliente cliente = new Cliente(
                     rs.getString("nombre"),
                     rs.getString("apellido"),
-                    rs.getLong("idcliente"),
-                    rs.getString("correo")
+                    rs.getString("idcliente"),
+                    rs.getString("correo"),
+                    rs.getString("tipodocumento")
                 );
                 lista.add(cliente);
             }

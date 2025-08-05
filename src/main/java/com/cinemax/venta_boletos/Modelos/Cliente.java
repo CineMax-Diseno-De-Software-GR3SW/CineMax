@@ -1,16 +1,18 @@
 package com.cinemax.venta_boletos.Modelos;
 
 public class Cliente {
+    private String idCliente;
+    private String tipoDocumento;
     private String nombre;
     private String apellido;
-    private long idCliente;
     private String correoElectronico;
 
-    public Cliente(String nombre, String apellido, long idCliente, String correoElectronico) {
+    public Cliente(String nombre, String apellido, String idCliente, String correoElectronico, String tipoDocumento) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.idCliente = idCliente;
         this.correoElectronico = correoElectronico;
+        this.tipoDocumento = tipoDocumento;
     }
 
     @Override
@@ -20,6 +22,7 @@ public class Cliente {
                 ", apellido='" + apellido + '\'' +
                 ", idCliente='" + idCliente + '\'' +
                 ", correoElectronico='" + correoElectronico + '\'' +
+                ", tipoDocumento='" + tipoDocumento + '\'' +
                 '}';
     }
 
@@ -39,11 +42,15 @@ public class Cliente {
         this.apellido = apellido;
     }
 
-    public long getIdCliente() {
+    public String getIdCliente() {
         return idCliente;
     }
 
-    public void setIdCliente(long idCliente) {
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setIdCliente(String idCliente) {
         this.idCliente = idCliente;
     }
 
@@ -53,5 +60,9 @@ public class Cliente {
 
     public void setCorreoElectronico(String correoElectronico) {
         this.correoElectronico = correoElectronico;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
     }
 }

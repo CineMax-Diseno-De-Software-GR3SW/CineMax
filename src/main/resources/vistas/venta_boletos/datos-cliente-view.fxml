@@ -60,7 +60,7 @@
                <RowConstraints />
             </rowConstraints>
             </GridPane>
-         <Text fx:id="mensajeActualizacionCliente" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
+         <Text fx:id="mensajeActualizacionCliente" fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="207.302734375" />
          <Button mnemonicParsing="false" onAction="#onActualizarCliente" styleClass="primary-button" text="Actualizar" textAlignment="CENTER" />
          <VBox prefHeight="200.0" prefWidth="100.0">
             <children>
