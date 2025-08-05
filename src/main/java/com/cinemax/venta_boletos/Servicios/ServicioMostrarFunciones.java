@@ -1,9 +1,12 @@
 package com.cinemax.venta_boletos.Servicios;
 
+import com.cinemax.comun.ControladorCarga;
+import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.venta_boletos.Controladores.ControladorAsignadorButacas;
 import com.cinemax.peliculas.controladores.ControladorFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.venta_boletos.Controladores.ControladorCargaAsignacionButacas;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +20,7 @@ import javafx.scene.Node;
 import javafx.application.Platform;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
@@ -129,24 +133,19 @@ public class ServicioMostrarFunciones {
         }
 
         try {
+
             // 1. ventana actual
             Stage currentStage = (Stage) tabla.getScene().getWindow();
-            
-            // Cargar la vista SIN mostrarla todavía
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaSeleccionButacas.fxml"));
-            Parent root = loader.load();
-            
-            // Obtener el controlador
-            ControladorAsignadorButacas controller = loader.getController();
-            
-            // Inicializar los datos ANTES de mostrar
-            controller.inicializarDatos(funcionSeleccionada);
-            
-            // AHORA sí cambiar la escena con todo ya cargado
-            Scene newScene = new Scene(root);
-            currentStage.setScene(newScene);
-            currentStage.setTitle("Seleccionar Butacas");
+
+            // 2. Objetos para pasar los datos a la siguiente pantalla usando la pantalla de carga
+            ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
+                "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
+                currentStage,
+                new ArrayList<>(List.of(funcionSeleccionada))
+            );            
+
+            // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
+            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 550);
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());

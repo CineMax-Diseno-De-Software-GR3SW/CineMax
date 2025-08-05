@@ -218,15 +218,16 @@ public class ControladorFacturacion {
                 return false;
         }
 
+        System.out.println("Validando documento: " + documentoField.getText());
+        System.out.println("Estrategia seleccionada: " + tipoDocumentoBox.getValue());
+        System.out.println("Estrategia ejecutada: " + contextoValidacion.ejecutarEstrategia(documentoField.getText()));
         
+        documentoField.setText(documentoField.getText().strip());
         if(!contextoValidacion.ejecutarEstrategia(documentoField.getText())) {
             ManejadorMetodosComunes.mostrarVentanaError("Documento inválido: " + documentoField.getText());
             return false;
         }
 
-        System.out.println("Validando documento: " + documentoField.getText());
-        System.out.println("Estrategia seleccionada: " + tipoDocumentoBox.getValue());
-        System.out.println("Estrategia ejecutada: " + contextoValidacion.ejecutarEstrategia(documentoField.getText()));
         return true;
 
     }
@@ -371,7 +372,7 @@ public class ControladorFacturacion {
             // AHORA sí cambiar la escena con todo ya cargado
             Scene newScene = new Scene(root);
             currentStage.setScene(newScene);
-            currentStage.setTitle("Seleccionar Butacas");
+            currentStage.setTitle("CineMAX");
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la ventana: " + e.getMessage());

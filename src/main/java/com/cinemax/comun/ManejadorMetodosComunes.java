@@ -8,7 +8,6 @@ import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import java.io.IOException;
 
 public class ManejadorMetodosComunes {
@@ -150,4 +149,48 @@ public class ManejadorMetodosComunes {
             e.printStackTrace();
         }
     }
+
+    public static void mostrarPantallaDeCarga(Stage stage, String rutaFXML, int saltosEnElProgreso, int tiempoPorSalto) {
+        try {
+            ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
+            
+            // Configurar la carga para ir a la siguiente ventana
+            // Parámetros: stage, ruta FXML destino, título de ventana destino
+            controladorCarga.iniciarCarga(stage, rutaFXML, saltosEnElProgreso, tiempoPorSalto);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ControladorCarga cargarPantallaDeCarga(Stage stage) throws IOException {
+        // Cargar el FXML del splash screen
+        FXMLLoader loader = new FXMLLoader(ManejadorMetodosComunes.class.getResource("/vistas/comun/VistaCarga.fxml"));
+        Parent root = loader.load();
+        
+        // Obtener el controlador
+        ControladorCarga controladorCarga = loader.getController();
+        
+        // Crear y mostrar la escena del splash (Vista de carga)
+        Scene escenaCarga = new Scene(root);
+        stage.setScene(escenaCarga);
+        stage.setTitle("CineMax");
+        stage.setMaximized(true); // Maximizar la ventana
+        stage.show();
+
+        return controladorCarga;
+    }
+
+    public static void mostrarVistaDeCargaPasandoDatos(Stage stage, ControladorCargaConDatos controladorCargaConDatos, int saltosEnElProgreso, int tiempoPorSalto) {
+    try {
+        
+        ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
+        
+        // Pasar los datos al controlador de carga
+        controladorCarga.iniciarCarga(stage, controladorCargaConDatos, saltosEnElProgreso, tiempoPorSalto);
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 }

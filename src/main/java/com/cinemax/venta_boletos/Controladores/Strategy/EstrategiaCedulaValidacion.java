@@ -6,7 +6,7 @@ public class EstrategiaCedulaValidacion implements EstrategiaValidacion{
 
     @Override
     public boolean ejecutarEstrategia(String documento) {
-        return validarCedula(documento);
+        return validarCedula(documento.strip());
     }
 
      // Función que valida la cédula según las reglas establecidas
@@ -33,7 +33,6 @@ public class EstrategiaCedulaValidacion implements EstrategiaValidacion{
             // Validar que el tercer dígito esté en el rango 0-5
             digitosDeLaCedula = Integer.parseInt(cedula.substring(2, 3));
             if (digitosDeLaCedula >= 6 || digitosDeLaCedula < 0) {
-                System.out.println("La cédula " + cedula + " su tercer dígito no es válido"+" (debe estar entre 0 y 5)");
                 return false;
             }
 
@@ -42,18 +41,24 @@ public class EstrategiaCedulaValidacion implements EstrategiaValidacion{
                 int coeficienteMultiplicador = (contadorDígitos % 2 == 0) ? 2 : 1;
                 digitosDeLaCedula = Integer.parseInt(cedula.substring(contadorDígitos, contadorDígitos + 1));
                 int coeficientePorDigitoDeCedula = coeficienteMultiplicador * digitosDeLaCedula;
-                acumulador += (coeficientePorDigitoDeCedula >= 10) ? coeficientePorDigitoDeCedula - 9 : coeficientePorDigitoDeCedula;
+                if(coeficientePorDigitoDeCedula > 10) {
+                    int decena = coeficientePorDigitoDeCedula / 10;
+                    int unidad = coeficientePorDigitoDeCedula % 10;
+                    coeficientePorDigitoDeCedula = decena + unidad;
+                }
+                acumulador += coeficientePorDigitoDeCedula;
             }
 
             // Calcular el décimo dígito
-            decimoDigitoCalculado = (acumulador == 10) ? "10" : calcularDecimoDigito(acumulador);
+            int residuo = acumulador % 10;
+            decimoDigitoCalculado = residuo == 0 ? "0" : String.valueOf(residuo);
 
             // Comparar el décimo dígito calculado con el de la cédula y mostrar el resultado
             boolean validacionFinal =
                     (!cedula.substring(9, 10).equals(decimoDigitoCalculado)) ?
                             false :
                             true;
-            //System.out.println(validacionFinal);
+            System.out.println("Validación final: décimo digito calculado-> " + decimoDigitoCalculado + ", décimo digito ingresado-> " + cedula.substring(9, 10) + ", resultado-> " + validacionFinal);
             return validacionFinal;
 
         } catch (NumberFormatException e) {
@@ -65,13 +70,6 @@ public class EstrategiaCedulaValidacion implements EstrategiaValidacion{
             System.out.println("Error inesperado al validar la cédula '" + cedula);
             return false;
         }
-    }
-
-    // Funcion para calcular el décimo dígito de la cédula
-    private String calcularDecimoDigito(int acumulador) {
-        int decenaSuperior = (((acumulador / 10) % 10) + 1) * 10;
-        acumulador = decenaSuperior - acumulador;
-        return acumulador + "";
     }
 
 }
