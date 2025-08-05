@@ -28,7 +28,7 @@ public class FacturaDAO {
         try (Connection conn = conexionBase.conectar();
             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setLong(1, factura.getCodigoFactura());
-            ps.setLong(2, factura.getCliente().getIdCliente());
+            ps.setString(2, factura.getCliente().getIdCliente());
 
             DateTimeFormatter entrada = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
             LocalDateTime fechaFormateada = LocalDateTime.parse(factura.getFecha(), entrada);
@@ -47,7 +47,7 @@ public class FacturaDAO {
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setLong(1, factura.getCodigoFactura());
-            ps.setLong(2, factura.getCliente().getIdCliente());
+            ps.setString(2, factura.getCliente().getIdCliente());
             ps.setTimestamp(3, java.sql.Timestamp.valueOf(factura.getFecha()));
             ps.setBigDecimal(4, BigDecimal.valueOf(factura.getSubTotal()));
             ps.setBigDecimal(5, BigDecimal.valueOf(factura.getTotal()));
@@ -87,8 +87,9 @@ public class FacturaDAO {
                         cliente = new Cliente(
                             rsCliente.getString("nombre"),
                             rsCliente.getString("apellido"),
-                            rsCliente.getLong("idcliente"),
-                            rsCliente.getString("correo")
+                            rsCliente.getString("idcliente"),
+                            rsCliente.getString("correo"),
+                            rsCliente.getString("tipodocumento") 
                         );
                     }
                 }
@@ -126,8 +127,9 @@ public class FacturaDAO {
                         cliente = new Cliente(
                             rsCliente.getString("nombre"),
                             rsCliente.getString("apellido"),
-                            rsCliente.getLong("idcliente"),
-                            rsCliente.getString("correo")
+                            rsCliente.getString("idcliente"),
+                            rsCliente.getString("correo"),
+                            rsCliente.getString("tipodocumento") 
                         );
                     }
                 }

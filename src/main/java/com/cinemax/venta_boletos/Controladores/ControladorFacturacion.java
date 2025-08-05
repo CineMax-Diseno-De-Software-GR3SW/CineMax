@@ -176,7 +176,7 @@ public class ControladorFacturacion {
         }
 
         try {
-            long idcliente = Long.parseLong(texto);
+            String idcliente = texto;
             ClienteDAO clienteDAO = new ClienteDAO();
             try {
                 Cliente cliente = clienteDAO.buscarPorId(idcliente);
@@ -185,10 +185,13 @@ public class ControladorFacturacion {
                     nombreField.setText(cliente.getNombre());
                     apellidoField.setText(cliente.getApellido());
                     documentoField.setText(String.valueOf(cliente.getIdCliente()));
+                    tipoDocumentoBox.setValue(cliente.getTipoDocumento());
                     correoField.setText(cliente.getCorreoElectronico());
-                    mensajeBusquedaCliente.setText("Cliente encontrado.");
+                    //mensajeBusquedaCliente.setText("Cliente encontrado.");
+                    ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
                 } else {
-                    mensajeBusquedaCliente.setText("Cliente no encontrado.");
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
+                    //mensajeBusquedaCliente.setText("Cliente no encontrado.");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -235,28 +238,36 @@ public class ControladorFacturacion {
     @FXML
     void onActualizarCliente(ActionEvent event) {
 
-        if (!validarDocumento()) {
-            return; // Si el documento no es válido, no continuar con la actualización
-        }
+        // if (!validarDocumento()) {
+        //     return; // Si el documento no es válido, no continuar con la actualización
+        // }
 
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
             return;
         }
-
+        
         try {
-            long idcliente = Long.parseLong(documentoField.getText());
-            Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), idcliente,
-                    correoField.getText());
+            Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
+                    correoField.getText(), tipoDocumentoBox.getValue());
             ClienteDAO clienteDAO = new ClienteDAO();
-            clienteDAO.actualizarCliente(cliente);
-            mensajeActualizacionCliente.setText("Cliente actualizado correctamente.");
+
+            Cliente clienteExiste = clienteDAO.buscarPorId(identificacionField.getText());
+
+            if (clienteExiste == null) {
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
+            } else {
+                clienteDAO.actualizarCliente(cliente);
+                ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
+                //mensajeActualizacionCliente.setText("Cliente actualizado correctamente.");
+            }
+
         } catch (NumberFormatException e) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
         } catch (Exception e) {
             e.printStackTrace();
-            ManejadorMetodosComunes.mostrarVentanaError("Ocurrió un error al actualizar el cliente.");
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar al cliente.");
         }
     }
 
@@ -273,9 +284,9 @@ public class ControladorFacturacion {
             return;
         }
 
-        if(!validarDocumento()) {
-            return; // Si el documento no es válido, no continuar con la compra
-        }
+        // if(!validarDocumento()) {
+        //     return; // Si el documento no es válido, no continuar con la compra
+        // }
 
         // 1. Validar la cédula
         //Manejador manejadorCedula = new ManejadorCedula();
@@ -287,13 +298,14 @@ public class ControladorFacturacion {
         ClienteDAO clienteDAO = new ClienteDAO();
         Cliente cliente = null;
         try {
-            cliente = clienteDAO.buscarPorId(Long.parseLong(documentoField.getText()));
+            cliente = clienteDAO.buscarPorId(documentoField.getText());
             if (cliente == null) {
                 cliente = new Cliente(
                         nombreField.getText(),
                         apellidoField.getText(),
-                        Long.parseLong(documentoField.getText()),
-                        correoField.getText());
+                        documentoField.getText(),
+                        correoField.getText(),
+                        tipoDocumentoBox.getValue());
                 clienteDAO.crearCliente(cliente);
             }
         } catch (NumberFormatException e) {
@@ -326,7 +338,7 @@ public class ControladorFacturacion {
         try {
             facturaDAO.crearFactura(facturaFinal);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear la factura: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -334,7 +346,7 @@ public class ControladorFacturacion {
             try {
                 boletoDAO.crearBoleto((Boleto) boleto, facturaFinal);
             } catch (Exception e) {
-                ManejadorMetodosComunes.mostrarVentanaError("Error al crear el boleto: " + e.getMessage());
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear el boleto: " + e.getMessage());
                 e.printStackTrace();
                 return; 
             }
@@ -343,7 +355,7 @@ public class ControladorFacturacion {
         // TODO: Dao debe guardar la factura
 
         // 3. Mostrar un mensaje de éxito y cerrar
-        ManejadorMetodosComunes.mostrarVentanaExito("Se ha generado la factura: " + facturaFinal.getCodigoFactura());
+        ManejadorMetodosComunes.mostrarVentanaExito("Factura creada exitosamente: " + facturaFinal.getCodigoFactura());
 
         System.out.println("--- FACTURA GENERADA ---");
         System.out.println(facturaFinal);
