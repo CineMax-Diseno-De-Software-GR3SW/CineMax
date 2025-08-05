@@ -15,11 +15,12 @@ public class Usuario {
     private LocalDateTime fechaUltimaModificacion;
     private Rol rol;
 
+
     // Constructor
     public Usuario() {
         this.fechaCreacion = LocalDateTime.now();
         this.fechaUltimaModificacion = LocalDateTime.now();
-        this.activo = true;
+//        this.activo = true;
     }
 
     public Usuario(String nombreUsuario, String correo, String clave, String nombreCompleto,
