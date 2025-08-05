@@ -21,6 +21,8 @@ public class ControladorMostrarFunciones {
     @FXML
     private TableColumn<Funcion, String> colSala;
     @FXML
+    private TableColumn<Funcion, String> colTipoSala;
+    @FXML
     private TableColumn<Funcion, String> colFormato;
     @FXML
     private TableColumn<Funcion, String> colTipoEstreno;
@@ -48,6 +50,8 @@ public class ControladorMostrarFunciones {
             System.err.println("ERROR: colHora no inyectado");
         if (colSala == null)
             System.err.println("ERROR: colSala no inyectado");
+        if (colTipoSala == null)
+            System.err.println("ERROR: colTipoSala no inyectado");
         if (colFormato == null)
             System.err.println("ERROR: colFormato no inyectado");
         if (colTipoEstreno == null)
@@ -63,7 +67,7 @@ public class ControladorMostrarFunciones {
 
         Platform.runLater(() -> {
             if (peliculaTituloLabel != null) {
-                peliculaTituloLabel.setText("Funciones de: " + pelicula);
+                peliculaTituloLabel.setText("Película: " + pelicula);
             }
 
             servicio.cargarFunciones(
@@ -74,6 +78,7 @@ public class ControladorMostrarFunciones {
                     colTipoEstreno,
                     colPrecio,
                     colFecha,
+                    colTipoSala,
                     pelicula);
         });
     }

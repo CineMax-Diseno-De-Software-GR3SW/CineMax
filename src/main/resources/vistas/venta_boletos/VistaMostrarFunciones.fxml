@@ -15,7 +15,7 @@
         <VBox alignment="CENTER" style="-fx-background-color: #1e1e1e;">
             <Label fx:id="peliculaTituloLabel"
                    style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"
-                   text="Funciones de: ">
+                   text="Película: ">
                 <padding>
                     <Insets top="20" bottom="10"/>
                 </padding>
@@ -40,12 +40,13 @@
                        prefHeight="400"
                        prefWidth="800">
                 <columns>
-                    <TableColumn fx:id="colHora" text="Hora" prefWidth="100"/>
-                    <TableColumn fx:id="colSala" text="Sala" prefWidth="120"/>
-                    <TableColumn fx:id="colFormato" text="Formato" prefWidth="120"/>
-                    <TableColumn fx:id="colTipoEstreno" text="Tipo Estreno" prefWidth="150"/>
-                    <TableColumn fx:id="colPrecio" text="Precio" prefWidth="100"/>
-                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="120"/>
+                    <TableColumn fx:id="colHora" text="Hora" prefWidth="80"/>
+                    <TableColumn fx:id="colSala" text="Sala" prefWidth="100"/>
+                    <TableColumn fx:id="colTipoSala" text="Tipo Sala" prefWidth="120"/>
+                    <TableColumn fx:id="colFormato" text="Formato" prefWidth="100"/>
+                    <TableColumn fx:id="colTipoEstreno" text="Tipo Estreno" prefWidth="120"/>
+                    <TableColumn fx:id="colPrecio" text="Precio" prefWidth="80"/>
+                    <TableColumn fx:id="colFecha" text="Fecha" prefWidth="100"/>
                 </columns>
                 <columnResizePolicy>
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
