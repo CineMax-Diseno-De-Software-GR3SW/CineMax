@@ -168,7 +168,7 @@ public class ControladorFacturacion {
         mensajeBusquedaCliente.setText("");
         mensajeActualizacionCliente.setText("");
 
-        String texto = identificacionField.getText();
+        String texto = identificacionField.getText().strip().replaceAll("\\s+", " "); // Limpieza profunda del input
 
         if (texto.isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
@@ -203,6 +203,14 @@ public class ControladorFacturacion {
 
     private boolean validarDocumento() {
 
+        // Limpieza PROFUNDA del input (incluye espacios Unicode y múltiples espacios)
+        String documento = documentoField.getText()
+            .replaceAll("^\\s+", "")  // Espacios al inicio
+            .replaceAll("\\s+$", "")  // Espacios al final
+            .replaceAll("\\s+", " "); // Espacios múltiples internos
+        
+        documentoField.setText(documento); // Actualiza el campo con el texto limpio
+    
         ContextoValidacion contextoValidacion = new ContextoValidacion();
 
         switch (tipoDocumentoBox.getValue()) {
@@ -221,11 +229,11 @@ public class ControladorFacturacion {
                 return false;
         }
 
-        System.out.println("Validando documento: " + documentoField.getText());
+        System.out.println("Validando documento: " + documentoField);
         System.out.println("Estrategia seleccionada: " + tipoDocumentoBox.getValue());
         System.out.println("Estrategia ejecutada: " + contextoValidacion.ejecutarEstrategia(documentoField.getText()));
-        
-        documentoField.setText(documentoField.getText().strip());
+
+        documentoField.setText(documentoField.getText());
         if(!contextoValidacion.ejecutarEstrategia(documentoField.getText())) {
             ManejadorMetodosComunes.mostrarVentanaError("Documento inválido: " + documentoField.getText());
             return false;
@@ -238,9 +246,9 @@ public class ControladorFacturacion {
     @FXML
     void onActualizarCliente(ActionEvent event) {
 
-        // if (!validarDocumento()) {
-        //     return; // Si el documento no es válido, no continuar con la actualización
-        // }
+        if (!validarDocumento()) {
+            return; // Si el documento no es válido, no continuar con la actualización
+        }
 
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
@@ -284,9 +292,9 @@ public class ControladorFacturacion {
             return;
         }
 
-        // if(!validarDocumento()) {
-        //     return; // Si el documento no es válido, no continuar con la compra
-        // }
+        if(!validarDocumento()) {
+            return; // Si el documento no es válido, no continuar con la compra
+        }
 
         // 1. Validar la cédula
         //Manejador manejadorCedula = new ManejadorCedula();
@@ -321,16 +329,16 @@ public class ControladorFacturacion {
         BoletoDAO boletoDAO = new BoletoDAO();
 
 
-        ButacaService butacaService = new ButacaService();
-        for (Producto boleto : boletos) {
-            ((Boleto) boleto).getButaca().setEstado(EstadoButaca.OCUPADA.name());
-            try {
-                butacaService.actualizarButaca(((Boleto) boleto).getButaca());
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+        //ButacaService butacaService = new ButacaService();
+        //for (Producto boleto : boletos) {
+        //    ((Boleto) boleto).getButaca().setEstado(EstadoButaca.OCUPADA.name());
+        //    try {
+        //        butacaService.actualizarButaca(((Boleto) boleto).getButaca());
+        //    } catch (Exception e) {
+        //        // TODO Auto-generated catch block
+        //        e.printStackTrace();
+        //    }
+        //}
 
         FacturaDAO facturaDAO = new FacturaDAO();
         // 2. Usar tu servicio para generar la factura final

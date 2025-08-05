@@ -62,23 +62,26 @@ public class ControladorDeConsultaSalas implements Initializable {
 
                 if (codigosButacasOcupadas.contains(butaca.getId()) && !EstadoButaca.OCUPADA.toString().equals(butaca.getEstado())) {
                     butaca.setEstado(EstadoButaca.OCUPADA.toString());
-                }
-
-                switch (butaca.getEstado()) {
-                    case "DISPONIBLE":
-                        btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");
-                        btn.setOnAction(e -> seleccionarButaca(butaca, btn));
-                        break;
-                    case "OCUPADA":
-                        btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-                        btn.setDisable(true);
-                        break;
-                    case "INHABILITADA":
-                        btn.setStyle("-fx-background-color: gray; -fx-text-fill: white;");
-                        btn.setDisable(true);
-                        break;
-                    default:
-                        break;
+                    btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                    btn.setDisable(true);
+                    
+                } else {
+                    switch (butaca.getEstado()) {
+                        case "DISPONIBLE":
+                            btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");
+                            btn.setOnAction(e -> seleccionarButaca(butaca, btn));
+                            break;
+                        case "OCUPADA":
+                            btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                            btn.setDisable(true);
+                            break;
+                        case "INHABILITADA":
+                            btn.setStyle("-fx-background-color: gray; -fx-text-fill: white;");
+                            btn.setDisable(true);
+                            break;
+                        default:
+                            break;
+                    }
                 }
 
                 int fila = butaca.getFila().toUpperCase().charAt(0) - 'A';

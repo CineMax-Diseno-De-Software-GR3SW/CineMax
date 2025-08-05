@@ -23,16 +23,23 @@ public class EstrategiaCedulaValidacion implements EstrategiaValidacion{
                 return false;
             }
 
+            // Validar que todos los caracteres sean dígitos
+            if (!cedula.matches("\\d+")) {
+                System.out.println("La cédula debe contener solo números");
+                return false;
+            }
+
             // Validar que los primeros 2 dígitos (provincia) están en el rango 1-24
             digitosDeLaCedula = Integer.parseInt(cedula.substring(0, 2));
-            if (digitosDeLaCedula <= 0 || digitosDeLaCedula > 24) {
+            if (digitosDeLaCedula < 1 || digitosDeLaCedula > 24) {
                 System.out.println("La cédula " + cedula + " sus 2 primeros dígitos no son válidos (deben estar entre 1 y 24)");
                 return false;
             }
 
             // Validar que el tercer dígito esté en el rango 0-5
             digitosDeLaCedula = Integer.parseInt(cedula.substring(2, 3));
-            if (digitosDeLaCedula >= 6 || digitosDeLaCedula < 0) {
+            if (digitosDeLaCedula < 0 || digitosDeLaCedula > 5) {
+                System.out.println("El tercer dígito debe estar entre 0 y 5");
                 return false;
             }
 
@@ -41,17 +48,14 @@ public class EstrategiaCedulaValidacion implements EstrategiaValidacion{
                 int coeficienteMultiplicador = (contadorDígitos % 2 == 0) ? 2 : 1;
                 digitosDeLaCedula = Integer.parseInt(cedula.substring(contadorDígitos, contadorDígitos + 1));
                 int coeficientePorDigitoDeCedula = coeficienteMultiplicador * digitosDeLaCedula;
-                if(coeficientePorDigitoDeCedula > 10) {
-                    int decena = coeficientePorDigitoDeCedula / 10;
-                    int unidad = coeficientePorDigitoDeCedula % 10;
-                    coeficientePorDigitoDeCedula = decena + unidad;
-                }
-                acumulador += coeficientePorDigitoDeCedula;
+                
+                // Si el producto es >= 10, sumar los dígitos (equivalente a restar 9)
+                acumulador += (coeficientePorDigitoDeCedula >= 10) ? (coeficientePorDigitoDeCedula - 9) : coeficientePorDigitoDeCedula;                
             }
 
             // Calcular el décimo dígito
             int residuo = acumulador % 10;
-            decimoDigitoCalculado = residuo == 0 ? "0" : String.valueOf(residuo);
+            decimoDigitoCalculado = residuo == 0 ? "0" : String.valueOf(10-residuo);
 
             // Comparar el décimo dígito calculado con el de la cédula y mostrar el resultado
             boolean validacionFinal =

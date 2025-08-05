@@ -1,9 +1,12 @@
 package com.cinemax;
 
 import com.cinemax.comun.ConexionBaseSingleton;
+import com.cinemax.comun.ManejadorMetodosComunes;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -18,6 +21,10 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/empleados/PantallaLogin.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 500);
 
+        Image icon = new Image(Main.class.getResourceAsStream("/imagenes/logo.png"));
+        stage.getIcons().add(icon);
+
+        // https://cdn-icons-png.flaticon.com/512/44/44460.png
 
         stage.setTitle("CineMax - Empleados");
         stage.setScene(scene);

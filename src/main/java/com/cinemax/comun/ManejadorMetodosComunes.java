@@ -28,14 +28,14 @@ public class ManejadorMetodosComunes {
             currentStage.setHeight(screenBounds.getHeight());
             
 
-            currentStage.setTitle(titulo);
+            currentStage.setTitle("CineMax");
 
             // Cambiar la escena
             currentStage.setScene(new Scene(root));
-            
 
             // Maximizar la ventana
             currentStage.setMaximized(true);
+
 
         } catch (IOException e) {
             mostrarVentanaError("No se pudo cargar la interfaz de usuario.");
@@ -61,9 +61,11 @@ public class ManejadorMetodosComunes {
             // Cambiar la escena
             currentStage.setScene(new Scene(root));
             
+            currentStage.setTitle("CineMAX");
 
             // Maximizar la ventana
             currentStage.setMaximized(true);
+
 
         } catch (IOException e) {
             mostrarVentanaError("No se pudo cargar la interfaz de usuario.");
@@ -93,7 +95,8 @@ public class ManejadorMetodosComunes {
             
             // Cambiar la escena
             currentStage.setScene(new Scene(root));
-            currentStage.setTitle(titulo);
+            currentStage.setTitle("CineMAX");
+            
             currentStage.setMaximized(true); // Maximizar la ventana
 
             return controller; // Retorna el controlador para configuración adicional
@@ -174,7 +177,8 @@ public class ManejadorMetodosComunes {
         // Crear y mostrar la escena del splash (Vista de carga)
         Scene escenaCarga = new Scene(root);
         stage.setScene(escenaCarga);
-        stage.setTitle("CineMax");
+        stage.setTitle("CineMAX");
+
         stage.setMaximized(true); // Maximizar la ventana
         stage.show();
 
@@ -182,15 +186,16 @@ public class ManejadorMetodosComunes {
     }
 
     public static void mostrarVistaDeCargaPasandoDatos(Stage stage, ControladorCargaConDatos controladorCargaConDatos, int saltosEnElProgreso, int tiempoPorSalto) {
-    try {
+        try {
         
-        ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
+            ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
         
-        // Pasar los datos al controlador de carga
-        controladorCarga.iniciarCarga(stage, controladorCargaConDatos, saltosEnElProgreso, tiempoPorSalto);
+            // Pasar los datos al controlador de carga
+            controladorCarga.iniciarCarga(stage, controladorCargaConDatos, saltosEnElProgreso, tiempoPorSalto);
         
-    } catch (Exception e) {
-        e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-}
+
 }
