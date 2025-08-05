@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Modelos;
+package com.cinemax.venta_boletos.modelos.entidades;
 
 
 public class CalculadorIVA implements CalculadorImpuesto {

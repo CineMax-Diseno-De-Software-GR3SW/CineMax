@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores.cadena_de_responsabilidad;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 

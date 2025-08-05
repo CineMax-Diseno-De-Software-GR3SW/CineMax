@@ -1,24 +1,22 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
-import com.cinemax.salas.servicios.ButacaService;
-import com.cinemax.venta_boletos.Controladores.Strategy.ContextoValidacion;
-import com.cinemax.venta_boletos.Controladores.Strategy.EstrategiaCedulaValidacion;
-import com.cinemax.venta_boletos.Controladores.Strategy.EstrategiaPasaporteValidacion;
-import com.cinemax.venta_boletos.Controladores.Strategy.EstrategiaRucValidacion;
-import com.cinemax.venta_boletos.Modelos.Boleto;
-import com.cinemax.venta_boletos.Modelos.Cliente;
-import com.cinemax.venta_boletos.Modelos.Factura;
-import com.cinemax.venta_boletos.Modelos.Producto;
-import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
-import com.cinemax.venta_boletos.Modelos.Persistencia.ClienteDAO;
-import com.cinemax.venta_boletos.Modelos.Persistencia.FacturaDAO;
-import com.cinemax.venta_boletos.Servicios.GeneradorArchivoPDF;
-import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
-import com.cinemax.venta_boletos.Servicios.ServicioGeneradorArchivo;
+import com.cinemax.venta_boletos.controladores.strategy.ContextoValidacion;
+import com.cinemax.venta_boletos.controladores.strategy.EstrategiaCedulaValidacion;
+import com.cinemax.venta_boletos.controladores.strategy.EstrategiaPasaporteValidacion;
+import com.cinemax.venta_boletos.controladores.strategy.EstrategiaRucValidacion;
+import com.cinemax.venta_boletos.modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
+import com.cinemax.venta_boletos.modelos.persistencia.ClienteDAO;
+import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
+import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivoPDF;
+import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -42,6 +40,8 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivo;
 
 public class ControladorFacturacion {
 
@@ -324,7 +324,7 @@ public class ControladorFacturacion {
             e.printStackTrace();
         }
 
-        ServicioGeneradorArchivo generador = new GeneradorArchivoPDF();
+        ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
         generador.generarBoletosPDF(boletos);
 
         
@@ -372,7 +372,7 @@ public class ControladorFacturacion {
 
         //Stage stage = (Stage) buttonPagar.getScene().getWindow();
         //stage.close();
-        ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "Cartelera");
+        ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
     }
 
     @FXML

@@ -1,7 +1,8 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores;
 
-import com.cinemax.venta_boletos.Servicios.ServicioMostrarFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.venta_boletos.servicios.ServicioMostrarFunciones;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.SelectionMode;

@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="850.0" style="-fx-background-color: transparent;" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.Controladores.ControladorInformacionLateral">
+<BorderPane prefHeight="850.0" style="-fx-background-color: transparent;" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.controladores.ControladorInformacionLateral">
    <right>
       <VBox maxWidth="450.0" minWidth="400.0" prefHeight="550.0" spacing="15.0" styleClass="financial-summary-pane" BorderPane.alignment="CENTER">
          <padding>

@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores.Strategy;
+package com.cinemax.venta_boletos.controladores.strategy;
 
 public class ContextoValidacion {
     private EstrategiaValidacion estrategia;

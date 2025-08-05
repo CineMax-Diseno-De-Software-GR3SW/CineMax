@@ -1,19 +1,16 @@
-package com.cinemax.venta_boletos.Servicios;
+package com.cinemax.venta_boletos.servicios;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones;
 import com.cinemax.peliculas.controladores.ControladorCartelera;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.venta_boletos.controladores.ControladorMostrarFunciones;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.event.ActionEvent;
 
-import java.io.IOException;
 import java.util.List;
 
 public class ServicioMostrarCartelera {
@@ -57,8 +54,8 @@ public class ServicioMostrarCartelera {
             
             ControladorMostrarFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
                 currentStage, 
-                "/vistas/venta_boletos/funciones-view.fxml", 
-                "Funciones de " + peliculaSeleccionada.getTitulo()
+                "/vistas/venta_boletos/VistaFunciones.fxml", 
+                "CineMAX"
             );
             
             if (controller != null) {

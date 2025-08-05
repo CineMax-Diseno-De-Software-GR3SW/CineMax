@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,34 +10,21 @@ import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.controladores.ControladorDeConsultaSalas;
 import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.modelos.entidades.TipoSala;
-import com.cinemax.salas.servicios.ButacaService;
-import com.cinemax.venta_boletos.Modelos.Boleto;
-import com.cinemax.venta_boletos.Modelos.Producto;
-import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
-import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
+import com.cinemax.venta_boletos.servicios.ServicioGeneradorBoleto;
 
 // imports para manejar el mapa de butacas
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Screen;
-import javafx.geometry.Rectangle2D;
-
 import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -161,7 +148,7 @@ public class ControladorAsignadorButacas {
         
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow(); // ventana actual
         // Cambiar a la vista de funciones y pasar el título de la película seleccionada
-        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/funciones-view.fxml", "funciones de " + funcionSeleccionada.getPelicula().getTitulo());
+        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/VistaFunciones.fxml", "CineMAX");
         controladorFunciones.setPelicula(funcionSeleccionada.getPelicula().getTitulo());
     }
 
@@ -183,7 +170,7 @@ public class ControladorAsignadorButacas {
 
             // 3. Cargar la vista SIN mostrarla todavía
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
+            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaFacturacion.fxml"));
             Parent root = loader.load();
             
             // 4. Obtener el controlador
@@ -198,7 +185,7 @@ public class ControladorAsignadorButacas {
             // AHORA sí cambiar la escena con todo ya cargado
             Scene newScene = new Scene(root);
             currentStage.setScene(newScene);
-            currentStage.setTitle("Seleccionar Butacas");
+            currentStage.setTitle("CineMAX");
 
             System.out.println(butacasSeleccionadas.stream()
                 .map(b -> b.getFila() + b.getColumna())

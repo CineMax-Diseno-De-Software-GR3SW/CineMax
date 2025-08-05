@@ -1,17 +1,17 @@
-package com.cinemax.venta_boletos.Servicios;
+package com.cinemax.venta_boletos.servicios;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
 import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.servicios.ContenidoMensaje;
-import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
-import com.cinemax.venta_boletos.Modelos.CalculadorImpuesto;
-import com.cinemax.venta_boletos.Modelos.Cliente;
-import com.cinemax.venta_boletos.Modelos.Factura;
-import com.cinemax.venta_boletos.Modelos.Producto;
+import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
+import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
+import com.cinemax.venta_boletos.modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
+
 
 public class ServicioFacturacion {
 
@@ -31,13 +31,13 @@ public class ServicioFacturacion {
         factura.calcularSubTotal();
         factura.calcularTotal(calculadorImpuesto);
 
-        ServicioGeneradorArchivo generador = new GeneradorArchivoPDF();
+        ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
         generador.generarFacturaPDF(factura);
 
         // Enviar el PDF al correo del cliente usando ServicioCorreoSingleton
         try {
             ServicioCorreoSingleton correo = ServicioCorreoSingleton.getInstancia();
-            ContenidoMensaje contenido = ContenidoMensajeFactura.crear(factura);
+            ContenidoMensaje contenido = ServicioContenidoMensajeFactura.crear(factura);
             // Construir la ruta del archivo PDF generado
             String rutaPDF = "PDFsGenerados_BoletoFactura/FacturasGeneradas/Factura_" + factura.getCodigoFactura() + ".pdf";
             File archivoPDF = new File(rutaPDF);

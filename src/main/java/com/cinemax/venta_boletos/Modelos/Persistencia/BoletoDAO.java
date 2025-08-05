@@ -1,21 +1,18 @@
-package com.cinemax.venta_boletos.Modelos.Persistencia;
+package com.cinemax.venta_boletos.modelos.persistencia;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.salas.modelos.entidades.TipoSala;
-import com.cinemax.venta_boletos.Modelos.Boleto;
-import com.cinemax.venta_boletos.Modelos.Cliente;
-import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
 
 public class BoletoDAO {
     

@@ -1,11 +1,10 @@
-package com.cinemax.venta_boletos.Servicios;
+package com.cinemax.venta_boletos.servicios;
 
-import com.cinemax.comun.ControladorCarga;
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.controladores.ControladorFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
-import com.cinemax.venta_boletos.Controladores.ControladorCargaAsignacionButacas;
+import com.cinemax.venta_boletos.controladores.ControladorCargaAsignacionButacas;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -113,7 +112,7 @@ public class ServicioMostrarFunciones {
 
     public void regresarPantallaCartelera(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/cartelera-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/VistaCartelera.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));

@@ -1,8 +1,7 @@
-package com.cinemax.venta_boletos.Modelos;
+package com.cinemax.venta_boletos.modelos.entidades;
 
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.salas.modelos.entidades.TipoSala;
 
 public class Boleto extends Producto {
     private Funcion funcion;

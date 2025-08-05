@@ -35,7 +35,7 @@ module com.cinemax {
         requires org.apache.pdfbox; 
 
         // Paquetes del módulo venta-boletos
-        exports com.cinemax.venta_boletos.Controladores;
-        opens com.cinemax.venta_boletos.Controladores to javafx.fxml;
-        opens com.cinemax.venta_boletos.Servicios to javafx.base, javafx.fxml;
+        exports com.cinemax.venta_boletos.controladores;
+        opens com.cinemax.venta_boletos.controladores to javafx.fxml;
+        opens com.cinemax.venta_boletos.servicios to javafx.base, javafx.fxml;
     }

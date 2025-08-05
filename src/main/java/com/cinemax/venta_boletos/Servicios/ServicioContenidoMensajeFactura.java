@@ -1,9 +1,9 @@
-package com.cinemax.venta_boletos.Servicios;
+package com.cinemax.venta_boletos.servicios;
 
 import com.cinemax.empleados.servicios.ContenidoMensaje;
-import com.cinemax.venta_boletos.Modelos.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
 
-public class ContenidoMensajeFactura {
+public class ServicioContenidoMensajeFactura {
 
     public static ContenidoMensaje crear(Factura factura) {
         String asunto = "Factura de su compra en CineMax";

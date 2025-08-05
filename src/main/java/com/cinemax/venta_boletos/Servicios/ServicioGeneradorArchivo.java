@@ -1,10 +1,9 @@
-package com.cinemax.venta_boletos.Servicios;
-
+package com.cinemax.venta_boletos.servicios;
 import java.util.List;
 
-import com.cinemax.venta_boletos.Modelos.Boleto;
-import com.cinemax.venta_boletos.Modelos.Factura;
-import com.cinemax.venta_boletos.Modelos.Producto;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
+
 
 public interface ServicioGeneradorArchivo {
     void generarFacturaPDF(Factura factura);

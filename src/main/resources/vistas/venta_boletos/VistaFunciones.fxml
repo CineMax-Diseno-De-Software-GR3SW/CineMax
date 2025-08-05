@@ -8,7 +8,7 @@
 <BorderPane stylesheets="@../temas/styles.css" 
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones">
+            fx:controller="com.cinemax.venta_boletos.controladores.ControladorMostrarFunciones">
 
     <!-- ░░░s TOP BAR ░░░ -->
     <top>

@@ -1,28 +1,20 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores;
 
 import javafx.scene.control.Label;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.salas.modelos.entidades.TipoSala;
-import com.cinemax.venta_boletos.Modelos.Boleto;
-import com.cinemax.venta_boletos.Modelos.CalculadorIVA;
-import com.cinemax.venta_boletos.Modelos.Producto;
-
-import javafx.event.ActionEvent;
+import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 
 public class ControladorInformacionLateral {
 

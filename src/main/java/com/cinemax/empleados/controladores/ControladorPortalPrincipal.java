@@ -101,7 +101,7 @@ public class ControladorPortalPrincipal {
     @FXML
     private void onVenderBoleto(ActionEvent event) {
         //navegarA("/vistas/venta_boletos/cartelera-view.fxml", "Venta de Boletos", event);
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(), "/vistas/venta_boletos/cartelera-view.fxml");
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(), "/vistas/venta_boletos/VistaCartelera.fxml");
     }
 
     @FXML

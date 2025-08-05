@@ -1,20 +1,21 @@
-package com.cinemax.venta_boletos.Servicios;
+package com.cinemax.venta_boletos.servicios;
 
-import com.cinemax.venta_boletos.Modelos.Boleto;
-import com.cinemax.venta_boletos.Modelos.Cliente;
-import com.cinemax.venta_boletos.Modelos.Factura;
-import com.cinemax.venta_boletos.Modelos.Producto;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import com.cinemax.venta_boletos.modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class GeneradorArchivoPDF implements ServicioGeneradorArchivo {
+public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
 
     private static final float MARGIN = 50;
     private static final PDType1Font FONT_BOLD = PDType1Font.HELVETICA_BOLD;

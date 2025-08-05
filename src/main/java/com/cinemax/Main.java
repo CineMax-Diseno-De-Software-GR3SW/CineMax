@@ -1,7 +1,6 @@
 package com.cinemax;
 
 import com.cinemax.comun.ConexionBaseSingleton;
-import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
