@@ -112,7 +112,7 @@ public class ServicioMostrarFunciones {
 
     public void regresarPantallaCartelera(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/VistaCartelera.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/VistaMostrarCartelera.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));

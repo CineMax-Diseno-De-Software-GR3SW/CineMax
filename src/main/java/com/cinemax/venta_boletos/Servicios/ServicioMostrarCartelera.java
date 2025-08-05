@@ -54,7 +54,7 @@ public class ServicioMostrarCartelera {
             
             ControladorMostrarFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
                 currentStage, 
-                "/vistas/venta_boletos/VistaFunciones.fxml", 
+                "/vistas/venta_boletos/VistaMostrarFunciones.fxml", 
                 "CineMAX"
             );
             

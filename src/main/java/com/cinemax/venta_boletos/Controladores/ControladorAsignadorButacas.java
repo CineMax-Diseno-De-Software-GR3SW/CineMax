@@ -148,7 +148,7 @@ public class ControladorAsignadorButacas {
         
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow(); // ventana actual
         // Cambiar a la vista de funciones y pasar el título de la película seleccionada
-        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/VistaFunciones.fxml", "CineMAX");
+        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/VistaMostrarFunciones.fxml", "CineMAX");
         controladorFunciones.setPelicula(funcionSeleccionada.getPelicula().getTitulo());
     }
 
