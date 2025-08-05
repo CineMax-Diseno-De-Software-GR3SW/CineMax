@@ -62,7 +62,6 @@ public class ControladorAsignadorButacas {
     @FXML
     private VBox mapaButacasContainer;
 
-
     // ------Atributos------
     private ControladorDeConsultaSalas controladorConsultaSalas;
     private List<Butaca> butacasSeleccionadas;
@@ -76,7 +75,7 @@ public class ControladorAsignadorButacas {
     }
 
     // 1. Inicializar datos de la función seleccionada
-    public void inicializarDatos(Funcion funcionSeleccionada) { 
+    public void inicializarDatos(Funcion funcionSeleccionada) {
 
         // 1. Colocar encabezado de tipo de sala
         labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name()); // encabezado
@@ -96,7 +95,8 @@ public class ControladorAsignadorButacas {
             return;
         }
 
-        // 4. Crear un Set de códigos alfanuméricos de butacas ocupadas para búsqueda O(1)
+        // 4. Crear un Set de códigos alfanuméricos de butacas ocupadas para búsqueda
+        // O(1)
         Set<Integer> codigosButacasOcupadas = new HashSet<>();
         for (Butaca butacaOcupada : butacasOcupadas) {
             codigosButacasOcupadas.add(butacaOcupada.getId());
@@ -106,16 +106,16 @@ public class ControladorAsignadorButacas {
 
         // 7. Asignar la función seleccionada al controlador
         this.funcionSeleccionada = funcionSeleccionada;
-        
+
     }
 
     private void cargarInformacionFuncion(Funcion funcion) {
-         try {
+        try {
             // Cargar el FXML del mapa de butacas
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaInformacionLateral.fxml"));
             Parent vistaInformacionLateral = loader.load();
-            
+
             // Agregar el mapa al contenedor
             informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
 
@@ -129,7 +129,7 @@ public class ControladorAsignadorButacas {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
     }
 
     private void cargarMapaButacas(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada) {
@@ -138,36 +138,39 @@ public class ControladorAsignadorButacas {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/vistas/salas/MapaButacas.fxml"));
             Parent mapaButacas = loader.load();
-            
+
             // 2. Agregar el mapa al contenedor
             mapaButacasContainer.getChildren().add(mapaButacas);
-            
+
             // 3. Obtener referencia al controlador del mapa
             controladorConsultaSalas = loader.getController();
 
             // 4. Mostrar las butacas
             controladorConsultaSalas.setControladorAsignadorButacas(this);
             controladorConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);
-            
+
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
             e.printStackTrace();
         }
-    } 
+    }
 
     @FXML
     void onBackAction(ActionEvent event) {
-        // Regresar a la pantalla de funciones con la información de la película seleccionada
-        
+        // Regresar a la pantalla de funciones con la información de la película
+        // seleccionada
+
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow(); // ventana actual
         // Cambiar a la vista de funciones y pasar el título de la película seleccionada
-        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes.cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/funciones-view.fxml", "funciones de " + funcionSeleccionada.getPelicula().getTitulo());
+        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes.cambiarVentanaConControlador(
+                currentStage, "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
+                "funciones de " + funcionSeleccionada.getPelicula().getTitulo());
         controladorFunciones.setPelicula(funcionSeleccionada.getPelicula().getTitulo());
     }
 
     @FXML
     void onContinuarAction(ActionEvent event) {
-        if(butacasSeleccionadas.isEmpty()) {
+        if (butacasSeleccionadas.isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Debe seleccionar al menos una butaca.");
             return;
         }
@@ -175,9 +178,9 @@ public class ControladorAsignadorButacas {
         try {
             // 1. Generar los boletos
             ServicioGeneradorBoleto servicioGeneradorBoleto = new ServicioGeneradorBoleto();
-            List<Producto> boletosGenerados = servicioGeneradorBoleto.generarBoleto(funcionSeleccionada, butacasSeleccionadas);
-            
-            
+            List<Producto> boletosGenerados = servicioGeneradorBoleto.generarBoleto(funcionSeleccionada,
+                    butacasSeleccionadas);
+
             // 2. ventana actual
             Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
 
@@ -185,26 +188,25 @@ public class ControladorAsignadorButacas {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("/vistas/venta_boletos/datos-cliente-view.fxml"));
             Parent root = loader.load();
-            
+
             // 4. Obtener el controlador
             ControladorFacturacion controladorFacturacion = loader.getController();
 
             // 5. Inicializar el controlador de facturación con los datos necesarios
             controladorFacturacion.setControladorInformacionLateral(controladorInformacionLateral);
-            
+
             // 6. Inicializar los datos ANTES de mostrar
             controladorFacturacion.initData(boletosGenerados);
-            
+
             // AHORA sí cambiar la escena con todo ya cargado
             Scene newScene = new Scene(root);
             currentStage.setScene(newScene);
             currentStage.setTitle("Seleccionar Butacas");
 
             System.out.println(butacasSeleccionadas.stream()
-                .map(b -> b.getFila() + b.getColumna())
-                .collect(Collectors.joining(", ")));
-            
-            
+                    .map(b -> b.getFila() + b.getColumna())
+                    .collect(Collectors.joining(", ")));
+
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
             System.err.println("Error al cargar la vista de datos del cliente: " + e.getMessage());
@@ -230,5 +232,5 @@ public class ControladorAsignadorButacas {
         controladorInformacionLateral.removerButacaDeLista(butaca);
         controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
-    
+
 }

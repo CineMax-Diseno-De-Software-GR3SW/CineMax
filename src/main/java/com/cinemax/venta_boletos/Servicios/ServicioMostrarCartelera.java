@@ -54,13 +54,12 @@ public class ServicioMostrarCartelera {
         }
 
         try {
-            
+
             ControladorMostrarFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
-                currentStage, 
-                "/vistas/venta_boletos/funciones-view.fxml", 
-                "Funciones de " + peliculaSeleccionada.getTitulo()
-            );
-            
+                    currentStage,
+                    "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
+                    "Funciones de " + peliculaSeleccionada.getTitulo());
+
             if (controller != null) {
                 controller.setPelicula(peliculaSeleccionada.getTitulo());
             }
