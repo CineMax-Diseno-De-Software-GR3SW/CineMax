@@ -51,7 +51,7 @@ public class ServicioMostrarCartelera {
         }
 
         try {
-            
+
             ControladorMostrarFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
                 currentStage, 
                 "/vistas/venta_boletos/VistaMostrarFunciones.fxml", 

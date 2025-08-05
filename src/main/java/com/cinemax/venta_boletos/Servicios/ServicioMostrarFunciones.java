@@ -27,7 +27,6 @@ import java.math.BigDecimal;
 public class ServicioMostrarFunciones {
 
     private final ControladorFunciones controladorFunciones = new ControladorFunciones();
-    //private final BoletoDAO daoBoleto = new BoletoDAO();
 
     public void cargarFunciones(TableView<Funcion> tabla,
             TableColumn<Funcion, String> colHora,
@@ -38,28 +37,14 @@ public class ServicioMostrarFunciones {
             TableColumn<Funcion, String> colFecha,
             String nombrePelicula) {
 
-        // Configurar columnas primero
         configurarColumnas(colHora, colSala, colFormato, colTipoEstreno, colPrecio, colFecha);
 
         try {
             List<Funcion> funcionesObtenidas = controladorFunciones.obtenerFuncionesPorNombrePelicula(nombrePelicula);
-
-            // Debug detallado
-            System.out.println("\n=== DEBUG: Funciones obtenidas ===");
-            funcionesObtenidas.forEach(f -> {
-                System.out.println(
-                        "ID: " + f.getId() +
-                                " | Película: " + (f.getPelicula() != null ? f.getPelicula().getTitulo() : "null") +
-                                " | Sala: " + (f.getSala() != null ? f.getSala().getNombre() : "null") +
-                                " | Fecha: " + f.getFechaHoraInicio());
-            });
-
             ObservableList<Funcion> listaFunciones = FXCollections.observableArrayList(funcionesObtenidas);
 
             Platform.runLater(() -> {
                 tabla.setItems(listaFunciones);
-                System.out.println("Funciones cargadas en tabla: " + listaFunciones.size());
-
                 if (listaFunciones.isEmpty()) {
                     tabla.setPlaceholder(new Label("No hay funciones disponibles para " + nombrePelicula));
                 }
@@ -112,7 +97,8 @@ public class ServicioMostrarFunciones {
 
     public void regresarPantallaCartelera(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/venta_boletos/VistaMostrarCartelera.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/venta_boletos/VistaMostrarCartelera.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root, 800, 600));
@@ -132,18 +118,12 @@ public class ServicioMostrarFunciones {
         }
 
         try {
-
-            // 1. ventana actual
             Stage currentStage = (Stage) tabla.getScene().getWindow();
-
-            // 2. Objetos para pasar los datos a la siguiente pantalla usando la pantalla de carga
             ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
-                "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
-                currentStage,
-                new ArrayList<>(List.of(funcionSeleccionada))
-            );            
+                    "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
+                    currentStage,
+                    new ArrayList<>(List.of(funcionSeleccionada)));
 
-            // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
             ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 150);
 
         } catch (Exception e) {
