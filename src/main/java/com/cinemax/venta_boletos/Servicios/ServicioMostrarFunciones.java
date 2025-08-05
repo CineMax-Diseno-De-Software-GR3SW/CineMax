@@ -145,7 +145,7 @@ public class ServicioMostrarFunciones {
             );            
 
             // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
-            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 550);
+            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 150);
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());

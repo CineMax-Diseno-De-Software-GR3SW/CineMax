@@ -1,5 +1,6 @@
 package com.cinemax.venta_boletos.Controladores;
 
+import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
@@ -39,6 +40,7 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ControladorFacturacion {
@@ -375,27 +377,24 @@ public class ControladorFacturacion {
 
     @FXML
     protected void onBackAction() {
+
         try {
+
+            // 1. ventana actual
             Stage currentStage = (Stage) headerBar.getScene().getWindow();
-            
-            // Cargar la vista SIN mostrarla todavía
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaSeleccionButacas.fxml"));
-            Parent root = loader.load();
-            
-            // Obtener el controlador
-            ControladorAsignadorButacas controller = loader.getController();
-            
-            // Inicializar los datos ANTES de mostrar
-            controller.inicializarDatos(((Boleto) boletos.get(0)).getFuncion());
-            
-            // AHORA sí cambiar la escena con todo ya cargado
-            Scene newScene = new Scene(root);
-            currentStage.setScene(newScene);
-            currentStage.setTitle("CineMAX");
+
+            // 2. Objetos para pasar los datos a la siguiente pantalla usando la pantalla de carga
+            ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
+                "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
+                currentStage,
+                new ArrayList<>(List.of(((Boleto) boletos.get(0)).getFuncion()))
+            );            
+
+            // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
+            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 100);
 
         } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la ventana: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
             e.printStackTrace();
         }
     }
