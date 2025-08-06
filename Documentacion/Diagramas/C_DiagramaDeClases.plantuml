@@ -55,7 +55,9 @@ package Servicios{
     }
 
     class ServicioFacturacion {
-        generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+        + generarFactura(boletos: List<Boleto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): Factura
+        - generarCodigoFactura(): long
+        - getFechaActual(): String
     }
 
     class ServicioGeneradorBoleto{
@@ -63,11 +65,27 @@ package Servicios{
     }
 
     interface ServicioGeneradorArchivo {
-        + generar(factura: Factura): void
+        + generarFactura(factura: Factura): void
+        + generarBoletos(boletos: List<Producto>): void
     }
 
     class GeneradorArchivoPDF {
-        '+ generar(factura: Factura): void
+        + generar(factura: Factura): void
+        + generar(boletos: List<Producto>): void
+        - crearCarpetaSiNoExiste(carpeta: String): void
+
+    }
+
+    class ServicioMostrarCartelera {
+        - controladorCartelera: ControladorCartelera
+        - peliculas: ObservableList<Pelicula>
+        - selectedPelicula: Pelicula
+        + getPeliculas(): ObservableList<Pelicula>
+        + getSelectedPelicula(): Pelicula
+        + setSelectedPelicula(pelicula: Pelicula): void
+        + inicializarListaPeliculas(): void
+        + seleccionarPelicula(peliculaSeleccionada: Pelicula, currentStage: Stage): void
+        + mostrarCartelera(): void
     }
 }
 
@@ -76,44 +94,65 @@ package Modelos {
 
     abstract class Producto {
         - precio: double
-        + {abstract} calcularPrecio(): double
+        + {abstract} calcularPrecio(): void
+        + setPrecio(precio: double): void
+        + getPrecio(): double
     }
 
     class Boleto {
-        - id: int
         - funcion: Funcion
         - butaca: Butaca
         + setFuncion(funcion: Funcion): void
         + setButaca(butaca: Butaca): void
-        + calcularPrecio(): double
+        + getFuncion(): Funcion
+        + getButaca(): Butaca
+        + calcularPrecio(): void
     }
 
     class Factura {
-        - codigoFactura: String
-        - fecha: LocalDateTime
+        - codigoFactura: long
+        - fecha: String
         - cliente: Cliente
         - productos: List<Producto>
         - subtotal: double
         - total: double
-        + calcularSubTotal(): double
-        + calcularTotal(): double
-        + generarCodigo(): String
+        + calcularSubTotal(): void
+        + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
+        + setProductos(productos: List<Producto>): void
+        + getCodigoFactura(): long
+        + getFecha(): String
+        + getCliente(): Cliente
+        + getTotal(): double
+        + getSubTotal(): double
+        + getProductos(): List<Producto>
     }
 
     interface CalculadorImpuesto {
-        + calcular(subtotal: double): double
+        + calcularImpuesto(subtotal: double): double
     }
 
     class CalculadorIVA {
         - {static} IVA_TASA: double
-        '+ calcular(subtotal: double): double
+        + calcularImpuesto(subtotal: double): double
+        + {static} getIVA_TASA(): double
     }
 
     class Cliente {
-        - cedula: long
+        - idCliente: String
+        - tipoDocumento: String
         - nombre: String
         - apellido: String
-        - correo: String
+        - correoElectronico: String
+        + setIdCliente(idCliente: String): void
+        + setTipoDocumento(tipoDocumento: String): void
+        + setNombre(nombre: String): void
+        + setApellido(apellido: String): void
+        + setCorreoElectronico(correoElectronico: String): void
+        + getIdCliente(): String
+        + getTipoDocumento(): String
+        + getNombre(): String
+        + getApellido(): String
+        + getCorreoElectronico(): String
     }
 }
 

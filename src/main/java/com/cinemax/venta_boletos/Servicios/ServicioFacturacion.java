@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.servicios.ContenidoMensaje;
-import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
@@ -15,14 +14,14 @@ import com.cinemax.venta_boletos.modelos.entidades.Producto;
 
 public class ServicioFacturacion {
 
-    CalculadorImpuesto calculadorImpuesto; // TODO: No debería ser un atributo de la clase, sino un parámetro del método
+    // CalculadorImpuesto calculadorImpuesto; // TODO: No debería ser un atributo de la clase, sino un parámetro del método
                                            // generarFactura
 
-    public ServicioFacturacion() {
-        this.calculadorImpuesto = new CalculadorIVA();
-    }
+    // public ServicioFacturacion() {
+    //     this.calculadorImpuesto = new CalculadorIVA();
+    // }
 
-    public Factura generarFactura(List<Producto> productos, Cliente cliente) {
+    public Factura generarFactura(List<Producto> productos, Cliente cliente, CalculadorImpuesto calculadorImpuesto) {
         Factura factura = new Factura(
                 generarCodigoFactura(),
                 getFechaActual(),
@@ -32,7 +31,7 @@ public class ServicioFacturacion {
         factura.calcularTotal(calculadorImpuesto);
 
         ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
-        generador.generarFacturaPDF(factura);
+        generador.generarFactura(factura);
 
         // Enviar el PDF al correo del cliente usando ServicioCorreoSingleton
         try {
