@@ -35,9 +35,10 @@ public class ServicioMostrarFunciones {
             TableColumn<Funcion, String> colTipoEstreno,
             TableColumn<Funcion, String> colPrecio,
             TableColumn<Funcion, String> colFecha,
+            TableColumn<Funcion, String> colTipoSala,
             String nombrePelicula) {
 
-        configurarColumnas(colHora, colSala, colFormato, colTipoEstreno, colPrecio, colFecha);
+        configurarColumnas(colHora, colSala, colFormato, colTipoEstreno, colPrecio, colFecha, colTipoSala);
 
         try {
             List<Funcion> funcionesObtenidas = controladorFunciones.obtenerFuncionesPorNombrePelicula(nombrePelicula);
@@ -64,7 +65,8 @@ public class ServicioMostrarFunciones {
             TableColumn<Funcion, String> colFormato,
             TableColumn<Funcion, String> colTipoEstreno,
             TableColumn<Funcion, String> colPrecio,
-            TableColumn<Funcion, String> colFecha) {
+            TableColumn<Funcion, String> colFecha,
+            TableColumn<Funcion, String> colTipoSala) {
 
         colHora.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getFechaHoraInicio() != null
@@ -74,6 +76,11 @@ public class ServicioMostrarFunciones {
         colSala.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getSala() != null ? cellData.getValue().getSala().getNombre()
                         : "Sala no disponible"));
+
+        colTipoSala.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getSala() != null && cellData.getValue().getSala().getTipo() != null
+                        ? cellData.getValue().getSala().getTipo().toString()
+                        : ""));
 
         colFormato.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getFormato() != null ? cellData.getValue().getFormato().name().replace("_", " ")

@@ -75,12 +75,6 @@ public class ControladorFacturacion {
     private VBox informacionFuncionContainer;
 
     @FXML
-    private Text mensajeActualizacionCliente;
-
-    @FXML
-    private Text mensajeBusquedaCliente;
-
-    @FXML
     private TextField nombreField;
 
     @FXML
@@ -165,8 +159,6 @@ public class ControladorFacturacion {
         apellidoField.clear();
         documentoField.clear();
         correoField.clear();
-        mensajeBusquedaCliente.setText("");
-        mensajeActualizacionCliente.setText("");
 
         String texto = identificacionField.getText().strip().replaceAll("\\s+", " "); // Limpieza profunda del input
 
@@ -187,11 +179,9 @@ public class ControladorFacturacion {
                     documentoField.setText(String.valueOf(cliente.getIdCliente()));
                     tipoDocumentoBox.setValue(cliente.getTipoDocumento());
                     correoField.setText(cliente.getCorreoElectronico());
-                    //mensajeBusquedaCliente.setText("Cliente encontrado.");
                     ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
                 } else {
                     ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
-                    //mensajeBusquedaCliente.setText("Cliente no encontrado.");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -268,7 +258,6 @@ public class ControladorFacturacion {
             } else {
                 clienteDAO.actualizarCliente(cliente);
                 ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
-                //mensajeActualizacionCliente.setText("Cliente actualizado correctamente.");
             }
 
         } catch (NumberFormatException e) {
