@@ -14,15 +14,25 @@ import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
 
-
+/** 
+ * Clase FacturaDAO que maneja las operaciones de persistencia para la entidad Factura.
+ * Utiliza procedimientos almacenados para crear, actualizar, eliminar y buscar facturas.
+ */
 public class FacturaDAO {
-    
+
+    /** Instancia singleton para manejar la conexión a la base de datos */
     private final ConexionBaseSingleton conexionBase;
 
+    /** Constructor de la clase FacturaDAO que inicializa la conexión a la base de datos */
     public FacturaDAO() {
         this.conexionBase = ConexionBaseSingleton.getInstancia();
     }
 
+    /**
+     * Crea una nueva factura en la base de datos.
+     * @param factura El objeto Factura que contiene la información de la factura a insertar.
+     * @throws Exception Si ocurre un error al insertar la factura.
+     */
     public void crearFactura(Factura factura) throws Exception {
         String sql = "SELECT crear_factura(?, ?, ?, ?, ?)";
         try (Connection conn = conexionBase.conectar();
@@ -41,6 +51,11 @@ public class FacturaDAO {
         }
     }
 
+    /**
+     * Actualiza la información de una factura existente en la base de datos.
+     * @param factura El objeto Factura que contiene la información actualizada de la factura.
+     * @throws Exception Si ocurre un error al actualizar la factura.
+     */
     public void actualizarFactura(Factura factura) throws Exception {
         String sql = "SELECT actualizar_factura(?, ?, ?, ?, ?)";
         try (Connection conn = conexionBase.conectar();
@@ -56,6 +71,11 @@ public class FacturaDAO {
         }
     }
 
+    /**
+     * Elimina una factura de la base de datos.
+     * @param idFactura El ID de la factura a eliminar.
+     * @throws Exception Si ocurre un error al eliminar la factura.
+     */
     public void eliminarFactura(Long idFactura) throws Exception {
         String sql = "SELECT eliminar_factura(?)";
         try (Connection conn = conexionBase.conectar();
@@ -65,6 +85,12 @@ public class FacturaDAO {
         }
     }
 
+    /**
+     * Busca una factura por su ID.
+     * @param idFactura El ID de la factura a buscar.
+     * @return El objeto Factura encontrado o null si no se encuentra.
+     * @throws Exception Si ocurre un error al buscar la factura.
+     */
     public Factura buscarPorId(Long idFactura) throws Exception {
         String sql = "SELECT * FROM obtener_factura(?)";
         try (Connection conn = conexionBase.conectar();
@@ -106,6 +132,11 @@ public class FacturaDAO {
         }
     }
 
+    /**
+     * Lista todas las facturas en la base de datos.
+     * @return Una lista de objetos Factura.
+     * @throws Exception Si ocurre un error al listar las facturas.
+     */
     public List<Factura> listarTodas() throws Exception {
         List<Factura> lista = new ArrayList<>();
         String sql = "SELECT * FROM listar_facturas()";

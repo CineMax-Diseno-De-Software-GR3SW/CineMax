@@ -19,43 +19,31 @@ import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 
-import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivo;
 
+/**
+ * Controlador principal para la facturación de boletos.
+ * Maneja la interacción del usuario con la interfaz de facturación.
+ */
 public class ControladorFacturacion {
 
-    // --- Lógica de Negocio ---
-    private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
-
-    // --- Estado ---
-    private Scene previousScene;
-    private List<Producto> boletos;
-    private double xOffset = 0;
-    private double yOffset = 0;
-
-    // --- Componentes FXML ---
+    // ===== ELEMENTOS DE LA INTERFAZ (FXML) =====
     @FXML
     private TextField apellidoField;
 
+    /** Botón para realizar el proceso de pago. */
     @FXML
     private Button buttonPagar;
 
@@ -68,6 +56,7 @@ public class ControladorFacturacion {
     @FXML
     private HBox headerBar;
 
+    /** Campo de texto para ingresar el número de identificación del cliente y buscarlo en base a eso. */
     @FXML
     private TextField identificacionField;
 
@@ -77,21 +66,43 @@ public class ControladorFacturacion {
     @FXML
     private TextField nombreField;
 
+    /** Casilla de verificación para confirmar la compra de los boletos. */
     @FXML
     private CheckBox confirmCheckBox;
 
     @FXML
     private ComboBox<String> tipoDocumentoBox;
-    //public void setPreviousScene(Scene scene) {
-    //    this.previousScene = scene;
-    //}
 
+    // ===== ATRIBUTOS DE LÓGICA =====
+
+    /** Lista de productos seleccionados, representando los boletos de cine. */
+    private List<Producto> boletos;
+    private double xOffset = 0;
+    private double yOffset = 0;
+
+    /** Servicio que gestiona la lógica de facturación (generación de factura, validaciones). */
+    private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
+
+    /** Controlador del panel lateral que muestra información de la función. */
     private ControladorInformacionLateral controladorInformacionLateral;
 
+    /**
+     * Inicializa los elementos gráficos y configura eventos personalizados.
+     *
+     * Proceso de inicialización:
+     * 1. Llena el ComboBox de tipo de documento con opciones predefinidas.
+     * 2. Selecciona por defecto el valor "Cédula" en el ComboBox.
+     * 3. Configura eventos de mouse para permitir arrastrar la ventana desde la barra superior (headerBar).
+     */
     @FXML
     public void initialize() {
+        // 1. Establecer los valores disponibles para el tipo de documento.
         tipoDocumentoBox.setItems(FXCollections.observableArrayList("Cédula", "Pasaporte", "RUC"));
+
+         // 2. Seleccionar "Cédula" como valor por defecto.
         tipoDocumentoBox.setValue("Cédula");
+
+        // 3. Configurar eventos para permitir mover la ventana arrastrando el header.
         headerBar.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
@@ -102,66 +113,57 @@ public class ControladorFacturacion {
         });
     }
 
+
+    /**
+     * Inicializa la vista con los boletos seleccionados y muestra la información lateral correspondiente.
+     * 
+     * Proceso de inicialización:
+     * 1. Asigna la lista de boletos a la variable local.
+     * 2. Verifica si el controlador lateral está inicializado.
+     * 3. Carga la vista de información lateral desde el controlador correspondiente.
+     * 4. Limpia y agrega la vista al contenedor principal.
+     * 5. Calcula el total a pagar con base en los boletos seleccionados.
+     * 
+     * @param boletos Lista de productos (boletos) que fueron seleccionados por el usuario.
+     */
     public void initData(List<Producto> boletos) {
         this.boletos = boletos;
-        //ControladorAsignadorButacas controladorAsignadorButacas = new ControladorAsignadorButacas();
-        //List<Butaca> butacasAsignadas = controladorAsignadorButacas.asignarButacas("", funcion, butacasAsignadas, totalBoletos);
-        //List<Producto> boletosGenerados = servicioBoleto.generarBoleto(this.funcion, butacasAsignadas);
 
-        // Crear una instancia de Factura para usar su lógica de cálculo
-        // Factura facturaTemporal = new Factura();
-        // facturaTemporal.setProductos(this.boletos);
-        // facturaTemporal.calcularSubTotal();
-        // facturaTemporal.calcularTotal(new CalculadorIVA());
-
-        DecimalFormat df = new DecimalFormat("$ #,##0.00");
-
-        //subtotalLabel.setText(df.format(subtotal));
-        //impuestosLabel.setText(df.format(impuestos));
-        //totalLabel.setText(df.format(total));
-
-        // Cargar el FXML de la vista de información lateral
+        // 2. Validar si el controlador lateral está inicializado correctamente.
         if(controladorInformacionLateral == null) {
             ManejadorMetodosComunes.mostrarVentanaError("Controlador de información lateral no inicializado.");
             return;
         }
 
-        Parent vistaInformacionLateral = controladorInformacionLateral.getRoot(); // Para obtener la vista cargada en el controlador anterior
-
-
-        //FXMLLoader loader = new FXMLLoader();
-        //loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaInformacionLateral.fxml"));
-        //
-        //loader.setController(controladorInformacionLateral);
+        // 3. Obtener la vista asociada al controlador lateral.
+        Parent vistaInformacionLateral = controladorInformacionLateral.getRoot(); 
         
-        //Parent vistaInformacionLateral;
-        //try {
-        //    vistaInformacionLateral = loader.load();
-        //} catch (IOException e) {
-        //    ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la vista de información lateral: " + e.getMessage());
-        //    e.printStackTrace();
-        //    return; // Salir del método si hay un error
-        //}
-        
-        // Agregar el mapa al contenedor
-        informacionFuncionContainer.getChildren().clear(); // Limpiar el contenedor antes de agregar
+        // 4. Limpiar el contenedor y cargar la vista de información lateral.
+        informacionFuncionContainer.getChildren().clear(); 
         informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
+
+        // 5. Calcular el total a pagar por los boletos seleccionados.
         controladorInformacionLateral.calcularTotal(boletos);
-
-        System.out.println("Boletos generados: " + ((Boleto) boletos.get(0)).getFuncion().getPelicula().getTitulo());
-        System.out.println("Butacas asignadas: " + ((Boleto) boletos.get(0)).getButaca().getFila() + " " + ((Boleto) boletos.get(0)).getButaca().getColumna());
-
     }
 
+    /**
+     * Maneja el evento de búsqueda de cliente por número de identificación.
+     * Limpia los campos de texto y busca al cliente en la base de datos.
+     * Si el cliente es encontrado, llena los campos con su información.
+     * Si no se encuentra, muestra un mensaje de advertencia.
+     * @param event Evento de acción al hacer clic en el botón de búsqueda.
+     */
     @FXML
     void onBuscarCliente(ActionEvent event) {
+        // Limpia los campos de texto antes de buscar.
         nombreField.clear();
         apellidoField.clear();
         documentoField.clear();
         correoField.clear();
 
-        String texto = identificacionField.getText().strip().replaceAll("\\s+", " "); // Limpieza profunda del input
+        String texto = identificacionField.getText();
 
+        // Validar que el campo de identificación no esté vacío.
         if (texto.isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
             return;
@@ -171,8 +173,10 @@ public class ControladorFacturacion {
             String idcliente = texto;
             ClienteDAO clienteDAO = new ClienteDAO();
             try {
+                // Buscar al cliente por su número de identificación.
                 Cliente cliente = clienteDAO.buscarPorId(idcliente);
 
+                // Si el cliente es encontrado, se llenan los campos con su información.
                 if (cliente != null) {
                     nombreField.setText(cliente.getNombre());
                     apellidoField.setText(cliente.getApellido());
@@ -180,7 +184,8 @@ public class ControladorFacturacion {
                     tipoDocumentoBox.setValue(cliente.getTipoDocumento());
                     correoField.setText(cliente.getCorreoElectronico());
                     ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
-                } else {
+                } else { 
+                    // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
                     ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
                 }
             } catch (Exception e) {
@@ -191,18 +196,25 @@ public class ControladorFacturacion {
         }
     }
 
+    /**
+     * Valida el documento ingresado por el usuario según el tipo de documento seleccionado.
+     * Limpia el campo de texto de espacios innecesarios y aplica la estrategia de validación correspondiente.
+     * Si el documento es inválido, muestra un mensaje de error y retorna false.
+     * @return true si el documento es válido, false en caso contrario.
+     */
     private boolean validarDocumento() {
 
-        // Limpieza PROFUNDA del input (incluye espacios Unicode y múltiples espacios)
+        // Limpieza PROFUNDA del input (incluye espacios Unicode y múltiples espacios).
         String documento = documentoField.getText()
-            .replaceAll("^\\s+", "")  // Espacios al inicio
-            .replaceAll("\\s+$", "")  // Espacios al final
-            .replaceAll("\\s+", " "); // Espacios múltiples internos
+            .replaceAll("^\\s+", "")  // Espacios al inicio.
+            .replaceAll("\\s+$", "")  // Espacios al final.
+            .replaceAll("\\s+", " "); // Espacios múltiples internos.
         
         documentoField.setText(documento); // Actualiza el campo con el texto limpio
     
         ContextoValidacion contextoValidacion = new ContextoValidacion();
 
+        // Selecciona la estrategia de validación según el tipo de documento.
         switch (tipoDocumentoBox.getValue()) {
             case "Cédula":
                 contextoValidacion.setEstrategia(new EstrategiaCedulaValidacion());
@@ -219,11 +231,9 @@ public class ControladorFacturacion {
                 return false;
         }
 
-        System.out.println("Validando documento: " + documentoField);
-        System.out.println("Estrategia seleccionada: " + tipoDocumentoBox.getValue());
-        System.out.println("Estrategia ejecutada: " + contextoValidacion.ejecutarEstrategia(documentoField.getText()));
-
         documentoField.setText(documentoField.getText());
+        // Ejecuta la estrategia de validación y verifica si el documento es válido.
+        // Si no es válido, muestra un mensaje de error y retorna false.
         if(!contextoValidacion.ejecutarEstrategia(documentoField.getText())) {
             ManejadorMetodosComunes.mostrarVentanaError("Documento inválido: " + documentoField.getText());
             return false;
@@ -233,13 +243,22 @@ public class ControladorFacturacion {
 
     }
 
+    /**
+     * Maneja el evento de actualización de cliente.
+     * Valida los campos de entrada y actualiza la información del cliente en la base de datos.
+     * Si el cliente no existe, muestra un mensaje de advertencia.
+     * Si hay un error al actualizar, muestra un mensaje de error.
+     * @param event Evento de acción al hacer clic en el botón de actualizar cliente.
+     */
     @FXML
     void onActualizarCliente(ActionEvent event) {
 
+        // Validar que el documento sea válido antes de continuar con la actualización.
         if (!validarDocumento()) {
-            return; // Si el documento no es válido, no continuar con la actualización
+            return; 
         }
 
+        // Validar que todos los campos estén llenos antes de proceder con la actualización.
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -253,9 +272,12 @@ public class ControladorFacturacion {
 
             Cliente clienteExiste = clienteDAO.buscarPorId(identificacionField.getText());
 
+            // Verificar si el cliente existe en la base de datos.
             if (clienteExiste == null) {
+                // Si el cliente no existe, mostrar un mensaje de advertencia.
                 ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
             } else {
+                // Si el cliente existe, actualizar su información en la base de datos.
                 clienteDAO.actualizarCliente(cliente);
                 ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
             }
@@ -268,34 +290,41 @@ public class ControladorFacturacion {
         }
     }
 
+    /**
+     * Maneja la acción de pago al hacer clic en el botón de pagar.
+     * Valida los campos de entrada, verifica si se ha confirmado la compra y si el documento es válido.
+     * Si todo es correcto, genera la factura y los boletos, y muestra un mensaje de éxito.
+     * Si hay algún error durante el proceso, muestra un mensaje de error.
+     * @param event Evento de acción al hacer clic en el botón de pagar.
+     */
+
     @FXML
     protected void onPagarAction() {
+        // Validar que todos los campos estén llenos antes de proceder con la compra.
         if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
                 || correoField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
             return;
         }
 
+        // Validar que se haya confirmado la compra antes de continuar.
         if(confirmCheckBox.isSelected() == false) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Debe confirmar la compra para continuar.");
             return;
         }
 
+        // Validar el documento ingresado por el usuario.
         if(!validarDocumento()) {
-            return; // Si el documento no es válido, no continuar con la compra
+            return;
         }
-
-        // 1. Validar la cédula
-        //Manejador manejadorCedula = new ManejadorCedula();
-        //Manejador manejadorRUC = new ManejadorRUC();
-//
-        //manejadorCedula.colocarSiguienteManejador(manejadorRUC);
-        //manejadorCedula.manejarPeticion(documentoField.getText());
 
         ClienteDAO clienteDAO = new ClienteDAO();
         Cliente cliente = null;
         try {
+            // Buscar al cliente por su número de identificación.
             cliente = clienteDAO.buscarPorId(documentoField.getText());
+
+            // Si el cliente no existe, crear uno nuevo con los datos ingresados.
             if (cliente == null) {
                 cliente = new Cliente(
                         nombreField.getText(),
@@ -311,34 +340,25 @@ public class ControladorFacturacion {
             e.printStackTrace();
         }
 
+        // Generar los boletos en formato PDF.
         ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
         generador.generarBoletosPDF(boletos);
 
-        
-        BoletoDAO boletoDAO = new BoletoDAO();
-
-
-        //ButacaService butacaService = new ButacaService();
-        //for (Producto boleto : boletos) {
-        //    ((Boleto) boleto).getButaca().setEstado(EstadoButaca.OCUPADA.name());
-        //    try {
-        //        butacaService.actualizarButaca(((Boleto) boleto).getButaca());
-        //    } catch (Exception e) {
-        //        // TODO Auto-generated catch block
-        //        e.printStackTrace();
-        //    }
-        //}
-
         FacturaDAO facturaDAO = new FacturaDAO();
-        // 2. Usar tu servicio para generar la factura final
+        
+        // Generar la factura con los boletos y el cliente.
         Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
         try {
+            // Guardar la factura en la base de datos.
             facturaDAO.crearFactura(facturaFinal);
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear la factura: " + e.getMessage());
             e.printStackTrace();
         }
 
+        BoletoDAO boletoDAO = new BoletoDAO();
+
+        // Guardar los boletos asociados a la factura en la base de datos.
         for (Producto boleto : boletos) {
             try {
                 boletoDAO.crearBoleto((Boleto) boleto, facturaFinal);
@@ -349,35 +369,36 @@ public class ControladorFacturacion {
             }
         }
 
-        // TODO: Dao debe guardar la factura
-
-        // 3. Mostrar un mensaje de éxito y cerrar
+        // Mostrar un mensaje de éxito al usuario indicando que la factura se ha creado exitosamente.
         ManejadorMetodosComunes.mostrarVentanaExito("Factura creada exitosamente: " + facturaFinal.getCodigoFactura());
 
-        System.out.println("--- FACTURA GENERADA ---");
-        System.out.println(facturaFinal);
-
-        //Stage stage = (Stage) buttonPagar.getScene().getWindow();
-        //stage.close();
+        // Redirigir al usuario a la pantalla principal del portal de empleados.
         ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
     }
 
+    /**
+     * Maneja la acción de retroceso al hacer clic en el botón de retroceso.
+     * Cierra la ventana actual y redirige al usuario a la pantalla de selección de butacas.
+     * Si ocurre un error durante el proceso, muestra un mensaje de error.
+     * @param event Evento de acción al hacer clic en el botón de retroceso.
+     */
     @FXML
     protected void onBackAction() {
 
         try {
 
-            // 1. ventana actual
+            // Obtener la ventana actual desde el headerBar.
             Stage currentStage = (Stage) headerBar.getScene().getWindow();
 
-            // 2. Objetos para pasar los datos a la siguiente pantalla usando la pantalla de carga
+            // Crear el controlador de carga para la vista de selección de butacas,
+            // pasando la ruta FXML, la ventana actual y la función asociada al primer boleto
             ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
                 "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
                 currentStage,
                 new ArrayList<>(List.of(((Boleto) boletos.get(0)).getFuncion()))
             );            
 
-            // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
+            // Mostrar la vista de carga pasando los datos necesarios.
             ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 100);
 
         } catch (Exception e) {
@@ -386,10 +407,14 @@ public class ControladorFacturacion {
         }
     }
 
+    /**
+     * Establece el controlador de información lateral para mostrar detalles de la función y el total a pagar.
+     * 
+     * @param controladorInformacionLateral El controlador de información lateral que maneja la vista de detalles de la función.
+     */
     public void setControladorInformacionLateral(ControladorInformacionLateral controladorInformacionLateral) {
         this.controladorInformacionLateral = controladorInformacionLateral;
         controladorInformacionLateral.mostrarTodaLaInformacionDePago();
-        
     }
 
 }

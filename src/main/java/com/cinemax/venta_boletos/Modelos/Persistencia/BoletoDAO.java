@@ -14,14 +14,26 @@ import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
 
+/** 
+ * Clase BoletoDAO que maneja las operaciones de acceso a datos relacionadas con los boletos.
+ * Proporciona métodos para listar butacas ocupadas por función e insertar nuevos boletos.
+ */
 public class BoletoDAO {
     
+    /** Instancia singleton para manejar la conexión a la base de datos */
     private final ConexionBaseSingleton conexionBase;
 
+    /** Constructor de la clase BoletoDAO que inicializa la conexión a la base de datos */
     public BoletoDAO() {
         this.conexionBase = ConexionBaseSingleton.getInstancia();
     }
 
+    /**
+     * Lista las butacas ocupadas para una función específica.
+     * @param funcion La función para la cual se desean listar las butacas ocupadas.
+     * @return Una lista de objetos Butaca que representan las butacas ocupadas en la función.
+     * @throws Exception Si ocurre un error al consultar las butacas ocupadas.
+     */
     public List<Butaca> listarButacasDeBoletosPorFuncion(Funcion funcion) throws Exception {
         List<Butaca> butacas = new ArrayList<>();
         String sql = "SELECT * FROM listar_butacas_por_funcion(?)";
@@ -29,7 +41,7 @@ public class BoletoDAO {
         ResultSet rs = null;
         Connection conn = null;
         try {
-            conn = conexionBase.conectar();
+            conn = conexionBase.conectar(); 
             ps = conn.prepareStatement(sql);
             ps.setInt(1, funcion.getId());
 
@@ -54,67 +66,12 @@ public class BoletoDAO {
         }
     }
 
-
-    //public Funcion listarFuncionPorTipoDeSala(Funcion funcion, TipoSala tipoSala) throws Exception {
-    //    List<Butaca> butacas = new ArrayList<>();
-//
-    //    // Lógica para obtener las butacas de los boletos asociados a la función
-    //    String sql = """
-    //        SELECT 
-    //            id_funcion,
-    //            id_pelicula,
-    //            id_sala,
-    //            fecha_hora_inicio,
-    //            fecha_hora_fin,
-    //            formato,
-    //            tipo_estreno,
-    //        FROM 
-    //            funcion
-    //        WHERE 
-    //            id_funcion = :id_funcion AND
-    //            id_pelicula = :id_pelicula AND
-    //            id_sala = :id_sala AND
-    //            fecha_hora_inicio = :fecha_hora_inicio AND
-    //            fecha_hora_fin = :fecha_hora_fin AND
-    //            formato = :formato AND
-    //            tipo_estreno = :tipo_estreno
-    //    """.replace(":id_funcion", String.valueOf(funcion.getId()))
-    //            .replace(":id_pelicula", String.valueOf(funcion.getPelicula().getId()))
-    //            .replace(":id_sala", String.valueOf(funcion.getSala().getId()))
-    //            .replace(":fecha_hora_inicio", funcion.getFechaHoraInicio().toString())
-    //            .replace(":fecha_hora_fin", funcion.getFechaHoraFin().toString())
-    //            .replace(":formato", funcion.getFormato().name())
-    //            .replace(":tipo_estreno", funcion.getTipoEstreno().name());
-//
-//
-    //    ResultSet rs = null;
-    //    Statement st = null;
-    //    Connection conn = null;
-    //    try {
-    //        conn = conexionBase.conectar();
-    //        st = conn.createStatement();
-    //        rs = st.executeQuery(sql);
-    //        while (rs.next()) {
-    //            Butaca butaca = new Butaca();
-    //            butaca.setId(rs.getInt("id"));
-    //            butaca.setIdSala(rs.getInt("sala_id"));
-    //            butaca.setFila(rs.getString("fila"));
-    //            butaca.setColumna(rs.getString("columna"));
-    //            butaca.setEstado(rs.getString("estado"));
-    //            butacas.add(butaca);
-    //        }
-    //        return butacas;
-//
-    //    } catch (SQLException e) {
-    //        System.err.println("Error al listar clientes: " + e.getMessage());
-    //        return butacas;
-    //    } finally {
-    //        ConexionBaseSingleton.cerrarRecursos(rs, st);
-    //        if (conn != null) conn.close();
-    //    }
-//
-    //}
-
+    /**
+     * Inserta un nuevo boleto en la base de datos.
+     * @param boleto El objeto Boleto que contiene la información del boleto a insertar.
+     * @param factura La factura asociada al boleto.
+     * @throws Exception Si ocurre un error al insertar el boleto.
+     */
     public void crearBoleto(Boleto boleto, Factura factura) throws Exception {
         String sql = "{ CALL insertar_boleto(?, ?, ?) }";
         try (Connection conn = conexionBase.conectar();
