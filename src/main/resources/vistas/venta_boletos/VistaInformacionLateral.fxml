@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="850.0" style="-fx-background-color: transparent;" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.controladores.ControladorInformacionLateral">
+   <right>
+      <VBox maxWidth="450.0" minWidth="400.0" prefHeight="550.0" spacing="15.0" styleClass="financial-summary-pane" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
+         <children>
+            <VBox fx:id="funcionInfoContainer" prefWidth="238.0" spacing="10.0" styleClass="info-section">
+               <children>
+                  <Label styleClass="section-header" text="Información de la venta">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Label>
+                  <Label fx:id="labelNombrePelicula" prefHeight="0.0" prefWidth="274.0" styleClass="movie-title" text="Nombre de la película" textAlignment="CENTER" wrapText="true" />
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <ImageView fx:id="imagenPelicula" fitHeight="160.0" fitWidth="163.0" preserveRatio="true" styleClass="movie-poster" />
+                        <VBox prefHeight="154.0" prefWidth="75.0" spacing="5.0">
+                           <children>
+                              <Label fx:id="labelGeneroPelicula1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Género: " />
+                              <Label fx:id="labelFormato1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Formato: " />
+                              <Label fx:id="labelTipoEstreno1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Tipo: " />
+                              <Label fx:id="labelLugarSala1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Sala: " />
+                              <Label fx:id="labelFechaFuncion1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Fecha: " />
+                              <Label fx:id="labelHoraFuncion1" style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Hora: " />
+                           </children>
+                        </VBox>
+                        <Separator orientation="VERTICAL" prefHeight="200.0" />
+                        <VBox prefHeight="154.0" prefWidth="158.0" spacing="5.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label fx:id="labelGeneroPelicula" style="-fx-text-fill: #EAEAEA;" text="Género: " />
+                              <Label fx:id="labelFormato" style="-fx-text-fill: #EAEAEA;" text="Formato: " />
+                              <Label fx:id="labelTipoEstreno" style="-fx-text-fill: #EAEAEA;" text="Tipo: " />
+                              <Label fx:id="labelLugarSala" style="-fx-text-fill: #EAEAEA;" text="Sala: " />
+                              <Label fx:id="labelFechaFuncion" style="-fx-text-fill: #EAEAEA;" text="Fecha: " />
+                              <Label fx:id="labelHoraFuncion" style="-fx-text-fill: #EAEAEA;" text="Hora: " />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Separator />
+            <VBox fx:id="boletosContainer" prefHeight="250.0" maxHeight="250.0" prefWidth="358.0" spacing="10.0" styleClass="tickets-section" VBox.vgrow="NEVER">
+               <children>
+                  <ScrollPane fx:id="scrollBoletos" fitToWidth="true" maxHeight="250.0" prefHeight="250.0" prefWidth="358.0" styleClass="tickets-scroll">
+                     <content>
+                        <VBox fx:id="listaBoletos" prefWidth="300.0" spacing="5.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </VBox>
+            <HBox fx:id="HBoxSubtotal" alignment="BASELINE_CENTER">
+               <children>
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Subtotal:" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="\$ " />
+                  <Label fx:id="subtotalLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
+               </children>
+            </HBox>
+            <HBox fx:id="HBoxImpuesto" alignment="BASELINE_CENTER">
+               <children>
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Impuesto (12%):" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="\$ " />
+                  <Label fx:id="impuestoLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
+               </children>
+            </HBox>
+            <HBox alignment="BASELINE_CENTER">
+               <children>
+                  <Label fx:id="labelTotalTexto" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Total:" />
+                  <Region HBox.hgrow="ALWAYS" />
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="\$ " />
+                  <Label fx:id="totalLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </right>
+</BorderPane>

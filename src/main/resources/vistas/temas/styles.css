@@ -211,8 +211,13 @@
 }
 
 .combo-box-popup .list-view .list-cell:filled:selected {
-    -fx-background-color: #20d411;
-    -fx-text-fill: #ffffff;
+    -fx-background-color: #F25F00;
+}
+
+.confirmation-checkbox {
+    -fx-text-fill: #F25F00;
+    -fx-font-size: 17px; /* Ajusta el tamaño según necesites */
+    -fx-font-weight: bold; /* Opcional: para hacer el texto en negrita */
 }
 
 .confirmation-checkbox .box {
@@ -310,7 +315,80 @@
 }
 
 
-/* Íconos de estado */
+/* Estilo general del ComboBox cuando está colapsado */
+
+.combo-box {
+    -fx-background-color: #02487B;
+    /* Azul oscuro */
+    -fx-border-color: #02487B;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-mark-color: white;
+    /* Flechita blanca */
+}
+
+
+/* Estilo del texto seleccionado (parte visible) */
+
+.combo-box .list-cell {
+    -fx-text-fill: white;
+    /* Texto blanco */
+    -fx-background-color: #02487B;
+}
+
+
+/* Estilo del panel desplegable */
+
+.combo-box-popup .list-view {
+    -fx-background-color: #02487B;
+    /* Naranja base */
+    -fx-border-color: #1F2430;
+}
+
+
+/* Ítems normales */
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: #02487B;
+    -fx-text-fill: white;
+    /* Texto negro */
+}
+
+.titled-pane .text {
+    -fx-font-size: 16px;  /* Ajusta este valor según lo necesites */
+}
+/* Ítem resaltado con el mouse */
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #F25F00;
+    /* Naranja claro al pasar el mouse */
+    -fx-text-fill: #ffffff;
+    /* Texto negro */
+}
+
+
+/* Ítem seleccionado en el desplegable */
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: #F25F00;
+    /* Fondo naranja selección */
+    -fx-text-fill: #ffffff;
+    /* Texto negro */
+}
+
+
+/* Estilo del checkbox (no modificado, pero lo dejo si lo estás usando) */
+
+.confirmation-checkbox .box {
+    -fx-background-color: transparent;
+    -fx-border-color: #ffffff;
+    -fx-border-radius: 4px;
+}
+
+.confirmation-checkbox:selected .box .mark {
+    -fx-background-color: #AAD94C;
+    /* Verde para confirmación */
+}
 
 .warning-icon {
     -fx-font-size: 32px;

@@ -52,3 +52,6 @@ Thumbs.db
 
 # Archivos de volcado de memoria de la JVM
 hs_err_pid*
+
+# Diagrama de clases
+C_DiagramaDeClases.plantuml
