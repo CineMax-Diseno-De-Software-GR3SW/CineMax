@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public enum FormatoFuncion {
     DOS_D(new BigDecimal("1.0")), // Formato estándar - sin recargo
-    TRES_D(new BigDecimal("1.5")); // Formato 3D - 50% de recargo
+    TRES_D(new BigDecimal("1.50")); // Formato 3D - 50% de recargo
 
     private final BigDecimal multiplicadorPrecio;
 

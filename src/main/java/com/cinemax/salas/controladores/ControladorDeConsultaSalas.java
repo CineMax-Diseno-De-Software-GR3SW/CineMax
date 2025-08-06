@@ -1,11 +1,13 @@
 package com.cinemax.salas.controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.ButacaService;
 import com.cinemax.salas.servicios.SalaService;
 import com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas;
+import com.cinemax.venta_boletos.servicios.cadena_de_responsabilidad.Manejador;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -71,15 +73,12 @@ public class ControladorDeConsultaSalas implements Initializable {
                             btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");
                             btn.setOnAction(e -> seleccionarButaca(butaca, btn));
                             break;
-                        case "OCUPADA":
-                            btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-                            btn.setDisable(true);
-                            break;
                         case "INHABILITADA":
                             btn.setStyle("-fx-background-color: gray; -fx-text-fill: white;");
                             btn.setDisable(true);
                             break;
                         default:
+                            ManejadorMetodosComunes.mostrarVentanaError("La butaca " + butaca.getFila() + butaca.getColumna() + " tiene un estado no reconocido: " + butaca.getEstado() + "o desde la base de datos su estado es 'OCUPADA'");
                             break;
                     }
                 }

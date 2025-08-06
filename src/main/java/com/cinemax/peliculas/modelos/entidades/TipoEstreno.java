@@ -3,8 +3,8 @@ package com.cinemax.peliculas.modelos.entidades;
 import java.math.BigDecimal;
 
 public enum TipoEstreno {
-    ESTRENO(new BigDecimal("1.2")), // Estreno - 20% de recargo
-    PREESTRENO(new BigDecimal("1.3")); // Preestreno - 30% de recargo
+    ESTRENO(new BigDecimal("1.75")), // Estreno - 75% de recargo
+    PREESTRENO(new BigDecimal("2.00")); // Preestreno - 100% de recargo
 
     private final BigDecimal multiplicadorPrecio;
 

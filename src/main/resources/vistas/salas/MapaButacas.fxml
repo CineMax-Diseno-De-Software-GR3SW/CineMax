@@ -49,9 +49,9 @@
                 <Label style="-fx-text-fill: #f5f5f5;" text="Disponible" />
                 <Rectangle arcHeight="16" arcWidth="6" fill="#02487B" height="30" width="30" />
                 <Label style="-fx-text-fill: #f5f5f5;" text="Seleccionada" />
-                <Rectangle arcHeight="16" arcWidth="16" fill="red" height="30" width="30" />
+                <Rectangle arcHeight="16" arcWidth="16" fill="#791213" height="30" width="30" />
                 <Label style="-fx-text-fill: #f5f5f5;" text="Ocupada" />
-                <Rectangle arcHeight="16" arcWidth="16" fill="gray" height="30" width="30" />
+                <Rectangle arcHeight="16" arcWidth="16" fill="#454545" height="30" width="30" />
                 <Label style="-fx-text-fill: #f5f5f5;" text="Inhabilitada" />
             </HBox>
         </VBox>

@@ -206,13 +206,13 @@ public class ControladorInformacionLateral {
         
         // Detalles técnicos de la función
         labelFormato.setText(funcionSeleccionada.getFormato() != null ? 
-            funcionSeleccionada.getFormato().name().replace("_", " ") : "Formato no disponible");
+            funcionSeleccionada.getFormato().toString() : "Formato no disponible");
         labelTipoEstreno.setText(funcionSeleccionada.getTipoEstreno() != null ? 
-            funcionSeleccionada.getTipoEstreno().name().replace("_", " ").toLowerCase() : "Tipo de estreno no disponible");
+            funcionSeleccionada.getTipoEstreno().toString() : "Tipo de estreno no disponible");
         
         // Información de ubicación y horario
         labelLugarSala.setText(funcionSeleccionada.getSala() != null ? 
-            funcionSeleccionada.getSala().getNombre() + " - " + funcionSeleccionada.getSala().getTipo().toString().toLowerCase() : "Sala no disponible");
+            funcionSeleccionada.getSala().getNombre() + " - " + funcionSeleccionada.getSala().getTipo().toString() : "Sala no disponible");
         labelFechaFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? 
             funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Fecha no disponible");
         labelHoraFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? 

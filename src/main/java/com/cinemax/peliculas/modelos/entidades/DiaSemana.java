@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import java.math.BigDecimal;
 
 public enum DiaSemana {
-    LUNES(new BigDecimal("8.50")),
-    MARTES(new BigDecimal("8.50")),
-    MIERCOLES(new BigDecimal("8.50")),
-    JUEVES(new BigDecimal("8.50")),
-    VIERNES(new BigDecimal("8.50")),
-    SABADO(new BigDecimal("12.00")),
-    DOMINGO(new BigDecimal("12.00"));
+    LUNES(new BigDecimal("1.50")), // Lunes - 50% de recargo
+    MARTES(new BigDecimal("1.50")),
+    MIERCOLES(new BigDecimal("1.50")),
+    JUEVES(new BigDecimal("1.50")),
+    VIERNES(new BigDecimal("1.50")),
+    SABADO(new BigDecimal("1.75")), // Sábado - 75% de recargo
+    DOMINGO(new BigDecimal("1.75"));
 
     private final BigDecimal precio;
 

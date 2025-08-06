@@ -83,7 +83,7 @@ public class ServicioMostrarFunciones {
                         : ""));
 
         colFormato.setCellValueFactory(cellData -> new SimpleStringProperty(
-                cellData.getValue().getFormato() != null ? cellData.getValue().getFormato().name().replace("_", " ")
+                cellData.getValue().getFormato() != null ? cellData.getValue().getFormato().toString()
                         : ""));
 
         colTipoEstreno.setCellValueFactory(cellData -> new SimpleStringProperty(
