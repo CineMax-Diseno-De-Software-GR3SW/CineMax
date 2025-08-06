@@ -32,15 +32,26 @@ public class ControladorGestionUsuarios {
     public Button btnBack;
     public Label lblNombreUsuario;
     public Label lblRolUsuario;
+    
+    @FXML private TextField txtBuscar;
+    @FXML private Button btnBuscar;
+    @FXML private Button btnLimpiar;
+    @FXML private Button btnEliminar;
+    @FXML private Label lblTotalUsuarios;
+    
+    // Tabla y columnas
     @FXML private TableView<Usuario> tableUsuarios;
     @FXML private TableColumn<Usuario, Boolean> colActivo;
     @FXML private TableColumn<Usuario, Long> colUsuario;
     @FXML private TableColumn<Usuario, String> colNombre;
     @FXML private TableColumn<Usuario, String> colEmail;
     @FXML private TableColumn<Usuario, Rol> colRol;
+    @FXML private TableColumn<Usuario, String> colCedula;      // Nueva columna
+    @FXML private TableColumn<Usuario, String> colCelular;    // Nueva columna
 //    @FXML private TableColumn<Usuario, Void> colEditar;
 
     private ObservableList<Rol> rolesObservable;      // lista para el combo
+    private ObservableList<Usuario> listaUsuariosCompleta; // lista completa para búsqueda
 
     private ServicioUsuarios servicioUsuarios;
 
@@ -61,8 +72,10 @@ public class ControladorGestionUsuarios {
         lblRolUsuario.setText(use.getDescripcionRol());
         colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
         colUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
+        colCedula.setCellValueFactory(new PropertyValueFactory<>("cedula"));     // Nueva columna
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("correo"));
+        colCelular.setCellValueFactory(new PropertyValueFactory<>("numeroTelefono")); // Nueva columna
         colRol.setCellValueFactory(new PropertyValueFactory<>("nombreRol"));
 
 
@@ -91,7 +104,11 @@ public class ControladorGestionUsuarios {
                     .toList();                                             // Java 16+; o collect(Collectors.toList())
 
             // 3.  Cargas la tabla con la lista filtrada
-            tableUsuarios.setItems(FXCollections.observableArrayList(soloOtros));
+            listaUsuariosCompleta = FXCollections.observableArrayList(soloOtros);
+            tableUsuarios.setItems(listaUsuariosCompleta);
+            
+            // 4. Actualizar contador de usuarios
+            actualizarContadorUsuarios();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -178,9 +195,85 @@ public class ControladorGestionUsuarios {
         tableUsuarios.setEditable(true);  // imprescindible para ComboBoxTableCell
     }
 
+    // Método para actualizar el contador de usuarios
+    private void actualizarContadorUsuarios() {
+        int totalUsuarios = tableUsuarios.getItems().size();
+        lblTotalUsuarios.setText("Total de usuarios: " + totalUsuarios);
+    }
 
     private void editarUsuario(Usuario u) {
         // abrir diálogo / escena de edición
+    }
+
+    // Método para buscar usuarios por cédula o rol
+    @FXML
+    private void onBuscar() {
+        String textoBusqueda = txtBuscar.getText().trim().toLowerCase();
+        
+        if (textoBusqueda.isEmpty()) {
+            // Si no hay texto, mostrar todos
+            tableUsuarios.setItems(listaUsuariosCompleta);
+        } else {
+            // Filtrar por cédula o rol
+            ObservableList<Usuario> usuariosFiltrados = listaUsuariosCompleta.stream()
+                .filter(usuario -> 
+                    (usuario.getCedula() != null && usuario.getCedula().toLowerCase().contains(textoBusqueda)) ||
+                    (usuario.getNombreRol() != null && usuario.getNombreRol().toLowerCase().contains(textoBusqueda))
+                )
+                .collect(FXCollections::observableArrayList, ObservableList::add, ObservableList::addAll);
+                
+            tableUsuarios.setItems(usuariosFiltrados);
+        }
+        
+        // Actualizar contador después de filtrar
+        actualizarContadorUsuarios();
+    }
+
+    // Método para limpiar la búsqueda
+    @FXML
+    private void onLimpiar() {
+        txtBuscar.clear();
+        tableUsuarios.setItems(listaUsuariosCompleta);
+        actualizarContadorUsuarios();
+    }
+
+    // Método para eliminar usuario seleccionado
+    @FXML
+    private void onEliminar() {
+        Usuario usuarioSeleccionado = tableUsuarios.getSelectionModel().getSelectedItem();
+        
+        if (usuarioSeleccionado == null) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, selecciona un usuario para eliminar.");
+            return;
+        }
+        
+        // Confirmación de eliminación
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.setTitle("Confirmar Eliminación");
+        confirmacion.setHeaderText("¿Estás seguro de que deseas eliminar este usuario?");
+        confirmacion.setContentText("Usuario: " + usuarioSeleccionado.getNombreCompleto() + 
+                                   "\nCédula: " + usuarioSeleccionado.getCedula() +
+                                   "\n\nEsta acción no se puede deshacer.");
+        
+        if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+            try {
+                // Eliminar de la base de datos
+                servicioUsuarios.eliminarUsuario(usuarioSeleccionado.getId());
+                
+                // Remover de las listas locales
+                listaUsuariosCompleta.remove(usuarioSeleccionado);
+                tableUsuarios.getItems().remove(usuarioSeleccionado);
+                
+                // Actualizar contador
+                actualizarContadorUsuarios();
+                
+                ManejadorMetodosComunes.mostrarVentanaExito("Usuario eliminado correctamente.");
+                
+            } catch (Exception e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Error al eliminar el usuario: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     public void onBackAction(ActionEvent event) {
@@ -230,29 +323,6 @@ public class ControladorGestionUsuarios {
 //            alert.showAndWait();
             ManejadorMetodosComunes.mostrarVentanaError("No se pudo abrir la ventana de registro.");
         }
-    }
-
-    @FXML
-    private void onCerrarSesion(ActionEvent event) {
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
-        try {
-            Parent root = loader.load();
-
-            // Obtener el Stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Portal del Administrador");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-        // Ejemplo de cerrar ventana actual (si fuera necesario)
-        // Stage stage = (Stage) txtBienvenida.getScene().getWindow();
-        // stage.close();
-
-
     }
 
 }

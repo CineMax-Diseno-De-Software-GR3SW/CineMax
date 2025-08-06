@@ -40,21 +40,46 @@
                 <Label text="" minWidth="10"/> <!-- Espacio simulado -->
             </HBox>
 
+            <!-- Sección de Búsqueda -->
+            <VBox spacing="10" styleClass="search-section">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Buscar:"/>
+                    <TextField fx:id="txtBuscar" promptText="Cédula, rol..." prefWidth="200"/>
+                    <Button fx:id="btnBuscar" text="Buscar" onAction="#onBuscar" styleClass="primary-button"/>
+                    <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="link-button" />
+                </HBox>
+            </VBox>
+
             <VBox spacing="10" prefWidth="620" maxWidth="620">
 
             <!--             Tabla de usuarios -->
             <TableView fx:id="tableUsuarios" prefHeight="320" prefWidth="400" styleClass="tabla">
                 <columns>
-                    <TableColumn fx:id="colUsuario"  text="Usuario"        prefWidth="85"/>
-                    <TableColumn fx:id="colNombre" text="Nombre"    prefWidth="130"/>
-                    <TableColumn fx:id="colEmail"  text="Correo"    prefWidth="170"/>
-                    <TableColumn fx:id="colRol"    text="Rol"       prefWidth="150"/>
-                    <TableColumn fx:id="colActivo"     text="Activo"        prefWidth="85"/>
+                    <TableColumn fx:id="colUsuario"  text="Usuario"        prefWidth="75"/>
+                    <TableColumn fx:id="colCedula"   text="Cédula"         prefWidth="85"/>
+                    <TableColumn fx:id="colNombre"   text="Nombre"         prefWidth="120"/>
+                    <TableColumn fx:id="colEmail"    text="Correo"         prefWidth="140"/>
+                    <TableColumn fx:id="colCelular"  text="Celular"        prefWidth="90"/>
+                    <TableColumn fx:id="colRol"      text="Rol"            prefWidth="120"/>
+                    <TableColumn fx:id="colActivo"   text="Activo"         prefWidth="70"/>
 
                     <!-- Columna de acciones -->
 <!--                    <TableColumn fx:id="colEditar" text="Acciones"  prefWidth="90"/>-->
                 </columns>
             </TableView>
+
+            <!-- Botones de acción -->
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="stepper-button"/>
+            </HBox>
+
+            <!-- Pie de página con contador -->
+            <HBox alignment="CENTER_LEFT">
+                <Label fx:id="lblTotalUsuarios" text="Total de usuarios: 0" styleClass="summary-details"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label text="Cargando..." styleClass="summary-details"/>
+            </HBox>
+
         </VBox>
 
     </VBox>
@@ -76,7 +101,6 @@
                 <!-- Espaciador que empuja el botón Log Out al fondo -->
                 <Region VBox.vgrow="ALWAYS"/>
 
-                <Button text="Log Out" onAction="#onCerrarSesion" styleClass="primary-button" />
             </children>
         </VBox>
     </left>
