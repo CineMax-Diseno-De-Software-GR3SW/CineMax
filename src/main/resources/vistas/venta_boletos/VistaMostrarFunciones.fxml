@@ -15,21 +15,13 @@
 
     <!-- ░░░ TOP ░░░ -->
     <top>
-        <VBox alignment="CENTER" style="-fx-background-color: #1e1e1e;">
-            <Label fx:id="peliculaTituloLabel"
-                   style="-fx-text-fill: white; -fx-font-size: 24; -fx-font-weight: bold;"
-                   text="Funciones de: ">
-                <padding>
-                    <Insets top="20" bottom="10"/>
-                </padding>
-            </Label>
-
-            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-background-color: #1e1e1e; -fx-padding: 10;">
-                <Button text="←" onAction="#handleRegresar" styleClass="stepper-button"/>
-                <Label text="Funciones Disponibles" style="-fx-text-fill: white;">
-                    <font>
-                        <Font name="Arial Black" size="22"/>
-                    </font>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button text="←" onAction="#handleRegresar" styleClass="stepper-button" /> 
+                <Label fx:id="peliculaTituloLabel" text="Película: " styleClass="section-title"> 
+                <font>
+                        <Font name="Arial Black" size="22.0"/>
+                </font>
                 </Label>
                 <Region HBox.hgrow="ALWAYS" /> </children>
             <padding>
@@ -45,6 +37,7 @@
                 <columns>
                     <TableColumn fx:id="colHora" prefWidth="100" text="Hora" />
                     <TableColumn fx:id="colSala" prefWidth="120" text="Sala" />
+                    <TableColumn fx:id="colTipoSala" text="Tipo Sala" prefWidth="120"/>
                     <TableColumn fx:id="colFormato" prefWidth="120" text="Formato" />
                     <TableColumn fx:id="colTipoEstreno" prefWidth="150" text="Tipo Estreno" />
                     <TableColumn fx:id="colPrecio" prefWidth="100" text="Precio" />
