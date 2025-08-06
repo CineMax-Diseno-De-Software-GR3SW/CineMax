@@ -19,7 +19,8 @@ public class Main extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 800, 500);
 
 
-        stage.setTitle("CineMax - Empleados");
+        stage.setTitle("CineMax");
+//        stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
     }

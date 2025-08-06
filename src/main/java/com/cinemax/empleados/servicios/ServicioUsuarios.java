@@ -1,10 +1,12 @@
 package com.cinemax.empleados.servicios;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.modelos.entidades.*;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
 import java.security.SecureRandom;
+import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +29,7 @@ public class ServicioUsuarios {
         String clave = generarClaveAleatoria();
 
         Usuario usuario = new Usuario(nombreUsuario,correo,clave,nombreCompleto,
-                cedula,celular,cargoSeleccionado, estadoActivo);
+                cedula,celular,cargoSeleccionado, estadoActivo, true);
         // Asignar ID si no tiene
         if (usuario.getId() == null) {
             usuario.setId(usuarioDAO.obtenerSiguienteId());
@@ -171,18 +173,23 @@ public class ServicioUsuarios {
         usuarioDAO.cambiarEstado(idUsuario,nuevoEstado);
     }
 
-    public void recuperarClave(String correo) {
-        try {
+    public void recuperarClave(String correo) throws Exception{
+
             Usuario usuario = usuarioDAO.buscarPorCorreo(correo);
             usuario.setClave(generarClaveAleatoria());
             usuarioDAO.actualizarClave(usuario.getId(), usuario.getClave());
+            usuario.setRequiereCambioClave(true);
+            usuarioDAO.setRequiereCambioClave(usuario.getId(), usuario.isRequiereCambioClave());
             ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeRecuperacionContrasena(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
-        } catch (Exception e) {
-
-        }
-
+            ManejadorMetodosComunes.mostrarVentanaExito("Accion realizada exitosamente");
 
     }
+
+    public void actualizarClaveTemporal(Usuario usuarioActivo, String nuevaClave) throws SQLException {
+        usuarioActivo.actualizarClave(nuevaClave);
+        usuarioDAO.actualizarClaveTemporal(usuarioActivo.getId(), nuevaClave);
+    }
+
 }
 
 //

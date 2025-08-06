@@ -20,6 +20,7 @@ public class Main extends Application {
 
 
         stage.setTitle("CineMax - Empleados");
+        stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
     }

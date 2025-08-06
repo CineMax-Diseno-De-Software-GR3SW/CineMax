@@ -1,5 +1,6 @@
 package com.cinemax.comun;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -35,6 +36,10 @@ public class ManejadorMetodosComunes {
 
             // Cambiar la escena del Stage actual
             currentStage.setScene(new Scene(root));
+            currentStage.setTitle("Cinemax");
+//            currentStage.setMaximized(true);
+
+//            Platform.runLater(() -> currentStage.setMaximized(true));
 
         } catch (IOException e) {
             mostrarVentanaError("No se pudo cargar la interfaz de usuario.");
