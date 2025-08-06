@@ -17,7 +17,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws IOException {
 
-        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/empleados/PantallaLogin.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/venta_boletos/VistaMostrarCartelera.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 800, 500);
 
         Image icon = new Image(Main.class.getResourceAsStream("/imagenes/logo.png"));

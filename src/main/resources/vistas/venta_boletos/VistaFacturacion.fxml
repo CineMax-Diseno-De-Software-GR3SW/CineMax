@@ -20,7 +20,7 @@
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
-                <Button onAction="#onBackAction" styleClass="icon-button" text="←" />
+                <Button onAction="#onBackAction" styleClass="stepper-button" text="←" />
                 <Label styleClass="section-title" text="Información de facturación" />
                 <Region HBox.hgrow="ALWAYS" />
             </children>
@@ -67,9 +67,10 @@
                <Region prefHeight="210.0" prefWidth="442.0" />
                <Separator />
                <Separator visible="false" />
-               <CheckBox fx:id="confirmCheckBox" styleClass="confirmation-checkbox" text="Confirmo la compra en SCALA (Quito)" textFill="#ffa000" />
+               <CheckBox fx:id="confirmCheckBox" styleClass="confirmation-checkbox" text="Confirmo la compra" />
             </children>
          </VBox>
+         <Label style="-fx-font-size: 12px;" text="Una vez realizada la compra, no se aceptan cambios ni devoluciones" textFill="#888888" />
         </VBox>
    </center>
    <right>

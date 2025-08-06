@@ -12,7 +12,7 @@
             styleClass="root-pane"> <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
-                <Button text="←" onAction="#handleRegresar" styleClass="stepper-button" /> <Label text="Cartelera CineMax" styleClass="section-title"> <font>
+                <Button text="←" onAction="#handleRegresar" styleClass="stepper-button" /> <Label text="Cartelera" styleClass="section-title"> <font>
                         <Font name="Arial Black" size="22.0"/>
                     </font>
                 </Label>

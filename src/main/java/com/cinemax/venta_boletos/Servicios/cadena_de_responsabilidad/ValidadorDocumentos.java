@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.controladores.cadena_de_responsabilidad;
+package com.cinemax.venta_boletos.servicios.cadena_de_responsabilidad;
 
 public class ValidadorDocumentos {
     private Manejador manejador;

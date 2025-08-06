@@ -210,6 +210,12 @@
     -fx-background-color: #F25F00;
 }
 
+.confirmation-checkbox {
+    -fx-text-fill: #F25F00;
+    -fx-font-size: 17px; /* Ajusta el tamaño según necesites */
+    -fx-font-weight: bold; /* Opcional: para hacer el texto en negrita */
+}
+
 .confirmation-checkbox .box {
     -fx-background-color: transparent;
     -fx-border-color: #888888;
@@ -402,7 +408,7 @@
 
 .confirmation-checkbox .box {
     -fx-background-color: transparent;
-    -fx-border-color: #6C7079;
+    -fx-border-color: #ffffff;
     -fx-border-radius: 4px;
 }
 

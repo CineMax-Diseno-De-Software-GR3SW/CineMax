@@ -2,12 +2,10 @@ package com.cinemax.venta_boletos.controladores;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.salas.modelos.entidades.EstadoButaca;
-import com.cinemax.venta_boletos.controladores.strategy.ContextoValidacion;
-import com.cinemax.venta_boletos.controladores.strategy.EstrategiaCedulaValidacion;
-import com.cinemax.venta_boletos.controladores.strategy.EstrategiaPasaporteValidacion;
-import com.cinemax.venta_boletos.controladores.strategy.EstrategiaRucValidacion;
+import com.cinemax.venta_boletos.servicios.strategy.ContextoValidacion;
+import com.cinemax.venta_boletos.servicios.strategy.EstrategiaCedulaValidacion;
+import com.cinemax.venta_boletos.servicios.strategy.EstrategiaPasaporteValidacion;
+import com.cinemax.venta_boletos.servicios.strategy.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;

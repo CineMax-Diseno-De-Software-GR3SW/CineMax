@@ -12,7 +12,7 @@
    <top>
       <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
          <children>
-            <Button fx:id="buttonVolver" onAction="#onBackAction" styleClass="icon-button" text="←" />
+            <Button fx:id="buttonVolver" onAction="#onBackAction" styleClass="stepper-button" text="←" />
             <Label styleClass="section-title" text="Selecciona tus butacas" />
             <Region HBox.hgrow="ALWAYS" />
          </children>
