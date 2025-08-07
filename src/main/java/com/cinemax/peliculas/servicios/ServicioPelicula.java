@@ -7,17 +7,56 @@ import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 
+/**
+ * Servicio de negocio para la gestión de películas.
+ *
+ * <p>Esta clase implementa la lógica de negocio relacionada con las películas
+ * del sistema CineMax, incluyendo validaciones de datos, reglas de negocio
+ * y operaciones CRUD. Actúa como intermediario entre la capa de presentación
+ * y la capa de persistencia, asegurando la integridad y consistencia de los datos.
+ *
+ * <p>Funcionalidades principales:
+ * <ul>
+ *   <li>Creación y actualización de películas con validaciones exhaustivas</li>
+ *   <li>Validación de duplicados por título y año</li>
+ *   <li>Gestión completa del CRUD de películas</li>
+ *   <li>Búsquedas flexibles por diferentes criterios</li>
+ *   <li>Aplicación de reglas de negocio específicas del dominio</li>
+ * </ul>
+ *
+ * @author GR3SW
+ * @version 1.0
+ * @since 1.0
+ */
 public class ServicioPelicula {
     
+    /** DAO para acceso a datos de películas */
     private PeliculaDAO peliculaDAO;
     
-    // Constructor
+    /**
+     * Constructor que inicializa el servicio con el DAO correspondiente.
+     */
     public ServicioPelicula() {
         this.peliculaDAO = new PeliculaDAO();
     }
     
     /**
-     * Crea una nueva película con validaciones de negocio
+     * Crea una nueva película con validaciones completas de negocio.
+     *
+     * <p>Este método realiza validaciones exhaustivas de todos los datos
+     * de entrada y aplica las reglas de negocio específicas del sistema
+     * antes de persistir la película.
+     *
+     * @param titulo Título de la película, no puede ser null ni vacío
+     * @param sinopsis Descripción de la película, no puede ser null ni vacía
+     * @param duracionMinutos Duración en minutos, debe ser mayor a 0
+     * @param anio Año de lanzamiento, debe estar en rango válido
+     * @param idioma Idioma principal de la película
+     * @param genero Géneros de la película separados por comas
+     * @param imagenUrl URL de la imagen promocional
+     * @return Película creada con ID asignado
+     * @throws IllegalArgumentException Si algún parámetro es inválido
+     * @throws SQLException Si ocurre un error durante la persistencia
      */
     public Pelicula crearPelicula(String titulo, String sinopsis, int duracionMinutos, 
                                  int anio, Idioma idioma, String genero, String imagenUrl) 
@@ -41,7 +80,21 @@ public class ServicioPelicula {
     }
     
     /**
-     * Actualiza una película existente
+     * Actualiza una película existente con validaciones completas.
+     *
+     * <p>Verifica la existencia de la película antes de aplicar las
+     * validaciones y actualizar los datos.
+     *
+     * @param id Identificador único de la película a actualizar
+     * @param titulo Nuevo título de la película
+     * @param sinopsis Nueva descripción de la película
+     * @param duracionMinutos Nueva duración en minutos
+     * @param anio Nuevo año de lanzamiento
+     * @param idioma Nuevo idioma principal
+     * @param genero Nuevos géneros separados por comas
+     * @param imagenUrl Nueva URL de imagen promocional
+     * @throws IllegalArgumentException Si los datos son inválidos o la película no existe
+     * @throws SQLException Si ocurre un error durante la actualización
      */
     public void actualizarPelicula(int id, String titulo, String sinopsis, 
                                   int duracionMinutos, int anio, Idioma idioma, 
@@ -71,7 +124,11 @@ public class ServicioPelicula {
     }
     
     /**
-     * Elimina una película por ID
+     * Elimina una película del sistema con validaciones previas.
+     *
+     * @param id Identificador único de la película a eliminar
+     * @throws IllegalArgumentException Si el ID es inválido o la película no existe
+     * @throws SQLException Si ocurre un error durante la eliminación
      */
     public void eliminarPelicula(int id) throws IllegalArgumentException, SQLException {
         if (id <= 0) {
@@ -88,7 +145,12 @@ public class ServicioPelicula {
     }
     
     /**
-     * Busca una película por ID
+     * Busca una película específica por su identificador único.
+     *
+     * @param id Identificador único de la película
+     * @return Película encontrada o null si no existe
+     * @throws IllegalArgumentException Si el ID es inválido
+     * @throws SQLException Si ocurre un error durante la búsqueda
      */
     public Pelicula buscarPeliculaPorId(int id) throws IllegalArgumentException, SQLException {
         if (id <= 0) {
@@ -99,21 +161,25 @@ public class ServicioPelicula {
     }
     
     /**
-     * Obtiene todas las películas
-     */
-    // public List<Pelicula> listarTodasLasPeliculas() throws SQLException {
-    //     return peliculaDAO.listarTodas();
-    // }
-    
-    /**
-     * Obtiene todas las películas disponibles
+     * Obtiene todas las películas disponibles en el sistema.
+     *
+     * @return Lista de todas las películas
+     * @throws SQLException Si ocurre un error durante la consulta
      */
     public List<Pelicula> obtenerPeliculas() throws SQLException {
         return peliculaDAO.listarTodas();
     }
 
     /**
-     * Busca películas por título (búsqueda parcial)
+     * Busca películas por título utilizando búsqueda parcial.
+     *
+     * <p>Realiza una búsqueda case-insensitive que permite encontrar
+     * películas cuyo título contenga la cadena proporcionada.
+     *
+     * @param titulo Título o parte del título a buscar
+     * @return Lista de películas que coinciden con el criterio
+     * @throws IllegalArgumentException Si el título de búsqueda es vacío
+     * @throws SQLException Si ocurre un error durante la búsqueda
      */
     public List<Pelicula> buscarPeliculasPorTitulo(String titulo) 
                                                   throws IllegalArgumentException, SQLException {
@@ -125,7 +191,14 @@ public class ServicioPelicula {
     }
     
     /**
-     * Verifica si existe una película duplicada
+     * Verifica si existe una película duplicada con el mismo título y año.
+     *
+     * <p>Útil para validaciones antes de crear nuevas películas.
+     *
+     * @param titulo Título de la película a verificar
+     * @param anio Año de lanzamiento de la película
+     * @return true si existe un duplicado, false en caso contrario
+     * @throws SQLException Si ocurre un error durante la verificación
      */
     public boolean existePeliculaDuplicada(String titulo, int anio) throws SQLException {
         if (titulo == null || titulo.trim().isEmpty()) {
@@ -136,7 +209,17 @@ public class ServicioPelicula {
     }
     
     /**
-     * Método privado para validar los datos de una película
+     * Valida exhaustivamente los datos de una película según las reglas de negocio.
+     *
+     * <p>Este método centraliza todas las validaciones de datos para
+     * garantizar la consistencia en creación y actualización.
+     *
+     * @param titulo Título a validar
+     * @param sinopsis Sinopsis a validar
+     * @param duracionMinutos Duración a validar
+     * @param anio Año a validar
+     * @param genero Género a validar
+     * @throws IllegalArgumentException Si algún dato no cumple las reglas de negocio
      */
     private void validarDatosPelicula(String titulo, String sinopsis, int duracionMinutos, 
                                      int anio, String genero) throws IllegalArgumentException {
@@ -188,10 +271,12 @@ public class ServicioPelicula {
         }
     }
 
-        /**
-     * Obtiene todas las películas disponibles en cartelera
+    /**
+     * Obtiene todas las películas disponibles en cartelera.
      *
-     * @return Lista de películas
+     * <p>Método alias para mantener compatibilidad con diferentes interfaces.
+     *
+     * @return Lista de todas las películas
      * @throws Exception Si ocurre un error durante la consulta
      */
     public List<Pelicula> listarTodasLasPeliculas() throws Exception {
