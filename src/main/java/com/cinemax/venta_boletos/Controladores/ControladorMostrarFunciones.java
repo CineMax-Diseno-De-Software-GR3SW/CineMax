@@ -102,7 +102,7 @@ public class ControladorMostrarFunciones {
         cmbFiltroFormato.setOnAction(event -> aplicarFiltros());
 
         // Configurar opciones de tipo de sala
-        cmbFiltroTipoSala.getItems().addAll("Todos", "Normal", "VIP", "Premium", "D-Box");
+        cmbFiltroTipoSala.getItems().addAll("Todos", "NORMAL", "VIP", "PREMIUM", "D-Box");
         cmbFiltroTipoSala.getSelectionModel().selectFirst();
         cmbFiltroTipoSala.setOnAction(event -> aplicarFiltros());
     }
