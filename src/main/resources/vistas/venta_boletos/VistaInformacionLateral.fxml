@@ -20,7 +20,7 @@
          <children>
             <VBox fx:id="funcionInfoContainer" prefWidth="238.0" spacing="10.0" styleClass="info-section">
                <children>
-                  <Label styleClass="section-header" text="Información de la venta">
+                  <Label styleClass="section-title" text="Información de la venta">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font></Label>
@@ -65,26 +65,26 @@
             </VBox>
             <HBox fx:id="HBoxSubtotal" alignment="BASELINE_CENTER">
                <children>
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Subtotal:" />
+                  <Label style="-fx-font-size: 16px;" text="Subtotal:" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="\$ " />
-                  <Label fx:id="subtotalLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
+                  <Label style="-fx-font-size: 16px;" text="\$ " />
+                  <Label fx:id="subtotalLabel" style="-fx-font-size: 16px;" text="0.00" />
                </children>
             </HBox>
             <HBox fx:id="HBoxImpuesto" alignment="BASELINE_CENTER">
                <children>
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Impuesto (12%):" />
+                  <Label style="-fx-font-size: 16px;" text="Impuesto (15%):" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="\$ " />
-                  <Label fx:id="impuestoLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
+                  <Label style="-fx-font-size: 16px;" text="\$ " />
+                  <Label fx:id="impuestoLabel" style="-fx-font-size: 16px;" text="0.00" />
                </children>
             </HBox>
             <HBox alignment="BASELINE_CENTER">
                <children>
-                  <Label fx:id="labelTotalTexto" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Total:" />
+                  <Label fx:id="labelTotalTexto" style="-fx-font-weight: bold; -fx-font-size: 20px;" text="Total:" />
                   <Region HBox.hgrow="ALWAYS" />
-                  <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="\$ " />
-                  <Label fx:id="totalLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="0.00" />
+                  <Label style="-fx-font-weight: bold; -fx-font-size: 20px;" text="\$ " />
+                  <Label fx:id="totalLabel" style="-fx-font-weight: bold; -fx-font-size: 20px;" text="0.00" />
                </children>
             </HBox>
          </children>

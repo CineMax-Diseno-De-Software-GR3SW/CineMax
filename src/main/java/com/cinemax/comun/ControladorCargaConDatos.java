@@ -95,23 +95,17 @@ public abstract class ControladorCargaConDatos {
     }
 
     /**
-     * Método abstracto que debe ser implementado por las clases hijas.
+     * Versión asíncrona que se ejecuta en paralelo.
      * 
-     * Este método define la lógica específica para cargar la vista de destino
-     * y transferir los datos correspondientes. Cada implementación concreta debe:
+     * Este método debe realizar toda la carga pesada (FXML, datos, inicializaciones)
+     * y retornar un ResultadoCarga que contiene todo lo necesario para cambiar la ventana.
      * 
-     * 1. Cargar el archivo FXML especificado en rutaFXML
-     * 2. Obtener el controlador de la nueva vista
-     * 3. Transferir los datos usando datosTransferencia
-     * 4. Configurar y mostrar la nueva ventana
-     * 5. Cerrar o gestionar la ventana actual si es necesario
+     * IMPORTANTE: Este método se ejecuta en un hilo de background, NO en el hilo de JavaFX.
+     * No debe hacer cambios directos a la UI.
      * 
-     * Este método es llamado por ControladorCarga cuando la barra de progreso
-     * completa su carga, permitiendo una transición fluida entre vistas.
-     * 
-     * @throws IOException Si ocurre un error al cargar el archivo FXML o 
-     *                     al acceder a los recursos necesarios
+     * @return ResultadoCarga con toda la información necesaria para cambiar la ventana
+     * @throws IOException Si ocurre un error durante la carga
      */
-    public abstract void cargarVistaPasandoDatos() throws IOException;
+    public abstract ResultadoCarga cargarVistaPasandoDatos() throws IOException;
 
 }

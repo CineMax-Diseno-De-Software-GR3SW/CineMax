@@ -23,7 +23,7 @@
 }
 
 .scroll-bar:vertical .thumb {
-    -fx-background-color: #20d411;
+    -fx-background-color: #0079cf;
     -fx-background-radius: 10px;
 }
 
@@ -106,6 +106,12 @@
     -fx-text-fill: #02487B;
 }
 
+.movie-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0079cf;
+}
+
 .section-title {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
@@ -128,7 +134,7 @@
 /* --- BOTONES --- */
 
 .stepper-button {
-    -fx-background-color: #20d411;
+    -fx-background-color: #02487B;
     -fx-text-fill: white;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
@@ -138,7 +144,7 @@
 }
 
 .stepper-button:hover {
-    -fx-background-color: #1cbc10;
+    -fx-background-color: #00345a;
 }
 
 .primary-button {
@@ -179,7 +185,7 @@
 }
 
 .text-field:focused {
-    -fx-border-color: #20d411;
+    -fx-border-color: #0079cf;
 }
 
 .combo-box {
@@ -206,17 +212,17 @@
 }
 
 .combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #20d411;
+    -fx-background-color: #02487B;
     -fx-text-fill: #ffffff;
 }
 
 .combo-box-popup .list-view .list-cell:filled:selected {
-    -fx-background-color: #F25F00;
+    -fx-background-color: #02487B;
 }
 
 .confirmation-checkbox {
-    -fx-text-fill: #F25F00;
-    -fx-font-size: 17px; /* Ajusta el tamaño según necesites */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 19px; /* Ajusta el tamaño según necesites */
     -fx-font-weight: bold; /* Opcional: para hacer el texto en negrita */
 }
 
@@ -227,7 +233,7 @@
 }
 
 .confirmation-checkbox:selected .box .mark {
-    -fx-background-color: #20d411;
+    -fx-background-color: #02487B;
 }
 
 
@@ -305,7 +311,7 @@
 }
 
 .toggle-button.switch:selected {
-    -fx-background-color: #20d411;
+    -fx-background-color: #02487B;
     -fx-alignment: CENTER_RIGHT;
 }
 
@@ -360,7 +366,7 @@
 /* Ítem resaltado con el mouse */
 
 .combo-box-popup .list-view .list-cell:hover {
-    -fx-background-color: #F25F00;
+    -fx-background-color: #02487B;
     /* Naranja claro al pasar el mouse */
     -fx-text-fill: #ffffff;
     /* Texto negro */
@@ -370,7 +376,7 @@
 /* Ítem seleccionado en el desplegable */
 
 .combo-box-popup .list-view .list-cell:filled:selected {
-    -fx-background-color: #F25F00;
+    -fx-background-color: #02487B;
     /* Fondo naranja selección */
     -fx-text-fill: #ffffff;
     /* Texto negro */
@@ -381,7 +387,7 @@
 
 .confirmation-checkbox .box {
     -fx-background-color: transparent;
-    -fx-border-color: #ffffff;
+    -fx-border-color: #0079cf;
     -fx-border-radius: 4px;
 }
 

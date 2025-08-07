@@ -312,4 +312,69 @@ public class ManejadorMetodosComunes {
         }
     }
 
+    /**
+     * NUEVO MÉTODO: Cambia ventana usando una vista ya cargada.
+     * 
+     * Este método optimizado recibe una vista que ya fue cargada en background,
+     * evitando el tiempo de carga en el hilo principal de JavaFX.
+     * 
+     * @param currentStage El Stage actual
+     * @param vistaYaCargada La vista que ya fue cargada en paralelo
+     */
+    public static void cambiarVentanaConVistaYaCargada(Stage currentStage, Parent vistaYaCargada) {
+        try {
+            // Obtener las dimensiones de la pantalla
+            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
+            
+            // Configurar la ventana
+            currentStage.setX(screenBounds.getMinX());
+            currentStage.setY(screenBounds.getMinY());
+            currentStage.setWidth(screenBounds.getWidth());
+            currentStage.setHeight(screenBounds.getHeight());
+            
+            // Aplicar la vista ya cargada (esto es súper rápido)
+            currentStage.setScene(new Scene(vistaYaCargada));
+            currentStage.setTitle("CineMAX");
+            currentStage.setMaximized(true);
+            
+        } catch (Exception e) {
+            mostrarVentanaError("Error aplicando vista pre-cargada: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * NUEVO MÉTODO: Versión optimizada de mostrarPantallaDeCarga.
+     * 
+     * Esta versión usa el nuevo sistema de carga paralela.
+     */
+    public static void mostrarPantallaDeCargaOptimizada(Stage stage, String rutaFXML, int saltosEnElProgreso, int tiempoPorSalto) {
+        try {
+            ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
+            
+            // Usar el nuevo método optimizado
+            controladorCarga.iniciarCarga(stage, rutaFXML, saltosEnElProgreso, tiempoPorSalto);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarVentanaError("Error iniciando pantalla de carga optimizada");
+        }
+    }
+
+    /**
+     * NUEVO MÉTODO: Versión optimizada para carga con datos.
+     */
+    public static void mostrarVistaDeCargaPasandoDatosOptimizada(Stage stage, ControladorCargaConDatos controladorCargaConDatos, int saltosEnElProgreso, int tiempoPorSalto) {
+        try {
+            ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
+            
+            // Usar el nuevo método optimizado con datos
+            controladorCarga.iniciarCarga(stage, controladorCargaConDatos, saltosEnElProgreso, tiempoPorSalto);
+        
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarVentanaError("Error iniciando carga optimizada con datos");
+        }
+    }
+
 }

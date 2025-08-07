@@ -378,7 +378,7 @@ public class ControladorFacturacion {
             );            
 
             // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
-            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 100);
+            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 8, 325);
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());

@@ -131,7 +131,7 @@ public class ServicioMostrarFunciones {
                     currentStage,
                     new ArrayList<>(List.of(funcionSeleccionada)));
 
-            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 150);
+            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 8, 325);
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
