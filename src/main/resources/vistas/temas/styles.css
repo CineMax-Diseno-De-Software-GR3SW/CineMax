@@ -55,7 +55,7 @@
 }
 
 .icon-button .text {
-    -fx-font-size: 20px;
+    -fx-font-size: 12px;
     -fx-fill: white;
     -fx-font-weight: bold;
 }
@@ -444,7 +444,7 @@
     -fx-background-radius: 0;
     -fx-effect: none;
 }
-
+/* indicador de campo obligatorio */
 .required-asterisk {
     -fx-text-fill: #f70101;
     -fx-font-size: 10px;

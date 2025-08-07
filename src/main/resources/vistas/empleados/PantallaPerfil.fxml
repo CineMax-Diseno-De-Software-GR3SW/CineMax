@@ -57,7 +57,7 @@
                 <HBox spacing="8.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="4">
                     <children>
                         <TextField fx:id="txtEmail" promptText="Correo electrónico" editable="false" styleClass="text-field" />
-                        <Button text="✎" onAction="#onEditarEmail" styleClass="icon-button" />
+                        <Button text="Editar" onAction="#onEditarEmail" styleClass="icon-button" />
                     </children>
                 </HBox>
 
@@ -65,7 +65,7 @@
                 <HBox spacing="8.0" alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="5">
                     <children>
                         <TextField fx:id="txtTelefono" promptText="Teléfono" editable="false" styleClass="text-field" />
-                        <Button text="✎" onAction="#onEditarTelefono" styleClass="icon-button" />
+                        <Button text="Editar" onAction="#onEditarTelefono" styleClass="icon-button" />
                     </children>
                 </HBox>
             </GridPane>

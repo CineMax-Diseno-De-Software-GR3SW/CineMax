@@ -13,14 +13,12 @@
         <Insets top="10" right="20" bottom="20" left="20"/>
     </padding>
 
-    <Label text="Cambiar Contraseña" style="-fx-font-size: 16px;" />
-
     <PasswordField fx:id="txtContrasenaActual" promptText="Contraseña actual"/>
     <PasswordField fx:id="txtNuevaContrasena" promptText="Nueva contraseña"/>
     <PasswordField fx:id="txtConfirmarContrasena" promptText="Confirmar nueva contraseña"/>
 
     <HBox spacing="10" alignment="CENTER">
-        <Button text="Cancelar" onAction="#onCancelar"/>
-        <Button text="Guardar" onAction="#onGuardar"/>
+        <Button text="Cancelar" onAction="#onCancelar" styleClass="primary-button"/>
+        <Button text="Guardar" onAction="#onGuardar" styleClass="primary-button"/>
     </HBox>
 </VBox>

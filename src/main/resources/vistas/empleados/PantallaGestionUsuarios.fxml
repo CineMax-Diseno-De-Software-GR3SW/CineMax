@@ -37,7 +37,7 @@
                     <Label text="Buscar:"/>
                     <TextField fx:id="txtBuscar" promptText="Cédula, rol..." prefWidth="200"/>
                     <Button fx:id="btnBuscar" text="Buscar" onAction="#onBuscar" styleClass="primary-button"/>
-                    <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="link-button" />
+                    <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="primary-button" />
                 </HBox>
             </VBox>
 
@@ -74,7 +74,7 @@
                         text="Crear"
                         onAction="#onAgregarUsuario"
                         styleClass="primary-button"/>
-                <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="stepper-button"/>
+                <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="primary-button"/>
             </HBox>
 
 
