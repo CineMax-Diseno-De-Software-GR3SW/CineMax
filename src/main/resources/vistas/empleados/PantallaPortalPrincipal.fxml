@@ -25,7 +25,6 @@
             <padding>
                 <Insets bottom="15.0" left="25.0" right="25.0" top="15.0"/>
             </padding>
-            <Label styleClass="section-title" text="Panel Principal"/>
             
             <!-- GridPane con 2 columnas para distribuir mejor los botones -->
             <GridPane hgap="15.0" vgap="12.0">

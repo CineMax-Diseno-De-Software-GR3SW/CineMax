@@ -13,7 +13,8 @@
                 <Button fx:id="btnBack"
                         text="←"
                         onAction="#onVolver"
-                        styleClass="stepper-button"/>                <Label text="Mi Perfil" styleClass="section-title" />
+                        styleClass="stepper-button"/>
+                <Label text="Información del Perfil" styleClass="section-title" />
             </children>
         </HBox>
     </top>
@@ -23,8 +24,6 @@
             <padding>
                 <Insets bottom="15.0" left="30.0" right="30.0" top="15.0" />
             </padding>
-
-            <Label styleClass="section-title" text="Información del Perfil" />
 
             <GridPane hgap="12.0" vgap="15.0">
                 <columnConstraints>
