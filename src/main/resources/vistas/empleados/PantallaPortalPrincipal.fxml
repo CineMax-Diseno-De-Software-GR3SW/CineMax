@@ -60,9 +60,9 @@
                         styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
                 <!-- Fila 4 -->
-                <Button fx:id="btnConfiguracionSalas" onAction="#onConfiguracionSalas" text="Configuración de Salas"
+                <Button fx:id="btnGestionSalas" onAction="#onGestionSalas" text="Gestión de Salas"
                         styleClass="primary-button" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
-                <Button fx:id="btnConfiguracionButacas" onAction="#onConfiguracionButacas" text="Configuración de Butacas"
+                <Button fx:id="btnGestionButacas" onAction="#onGestionButacas" text="Gestión de Butacas"
                         styleClass="primary-button" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
                 <!-- Fila 5 -->
