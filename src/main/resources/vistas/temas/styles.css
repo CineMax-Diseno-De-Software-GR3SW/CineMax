@@ -427,3 +427,18 @@
     -fx-background-color: #3A3A3A;
     -fx-text-fill: #EAEAEA;
 }
+
+
+.info-admin-pane {
+    -fx-background-color: #2B2B2B;
+    -fx-border-color: transparent;
+    -fx-border-width: 1px;
+    -fx-padding: 20px;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-effect: none;
+}
+
+.required-asterisk {
+    -fx-text-fill: #f70101;
+}

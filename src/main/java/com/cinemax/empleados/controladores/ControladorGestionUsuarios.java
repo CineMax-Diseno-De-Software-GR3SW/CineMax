@@ -64,6 +64,7 @@ public class ControladorGestionUsuarios {
         // Configurar columnas…
         servicioUsuarios = new ServicioUsuarios();
         servicioRoles = new ServicioRoles();
+        tableUsuarios.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
 
         gestorSesion = ServicioSesionSingleton.getInstancia();
@@ -75,7 +76,7 @@ public class ControladorGestionUsuarios {
         colCedula.setCellValueFactory(new PropertyValueFactory<>("cedula"));     // Nueva columna
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("correo"));
-        colCelular.setCellValueFactory(new PropertyValueFactory<>("numeroTelefono")); // Nueva columna
+        colCelular.setCellValueFactory(new PropertyValueFactory<>("celular")); // Nueva columna
         colRol.setCellValueFactory(new PropertyValueFactory<>("nombreRol"));
 
 
@@ -276,28 +277,33 @@ public class ControladorGestionUsuarios {
         }
     }
 
-    public void onBackAction(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void onBackAction() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml");
+
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+//            Parent root = loader.load();
+//            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+//            stage.setScene(new Scene(root));
+//            stage.show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
-    public void onAgregarUsuario(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRegistrarUsuario.fxml"));
-        try {
-            Parent root = loader.load();
+    public void onAgregarUsuario() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnAgregarUsuario.getScene().getWindow(), "/vistas/empleados/PantallaRegistrarUsuario.fxml");
 
-            // Obtener el Stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Registrar nuevo empleado");
-            stage.setScene(new Scene(root));
-            stage.show();
+//
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRegistrarUsuario.fxml"));
+//        try {
+//            Parent root = loader.load();
+//
+//            // Obtener el Stage actual desde el botón o cualquier nodo
+//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//            stage.setTitle("Registrar nuevo empleado");
+//            stage.setScene(new Scene(root));
+//            stage.show();
 //        try {
 //            URL fxmlLocation = getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml");
 //
@@ -314,15 +320,15 @@ public class ControladorGestionUsuarios {
 //            stage.initModality(Modality.APPLICATION_MODAL);
 //            stage.showAndWait();
 
-        } catch (IOException e) {
-            e.printStackTrace();
-//            Alert alert = new Alert(Alert.AlertType.ERROR);
-//            alert.setTitle("Error de Carga");
-//            alert.setHeaderText("No se pudo abrir la ventana de registro.");
-//            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
-//            alert.showAndWait();
-            ManejadorMetodosComunes.mostrarVentanaError("No se pudo abrir la ventana de registro.");
-        }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+////            Alert alert = new Alert(Alert.AlertType.ERROR);
+////            alert.setTitle("Error de Carga");
+////            alert.setHeaderText("No se pudo abrir la ventana de registro.");
+////            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
+////            alert.showAndWait();
+//            ManejadorMetodosComunes.mostrarVentanaError("No se pudo abrir la ventana de registro.");
+//        }
     }
 
 }
