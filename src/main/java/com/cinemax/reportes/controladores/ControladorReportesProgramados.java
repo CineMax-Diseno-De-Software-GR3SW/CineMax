@@ -1,4 +1,5 @@
 package com.cinemax.reportes.controladores;
+import com.cinemax.comun.ManejadorMetodosComunes;
 
 import java.io.IOException;
 
@@ -26,18 +27,16 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import com.cinemax.reportes.modelos.Export;
+import com.cinemax.reportes.modelos.ExportarCSVStrategy;
+import com.cinemax.reportes.modelos.ExportarPDFStrategy;
 import com.cinemax.reportes.modelos.ReporteGenerado;
+import com.cinemax.reportes.modelos.persistencia.VentaDAO;
 import com.cinemax.reportes.servicios.ReportesSchedulerService;
-
-import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import com.cinemax.reportes.servicios.VentasService;
 
 // Para la dependencia de programado task
 
@@ -66,13 +65,16 @@ public class ControladorReportesProgramados {
 
     final ReportesSchedulerService schedulerService = ReportesSchedulerService.getInstance();
 
+    private VentasService ventasService = new VentasService();
+    private Map<String, Object> datos = ventasService.getResumenDeVentas();;
+
     @FXML
     private void initialize() {
         // Inicializar la tabla de reportes generados
         if (tablaReportesGenerados != null) {
             inicializarTablaReportes();
         }
-        
+
         // Opciones para la frecuencia del reporte
         ObservableList<String> opcionesFrecuencia = FXCollections.observableArrayList(
                 "Diario",
@@ -100,24 +102,27 @@ public class ControladorReportesProgramados {
             Stage stage = (Stage) btnBack.getScene().getWindow();
             stage.setOnCloseRequest(event -> schedulerService.detenerScheduler());
         });
+
     }
 
     private void inicializarTablaReportes() {
         // Configurar las columnas
-        columnaNombre.setCellValueFactory(new PropertyValueFactory<>("nombreReporte"));
+        columnaNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         columnaFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         columnaEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
 
         // Columna de acciones con botones
         columnaAcciones.setCellFactory(columna -> new TableCell<>() {
             private final Button btnVerPDF = new Button("Ver");
-            private final Button btnDescargar = new Button("Descargar");
-            private final HBox pane = new HBox(5, btnVerPDF, btnDescargar);
+            private final Button btnDescargarPDF = new Button("Descargar PDF");
+            private final Button btnDescargarCSV = new Button("Descargar CSV");
+            private final HBox pane = new HBox(5, btnVerPDF, btnDescargarPDF, btnDescargarCSV);
 
             {
                 // Configurar estilos de botones
                 btnVerPDF.getStyleClass().add("btn-small");
-                btnDescargar.getStyleClass().add("btn-small");
+                btnDescargarPDF.getStyleClass().add("btn-small");
+                btnDescargarCSV.getStyleClass().add("btn-small");
 
                 // Configurar acciones
                 btnVerPDF.setOnAction(event -> {
@@ -125,9 +130,14 @@ public class ControladorReportesProgramados {
                     mostrarVistaPrevia(reporte);
                 });
 
-                btnDescargar.setOnAction(event -> {
+                btnDescargarPDF.setOnAction(event -> {
                     ReporteGenerado reporte = getTableView().getItems().get(getIndex());
-                    descargarReportePDF(reporte);
+                    descargarReporte(reporte, "pdf");
+                });
+
+                btnDescargarCSV.setOnAction(event -> {
+                    ReporteGenerado reporte = getTableView().getItems().get(getIndex());
+                    descargarReporte(reporte, "csv");
                 });
 
                 pane.setAlignment(Pos.CENTER);
@@ -158,28 +168,21 @@ public class ControladorReportesProgramados {
 
         // Inicializar la tabla con una lista vacía (sin datos de ejemplo)
         tablaReportesGenerados.setItems(schedulerService.getReportesEjecutados());
-    }
 
-    private void mostrarAlerta(String titulo, String mensaje) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(titulo);
-        alert.setHeaderText(null);
-        alert.setContentText(mensaje);
-        alert.showAndWait();
     }
 
     @FXML
     void confirmarReporteProgramado(ActionEvent event) {
         // Validar que se haya seleccionado una frecuencia
         if (choiceFrecuencia.getValue() == null || choiceFrecuencia.getValue().equals("Seleccione la Ejecucion")) {
-            mostrarAlerta("Error", "Se ha programado un reporte");
+            ManejadorMetodosComunes.mostrarVentanaError("Debe seleccionar una frecuencia de ejecución.");
             return;
         }
 
         // Verificar si ya existe un reporte con la misma frecuencia
         String frecuenciaSeleccionada = choiceFrecuencia.getValue();
         if (existeReporteConFrecuencia(frecuenciaSeleccionada)) {
-            mostrarAlerta("Error", "Ya existe un reporte programado con frecuencia " + frecuenciaSeleccionada + ".\n" +
+            ManejadorMetodosComunes.mostrarVentanaError("Ya existe un reporte programado con frecuencia " + frecuenciaSeleccionada + ".\n" +
                     "Solo puede haber una ejecución por cada tipo de frecuencia.");
             return;
         }
@@ -212,46 +215,40 @@ public class ControladorReportesProgramados {
 
     private void mostrarVentanaPrevia() {
         try {
-            // Crear una nueva ventana (Stage)
             Stage ventanaPrevia = new Stage();
             ventanaPrevia.setTitle("Previsualización del Reporte PDF");
             ventanaPrevia.setResizable(true);
 
-            // Crear el contenido principal
+            // Fondo negro del sistema
             VBox contenidoPrincipal = new VBox(10);
             contenidoPrincipal.setPadding(new Insets(15));
-            contenidoPrincipal.setStyle("-fx-background-color: #f5f5f5;");
+            contenidoPrincipal.getStyleClass().add("root");
 
             // Header con información del reporte
             VBox headerBox = new VBox(5);
-            headerBox.setStyle(
-                    "-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-padding: 15; -fx-border-radius: 5px;");
+            headerBox.getStyleClass().add("content-pane");
 
-            Label tituloReporte = new Label("REPORTE DE VENTAS - CINEMAX");
-            tituloReporte.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+            Label tituloReporte = new Label("EJEMPLO DE PROGRAMACION - CINEMAX");
+            tituloReporte.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
             Label lblFechaGeneracion = new Label("Se ha agendado fecha de creacion");
-            lblFechaGeneracion.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
+            lblFechaGeneracion.setStyle("-fx-font-size: 12px; -fx-text-fill: #b2bec3;");
 
             Label lblFrecuencia = new Label("Frecuencia: " + choiceFrecuencia.getValue());
-            lblFrecuencia.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
+            lblFrecuencia.setStyle("-fx-font-size: 12px; -fx-text-fill: #b2bec3;");
 
             headerBox.getChildren().addAll(tituloReporte, lblFechaGeneracion, lblFrecuencia);
 
             // Contenido del reporte (simulado)
             VBox contenidoReporte = new VBox(10);
-            contenidoReporte.setStyle(
-                    "-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+            contenidoReporte.getStyleClass().add("content-pane");
 
-            // Sección de datos simulados
             Label tituloSeccion = new Label("📊 RESUMEN DE VENTAS");
-            tituloSeccion.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #34495e;");
+            tituloSeccion.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
-            // Tabla de datos simulados
             VBox tablaDatos = new VBox(5);
             tablaDatos.setStyle("-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10;");
 
-            // Headers de la tabla
             HBox headerTabla = new HBox();
             headerTabla.setStyle("-fx-background-color: #3498db; -fx-padding: 8;");
             Label colFecha = crearCeldaTabla("Fecha", true);
@@ -259,38 +256,74 @@ public class ControladorReportesProgramados {
             Label colIngresos = crearCeldaTabla("Ingresos", true);
             headerTabla.getChildren().addAll(colFecha, colBoletos, colIngresos);
 
-            // Filas de datos de ejemplo
             VBox filasDatos = new VBox(2);
 
-            // TODO: Verificar que no se repita la ejecucion del task
             String frecuenciaSeleccionada = choiceFrecuencia.getValue();
             String fechaEjecucion = schedulerService.calcularProximaEjecucion(LocalDateTime.now().toString(),
                     frecuenciaSeleccionada);
 
             filasDatos.getChildren().addAll(
-                    crearFilaTabla(fechaEjecucion, "125", "String,750.00"),
-                    crearFilaTabla(LocalDate.now().minusDays(1).toString(), "98", "private,940.00"),
-                    crearFilaTabla(LocalDate.now().minusDays(2).toString(), "156", ",680.00"),
-                    crearFilaTabla(LocalDate.now().minusDays(3).toString(), "87", "private,610.00"));
+                    crearFilaTabla(fechaEjecucion, "25", "$1,250.00"));
 
-            // Total
             HBox totalRow = new HBox();
             totalRow.setStyle("-fx-background-color: #2ecc71; -fx-padding: 8;");
             Label totalLabel = crearCeldaTabla("TOTAL:", true);
-            Label totalBoletos = crearCeldaTabla("466", true);
-            Label totalIngresos = crearCeldaTabla(",980.00", true);
+            Label totalBoletos = crearCeldaTabla("125", true);
+            Label totalIngresos = crearCeldaTabla("$1,250.00", true);
             totalRow.getChildren().addAll(totalLabel, totalBoletos, totalIngresos);
 
             tablaDatos.getChildren().addAll(headerTabla, filasDatos, totalRow);
+
+            VBox infoAdicional = new VBox(5);
+            infoAdicional.getStyleClass().add("content-pane");
+
+            // Agregar la tabla de películas a la previsualización reutilizando las
+            // variables ya declaradas arriba
             contenidoReporte.getChildren().addAll(tituloSeccion, tablaDatos);
 
-            // Información adicional
-            VBox infoAdicional = new VBox(5);
-            infoAdicional.setStyle("-fx-background-color: #ecf0f1; -fx-padding: 10; -fx-border-radius: 3px;");
+            // Tabla de películas
+            Label tituloPeliculas = new Label("🎬 RESUMEN POR PELÍCULA");
+            tituloPeliculas.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
+
+            VBox tablaPeliculas = new VBox(2);
+            tablaPeliculas.setStyle(
+                    "-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10; -fx-background-radius: 5px;");
+
+            contenidoReporte.getChildren().addAll(tituloPeliculas, tablaPeliculas);
+
+            // Encabezados
+            HBox headerPeliculas = new HBox();
+            headerPeliculas.setStyle("-fx-background-color: #8e44ad; -fx-padding: 8;");
+            headerPeliculas.getChildren().addAll(
+                    crearCeldaTabla("Título", true),
+                    crearCeldaTabla("Funciones", true),
+                    crearCeldaTabla("Boletos Vendidos", true),
+                    crearCeldaTabla("Ingresos", true));
+
+            // Datos ficticios
+            String[][] peliculas = {
+                    { "Barbie", "3", "320", "$9,600.00" },
+                    { "Oppenheimer", "2", "210", "$6,300.00" },
+                    { "Intensamente 2", "2", "180", "$5,400.00" },
+                    { "Garfield", "1", "80", "$2,400.00" }
+            };
+
+            VBox filasPeliculas = new VBox(2);
+            for (String[] fila : peliculas) {
+                HBox filaPelicula = new HBox();
+                for (String celda : fila) {
+                    Label lbl = crearCeldaTabla(celda, false);
+                    lbl.setStyle("-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
+                    filaPelicula.getChildren().add(lbl);
+                }
+                filasPeliculas.getChildren().add(filaPelicula);
+            }
+
+            tablaPeliculas.getChildren().addAll(headerPeliculas, filasPeliculas);
 
             Label notaInfo = new Label(
                     "📝 Nota: Este es un ejemplo de cómo se verá el reporte cuando se genere automáticamente.");
-            notaInfo.setStyle("-fx-font-size: 11px; -fx-text-fill: #7f8c8d; -fx-font-style: italic;");
+            notaInfo.setStyle("-fx-font-size: 11px; -fx-text-fill: #b2bec3; -fx-font-style: italic;");
             notaInfo.setWrapText(true);
 
             Label proximaGeneracion = new Label("⏰ Próxima generación programada: " + fechaEjecucion);
@@ -298,32 +331,29 @@ public class ControladorReportesProgramados {
 
             infoAdicional.getChildren().addAll(notaInfo, proximaGeneracion);
 
-            // Botones
             HBox botonesBox = new HBox(15);
             botonesBox.setAlignment(Pos.CENTER);
             botonesBox.setPadding(new Insets(15, 0, 5, 0));
 
             Button btnConfirmar = new Button("✅ Programar Reporte");
-            btnConfirmar.setStyle(
-                    "-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 25; -fx-border-radius: 5px; -fx-background-radius: 5px;");
-
+            btnConfirmar.getStyleClass().add("btn-small");
             btnConfirmar.setOnAction(e -> {
                 agregarReporteATabla(fechaEjecucion);
-                mostrarAlerta("✅ Reporte Programado",
-                        "El reporte ha sido programado exitosamente.\n" +
-                                "Se ejecutará cada: " + frecuenciaSeleccionada +
-                                "\nPróxima ejecución: " + fechaEjecucion);
+                String mensaje = "✅ Reporte Programado\n"
+                        + "El reporte ha sido programado exitosamente.\n"
+                        + "Se ejecutará: " + frecuenciaSeleccionada;
+
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
+
                 ventanaPrevia.close();
             });
 
             Button btnCancelar = new Button("❌ Cancelar");
-            btnCancelar.setStyle(
-                    "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 12 25; -fx-border-radius: 5px; -fx-background-radius: 5px;");
+            btnCancelar.getStyleClass().add("btn-small");
             btnCancelar.setOnAction(e -> ventanaPrevia.close());
 
             botonesBox.getChildren().addAll(btnConfirmar, btnCancelar);
 
-            // Scroll pane para contenido largo
             ScrollPane scrollPane = new ScrollPane();
             VBox contenidoCompleto = new VBox(10);
             contenidoCompleto.getChildren().addAll(headerBox, contenidoReporte, infoAdicional);
@@ -331,18 +361,17 @@ public class ControladorReportesProgramados {
             scrollPane.setFitToWidth(true);
             scrollPane.setStyle("-fx-background-color: transparent;");
 
-            // Agregar todo al contenido principal
             contenidoPrincipal.getChildren().addAll(scrollPane, botonesBox);
 
-            // Crear la escena y mostrar la ventana
             Scene escena = new Scene(contenidoPrincipal, 600, 500);
+            escena.getStylesheets().add(getClass().getResource("/vistas/temas/styles.css").toExternalForm());
             ventanaPrevia.setScene(escena);
             ventanaPrevia.initModality(Modality.APPLICATION_MODAL);
             ventanaPrevia.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo abrir la previsualización del reporte.");
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo mostrar la previsualización del reporte.");
         }
     }
 
@@ -376,19 +405,16 @@ public class ControladorReportesProgramados {
         LocalDateTime fecha = LocalDateTime.parse(fechaEjecucion);
 
         ReporteGenerado nuevoReporte = new ReporteGenerado(
-            0,
-            "Reporte de Ventas - " + frecuencia,
-            "Programado",
-            fecha,
-            "/reportes/ventas_" + frecuencia.toLowerCase() + "_" + fechaEjecucion.replace("-", "_") + ".pdf",
-            frecuencia);
+                "Reporte de Ventas - " + frecuencia,
+                "Programado",
+                fecha,
+                "/reportes/ventas_" + frecuencia.toLowerCase() + "_" + fechaEjecucion.replace("-", "_") + ".pdf",
+                frecuencia);
 
         schedulerService.getReportesPendientes().add(nuevoReporte);
 
         choiceFrecuencia.setValue("Seleccione la Ejecucion");
         choiceFrecuencia.setDisable(true); // <-- Deshabilita el ChoiceBox
-
-        System.out.println("Reporte programado con frecuencia " + frecuencia + " para " + fechaEjecucion);
     }
 
     /**
@@ -396,7 +422,7 @@ public class ControladorReportesProgramados {
      */
     public void eliminarReporteProgramado(ReporteGenerado reporte) {
         if (reporte == null) {
-            mostrarAlerta("Error", "No se pudo identificar el reporte a eliminar.");
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo identificar el reporte a eliminar.");
             return;
         }
 
@@ -411,11 +437,11 @@ public class ControladorReportesProgramados {
         if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
             // Eliminar el reporte de la tabla
             tablaReportesGenerados.getItems().remove(reporte);
-            mostrarAlerta("Reporte Eliminado", "El reporte ha sido eliminado exitosamente.");
+            ManejadorMetodosComunes.mostrarVentanaExito("El reporte ha sido eliminado exitosamente.");
         }
     }
 
-    // Método para mostrar vista previa del reporte
+    // Método para mostrar vista previa del reporte (BOTON)
     private void mostrarVistaPrevia(ReporteGenerado reporte) {
         try {
             Stage ventanaPrevia = new Stage();
@@ -424,24 +450,23 @@ public class ControladorReportesProgramados {
 
             VBox contenido = new VBox(15);
             contenido.setPadding(new Insets(20));
-            contenido.setStyle("-fx-background-color: #f5f5f5;");
+            contenido.getStyleClass().add("root"); // Fondo oscuro del sistema
 
             // Header del reporte
             VBox headerBox = new VBox(10);
-            headerBox.setStyle(
-                    "-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+            headerBox.getStyleClass().add("content-pane");
 
-            Label titulo = new Label("REPORTE DE VENTAS - CINEMAX");
-            titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+            Label titulo = new Label("EJEMPLO DE PROGRAMACION - CINEMAX");
+            titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
             Label fechaGen = new Label("Fecha de Generación: "
                     + reporte.getFechaGeneracion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            fechaGen.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
+            fechaGen.setStyle("-fx-font-size: 12px; -fx-text-fill: #b2bec3;");
 
-            Label estado = new Label("Estado: " + reporte.getEstado());
-            estado.setStyle("-fx-font-size: 12px; -fx-text-fill: #27ae60; -fx-font-weight: bold;");
+            Label frecuencia = new Label("Frecuencia: " + reporte.getFrecuencia());
+            frecuencia.setStyle("-fx-font-size: 12px; -fx-text-fill: #27ae60; -fx-font-weight: bold;");
 
-            headerBox.getChildren().addAll(titulo, fechaGen, estado);
+            headerBox.getChildren().addAll(titulo, fechaGen, frecuencia);
 
             // Contenido del reporte
             VBox contenidoReporte = generarContenidoReporte(reporte);
@@ -450,7 +475,7 @@ public class ControladorReportesProgramados {
             Label notaPDF = new Label(
                     "📄 Nota: Al descargar se generará un archivo PDF con este contenido y formato profesional.");
             notaPDF.setStyle(
-                    "-fx-font-size: 11px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-background-color: #fdf2e9; -fx-padding: 10; -fx-border-radius: 5px;");
+                    "-fx-font-size: 11px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-background-color: #232323; -fx-padding: 10; -fx-border-radius: 5px;");
             notaPDF.setWrapText(true);
 
             // Botones
@@ -462,7 +487,15 @@ public class ControladorReportesProgramados {
                     "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
             btnDescargarPDF.setOnAction(e -> {
                 ventanaPrevia.close();
-                descargarReportePDF(reporte);
+                descargarReporte(reporte, "pdf");
+            });
+
+            Button btnDescargarCSV = new Button("🗎 Descargar como CSV");
+            btnDescargarCSV.setStyle(
+                    "-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
+            btnDescargarCSV.setOnAction(e -> {
+                ventanaPrevia.close();
+                descargarReporte(reporte, "csv");
             });
 
             Button btnEliminar = new Button("🗑️ Eliminar Reporte");
@@ -489,24 +522,24 @@ public class ControladorReportesProgramados {
             contenido.getChildren().addAll(scrollPane, botonesBox);
 
             Scene escena = new Scene(contenido, 650, 550);
+            escena.getStylesheets().add(getClass().getResource("/vistas/temas/styles.css").toExternalForm());
             ventanaPrevia.setScene(escena);
             ventanaPrevia.initModality(Modality.APPLICATION_MODAL);
             ventanaPrevia.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo mostrar la vista previa del reporte.");
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo mostrar la vista previa del reporte.");
         }
     }
 
     // Método auxiliar para generar contenido visual del reporte
     private VBox generarContenidoReporte(ReporteGenerado reporte) {
         VBox contenido = new VBox(15);
-        contenido.setStyle(
-                "-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+        contenido.getStyleClass().add("content-pane"); // Fondo secundario oscuro
 
-        Label tituloSeccion = new Label("📊 RESUMEN DE VENTAS");
-        tituloSeccion.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #34495e;");
+        Label tituloSeccion = new Label("📊 EJEMPLO DE RESUMEN DE VENTAS RECOPILADO");
+        tituloSeccion.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         VBox tablaDatos = new VBox(5);
         tablaDatos.setStyle("-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10;");
@@ -522,10 +555,7 @@ public class ControladorReportesProgramados {
         // Datos
         VBox filasDatos = new VBox(2);
         filasDatos.getChildren().addAll(
-                crearFilaTabla(reporte.getFechaGeneracion().toString(), "125", "$3,750.00"),
-                crearFilaTabla(reporte.getFechaGeneracion().minusDays(1).toString(), "98", "$2,940.00"),
-                crearFilaTabla(reporte.getFechaGeneracion().minusDays(2).toString(), "156", "$4,680.00"),
-                crearFilaTabla(reporte.getFechaGeneracion().minusDays(3).toString(), "87", "$2,610.00"));
+                crearFilaTabla(reporte.getFechaGeneracion().toString(), "$125", "$270.00"));
 
         // Total
         HBox totalRow = new HBox();
@@ -535,206 +565,96 @@ public class ControladorReportesProgramados {
                 crearCeldaTabla("466", true),
                 crearCeldaTabla("$13,980.00", true));
 
+        // Tabla de películas
+        Label tituloPeliculas = new Label("🎬 RESUMEN POR PELÍCULA");
+        tituloPeliculas.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
+
+        VBox tablaPeliculas = new VBox(2);
+        tablaPeliculas.setStyle(
+            "-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10; -fx-background-radius: 5px;");
+
+        // Encabezados
+        HBox headerPeliculas = new HBox();
+        headerPeliculas.setStyle("-fx-background-color: #8e44ad; -fx-padding: 8;");
+        headerPeliculas.getChildren().addAll(
+            crearCeldaTabla("Título", true),
+            crearCeldaTabla("Funciones", true),
+            crearCeldaTabla("Boletos Vendidos", true),
+            crearCeldaTabla("Ingresos", true));
+
+        // Datos ficticios
+        String[][] peliculas = {
+            { "Barbie", "3", "320", "$9,600.00" },
+            { "Oppenheimer", "2", "210", "$6,300.00" },
+            { "Intensamente 2", "2", "180", "$5,400.00" },
+            { "Garfield", "1", "80", "$2,400.00" }
+        };
+
+        VBox filasPeliculas = new VBox(2);
+        for (String[] fila : peliculas) {
+            HBox filaPelicula = new HBox();
+            for (String celda : fila) {
+            Label lbl = crearCeldaTabla(celda, false);
+            lbl.setStyle("-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
+            filaPelicula.getChildren().add(lbl);
+            }
+            filasPeliculas.getChildren().add(filaPelicula);
+        }
+
+        
+        
+        
         tablaDatos.getChildren().addAll(headerTabla, filasDatos, totalRow);
         contenido.getChildren().addAll(tituloSeccion, tablaDatos);
-
+        
+        
+        contenido.getChildren().addAll(tituloPeliculas, tablaPeliculas);
+        tablaPeliculas.getChildren().addAll(headerPeliculas, filasPeliculas);
         return contenido;
     }
 
-    // Método para descargar el reporte como PDF usando Apache PDFBox
-    private void descargarReportePDF(ReporteGenerado reporte) {
+    private void descargarReporte(ReporteGenerado reporte, String formato) {
         try {
-            // Crear el FileChooser
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Guardar Reporte PDF");
+            fileChooser.setTitle("Guardar Reporte " + formato.toUpperCase());
 
-            // Configurar el nombre por defecto del archivo
+            String extension = formato.equalsIgnoreCase("pdf") ? ".pdf" : ".csv";
             String nombreArchivo = reporte.getNombre().replaceAll("[^a-zA-Z0-9\\s]", "_") + "_" +
                     reporte.getFechaGeneracion().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
-            fileChooser.setInitialFileName(nombreArchivo + ".pdf");
+            fileChooser.setInitialFileName(nombreArchivo + extension);
 
-            // Configurar filtro de extensión para PDF
-            FileChooser.ExtensionFilter filtroPDF = new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf");
-            fileChooser.getExtensionFilters().add(filtroPDF);
+            if (formato.equalsIgnoreCase("pdf")) {
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
+            } else if (formato.equalsIgnoreCase("csv")) {
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
+            }
 
-            // Mostrar el diálogo de guardar
             Stage stage = (Stage) tablaReportesGenerados.getScene().getWindow();
             File archivo = fileChooser.showSaveDialog(stage);
 
             if (archivo != null) {
-                // Generar el PDF
-                generarPDFConPDFBox(reporte, archivo);
+                Export exportStrategy;
+                if (formato.equalsIgnoreCase("pdf")) {
+                    exportStrategy = new ExportarPDFStrategy();
+                } else if (formato.equalsIgnoreCase("csv")) {
+                    exportStrategy = new ExportarCSVStrategy();
+                } else {
+                    ManejadorMetodosComunes.mostrarVentanaError("Formato de exportación no soportado.");
+                    return;
+                }
+                // TODO: Aqui exportar los datos del reporte
+                exportStrategy.exportar(reporte, archivo, datos);
 
-                mostrarAlerta("✅ Descarga Exitosa",
-                        "El reporte PDF '" + reporte.getNombre() + "' ha sido guardado exitosamente en:\n" +
-                                archivo.getAbsolutePath());
+                String mensaje = "✅ Descarga Exitosa\n"
+                        + "El reporte '" + reporte.getNombre() + "' se ha sido registrado exitosamente\n";
 
+                ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
             } else {
                 System.out.println("Descarga cancelada por el usuario.");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo descargar el reporte PDF: " + e.getMessage());
-        }
-    }
-
-    // Método para generar el archivo PDF usando Apache PDFBox
-    private void generarPDFConPDFBox(ReporteGenerado reporte, File archivo) throws IOException {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.A4);
-            document.addPage(page);
-
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                // Configurar fuente
-                PDType1Font fontBold = PDType1Font.HELVETICA_BOLD;
-                PDType1Font fontNormal = PDType1Font.HELVETICA;
-
-                float margin = 50;
-                float yPosition = page.getMediaBox().getHeight() - margin;
-                float fontSize = 12;
-
-                // Título principal
-                contentStream.setFont(fontBold, 18);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("REPORTE DE VENTAS - CINEMAX");
-                contentStream.endText();
-
-                yPosition -= 40;
-
-                // Información del reporte
-                contentStream.setFont(fontNormal, fontSize);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("Nombre del Reporte: " + reporte.getNombre());
-                contentStream.newLineAtOffset(0, -20);
-                contentStream.showText("Fecha de Generacion: "
-                        + reporte.getFechaGeneracion().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-                contentStream.newLineAtOffset(0, -20);
-                contentStream.showText("Estado: " + reporte.getEstado());
-                contentStream.newLineAtOffset(0, -20);
-                contentStream.showText("Generado el: "
-                        + java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss")));
-                contentStream.endText();
-
-                yPosition -= 100;
-
-                // Subtítulo de la sección
-                contentStream.setFont(fontBold, 14);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("RESUMEN DE VENTAS");
-                contentStream.endText();
-
-                yPosition -= 30;
-
-                // Dibujar tabla manualmente
-                float tableWidth = 400;
-                float tableHeight = 150;
-                float rowHeight = 25;
-
-                // Definir posiciones de columnas
-                float col1X = margin;
-                float col2X = margin + 150;
-                float col3X = margin + 250;
-                float col4X = margin + 350;
-
-                // Dibujar líneas de la tabla
-                contentStream.setLineWidth(1);
-
-                // Líneas horizontales
-                for (int i = 0; i <= 6; i++) {
-                    contentStream.moveTo(col1X, yPosition - (i * rowHeight));
-                    contentStream.lineTo(col1X + tableWidth, yPosition - (i * rowHeight));
-                    contentStream.stroke();
-                }
-
-                // Líneas verticales
-                float[] colPositions = { col1X, col2X, col3X, col4X };
-                for (float colX : colPositions) {
-                    contentStream.moveTo(colX, yPosition);
-                    contentStream.lineTo(colX, yPosition - tableHeight);
-                    contentStream.stroke();
-                }
-
-                // Headers de la tabla
-                contentStream.setFont(fontBold, 10);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(col1X + 5, yPosition - 15);
-                contentStream.showText("Fecha");
-                contentStream.newLineAtOffset(col2X - col1X - 5, 0);
-                contentStream.showText("Boletos");
-                contentStream.newLineAtOffset(col3X - col2X, 0);
-                contentStream.showText("Ingresos");
-                contentStream.endText();
-
-                // Datos de la tabla
-                contentStream.setFont(fontNormal, 10);
-                String[][] datos = {
-                        { reporte.getFechaGeneracion().toString(), "125", "$3,750.00" },
-                        { reporte.getFechaGeneracion().minusDays(1).toString(), "98", "$2,940.00" },
-                        { reporte.getFechaGeneracion().minusDays(2).toString(), "156", "$4,680.00" },
-                        { reporte.getFechaGeneracion().minusDays(3).toString(), "87", "$2,610.00" }
-                };
-
-                for (int i = 0; i < datos.length; i++) {
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(col1X + 5, yPosition - 40 - (i * rowHeight));
-                    contentStream.showText(datos[i][0]);
-                    contentStream.newLineAtOffset(col2X - col1X - 5, 0);
-                    contentStream.showText(datos[i][1]);
-                    contentStream.newLineAtOffset(col3X - col2X, 0);
-                    contentStream.showText(datos[i][2]);
-                    contentStream.endText();
-                }
-
-                // Fila de total
-                contentStream.setFont(fontBold, 10);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(col1X + 5, yPosition - 140);
-                contentStream.showText("TOTAL:");
-                contentStream.newLineAtOffset(col2X - col1X - 5, 0);
-                contentStream.showText("466");
-                contentStream.newLineAtOffset(col3X - col2X, 0);
-                contentStream.showText("$13,980.00");
-                contentStream.endText();
-
-                // Información adicional
-                yPosition -= 200;
-                contentStream.setFont(fontBold, 12);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("Observaciones:");
-                contentStream.endText();
-
-                yPosition -= 20;
-                contentStream.setFont(fontNormal, 10);
-                String[] observaciones = {
-                        "• Este reporte muestra las ventas de boletos de cine en el periodo especificado.",
-                        "• Los ingresos estan calculados en base al precio promedio de $30.00 por boleto.",
-                        "• Reporte generado automaticamente por el sistema CineMax."
-                };
-
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                for (String obs : observaciones) {
-                    contentStream.showText(obs);
-                    contentStream.newLineAtOffset(0, -15);
-                }
-                contentStream.endText();
-
-                // Pie de página
-                contentStream.setFont(fontNormal, 8);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, 50);
-                contentStream.showText("© 2024 CineMax - Sistema de Gestion de Reportes");
-                contentStream.endText();
-            }
-
-            // Guardar el documento
-            document.save(archivo);
-            System.out.println("PDF generado exitosamente con PDFBox: " + archivo.getAbsolutePath());
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo descargar el reporte: " + e.getMessage());
         }
     }
 

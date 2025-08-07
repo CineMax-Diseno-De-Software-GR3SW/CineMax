@@ -31,6 +31,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import com.cinemax.reportes.modelos.ReporteVentaDTO;
+import com.cinemax.reportes.servicios.VentasService;
 import com.cinemax.reportes.modelos.ReporteGenerado;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
@@ -211,6 +212,9 @@ public class ControladorReportesPrincipal {
     private TableColumn<ReporteGenerado, Integer> colAcciones;
 
     private ObservableList<ReporteGenerado> reportesGenerados = FXCollections.observableArrayList();
+    
+    private VentasService ventasService = new VentasService();
+    private Map<String, Object> datos = ventasService.getResumenDeVentas();;
 
     // Datos quemados para las gráficas
     private final List<ReporteVentaDTO> datosSimulados = Arrays.asList(
@@ -247,6 +251,13 @@ public class ControladorReportesPrincipal {
 
         // Inicializar gráficas vacías
         inicializarGraficasVacias();
+
+        System.out.println("Total boletos: " + datos.get("total_boletos_vendidos"));
+        System.out.println("Total facturas: " + datos.get("total_facturas"));
+        System.out.println("Ingreso total: " + datos.get("ingreso_total"));
+        System.out.println("Total funciones: " + datos.get("total_funciones"));
+        System.out.println("Fecha inicio: " + datos.get("fecha_inicio"));
+        System.out.println("Fecha fin: " + datos.get("fecha_fin"));
     }
 
     private void configurarTablaReportes() {
@@ -518,15 +529,18 @@ public class ControladorReportesPrincipal {
 
             VBox contenido = new VBox(15);
             contenido.setPadding(new Insets(20));
-            contenido.setStyle("-fx-background-color: #f5f5f5;");
+            contenido.setStyle("-fx-background-color: #2B2B2B;");
 
             // Header del reporte
             VBox headerBox = new VBox(10);
             headerBox.setStyle(
-                    "-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+                    "-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
 
             Label titulo = new Label("REPORTE DE VENTAS - CINEMAX");
-            titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;");
+            titulo.setStyle(
+                    "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-alignment: center; -fx-pref-width: 760;");
+            titulo.setMaxWidth(Double.MAX_VALUE);
+            titulo.setAlignment(Pos.CENTER);
 
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
@@ -534,10 +548,10 @@ public class ControladorReportesPrincipal {
 
             Label fechaGen = new Label("Período: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
                     " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            fechaGen.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
+            fechaGen.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
 
             Label horarioLabel = new Label("Horario: " + horario);
-            horarioLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #7f8c8d;");
+            horarioLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
 
             Label estado = new Label("Estado: Generado el "
                     + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
@@ -548,12 +562,20 @@ public class ControladorReportesPrincipal {
             // Contenido del reporte con gráficas
             VBox contenidoReporte = generarContenidoReporteCompleto(datos);
 
+            HBox barraNota = new HBox();
+            barraNota.setStyle(
+                    "-fx-background-color: #2B2B2B; -fx-padding: 12 0 12 0; -fx-border-radius: 0; -fx-border-width: 0;");
+            barraNota.setAlignment(Pos.CENTER_LEFT);
+            barraNota.setMaxWidth(Double.MAX_VALUE);
+
             // Nota sobre el reporte
             Label notaReporte = new Label(
                     "📊 Este reporte incluye datos de ventas, gráficas de distribución y análisis detallado del período seleccionado.");
             notaReporte.setStyle(
-                    "-fx-font-size: 11px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-background-color: #fdf2e9; -fx-padding: 10; -fx-border-radius: 5px;");
-            notaReporte.setWrapText(true);
+                    "-fx-font-size: 12px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-padding: 0 20 0 20;");
+            notaReporte.setMaxWidth(Double.MAX_VALUE);
+
+            barraNota.getChildren().add(notaReporte);
 
             // Botones
             HBox botonesBox = new HBox(10);
@@ -586,9 +608,10 @@ public class ControladorReportesPrincipal {
 
             botonesBox.getChildren().add(btnCerrar);
 
+            // Lo que se va a mostrar en el componente
             ScrollPane scrollPane = new ScrollPane();
             VBox contenidoCompleto = new VBox(15);
-            contenidoCompleto.getChildren().addAll(headerBox, contenidoReporte, notaReporte);
+            contenidoCompleto.getChildren().addAll(headerBox, contenidoReporte, barraNota);
             scrollPane.setContent(contenidoCompleto);
             scrollPane.setFitToWidth(true);
 
@@ -608,14 +631,15 @@ public class ControladorReportesPrincipal {
     private VBox generarContenidoReporteCompleto(List<ReporteVentaDTO> datos) {
         VBox contenido = new VBox(20);
         contenido.setStyle(
-                "-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+                "-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
 
         // Sección de resumen de datos
         Label tituloSeccion = new Label("📊 RESUMEN DE VENTAS");
-        tituloSeccion.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;");
+        tituloSeccion.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         VBox tablaDatos = new VBox(5);
-        tablaDatos.setStyle("-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10;");
+        tablaDatos.setStyle(
+                "-fx-background-color: #2B2B2B; -fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10; -fx-text-fill: #ecf0f1;");
 
         // Headers de la tabla
         HBox headerTabla = new HBox();
@@ -652,16 +676,16 @@ public class ControladorReportesPrincipal {
 
         // Sección de gráficas reales
         Label tituloGraficas = new Label("📈 GRÁFICAS DE ANÁLISIS");
-        tituloGraficas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;");
+        tituloGraficas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         VBox graficasBox = new VBox(15);
-        graficasBox.setStyle("-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 15;");
+        graficasBox.setStyle("-fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 15;");
 
         // Gráfica de barras real
         VBox graficaBarras = new VBox(10);
-        graficaBarras.setStyle("-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-border-radius: 5px;");
+        graficaBarras.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 15; -fx-border-radius: 5px;");
         Label lblGraficaBarras = new Label("📊 Gráfica de Barras: Ventas por Tipo de Boleto (VIP vs Normal)");
-        lblGraficaBarras.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-size: 14px;");
+        lblGraficaBarras.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-font-size: 14px;");
 
         BarChart<String, Number> barChartPreview = crearGraficaBarrasPreview(datos);
         barChartPreview.setPrefHeight(300);
@@ -671,9 +695,9 @@ public class ControladorReportesPrincipal {
 
         // Gráfica de pastel real
         VBox graficaPastel = new VBox(10);
-        graficaPastel.setStyle("-fx-background-color: #f8f9fa; -fx-padding: 15; -fx-border-radius: 5px;");
+        graficaPastel.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 15; -fx-border-radius: 5px;");
         Label lblGraficaPastel = new Label("🥧 Gráfica de Pastel: Distribución de Boletos por Formato (2D vs 3D)");
-        lblGraficaPastel.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-font-size: 14px;");
+        lblGraficaPastel.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-font-size: 14px;");
 
         PieChart pieChartPreview = crearGraficaPastelPreview(datos);
         pieChartPreview.setPrefHeight(300);
@@ -685,10 +709,10 @@ public class ControladorReportesPrincipal {
 
         // Estadísticas adicionales
         Label tituloEstadisticas = new Label("📋 ESTADÍSTICAS ADICIONALES");
-        tituloEstadisticas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #34495e;");
+        tituloEstadisticas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         VBox estadisticasBox = new VBox(10);
-        estadisticasBox.setStyle("-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 15;");
+        estadisticasBox.setStyle("-fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 15;");
 
         // Calcular estadísticas
         Map<String, Integer> boletosPorTipo = new HashMap<>();
@@ -716,7 +740,7 @@ public class ControladorReportesPrincipal {
 
     private HBox crearFilaTablaCompleta(ReporteVentaDTO dato) {
         HBox fila = new HBox();
-        fila.setStyle("-fx-background-color: #f8f9fa; -fx-border-color: #dee2e6; -fx-border-width: 0 0 1 0;");
+        fila.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 0 0 1 0;");
 
         Label celdaFecha = crearCeldaTabla(dato.fecha, false);
         Label celdaTipo = crearCeldaTabla(dato.tipoBoleto, false);
@@ -730,10 +754,10 @@ public class ControladorReportesPrincipal {
 
     private HBox crearEstadistica(String titulo, String valor) {
         HBox estadistica = new HBox(10);
-        estadistica.setStyle("-fx-background-color: #f8f9fa; -fx-padding: 8; -fx-border-radius: 3px;");
+        estadistica.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 8; -fx-border-radius: 3px;");
 
         Label lblTitulo = new Label(titulo + ":");
-        lblTitulo.setStyle("-fx-font-weight: bold; -fx-text-fill: #2c3e50; -fx-min-width: 150;");
+        lblTitulo.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-min-width: 150;");
 
         Label lblValor = new Label(valor);
         lblValor.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
@@ -745,7 +769,7 @@ public class ControladorReportesPrincipal {
     private BarChart<String, Number> crearGraficaBarrasPreview(List<ReporteVentaDTO> datos) {
         BarChart<String, Number> barChartPreview = new BarChart<>(new CategoryAxis(), new NumberAxis());
         barChartPreview.setTitle("Ventas por Tipo de Boleto (VIP vs Normal)");
-        barChartPreview.setStyle("-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px;");
+        barChartPreview.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px;");
 
         // Configurar ejes
         CategoryAxis xAxis = (CategoryAxis) barChartPreview.getXAxis();
@@ -754,8 +778,8 @@ public class ControladorReportesPrincipal {
         yAxis.setLabel("Cantidad de Boletos Vendidos");
 
         // Aplicar estilos a los ejes
-        xAxis.setStyle("-fx-tick-label-fill: #2c3e50; -fx-font-weight: bold;");
-        yAxis.setStyle("-fx-tick-label-fill: #2c3e50; -fx-font-weight: bold;");
+        xAxis.setStyle("-fx-tick-label-fill: #ecf0f1; -fx-font-weight: bold;");
+        yAxis.setStyle("-fx-tick-label-fill: #ecf0f1; -fx-font-weight: bold;");
 
         // Agrupar datos por fecha y tipo de boleto (solo VIP y Normal)
         Map<String, Map<String, Integer>> datosAgrupados = new HashMap<>();
@@ -785,30 +809,50 @@ public class ControladorReportesPrincipal {
         // Agregar series al gráfico
         barChartPreview.getData().addAll(serieVIP, serieNormal);
 
+        barChartPreview.applyCss();
+        if (barChartPreview.lookup(".chart-title") != null)
+            barChartPreview.lookup(".chart-title")
+                    .setStyle("-fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;");
+        barChartPreview.lookupAll(".axis-label")
+                .forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1; -fx-font-weight: bold;"));
+        barChartPreview.lookupAll(".chart-legend").forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1;"));
+
         return barChartPreview;
     }
 
     private PieChart crearGraficaPastelPreview(List<ReporteVentaDTO> datos) {
         PieChart pieChartPreview = new PieChart();
         pieChartPreview.setTitle("Distribución de Boletos por Formato (2D vs 3D)");
-        pieChartPreview.setStyle("-fx-background-color: white; -fx-border-color: #ddd; -fx-border-width: 1px;");
+        pieChartPreview.setStyle(
+                "-fx-background-color: #2B2B2B; -fx-border-color: #ecf0f1; -fx-border-width: 1px;");
 
-        // Agrupar datos por formato (2D vs 3D) - cantidad de boletos
+        // Agrupar datos por formato (2D vs 3D)
         Map<String, Integer> datosPorFormato = new HashMap<>();
-
         for (ReporteVentaDTO dato : datos) {
             datosPorFormato.merge(dato.formato, dato.boletosVendidos, Integer::sum);
         }
-
-        // Agregar datos al gráfico de pastel (solo una vez)
         for (Map.Entry<String, Integer> entry : datosPorFormato.entrySet()) {
             pieChartPreview.getData()
                     .add(new PieChart.Data(entry.getKey() + " (" + entry.getValue() + ")", entry.getValue()));
         }
 
-        // Aplicar estilos a las etiquetas
         pieChartPreview.setLabelLineLength(10);
         pieChartPreview.setLabelsVisible(true);
+
+        // Listener para forzar color blanco en las etiquetas cada vez que cambian
+        pieChartPreview.getData().addListener((javafx.collections.ListChangeListener<PieChart.Data>) c -> {
+            pieChartPreview.applyCss();
+            pieChartPreview.lookupAll(".chart-pie-label")
+                .forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1; -fx-font-weight: bold;"));
+        });
+
+        // También forzar el color al crear el gráfico
+        pieChartPreview.applyCss();
+        if (pieChartPreview.lookup(".chart-title") != null)
+            pieChartPreview.lookup(".chart-title")
+                .setStyle("-fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;");
+        pieChartPreview.lookupAll(".chart-legend").forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1;"));
+        pieChartPreview.lookupAll(".chart-pie-label").forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1; -fx-font-weight: bold;"));
 
         return pieChartPreview;
     }
@@ -818,7 +862,7 @@ public class ControladorReportesPrincipal {
         celda.setPrefWidth(120);
         celda.setMaxWidth(120);
         celda.setStyle(esHeader ? "-fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;"
-                : "-fx-text-fill: #2c3e50; -fx-padding: 5; -fx-alignment: center;");
+                : "-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
         return celda;
     }
 
