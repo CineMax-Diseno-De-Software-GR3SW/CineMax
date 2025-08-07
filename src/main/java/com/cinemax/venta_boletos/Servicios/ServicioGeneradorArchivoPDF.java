@@ -47,7 +47,7 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
      * @param factura La factura con los datos a imprimir en el PDF
      */
     @Override
-    public void generarFacturaPDF(Factura factura) {
+    public void generarFactura(Factura factura) {
         // Asegura que exista la carpeta de destino
         crearCarpetaSiNoExiste(CARPETA_FACTURAS);
 
@@ -192,7 +192,7 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
      * @param boletos Lista de boletos a imprimir
      */
     @Override
-    public void generarBoletosPDF(List<Producto> boletos) {
+    public void generarBoletos(List<Producto> boletos) {
         // Asegura que exista la carpeta de destino
         crearCarpetaSiNoExiste(CARPETA_BOLETOS);
 

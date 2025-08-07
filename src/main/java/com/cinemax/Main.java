@@ -26,7 +26,7 @@ public class Main extends Application {
         // https://cdn-icons-png.flaticon.com/512/44/44460.png
 
         stage.setTitle("CineMax");
-//        stage.setMaximized(true);
+        stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
     }

@@ -19,37 +19,25 @@ import javafx.scene.Node;
 import javafx.application.Platform;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 /**
  * Servicio para la gestión y visualización de funciones cinematográficas.
- * 
+ * <p>
  * Responsabilidades principales:
- * 1. Carga y muestra las funciones disponibles para una película específica
- * 2. Configura la presentación de datos en una tabla JavaFX
- * 3. Maneja la navegación entre pantallas de cartelera y selección de butacas
- * 4. Valida y procesa la selección de funciones por parte del usuario
- * 
- * Flujo principal de operación:
- * 1. Recibe una película como parámetro de entrada
- * 2. Consulta las funciones disponibles para esa película
- * 3. Configura y popula una tabla con la información de las funciones
- * 4. Proporciona mecanismos para:
- * - Regresar a la pantalla de cartelera
- * - Seleccionar una función para continuar con la compra
- * 
- * Integración con otros componentes:
- * - Utiliza ControladorFunciones para obtener datos de funciones
- * - Interactúa con ControladorCargaAsignacionButacas para transición a
- * selección de butacas
- * - Emplea ManejadorMetodosComunes para manejo estándar de errores y navegación
- * 
- * @author [Nombre del autor o equipo]
- * @version 1.0
- * @since [Fecha de creación o versión]
+ * 1. Carga y muestra las funciones disponibles para una película específica.
+ * 2. Configura la presentación de datos en una tabla JavaFX.
+ * 3. Maneja la navegación entre pantallas de cartelera y selección de butacas.
+ * 4. Valida y procesa la selección de funciones por parte del usuario.
+ *
+ * @author GR3SW
+ * @version 1.2
  */
 public class ServicioMostrarFunciones {
 
@@ -64,50 +52,84 @@ public class ServicioMostrarFunciones {
 
     /**
      * Carga las funciones disponibles para una película específica en una tabla
-     * JavaFX.
-     * 
-     * @param tabla          Tabla donde se mostrarán las funciones
-     * @param colHora        Columna para mostrar la hora de la función
-     * @param colSala        Columna para mostrar la sala
-     * @param colFormato     Columna para mostrar el formato (2D, 3D, etc.)
-     * @param colTipoEstreno Columna para mostrar el tipo de estreno
-     * @param colPrecio      Columna para mostrar el precio
-     * @param colFecha       Columna para mostrar la fecha
-     * @param colTipoSala    Columna para mostrar el tipo de sala
-     * @param nombrePelicula Nombre de la película para filtrar funciones
-     * 
-     *                       Proceso:
-     *                       1. Configura las columnas de la tabla
-     *                       2. Obtiene las funciones desde el controlador
-     *                       3. Actualiza la tabla en el hilo de JavaFX
-     *                       4. Maneja casos de error o datos vacíos
+     * JavaFX, con la opción de aplicar filtros por fecha, formato y tipo de sala.
+     *
+     * @param tabla              Tabla donde se mostrarán las funciones.
+     * @param columnaHora        Columna para mostrar la hora de la función.
+     * @param columnaSala        Columna para mostrar la sala.
+     * @param columnaFormato     Columna para mostrar el formato (2D, 3D, etc.).
+     * @param columnaTipoEstreno Columna para mostrar el tipo de estreno.
+     * @param columnaPrecio      Columna para mostrar el precio.
+     * @param columnaFecha       Columna para mostrar la fecha.
+     * @param columnaTipoSala    Columna para mostrar el tipo de sala.
+     * @param nombrePelicula     Nombre de la película para filtrar funciones.
+     * @param fechaFiltro        Fecha por la cual filtrar las funciones. Puede ser
+     *                           nulo.
+     * @param formatoFiltro      Formato por el cual filtrar las funciones ("Todos",
+     *                           "2D", etc.).
+     * @param tipoSalaFiltro     Tipo de sala por el cual filtrar ("Todos", "VIP",
+     *                           etc.).
      */
     public void cargarFunciones(TableView<Funcion> tabla,
-            TableColumn<Funcion, String> colHora,
-            TableColumn<Funcion, String> colSala,
-            TableColumn<Funcion, String> colFormato,
-            TableColumn<Funcion, String> colTipoEstreno,
-            TableColumn<Funcion, String> colPrecio,
-            TableColumn<Funcion, String> colFecha,
-            TableColumn<Funcion, String> colTipoSala,
-            String nombrePelicula) {
+            TableColumn<Funcion, String> columnaHora,
+            TableColumn<Funcion, String> columnaSala,
+            TableColumn<Funcion, String> columnaFormato,
+            TableColumn<Funcion, String> columnaTipoEstreno,
+            TableColumn<Funcion, String> columnaPrecio,
+            TableColumn<Funcion, String> columnaFecha,
+            TableColumn<Funcion, String> columnaTipoSala,
+            String nombrePelicula,
+            LocalDate fechaFiltro,
+            String formatoFiltro,
+            String tipoSalaFiltro) {
 
-        configurarColumnas(colHora, colSala, colFormato, colTipoEstreno, colPrecio, colFecha, colTipoSala);
+        configurarColumnas(columnaHora, columnaSala, columnaFormato, columnaTipoEstreno, columnaPrecio, columnaFecha,
+                columnaTipoSala);
 
         try {
             List<Funcion> funcionesObtenidas = controladorFunciones.obtenerFuncionesPorNombrePelicula(nombrePelicula);
+
+            // Filtrar funciones que no han pasado descomentar para que valga
+            // funcionesObtenidas = funcionesObtenidas.stream()
+            // .filter(funcion -> funcion.getFechaHoraInicio() != null &&
+            // !funcion.getFechaHoraInicio().isBefore(LocalDateTime.now()))
+            // .collect(Collectors.toList());
+
+            // Aplicar filtros adicionales
+            if (fechaFiltro != null) {
+                funcionesObtenidas = funcionesObtenidas.stream()
+                        .filter(funcion -> funcion.getFechaHoraInicio().toLocalDate().isEqual(fechaFiltro))
+                        .collect(Collectors.toList());
+            }
+
+            if (!"Todos".equals(formatoFiltro)) {
+                funcionesObtenidas = funcionesObtenidas.stream()
+                        .filter(funcion -> funcion.getFormato() != null &&
+                                formatoFiltro.equals(funcion.getFormato().toString()))
+                        .collect(Collectors.toList());
+            }
+
+            if (!"Todos".equals(tipoSalaFiltro)) {
+                funcionesObtenidas = funcionesObtenidas.stream()
+                        .filter(funcion -> funcion.getSala() != null &&
+                                funcion.getSala().getTipo() != null &&
+                                tipoSalaFiltro.equals(funcion.getSala().getTipo().toString()))
+                        .collect(Collectors.toList());
+            }
+
             ObservableList<Funcion> listaFunciones = FXCollections.observableArrayList(funcionesObtenidas);
 
             Platform.runLater(() -> {
                 tabla.setItems(listaFunciones);
                 if (listaFunciones.isEmpty()) {
-                    tabla.setPlaceholder(new Label("No hay funciones disponibles para " + nombrePelicula));
+                    String mensaje = "No hay funciones disponibles con los filtros seleccionados.";
+                    tabla.setPlaceholder(new Label(mensaje));
                 }
             });
 
         } catch (Exception e) {
             Platform.runLater(() -> {
-                tabla.setPlaceholder(new Label("Error al cargar funciones"));
+                tabla.setPlaceholder(new Label("Error al cargar funciones."));
                 ManejadorMetodosComunes.mostrarVentanaError("Error al cargar funciones: " + e.getMessage());
             });
             e.printStackTrace();
@@ -116,13 +138,8 @@ public class ServicioMostrarFunciones {
 
     /**
      * Navega de regreso a la pantalla de cartelera principal.
-     * 
-     * @param event Evento de acción que disparó la navegación
-     * 
-     *              Proceso:
-     *              1. Carga la vista de cartelera desde archivo FXML
-     *              2. Configura la nueva escena
-     *              3. Maneja posibles errores de carga
+     *
+     * @param event Evento de acción que disparó la navegación.
      */
     public void regresarPantallaCartelera(ActionEvent event) {
         try {
@@ -141,23 +158,11 @@ public class ServicioMostrarFunciones {
     /**
      * Confirma la función seleccionada para avanzar al proceso de selección de
      * butacas.
-     * 
-     * @param tabla    Tabla que contiene las funciones disponibles
-     * @param pelicula Nombre de la película seleccionada (para contexto)
-     * 
-     *                 Proceso:
-     *                 1. Valida que se haya seleccionado una función
-     *                 2. Prepara los datos para la siguiente pantalla
-     *                 3. Inicia la transición con pantalla de carga
-     *                 4. Maneja posibles errores en el proceso
+     *
+     * @param tabla Tabla que contiene las funciones disponibles.
      */
-    public void confirmarFuncion(TableView<Funcion> tabla, String pelicula) {
+    public void confirmarFuncion(TableView<Funcion> tabla) {
         Funcion funcionSeleccionada = tabla.getSelectionModel().getSelectedItem();
-
-        if (funcionSeleccionada == null) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Seleccione una función primero");
-            return;
-        }
 
         try {
             Stage currentStage = (Stage) tabla.getScene().getWindow();
@@ -178,59 +183,52 @@ public class ServicioMostrarFunciones {
 
     /**
      * Configura los renderizadores de valor para cada columna de la tabla.
-     * 
-     * @param colHora        Columna de hora
-     * @param colSala        Columna de sala
-     * @param colFormato     Columna de formato
-     * @param colTipoEstreno Columna de tipo de estreno
-     * @param colPrecio      Columna de precio
-     * @param colFecha       Columna de fecha
-     * @param colTipoSala    Columna de tipo de sala
-     * 
-     *                       Detalles de configuración:
-     *                       - Formatea fechas y horas según patrones predefinidos
-     *                       - Maneja valores nulos en todos los campos
-     *                       - Aplica formato monetario al precio
-     *                       - Adapta nombres de enumeraciones para mejor
-     *                       visualización
+     *
+     * @param columnaHora        Columna de hora.
+     * @param columnaSala        Columna de sala.
+     * @param columnaFormato     Columna de formato.
+     * @param columnaTipoEstreno Columna de tipo de estreno.
+     * @param columnaPrecio      Columna de precio.
+     * @param columnaFecha       Columna de fecha.
+     * @param columnaTipoSala    Columna de tipo de sala.
      */
-    private void configurarColumnas(TableColumn<Funcion, String> colHora,
-            TableColumn<Funcion, String> colSala,
-            TableColumn<Funcion, String> colFormato,
-            TableColumn<Funcion, String> colTipoEstreno,
-            TableColumn<Funcion, String> colPrecio,
-            TableColumn<Funcion, String> colFecha,
-            TableColumn<Funcion, String> colTipoSala) {
+    private void configurarColumnas(TableColumn<Funcion, String> columnaHora,
+            TableColumn<Funcion, String> columnaSala,
+            TableColumn<Funcion, String> columnaFormato,
+            TableColumn<Funcion, String> columnaTipoEstreno,
+            TableColumn<Funcion, String> columnaPrecio,
+            TableColumn<Funcion, String> columnaFecha,
+            TableColumn<Funcion, String> columnaTipoSala) {
 
-        colHora.setCellValueFactory(cellData -> new SimpleStringProperty(
+        columnaHora.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getFechaHoraInicio() != null
                         ? cellData.getValue().getFechaHoraInicio().format(FORMATO_HORA)
                         : ""));
 
-        colSala.setCellValueFactory(cellData -> new SimpleStringProperty(
+        columnaSala.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getSala() != null ? cellData.getValue().getSala().getNombre()
                         : "Sala no disponible"));
 
-        colTipoSala.setCellValueFactory(cellData -> new SimpleStringProperty(
+        columnaTipoSala.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getSala() != null && cellData.getValue().getSala().getTipo() != null
                         ? cellData.getValue().getSala().getTipo().toString()
                         : ""));
 
-        colFormato.setCellValueFactory(cellData -> new SimpleStringProperty(
+        columnaFormato.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getFormato() != null ? cellData.getValue().getFormato().toString()
                         : ""));
 
-        colTipoEstreno.setCellValueFactory(cellData -> new SimpleStringProperty(
+        columnaTipoEstreno.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getTipoEstreno() != null
                         ? cellData.getValue().getTipoEstreno().name().replace("_", " ")
                         : ""));
 
-        colPrecio.setCellValueFactory(cellData -> {
+        columnaPrecio.setCellValueFactory(cellData -> {
             BigDecimal precio = cellData.getValue().calcularPrecioFinal();
             return new SimpleStringProperty(precio != null ? String.format("$%.2f", precio) : "$0.00");
         });
 
-        colFecha.setCellValueFactory(cellData -> new SimpleStringProperty(
+        columnaFecha.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getFechaHoraInicio() != null
                         ? cellData.getValue().getFechaHoraInicio().format(FORMATO_FECHA)
                         : ""));

@@ -1,13 +1,17 @@
 package com.cinemax.venta_boletos.controladores;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.venta_boletos.servicios.ServicioMostrarFunciones;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.*;
 import javafx.event.ActionEvent;
 import javafx.application.Platform;
 
@@ -16,165 +20,202 @@ import javafx.application.Platform;
  * 
  * Responsabilidades:
  * - Muestra las funciones disponibles para una película seleccionada
+ * - Permite filtrar funciones por fecha, formato y tipo de sala
  * - Gestiona la selección de funciones por parte del usuario
- * - Proporciona navegación hacia:
- * - Pantalla de cartelera (regreso)
- * - Pantalla de selección de butacas (confirmación)
+ * - Navega a la pantalla de selección de butacas al confirmar
  * 
- * Flujo principal:
- * 1. Recibe el nombre de la película seleccionada
- * 2. Carga y muestra las funciones disponibles
- * 3. Permite seleccionar una función
- * 4. Navega a la siguiente pantalla con la función seleccionada
+ * Patrones utilizados:
+ * - MVC (Model-View-Controller)
+ * - Observer (para actualizaciones de UI)
  * 
- * @author [Tu nombre o equipo]
- * @version 1.0
+ * @author CineMax Development Team
+ * @version 1.3
  */
 public class ControladorMostrarFunciones {
 
-    // ===== ELEMENTOS DE INTERFAZ (FXML) =====
+    // ========== COMPONENTES UI ==========
 
-    /** Etiqueta que muestra el título de la película seleccionada */
     @FXML
-    private Label peliculaTituloLabel;
+    private Label etiquetaTituloPelicula;
+    @FXML
+    private TableView<Funcion> tablaFunciones;
+    @FXML
+    private TableColumn<Funcion, String> columnaHora;
+    @FXML
+    private TableColumn<Funcion, String> columnaSala;
+    @FXML
+    private TableColumn<Funcion, String> columnaTipoSala;
+    @FXML
+    private TableColumn<Funcion, String> columnaFormato;
+    @FXML
+    private TableColumn<Funcion, String> columnaTipoEstreno;
+    @FXML
+    private TableColumn<Funcion, String> columnaPrecio;
+    @FXML
+    private TableColumn<Funcion, String> columnaFecha;
+    @FXML
+    private DatePicker selectorFecha;
+    @FXML
+    private ComboBox<String> cmbFiltroFormato;
+    @FXML
+    private ComboBox<String> cmbFiltroTipoSala;
+    @FXML
+    private ImageView imagenPelicula;
+    @FXML
+    private Label etiquetaGenero;
+    @FXML
+    private Label etiquetaDuracion;
 
-    /** Tabla que muestra la lista de funciones disponibles */
-    @FXML
-    private TableView<Funcion> tableViewFunciones;
-
-    /** Columnas de la tabla de funciones */
-    @FXML
-    private TableColumn<Funcion, String> colHora;
-    @FXML
-    private TableColumn<Funcion, String> colSala;
-    @FXML
-    private TableColumn<Funcion, String> colTipoSala;
-    @FXML
-    private TableColumn<Funcion, String> colFormato;
-    @FXML
-    private TableColumn<Funcion, String> colTipoEstreno;
-    @FXML
-    private TableColumn<Funcion, String> colPrecio;
-    @FXML
-    private TableColumn<Funcion, String> colFecha;
-
-    // ===== ATRIBUTOS DE LÓGICA =====
-
-    /** Servicio para gestión de datos de funciones */
+    // ========== DEPENDENCIAS ==========
     private final ServicioMostrarFunciones servicio = new ServicioMostrarFunciones();
+    private Pelicula peliculaActual;
 
-    /** Nombre de la película actualmente seleccionada */
-    private String nombrePeliculaActual;
-
-    // ===== MÉTODOS DE INICIALIZACIÓN =====
+    // ========== INICIALIZACIÓN ==========
 
     /**
-     * Inicializa el controlador después de cargar el FXML.
-     * 
-     * Realiza:
-     * 1. Verificación de inyección de dependencias FXML
-     * 2. Configuración inicial de la tabla
+     * Inicializa el controlador después de cargar el FXML
      */
     @FXML
     public void initialize() {
-        System.out.println("Iniciando ControladorMostrarFunciones...");
-        verificarInyecciones();
         configurarTabla();
+        configurarFiltros();
     }
 
     /**
-     * Verifica que todos los elementos FXML se hayan inyectado correctamente.
-     * 
-     * Imprime mensajes de error para cualquier elemento no inyectado.
-     */
-    private void verificarInyecciones() {
-        if (tableViewFunciones == null)
-            System.err.println("ERROR: tableViewFunciones no inyectado");
-        if (colHora == null)
-            System.err.println("ERROR: colHora no inyectado");
-        if (colSala == null)
-            System.err.println("ERROR: colSala no inyectado");
-        if (colTipoSala == null)
-            System.err.println("ERROR: colTipoSala no inyectado");
-        if (colFormato == null)
-            System.err.println("ERROR: colFormato no inyectado");
-        if (colTipoEstreno == null)
-            System.err.println("ERROR: colTipoEstreno no inyectado");
-        if (colPrecio == null)
-            System.err.println("ERROR: colPrecio no inyectado");
-        if (colFecha == null)
-            System.err.println("ERROR: colFecha no inyectado");
-    }
-
-    /**
-     * Configura propiedades iniciales de la tabla.
+     * Configura propiedades iniciales de la tabla
      */
     private void configurarTabla() {
-        tableViewFunciones.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        tablaFunciones.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
-    // ===== MÉTODOS PRINCIPALES =====
+    /**
+     * Configura los componentes de filtrado
+     */
+    private void configurarFiltros() {
+        if (selectorFecha != null) {
+            selectorFecha.setOnAction(event -> aplicarFiltros());
+        }
+
+        // Configurar opciones de formato
+        cmbFiltroFormato.getItems().addAll("Todos", "2D", "3D", "4DX", "IMAX");
+        cmbFiltroFormato.getSelectionModel().selectFirst();
+        cmbFiltroFormato.setOnAction(event -> aplicarFiltros());
+
+        // Configurar opciones de tipo de sala
+        cmbFiltroTipoSala.getItems().addAll("Todos", "NORMAL", "VIP", "PREMIUM", "D-Box");
+        cmbFiltroTipoSala.getSelectionModel().selectFirst();
+        cmbFiltroTipoSala.setOnAction(event -> aplicarFiltros());
+    }
+
+    // ========== MÉTODOS PRINCIPALES ==========
 
     /**
-     * Establece la película para la cual se mostrarán las funciones.
+     * Establece la película actual y actualiza la UI
      * 
-     * @param pelicula Nombre de la película seleccionada
+     * @param pelicula Película seleccionada
      */
-    public void setPelicula(String pelicula) {
-        this.nombrePeliculaActual = pelicula;
-
+    public void setPelicula(Pelicula pelicula) {
+        this.peliculaActual = pelicula;
         Platform.runLater(() -> {
-            actualizarTitulo(pelicula);
+            actualizarInformacionPelicula(pelicula);
             cargarFunciones();
         });
     }
 
     /**
-     * Actualiza el título de la película en la interfaz.
+     * Actualiza los componentes UI con información de la película
      * 
-     * @param pelicula Nombre de la película a mostrar
+     * @param pelicula Película a mostrar
      */
-    private void actualizarTitulo(String pelicula) {
-        if (peliculaTituloLabel != null) {
-            peliculaTituloLabel.setText("Funciones de: " + pelicula);
+    private void actualizarInformacionPelicula(Pelicula pelicula) {
+        etiquetaTituloPelicula.setText("Funciones de: " + pelicula.getTitulo());
+        etiquetaGenero.setText(pelicula.getGenerosComoString());
+        etiquetaDuracion.setText(pelicula.getDuracionMinutos() + " min");
+        cargarImagenPelicula(pelicula.getImagenUrl());
+    }
+
+    /**
+     * Carga la imagen de la película con manejo de errores
+     * 
+     * @param urlImagen URL de la imagen a cargar
+     */
+    private void cargarImagenPelicula(String urlImagen) {
+        try {
+            Image imagen = new Image(urlImagen, true);
+            imagen.errorProperty().addListener((observable, valorAnterior, esError) -> {
+                if (esError) {
+                    imagenPelicula.setImage(new Image("https://i.imgur.com/6LWDqET.png"));
+                }
+            });
+            imagenPelicula.setImage(imagen);
+        } catch (Exception excepcion) {
+            imagenPelicula.setImage(new Image("https://i.imgur.com/6LWDqET.png"));
         }
     }
 
     /**
-     * Carga las funciones disponibles para la película actual.
+     * Carga las funciones aplicando los filtros actuales
      */
     private void cargarFunciones() {
-        servicio.cargarFunciones(
-                tableViewFunciones,
-                colHora,
-                colSala,
-                colFormato,
-                colTipoEstreno,
-                colPrecio,
-                colFecha,
-                colTipoSala,
-                nombrePeliculaActual);
+        LocalDate fecha = selectorFecha.getValue();
+        String formato = cmbFiltroFormato.getValue();
+        String tipoSala = cmbFiltroTipoSala.getValue();
+
+        if (peliculaActual != null) {
+            servicio.cargarFunciones(
+                    tablaFunciones,
+                    columnaHora,
+                    columnaSala,
+                    columnaFormato,
+                    columnaTipoEstreno,
+                    columnaPrecio,
+                    columnaFecha,
+                    columnaTipoSala,
+                    peliculaActual.getTitulo(),
+                    fecha,
+                    formato,
+                    tipoSala);
+        }
     }
 
-    // ===== MANEJADORES DE EVENTOS =====
+    // ========== MANEJADORES DE EVENTOS ==========
 
     /**
-     * Maneja el evento de regresar a la pantalla de cartelera.
+     * Maneja el evento de regresar a la cartelera
      * 
-     * @param event Evento de acción del botón
+     * @param evento Evento de acción
      */
     @FXML
-    public void handleRegresar(ActionEvent event) {
-        servicio.regresarPantallaCartelera(event);
+    public void manejarRegreso(ActionEvent evento) {
+        servicio.regresarPantallaCartelera(evento);
     }
 
     /**
-     * Maneja la confirmación de la función seleccionada.
-     * 
-     * Navega a la pantalla de selección de butacas con la función elegida.
+     * Maneja la confirmación de función seleccionada
      */
     @FXML
-    private void handleConfirmar() {
-        servicio.confirmarFuncion(tableViewFunciones, nombrePeliculaActual);
+    private void manejarConfirmacion() {
+        Funcion seleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
+
+        if (seleccionada == null) {
+            ManejadorMetodosComunes.mostrarVentanaError("Ninguna Funcion Seleccionada");
+            return;
+        }
+
+        // Verificar si la función ya ha pasado (descomentar si se desea validar)
+        // if (seleccionada.getFechaHoraInicio().isBefore(LocalDateTime.now())) {
+        // ManejadorMetodosComunes.mostrarVentanaError("Funcion no disponible");
+        // return;
+        // }
+
+        servicio.confirmarFuncion(tablaFunciones);
     }
+
+    /**
+     * Aplica los filtros actuales y recarga las funciones
+     */
+    private void aplicarFiltros() {
+        cargarFunciones();
+    }
+
 }

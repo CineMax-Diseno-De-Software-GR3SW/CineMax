@@ -96,7 +96,7 @@ public class ServicioMostrarCartelera {
                     "CineMAX");
 
             if (controller != null) {
-                controller.setPelicula(peliculaSeleccionada.getTitulo());
+                controller.setPelicula(peliculaSeleccionada);
             }
 
         } catch (Exception e) {

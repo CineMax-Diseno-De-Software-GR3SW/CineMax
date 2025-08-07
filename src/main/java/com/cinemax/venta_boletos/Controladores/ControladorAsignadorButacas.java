@@ -28,7 +28,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
- * Controlador para la pantalla de selección de butacas en el proceso de venta de boletos.
+ * Controlador para la pantalla de selección de butacas en el proceso de venta
+ * de boletos.
  * 
  * Esta clase maneja la lógica de:
  * - Visualización del mapa de butacas de una sala específica
@@ -50,7 +51,7 @@ import javafx.stage.Stage;
 public class ControladorAsignadorButacas {
 
     // ===== ELEMENTOS DE LA INTERFAZ (FXML) =====
-    
+
     /** Botón para continuar al proceso de facturación */
     @FXML
     private Button buttonContinuar;
@@ -76,19 +77,19 @@ public class ControladorAsignadorButacas {
     private VBox mapaButacasContainer;
 
     // ===== ATRIBUTOS DE LÓGICA =====
-    
+
     /** Controlador para la gestión del mapa de butacas y su visualización */
     private ControladorDeConsultaSalas controladorConsultaSalas;
-    
+
     /** Lista de butacas que el usuario ha seleccionado para comprar */
     private List<Butaca> butacasSeleccionadas;
-    
+
     /** DAO para acceso a datos de boletos y butacas ocupadas */
     private BoletoDAO boletoDAO;
-    
+
     /** Función cinematográfica seleccionada (película + horario + sala) */
     private Funcion funcionSeleccionada;
-    
+
     /** Controlador del panel lateral que muestra información de la función */
     private ControladorInformacionLateral controladorInformacionLateral;
 
@@ -190,7 +191,7 @@ public class ControladorAsignadorButacas {
      * Establece la comunicación bidireccional con este controlador.
      * 
      * @param codigosButacasOcupadas Set con IDs de butacas ya vendidas
-     * @param salaSeleccionada Sala cuyo mapa se debe renderizar
+     * @param salaSeleccionada       Sala cuyo mapa se debe renderizar
      */
     private void cargarMapaButacas(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada) {
         try {
@@ -205,7 +206,7 @@ public class ControladorAsignadorButacas {
             // 3. Configurar comunicación bidireccional entre controladores
             controladorConsultaSalas = loader.getController();
             controladorConsultaSalas.setControladorAsignadorButacas(this);
-            
+
             // 4. Renderizar butacas con estado visual (ocupada/disponible)
             controladorConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);
 
@@ -227,11 +228,12 @@ public class ControladorAsignadorButacas {
     void onBackAction(ActionEvent event) {
         // Obtener referencia a la ventana actual
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
-        
+
         // Cambiar a la vista de funciones preservando el contexto de la película
         ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes
-                .cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/VistaMostrarFunciones.fxml", "CineMAX");
-        controladorFunciones.setPelicula(funcionSeleccionada.getPelicula().getTitulo());
+                .cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
+                        "CineMAX");
+        controladorFunciones.setPelicula(funcionSeleccionada.getPelicula());
     }
 
     /**
@@ -239,7 +241,8 @@ public class ControladorAsignadorButacas {
      * 
      * Valida que se hayan seleccionado butacas, genera los boletos correspondientes
      * y navega a la pantalla de facturación. Implementa un patrón de carga previa
-     * de datos antes de mostrar la nueva vista para evitar problemas de renderizado.
+     * de datos antes de mostrar la nueva vista para evitar problemas de
+     * renderizado.
      * 
      * @param event Evento de acción del botón
      */
@@ -269,8 +272,9 @@ public class ControladorAsignadorButacas {
             ControladorFacturacion controladorFacturacion = loader.getController();
             controladorFacturacion.setControladorInformacionLateral(controladorInformacionLateral);
 
-            // 5. Inicializar datos ANTES de mostrar la vista (evita problemas de renderizado)
-            controladorFacturacion.initData(boletosGenerados);
+            // 5. Inicializar datos ANTES de mostrar la vista (evita problemas de
+            // renderizado)
+            controladorFacturacion.cargarBoletosSeleccionados(boletosGenerados);
 
             // 6. Ahora sí cambiar la escena con todos los datos ya cargados
             Scene newScene = new Scene(root);
@@ -299,10 +303,10 @@ public class ControladorAsignadorButacas {
         if (butaca == null || butacasSeleccionadas.contains(butaca)) {
             return;
         }
-        
+
         // Agregar a la lista interna de seleccionadas
         butacasSeleccionadas.add(butaca);
-        
+
         // Actualizar visualización en panel lateral
         controladorInformacionLateral.mostrarButacaSeleccionada(butaca);
         controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
@@ -322,10 +326,10 @@ public class ControladorAsignadorButacas {
         if (butaca == null || !butacasSeleccionadas.contains(butaca)) {
             return;
         }
-        
+
         // Remover de la lista interna
         butacasSeleccionadas.remove(butaca);
-        
+
         // Actualizar visualización en panel lateral
         controladorInformacionLateral.removerButacaDeLista(butaca);
         controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);

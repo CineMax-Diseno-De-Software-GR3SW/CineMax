@@ -7,6 +7,7 @@ import com.cinemax.venta_boletos.servicios.strategy.EstrategiaCedulaValidacion;
 import com.cinemax.venta_boletos.servicios.strategy.EstrategiaPasaporteValidacion;
 import com.cinemax.venta_boletos.servicios.strategy.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
@@ -15,6 +16,7 @@ import com.cinemax.venta_boletos.modelos.persistencia.ClienteDAO;
 import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
 import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivoPDF;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
+import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -126,7 +128,7 @@ public class ControladorFacturacion {
      * 
      * @param boletos Lista de productos (boletos) que fueron seleccionados por el usuario.
      */
-    public void initData(List<Producto> boletos) {
+    public void cargarBoletosSeleccionados(List<Producto> boletos) {
         this.boletos = boletos;
 
         // 2. Validar si el controlador lateral está inicializado correctamente.
@@ -342,12 +344,12 @@ public class ControladorFacturacion {
 
         // Generar los boletos en formato PDF.
         ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
-        generador.generarBoletosPDF(boletos);
+        generador.generarBoletos(boletos);
 
         FacturaDAO facturaDAO = new FacturaDAO();
-        
+        CalculadorImpuesto calculadorImpuesto = new CalculadorIVA();
         // Generar la factura con los boletos y el cliente.
-        Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente);
+        Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente,calculadorImpuesto);
         try {
             // Guardar la factura en la base de datos.
             facturaDAO.crearFactura(facturaFinal);
@@ -398,8 +400,8 @@ public class ControladorFacturacion {
                 new ArrayList<>(List.of(((Boleto) boletos.get(0)).getFuncion()))
             );            
 
-            // Mostrar la vista de carga pasando los datos necesarios.
-            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatos(currentStage, controladorCargaConDatos, 8, 100);
+            // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
+            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 8, 325);
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());

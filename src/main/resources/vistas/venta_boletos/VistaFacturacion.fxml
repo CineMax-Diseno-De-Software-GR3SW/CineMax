@@ -15,6 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
 
 <BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.controladores.ControladorFacturacion">
     <top>
@@ -42,15 +43,30 @@
                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="146.20001220703125" minWidth="10.0" prefWidth="143.79998779296875" />
                     <ColumnConstraints hgrow="SOMETIMES" maxWidth="301.199951171875" minWidth="10.0" prefWidth="287.0000122070313" />
                 </columnConstraints>
-                <Label text="Nombre*" textFill="RED" />
+                <TextFlow>
+                    <Text text="Nombre" fill="WHITE" />
+                    <Text text="*" fill="RED" />
+                </TextFlow>
                 <TextField fx:id="nombreField" promptText="Nombre" styleClass="text-field" GridPane.columnIndex="1" />
-                <Label text="Apellido*" GridPane.rowIndex="1" />
+                <TextFlow GridPane.rowIndex="1">
+                    <Text text="Apellido" fill="WHITE" />
+                    <Text text="*" fill="RED" />
+                </TextFlow>
                 <TextField fx:id="apellidoField" promptText="Apellido" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Tipo de documento*" GridPane.rowIndex="2" />
+                <TextFlow GridPane.rowIndex="2">
+                    <Text text="Tipo de documento" fill="WHITE" />
+                    <Text text="*" fill="RED" />
+                </TextFlow>
                 <ComboBox fx:id="tipoDocumentoBox" prefWidth="Infinity" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Documento*" GridPane.rowIndex="3" />
+                <TextFlow GridPane.rowIndex="3">
+                    <Text text="Documento" fill="WHITE" />
+                    <Text text="*" fill="RED" />
+                </TextFlow>
                 <TextField fx:id="documentoField" promptText="Documento" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <Label text="Correo electrónico*" GridPane.rowIndex="4" />
+                <TextFlow GridPane.rowIndex="4">
+                    <Text text="Correo electrónico" fill="WHITE" />
+                    <Text text="*" fill="RED" />
+                </TextFlow>
                 <TextField fx:id="correoField" promptText="ejemplo@email.com" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             <rowConstraints>
                <RowConstraints />
@@ -70,7 +86,7 @@
                <CheckBox fx:id="confirmCheckBox" styleClass="confirmation-checkbox" text="Confirmar la compra" />
             </children>
          </VBox>
-         <Label style="-fx-font-size: 12px;" text="Una vez realizada la compra, no se aceptan cambios ni devoluciones" textFill="#888888" />
+         <Label style="-fx-font-size: 14px;" text="Una vez realizada la compra, no se aceptan cambios ni devoluciones" textFill="#888888" />
         </VBox>
    </center>
    <right>

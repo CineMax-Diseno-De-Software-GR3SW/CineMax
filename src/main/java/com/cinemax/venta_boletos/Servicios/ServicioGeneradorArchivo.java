@@ -25,7 +25,7 @@ public interface ServicioGeneradorArchivo {
      * @param factura La factura a serializar en PDF. No debe ser nula.
      * @throws GeneracionArchivoException Si ocurre un error durante la generación
      */
-    void generarFacturaPDF(Factura factura);
+    void generarFactura(Factura factura);
 
     /**
      * Genera archivos PDF para una lista de boletos/entradas.
@@ -34,5 +34,5 @@ public interface ServicioGeneradorArchivo {
      *                vacía.
      * @throws GeneracionArchivoException Si ocurre un error durante la generación
      */
-    void generarBoletosPDF(List<Producto> boletos);
+    void generarBoletos(List<Producto> boletos);
 }

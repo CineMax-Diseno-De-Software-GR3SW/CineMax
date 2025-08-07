@@ -3,12 +3,16 @@ package com.cinemax.comun;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Controlador para la pantalla de carga
@@ -19,9 +23,10 @@ import java.util.ResourceBundle;
  * 2. Carga con datos que ejecuta un controlador específico al finalizar
  * 
  * @author GR3SW
- * @version 1.0
+ * @version 2.0
  */
 public class ControladorCarga implements Initializable {
+    private static final long TIEMPO_MINIMO_CARGA = 500; // Tiempo mínimo en milisegundos para mostrar la pantalla de carga
     /**
      * Elemento de la interfaz que representa la barra de progreso de carga.
      * Se inyecta automáticamente desde el archivo FXML correspondiente.
@@ -37,6 +42,7 @@ public class ControladorCarga implements Initializable {
     public ControladorCarga() {
         // Constructor público sin argumentos
     }
+
     /**
      * Método de inicialización que se ejecuta automáticamente después de cargar el FXML.
      * Configura el estado inicial de la barra de progreso en 0%.
@@ -51,37 +57,48 @@ public class ControladorCarga implements Initializable {
     } 
     
     /**
-     * Inicia el proceso de carga simple que navega a otra ventana al finalizar.
+     * Versión optimizada que carga la siguiente ventana EN PARALELO con la animación.
      * 
-     * Crea una tarea en segundo plano que simula un proceso de carga mediante
-     * incrementos en la barra de progreso. Al completarse, navega automáticamente
-     * a la ventana especificada.
-     * 
-     * @param stage La ventana actual de JavaFX que se cerrará tras la carga
-     * @param rutaFXMLSiguienteVentana Ruta relativa del archivo FXML de la siguiente ventana
-     * @param saltosEnElProgreso Número de pasos/incrementos en la barra de progreso
-     * @param tiempoPorSalto Tiempo en milisegundos que dura cada paso de progreso
+     * @param stage La ventana actual
+     * @param rutaFXMLSiguienteVentana Ruta del archivo FXML de la siguiente ventana
+     * @param saltosEnElProgreso Número de pasos en la barra de progreso
+     * @param tiempoPorSalto Tiempo en milisegundos por cada paso
      */
     public void iniciarCarga(Stage stage, String rutaFXMLSiguienteVentana, int saltosEnElProgreso, int tiempoPorSalto) {
-        // Crear una tarea en segundo plano para simular la carga sin bloquear la UI
-        Task<Void> tareaCargar = new Task<Void>() {
+        long tiempoInicio = System.currentTimeMillis();
+        
+        // 1. INICIAR CARGA REAL EN PARALELO
+        CompletableFuture<Parent> cargaReal = CompletableFuture.supplyAsync(() -> {
+            try {
+                // Simular aquí cualquier procesamiento adicional necesario antes de cargar la vista
+                
+                FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXMLSiguienteVentana));
+                return loader.load();
+                
+            } catch (IOException e) {
+                throw new RuntimeException("Error cargando FXML: " + rutaFXMLSiguienteVentana, e);
+            }
+        });
+
+        // 2. ANIMAR BARRA DE PROGRESO EN PARALELO
+        Task<Void> tareaAnimacion = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
-                
                 int totalPasos = saltosEnElProgreso;
                 
-                // Simular progreso paso a paso
                 for (int i = 0; i < totalPasos; i++) {
+                    // Verificar si la tarea fue cancelada
+                    if (isCancelled()) {
+                        break;
+                    }
                     
-                    // Simular tiempo de procesamiento en cada paso
                     Thread.sleep(tiempoPorSalto);
-
-                    // Calcular el progreso como porcentaje (0.0 a 1.0)
-                    final double progreso = (double) (i + 1) / totalPasos;
                     
-                    // Actualizar la UI en el hilo principal de JavaFX
+                    final double progreso = (double) (i + 1) / totalPasos;
                     Platform.runLater(() -> {
-                        progressBar.setProgress(progreso);
+                        if (!isCancelled()) {
+                            progressBar.setProgress(progreso);
+                        }
                     });
                 }
                 
@@ -90,36 +107,40 @@ public class ControladorCarga implements Initializable {
             
             @Override
             protected void succeeded() {
-                // Ejecutar cuando la tarea se complete exitosamente
-                Platform.runLater(() -> {
-                    // Cambiar a la siguiente ventana usando el método común
-                    ManejadorMetodosComunes.cambiarVentana(stage, rutaFXMLSiguienteVentana);
-                });
+                // La animación terminó, ahora sincronizar con la carga real
+                sincronizarYMostrarVentana(stage, cargaReal, tiempoInicio);
             }
             
             @Override
             protected void failed() {
-                // Ejecutar en caso de error durante la tarea
                 Platform.runLater(() -> {
-                    // Mostrar ventana de error y resetear la barra de progreso
-                    ManejadorMetodosComunes.mostrarVentanaError("Error durante la carga: ");
+                    ManejadorMetodosComunes.mostrarVentanaError("Error en la animación de carga: " + getException().getMessage());
                     progressBar.setProgress(0.0);
                 });
+                // Cancelar la carga real si la animación falla
+                cargaReal.cancel(true);
             }
         };
         
-        // Crear y configurar el hilo para ejecutar la tarea
-        Thread hiloCargar = new Thread(tareaCargar);
-        hiloCargar.setDaemon(true); // El hilo se cierra automáticamente al cerrar la aplicación
-        hiloCargar.start();
+        // Manejar errores en la carga real
+        cargaReal.exceptionally(throwable -> {
+            Platform.runLater(() -> {
+                ManejadorMetodosComunes.mostrarVentanaError("Error cargando la siguiente ventana: " + throwable.getMessage());
+                progressBar.setProgress(0.0);
+            });
+            // Cancelar la animación si la carga real falla
+            tareaAnimacion.cancel();
+            return null;
+        });
+        
+        // Ejecutar la animación
+        Thread hiloAnimacion = new Thread(tareaAnimacion);
+        hiloAnimacion.setDaemon(true);
+        hiloAnimacion.start();
     }
 
     /**
      * Inicia el proceso de carga con controlador personalizado.
-     * 
-     * Esta versión sobrecargada del método permite ejecutar un controlador específico
-     * al finalizar la carga, en lugar de simplemente navegar a otra ventana.
-     * Útil cuando se necesita pasar datos o ejecutar lógica compleja tras la carga.
      * 
      * @param stage La ventana actual de JavaFX
      * @param controladorCargaConDatos Controlador personalizado que implementa ControladorCargaConDatos
@@ -127,57 +148,132 @@ public class ControladorCarga implements Initializable {
      * @param tiempoPorSalto Tiempo en milisegundos que dura cada paso de progreso
      */
     public void iniciarCarga(Stage stage, ControladorCargaConDatos controladorCargaConDatos, int saltosEnElProgreso, int tiempoPorSalto) {
-        // Crear tarea en segundo plano similar al método anterior
-        Task<Void> tareaCargar = new Task<Void>() {
+        long tiempoInicio = System.currentTimeMillis();
+        
+        // 1. INICIAR CARGA REAL EN PARALELO
+        CompletableFuture<ResultadoCarga> cargaReal = CompletableFuture.supplyAsync(() -> {
+            try {
+                // Aquí se puede agregar procesamiento adicional si es necesario
+                return controladorCargaConDatos.cargarVistaPasandoDatos();
+                
+            } catch (Exception e) {
+                throw new RuntimeException("Error en carga con datos", e);
+            }
+        });
+
+        // 2. ANIMAR BARRA DE PROGRESO EN PARALELO  
+        Task<Void> tareaAnimacion = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 int totalPasos = saltosEnElProgreso;
-
-                // Simular progreso paso a paso
+                
                 for (int i = 0; i < totalPasos; i++) {
-                    // Pausa simulando procesamiento
+                    if (isCancelled()) {
+                        break;
+                    }
+                    
                     Thread.sleep(tiempoPorSalto);
                     
-                    // Calcular progreso y actualizar UI
                     final double progreso = (double) (i + 1) / totalPasos;
                     Platform.runLater(() -> {
-                        progressBar.setProgress(progreso);
+                        if (!isCancelled()) {
+                            progressBar.setProgress(progreso);
+                        }
                     });
                 }
-
+                
                 return null;
             }
-
+            
             @Override
             protected void succeeded() {
-                // Ejecutar el controlador personalizado al completar la carga
-                Platform.runLater(() -> {
-                    try {
-                        // Llamar al método del controlador que maneja la vista con datos
-                        controladorCargaConDatos.cargarVistaPasandoDatos();
-
-                    } catch (IOException e) {
-                        // Manejar errores de E/O al cargar la vista
-                        e.printStackTrace();
-                        ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la vista: " + e.getMessage());
-                    }
-                });
+                // Sincronizar con la carga real
+                sincronizarYEjecutarControlador(stage, cargaReal, tiempoInicio);
             }
-
+            
             @Override
             protected void failed() {
-                // Manejar errores durante la tarea de carga
                 Platform.runLater(() -> {
-                    // Mostrar error específico con detalles de la excepción
-                    ManejadorMetodosComunes.mostrarVentanaError("Error durante la carga: " + getException().getMessage());
+                    ManejadorMetodosComunes.mostrarVentanaError("Error en la animación: " + getException().getMessage());
+                    progressBar.setProgress(0.0);
+                });
+                cargaReal.cancel(true);
+            }
+        };
+        
+        // Manejar errores en la carga real
+        cargaReal.exceptionally(throwable -> {
+            Platform.runLater(() -> {
+                ManejadorMetodosComunes.mostrarVentanaError("Error cargando vista con datos: " + throwable.getMessage());
+                progressBar.setProgress(0.0);
+            });
+            tareaAnimacion.cancel();
+            return null;
+        });
+        
+        // Ejecutar la animación
+        Thread hiloAnimacion = new Thread(tareaAnimacion);
+        hiloAnimacion.setDaemon(true);
+        hiloAnimacion.start();
+    }
+
+    /**
+     * Sincroniza la finalización de la animación con la carga real de la ventana.
+     * Garantiza un tiempo mínimo de visualización de la pantalla de carga.
+     */
+    private void sincronizarYMostrarVentana(Stage stage, CompletableFuture<Parent> cargaReal, long tiempoInicio) {
+        // Ejecutar en un hilo separado para no bloquear la UI
+        CompletableFuture.runAsync(() -> {
+            try {
+                // Esperar a que termine la carga real
+                Parent nuevaVista = cargaReal.get();
+                
+                // Garantizar tiempo mínimo de visualización
+                long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;
+                if (tiempoTranscurrido < TIEMPO_MINIMO_CARGA) {
+                    Thread.sleep(TIEMPO_MINIMO_CARGA - tiempoTranscurrido);
+                }
+                
+                // Cambiar a la nueva ventana en el hilo de JavaFX
+                Platform.runLater(() -> {
+                    ManejadorMetodosComunes.cambiarVentanaConVistaYaCargada(stage, nuevaVista);
+                });
+                
+            } catch (InterruptedException | ExecutionException e) {
+                Platform.runLater(() -> {
+                    ManejadorMetodosComunes.mostrarVentanaError("Error sincronizando carga: " + e.getMessage());
                     progressBar.setProgress(0.0);
                 });
             }
-        };
+        });
+    }
 
-        // Crear y ejecutar el hilo para la tarea
-        Thread hiloCargar = new Thread(tareaCargar);
-        hiloCargar.setDaemon(true); // Hilo daemon para cierre automático
-        hiloCargar.start();
+    /**
+     * Sincroniza la animación con el controlador personalizado.
+     */
+    private void sincronizarYEjecutarControlador(Stage stage, CompletableFuture<ResultadoCarga> cargaReal, long tiempoInicio) {
+        CompletableFuture.runAsync(() -> {
+            try {
+                // Esperar el resultado de la carga
+                ResultadoCarga resultado = cargaReal.get();
+                
+                // Garantizar tiempo mínimo
+                long tiempoTranscurrido = System.currentTimeMillis() - tiempoInicio;
+                if (tiempoTranscurrido < TIEMPO_MINIMO_CARGA) {
+                    Thread.sleep(TIEMPO_MINIMO_CARGA - tiempoTranscurrido);
+                }
+                
+                // Aplicar el resultado en el hilo de JavaFX
+                Platform.runLater(() -> {
+                    resultado.aplicarCambioDeVentana(stage);
+                });
+                
+            } catch (InterruptedException | ExecutionException e) {
+                Platform.runLater(() -> {
+                    ManejadorMetodosComunes.mostrarVentanaError("Error ejecutando controlador: " + e.getMessage());
+                    progressBar.setProgress(0.0);
+                });
+            }
+        });
     }
 }

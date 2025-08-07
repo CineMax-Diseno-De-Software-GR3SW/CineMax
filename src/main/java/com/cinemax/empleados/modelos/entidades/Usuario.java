@@ -160,10 +160,10 @@ public class Usuario {
                 + activo + ", fechaCreacion=" + fechaCreacion;
     }
 
-    public String getTelefono() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTelefono'");
-    }
+//    public String getNumeroTelefono() {
+//        // TODO Auto-generated method stub
+//        throw new UnsupportedOperationException("Unimplemented method 'getTelefono'");
+//    }
 
     public void actualizarCorreo(String nuevoEmail) {
         this.correo = nuevoEmail;
