@@ -11,14 +11,49 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase de acceso a datos (DAO) para la gestión de funciones cinematográficas.
+ *
+ * <p>Esta clase proporciona métodos para realizar operaciones CRUD (Crear, Leer,
+ * Actualizar, Eliminar) sobre las funciones en la base de datos. Utiliza
+ * procedimientos almacenados optimizados para mejorar el rendimiento y mantener
+ * la consistencia de los datos.
+ *
+ * <p>Características principales:
+ * <ul>
+ *   <li>Operaciones CRUD completas para funciones</li>
+ *   <li>Consultas optimizadas con JOINs para evitar el problema N+1</li>
+ *   <li>Manejo de excepciones SQL</li>
+ *   <li>Mapeo automático de ResultSet a objetos de dominio</li>
+ *   <li>Uso de procedimientos almacenados para mejor rendimiento</li>
+ * </ul>
+ *
+ * @author GR3SW
+ * @version 1.0
+ * @since 1.0
+ */
 public class FuncionDAO {
 
+    /** Gestor de conexión a la base de datos */
     private ConexionBaseSingleton gestorDB;
 
+    /**
+     * Constructor que inicializa el DAO con la conexión a la base de datos.
+     */
     public FuncionDAO() {
         this.gestorDB = ConexionBaseSingleton.getInstancia();
     }
 
+    /**
+     * Crea una nueva función en la base de datos.
+     *
+     * <p>Este método utiliza un procedimiento almacenado para insertar la función
+     * y obtener el ID generado automáticamente, el cual se asigna al objeto función.
+     *
+     * @param funcion Objeto Funcion a crear, no puede ser null
+     * @throws SQLException Si ocurre un error durante la operación de base de datos
+     * @throws IllegalArgumentException Si la función es null o tiene datos inválidos
+     */
     public void crear(Funcion funcion) throws SQLException {
         String sql = "SELECT guardar_funcion(?, ?, ?, ?, ?, ?)";
 
@@ -45,9 +80,18 @@ public class FuncionDAO {
         }
     }
 
+    /**
+     * Obtiene todas las funciones disponibles en el sistema.
+     *
+     * <p>Utiliza un procedimiento almacenado optimizado con JOINs para cargar
+     * en una sola consulta todas las funciones con sus respectivas películas
+     * y salas, evitando el problema N+1 de consultas.
+     *
+     * @return Lista de todas las funciones disponibles
+     * @throws RuntimeException Si ocurre un error durante la consulta
+     */
     public List<Funcion> listarTodasLasFunciones() {
         List<Funcion> funciones = new ArrayList<>();
-        // Usando SP optimizado con JOINs para eliminar el problema N+1
         String sql = "SELECT * FROM obtener_todas_funciones_optimizado()";
 
         try (Connection conn = gestorDB.getConexion();
@@ -67,9 +111,18 @@ public class FuncionDAO {
         }
     }
 
+    /**
+     * Obtiene todas las funciones programadas para una sala específica.
+     *
+     * <p>Utiliza un procedimiento almacenado optimizado para obtener las funciones
+     * de una sala particular, útil para validaciones de traslape de horarios.
+     *
+     * @param salaId Identificador de la sala
+     * @return Lista de funciones de la sala especificada
+     * @throws RuntimeException Si ocurre un error durante la consulta
+     */
     public List<Funcion> listarFuncionesPorSala(int salaId) {
         List<Funcion> funciones = new ArrayList<>();
-        // Usando SP optimizado con JOINs para eliminar el problema N+1
         String sql = "SELECT * FROM listar_funciones_por_sala_optimizado(?)";
 
         try (Connection conn = gestorDB.getConexion();
@@ -91,6 +144,12 @@ public class FuncionDAO {
         }
     }
 
+    /**
+     * Actualiza una función existente en la base de datos.
+     *
+     * @param funcion Objeto Funcion con los datos actualizados
+     * @throws SQLException Si ocurre un error durante la actualización
+     */
     public void actualizar(Funcion funcion) throws SQLException {
         String sql = "CALL actualizar_funcion(?, ?, ?, ?, ?, ?, ?)";
 
@@ -115,8 +174,14 @@ public class FuncionDAO {
         }
     }
 
+    /**
+     * Busca una función específica por su identificador.
+     *
+     * @param id Identificador único de la función
+     * @return Objeto Funcion si se encuentra, null si no existe
+     * @throws SQLException Si ocurre un error durante la búsqueda
+     */
     public Funcion buscarPorId(int id) throws SQLException {
-        // Usando SP optimizado con JOINs para eliminar consultas adicionales
         String sql = "SELECT * FROM buscar_funcion_por_id_optimizado(?)";
         
         try (Connection conn = gestorDB.getConexion();
@@ -137,6 +202,12 @@ public class FuncionDAO {
         }
     }
 
+    /**
+     * Elimina una función de la base de datos.
+     *
+     * @param id Identificador único de la función a eliminar
+     * @throws SQLException Si ocurre un error durante la eliminación
+     */
     public void eliminar(int id) throws SQLException {
         String sql = "CALL eliminar_funcion(?)";
 
@@ -154,6 +225,15 @@ public class FuncionDAO {
         }
     }
 
+    /**
+     * Obtiene los identificadores de las películas que tienen funciones futuras.
+     *
+     * <p>Este método es útil para determinar qué películas están actualmente
+     * en cartelera o programadas para proyección futura.
+     *
+     * @return Lista de IDs de películas con funciones futuras
+     * @throws RuntimeException Si ocurre un error durante la consulta
+     */
     public List<Integer> listarIdsPeliculasDeFuncionesFuturas() {
         List<Integer> idsPeliculas = new ArrayList<>();
         String sql = "SELECT * FROM listar_ids_peliculas_funciones_futuras()";
@@ -174,7 +254,16 @@ public class FuncionDAO {
         }
     }
 
-    // Método privado para mapear ResultSet a objeto Funcion (elimina duplicación de código)
+    /**
+     * Mapea un ResultSet a un objeto Funcion.
+     *
+     * <p>Este método privado elimina la duplicación de código y centraliza
+     * la lógica de conversión de datos de base de datos a objetos de dominio.
+     *
+     * @param rs ResultSet con los datos de la función
+     * @return Objeto Funcion mapeado
+     * @throws SQLException Si ocurre un error al acceder a los datos del ResultSet
+     */
     private Funcion mapearResultSetAFuncion(ResultSet rs) throws SQLException {
         // Crear objeto Pelicula usando el patrón del PeliculaDAO
         Pelicula pelicula = new Pelicula();
