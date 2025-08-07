@@ -38,38 +38,56 @@
 
                             <!-- Fila 1: Título -->
                             <VBox spacing="8.0">
-                                <Label text="Título *" styleClass="form-label" />
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Título" styleClass="form-label" />
+                                    <Label text="*" styleClass="required-asterisk" />
+                                </HBox>
                                 <TextField fx:id="txtTitulo" promptText="Ingrese el título de la película" styleClass="text-field" />
                             </VBox>
 
                             <!-- Fila 2: Año y Duración -->
                             <HBox spacing="15.0" alignment="CENTER_LEFT">
                                 <VBox spacing="8.0" HBox.hgrow="ALWAYS">
-                                    <Label text="Año *" styleClass="form-label" />
+                                    <HBox alignment="CENTER_LEFT" spacing="2">
+                                        <Label text="Año" styleClass="form-label" />
+                                        <Label text="*" styleClass="required-asterisk" />
+                                    </HBox>
                                     <TextField fx:id="txtAnio" promptText="2024" styleClass="text-field" />
                                 </VBox>
                                 <VBox spacing="8.0" HBox.hgrow="ALWAYS">
-                                    <Label text="Duración (min) *" styleClass="form-label" />
+                                    <HBox alignment="CENTER_LEFT" spacing="2">
+                                        <Label text="Duración (min)" styleClass="form-label" />
+                                        <Label text="*" styleClass="required-asterisk" />
+                                    </HBox>
                                     <TextField fx:id="txtDuracion" promptText="120" styleClass="text-field" />
                                 </VBox>
                             </HBox>
 
                             <!-- Fila 3: Idioma -->
                             <VBox spacing="8.0">
-                                <Label text="Idioma *" styleClass="form-label" />
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Idioma" styleClass="form-label" />
+                                    <Label text="*" styleClass="required-asterisk" />
+                                </HBox>
                                 <ComboBox fx:id="cmbIdioma" promptText="Seleccione idioma" styleClass="combo-box" prefWidth="200.0" />
                             </VBox>
 
                             <!-- Fila 4: Sinopsis -->
                             <VBox spacing="8.0">
-                                <Label text="Sinopsis *" styleClass="form-label" />
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Sinopsis" styleClass="form-label" />
+                                    <Label text="*" styleClass="required-asterisk" />
+                                </HBox>
                                 <TextArea fx:id="txtSinopsis" promptText="Ingrese la sinopsis de la película"
                                           wrapText="true" prefRowCount="3" styleClass="text-area" />
                             </VBox>
 
                             <!-- Fila 5: Género Principal -->
                             <VBox spacing="8.0">
-                                <Label text="Género Principal *" styleClass="form-label" />
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Género Principal" styleClass="form-label" />
+                                    <Label text="*" styleClass="required-asterisk" />
+                                </HBox>
                                 <ComboBox fx:id="cmbGenero" promptText="Seleccione género principal" styleClass="combo-box" />
                             </VBox>
 
@@ -85,6 +103,14 @@
                                 <Label text="URL de Imagen" styleClass="form-label" />
                                 <TextField fx:id="txtImagenUrl" promptText="https://ejemplo.com/imagen.jpg (opcional)" styleClass="text-field" />
                             </VBox>
+
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="*" styleClass="required-asterisk" />
+                                    <Label text="Campos Obligatorios" styleClass="help-text" />
+                                </HBox>
+                            </VBox>
+
                         </VBox>
 
                         <!-- Botones del formulario -->
@@ -98,11 +124,6 @@
                                         prefWidth="90.0" onAction="#onLimpiarFormulario" />
                             </HBox>
                         </VBox>
-
-                        <!-- Estado del formulario -->
-                        <HBox alignment="CENTER" styleClass="summary-pane">
-                            <Label fx:id="lblEstadoFormulario" text="Complete todos los campos obligatorios" styleClass="summary-details" />
-                        </HBox>
                     </VBox>
                 </ScrollPane>
             </VBox>
