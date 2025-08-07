@@ -447,4 +447,5 @@
 
 .required-asterisk {
     -fx-text-fill: #f70101;
+    -fx-font-size: 10px;
 }

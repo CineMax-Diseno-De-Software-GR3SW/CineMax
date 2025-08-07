@@ -1,6 +1,5 @@
 package com.cinemax.empleados.controladores;
 
-
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Usuario;
@@ -87,8 +86,7 @@ public class ControladorRegistrarUsuario implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al cargar Roles");
-
-//            mostrarAlerta(AlertType.ERROR, "Error al Cargar", "Error al cargar Roles", "No se pudieron cargar los roles de usuario.");
+            //mostrarAlerta(AlertType.ERROR, "Error al Cargar", "Error al cargar Roles", "No se pudieron cargar los roles de usuario.");
         }
 
         campoCelular.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -141,28 +139,26 @@ public class ControladorRegistrarUsuario implements Initializable {
                 celular.isEmpty() || nombreUsuario.isEmpty() ||
                 cargoSeleccionado == null) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Campos incompletos");
-//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Campos Incompletos", "Por favor, complete todos los campos obligatorios.");
+          //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Campos Incompletos", "Por favor, complete todos los campos obligatorios.");
             return;
         }
 
         //Validación adicional para el celular
         if (!celular.matches("\\d{10}")) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de Celular Inválido \n Debe contener exactamente 10 dígitos");
-
-//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Celular Inválido", "Debe contener exactamente 10 dígitos");
+            //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Celular Inválido", "Debe contener exactamente 10 dígitos");
             return;
         }
 
         if (!cedula.matches("\\d{10}")) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de Cédula Inválido \n Debe contener exactamente 10 dígitos");
 
-//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
+          //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
             return;
         }
         if (!validadorUsuario.validarCorreo(correo)) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de correo inválido");
-
-//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
+            //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
             return;
         }
 
