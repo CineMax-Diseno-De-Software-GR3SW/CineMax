@@ -56,23 +56,23 @@
         </VBox>
     </top>
 
-    <left>
-    <VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #1e1e1e; -fx-padding: 15;" prefWidth="220">
-        <ImageView fx:id="imagenPelicula" fitWidth="180" preserveRatio="true" />
-        
-        <HBox spacing="10.0">
-            <VBox spacing="5.0" prefWidth="70">
-                <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Género:" />
-                <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Duración:" />
-            </VBox>
-            <Separator orientation="VERTICAL" prefHeight="45.0" />
-            <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                <Label fx:id="etiquetaGenero" style="-fx-text-fill: #EAEAEA;" />
-                <Label fx:id="etiquetaDuracion" style="-fx-text-fill: #EAEAEA;" />
-            </VBox>
-        </HBox>
-    </VBox>
-</left>
+    <right>
+        <VBox alignment="TOP_CENTER" spacing="15" style="-fx-background-color: #1e1e1e; -fx-padding: 15;" prefWidth="220">
+            <ImageView fx:id="imagenPelicula" fitWidth="180" preserveRatio="true" />
+            
+            <HBox spacing="10.0">
+                <VBox spacing="5.0" prefWidth="70">
+                    <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Género:" />
+                    <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Duración:" />
+                </VBox>
+                <Separator orientation="VERTICAL" prefHeight="45.0" />
+                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                    <Label fx:id="etiquetaGenero" style="-fx-text-fill: #EAEAEA;" />
+                    <Label fx:id="etiquetaDuracion" style="-fx-text-fill: #EAEAEA;" />
+                </VBox>
+            </HBox>
+        </VBox>
+    </right>
 
     <center>
         <VBox alignment="CENTER" spacing="20" style="-fx-padding: 20; -fx-background-color: #2a2a2a;">
