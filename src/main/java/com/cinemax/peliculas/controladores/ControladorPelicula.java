@@ -44,39 +44,86 @@ import javafx.util.StringConverter;
 
 
 public class ControladorPelicula implements Initializable {
-    
+
     private ServicioPelicula servicioPelicula;
-    
+
     // Constructor
     public ControladorPelicula() {
         this.servicioPelicula = new ServicioPelicula();
     }
 
     // Componentes de la interfaz FXML
-    @FXML private TextField txtBuscar;
-    @FXML private ComboBox<String> cmbFiltroGenero;
-    @FXML private TableView<Pelicula> tablaPeliculas;
-    @FXML private TableColumn<Pelicula, Integer> colId;
-    @FXML private TableColumn<Pelicula, String> colTitulo;
-    @FXML private TableColumn<Pelicula, Integer> colAnio;
-    @FXML private TableColumn<Pelicula, String> colGenero;
-    @FXML private TableColumn<Pelicula, Integer> colDuracion;
-    @FXML private TableColumn<Pelicula, String> colIdioma;
-    
-    @FXML private Button btnNuevaPelicula;
-    @FXML private Button btnBuscar;
-    @FXML private Button btnLimpiar;
-    @FXML private Button btnEditar;
-    @FXML private Button btnEliminar;
-    @FXML private Button btnVerDetalles;
-    @FXML private Button btnVolver;
-    
-    @FXML private Label lblTotalPeliculas;
-    @FXML private Label lblEstadisticas;
+    @FXML
+    private TextField txtBuscar;
+    @FXML
+    private ComboBox<String> cmbFiltroGenero;
+    @FXML
+    private TableView<Pelicula> tablaPeliculas;
+    @FXML
+    private TableColumn<Pelicula, Integer> colId;
+    @FXML
+    private TableColumn<Pelicula, String> colTitulo;
+    @FXML
+    private TableColumn<Pelicula, Integer> colAnio;
+    @FXML
+    private TableColumn<Pelicula, String> colGenero;
+    @FXML
+    private TableColumn<Pelicula, Integer> colDuracion;
+    @FXML
+    private TableColumn<Pelicula, String> colIdioma;
+
+    @FXML
+    private Button btnNuevaPelicula;
+    @FXML
+    private Button btnBuscar;
+    @FXML
+    private Button btnLimpiar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Button btnVerDetalles;
+    @FXML
+    private Button btnVolver;
+
+    @FXML
+    private Label lblTotalPeliculas;
+    @FXML
+    private Label lblEstadisticas;
+
+    // Campos del formulario de película integrado
+    @FXML
+    private TextField txtTitulo;
+    @FXML
+    private TextField txtAnio;
+    @FXML
+    private TextField txtDuracion;
+    @FXML
+    private ComboBox<Idioma> cmbIdioma;
+    @FXML
+    private TextArea txtSinopsis;
+    @FXML
+    private ComboBox<String> cmbGenero;
+    @FXML
+    private ListView<String> listGeneros;
+    @FXML
+    private TextField txtImagenUrl;
+    @FXML
+    private Button btnGuardar;
+    @FXML
+    private Button btnNuevo;
+    @FXML
+    private Button btnCancelar;
+    @FXML
+    private Button btnLimpiarFormulario;
+    @FXML
+    private Label lblEstadoFormulario;
 
     // Datos para la tabla
     private ObservableList<Pelicula> listaPeliculas;
     private ObservableList<Pelicula> peliculasFiltradas;
+
+    // Variable para controlar el modo de edición
+    private Pelicula peliculaEnEdicion = null;
 
     @FXML
     private void onNuevaPelicula(ActionEvent event) {
@@ -191,11 +238,11 @@ public class ControladorPelicula implements Initializable {
         // Listener para habilitar/deshabilitar botón guardar
         Runnable validarFormulario = () -> {
             boolean valido = !txtTitulo.getText().trim().isEmpty() &&
-                           !txtSinopsis.getText().trim().isEmpty() &&
-                           !txtDuracion.getText().trim().isEmpty() &&
-                           !txtAnio.getText().trim().isEmpty() &&
-                           cmbIdioma.getValue() != null &&
-                           cmbGenero.getValue() != null;
+                    !txtSinopsis.getText().trim().isEmpty() &&
+                    !txtDuracion.getText().trim().isEmpty() &&
+                    !txtAnio.getText().trim().isEmpty() &&
+                    cmbIdioma.getValue() != null &&
+                    cmbGenero.getValue() != null;
             botonGuardar.setDisable(!valido);
         };
 
@@ -208,18 +255,18 @@ public class ControladorPelicula implements Initializable {
 
         // Mostrar el diálogo
         Optional<ButtonType> resultado = dialog.showAndWait();
-        
+
         if (resultado.isPresent() && resultado.get() == btnGuardar) {
             try {
                 // Validar datos numéricos
                 int duracion = Integer.parseInt(txtDuracion.getText().trim());
                 int anio = Integer.parseInt(txtAnio.getText().trim());
-                
+
                 if (duracion <= 0) {
                     mostrarError("Error de validación", "La duración debe ser un número positivo");
                     return;
                 }
-                
+
                 if (anio < 1900 || anio > 2030) {
                     mostrarError("Error de validación", "El año debe estar entre 1900 y 2030");
                     return;
@@ -228,7 +275,7 @@ public class ControladorPelicula implements Initializable {
                 // Construir string de géneros
                 StringBuilder generosBuilder = new StringBuilder();
                 generosBuilder.append(cmbGenero.getValue());
-                
+
                 List<String> generosAdicionales = listGeneros.getSelectionModel().getSelectedItems();
                 for (String genero : generosAdicionales) {
                     if (!genero.equals(cmbGenero.getValue())) {
@@ -238,11 +285,11 @@ public class ControladorPelicula implements Initializable {
 
                 // Verificar duplicados
                 boolean existe = servicioPelicula.existePeliculaDuplicada(
-                    txtTitulo.getText().trim(), anio);
-                
+                        txtTitulo.getText().trim(), anio);
+
                 if (existe) {
                     ManejadorMetodosComunes.mostrarVentanaAdvertencia(
-                        "Ya existe una película con ese título y año. Se continuará con el registro.");
+                            "Ya existe una película con ese título y año. Se continuará con el registro.");
                     // Continuamos con el registro
                 }
 
@@ -253,18 +300,18 @@ public class ControladorPelicula implements Initializable {
                 }
 
                 Pelicula nuevaPelicula = servicioPelicula.crearPelicula(
-                    txtTitulo.getText().trim(),
-                    txtSinopsis.getText().trim(),
-                    duracion,
-                    anio,
-                    cmbIdioma.getValue(),
-                    generosBuilder.toString(),
-                    imagenUrl
+                        txtTitulo.getText().trim(),
+                        txtSinopsis.getText().trim(),
+                        duracion,
+                        anio,
+                        cmbIdioma.getValue(),
+                        generosBuilder.toString(),
+                        imagenUrl
                 );
 
                 // Recargar la tabla
                 cargarPeliculas();
-                
+
                 // Seleccionar la nueva película
                 for (Pelicula pelicula : peliculasFiltradas) {
                     if (pelicula.getId() == nuevaPelicula.getId()) {
@@ -284,11 +331,224 @@ public class ControladorPelicula implements Initializable {
     }
 
     @FXML
+    private void onGuardar(ActionEvent event) {
+        try {
+            // Validar que todos los campos obligatorios estén completos
+            if (!validarFormularioCompleto()) {
+                mostrarError("Formulario incompleto", "Por favor complete todos los campos obligatorios");
+                return;
+            }
+
+            // Validar datos numéricos
+            int duracion = Integer.parseInt(txtDuracion.getText().trim());
+            int anio = Integer.parseInt(txtAnio.getText().trim());
+
+            if (duracion <= 0) {
+                mostrarError("Error de validación", "La duración debe ser un número positivo");
+                return;
+            }
+
+            if (anio < 1900 || anio > 2030) {
+                mostrarError("Error de validación", "El año debe estar entre 1900 y 2030");
+                return;
+            }
+
+            // Construir string de géneros
+            StringBuilder generosBuilder = new StringBuilder();
+            generosBuilder.append(cmbGenero.getValue());
+
+            List<String> generosAdicionales = listGeneros.getSelectionModel().getSelectedItems();
+            for (String genero : generosAdicionales) {
+                if (!genero.equals(cmbGenero.getValue())) {
+                    generosBuilder.append(", ").append(genero);
+                }
+            }
+
+            String imagenUrl = txtImagenUrl.getText().trim();
+            if (imagenUrl.isEmpty()) {
+                imagenUrl = null;
+            }
+
+            if (peliculaEnEdicion == null) {
+                // Crear nueva película
+                // Verificar duplicados
+                boolean existe = servicioPelicula.existePeliculaDuplicada(
+                        txtTitulo.getText().trim(), anio);
+
+                if (existe) {
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia(
+                            "Ya existe una película con ese título y año. Se continuará con el registro.");
+                }
+
+                Pelicula nuevaPelicula = servicioPelicula.crearPelicula(
+                        txtTitulo.getText().trim(),
+                        txtSinopsis.getText().trim(),
+                        duracion,
+                        anio,
+                        cmbIdioma.getValue(),
+                        generosBuilder.toString(),
+                        imagenUrl
+                );
+
+                // Recargar la tabla
+                cargarPeliculas();
+
+                // Seleccionar la nueva película
+                for (Pelicula pelicula : peliculasFiltradas) {
+                    if (pelicula.getId() == nuevaPelicula.getId()) {
+                        tablaPeliculas.getSelectionModel().select(pelicula);
+                        break;
+                    }
+                }
+
+                // Limpiar el formulario
+                limpiarFormulario();
+                mostrarInformacion("Éxito", "Película creada exitosamente:\n" + nuevaPelicula.getTitulo());
+
+            } else {
+                // Actualizar película existente
+                // Guardar el ID antes de cualquier operación
+                int idPeliculaEditada = peliculaEnEdicion.getId();
+
+                // Verificar duplicados solo si cambió el título o año
+                if (!txtTitulo.getText().trim().equals(peliculaEnEdicion.getTitulo()) ||
+                        anio != peliculaEnEdicion.getAnio()) {
+
+                    boolean existe = servicioPelicula.existePeliculaDuplicada(
+                            txtTitulo.getText().trim(), anio);
+
+                    if (existe) {
+                        ManejadorMetodosComunes.mostrarVentanaAdvertencia(
+                                "Ya existe otra película con ese título y año. Se continuará con la actualización.");
+                    }
+                }
+
+                // Actualizar la película
+                servicioPelicula.actualizarPelicula(
+                        idPeliculaEditada,
+                        txtTitulo.getText().trim(),
+                        txtSinopsis.getText().trim(),
+                        duracion,
+                        anio,
+                        cmbIdioma.getValue(),
+                        generosBuilder.toString(),
+                        imagenUrl
+                );
+
+                // Salir del modo edición ANTES de recargar
+                peliculaEnEdicion = null;
+                actualizarModoFormulario();
+
+                // Recargar la tabla
+                cargarPeliculas();
+
+                // Intentar mantener la selección en la película editada usando el ID guardado
+                for (Pelicula pelicula : peliculasFiltradas) {
+                    if (pelicula.getId() == idPeliculaEditada) {
+                        tablaPeliculas.getSelectionModel().select(pelicula);
+                        break;
+                    }
+                }
+
+                mostrarInformacion("Éxito", "Película actualizada exitosamente:\n" + txtTitulo.getText().trim());
+            }
+
+        } catch (NumberFormatException e) {
+            mostrarError("Error de formato", "La duración y el año deben ser números válidos");
+        } catch (Exception e) {
+            mostrarError("Error al guardar película", "Error: " + e.getMessage());
+        }
+    }
+
+    @FXML
+    private void onLimpiarFormulario(ActionEvent event) {
+        limpiarFormulario();
+    }
+
+    private void limpiarFormulario() {
+        if (txtTitulo != null) txtTitulo.clear();
+        if (txtAnio != null) txtAnio.clear();
+        if (txtDuracion != null) txtDuracion.clear();
+        if (txtSinopsis != null) txtSinopsis.clear();
+        if (txtImagenUrl != null) txtImagenUrl.clear();
+        if (cmbIdioma != null) cmbIdioma.setValue(null);
+        if (cmbGenero != null) cmbGenero.setValue(null);
+        if (listGeneros != null) listGeneros.getSelectionModel().clearSelection();
+
+        // Resetear modo de edición
+        peliculaEnEdicion = null;
+        actualizarModoFormulario();
+
+        // Limpiar selección de tabla
+        tablaPeliculas.getSelectionModel().clearSelection();
+    }
+
+    @FXML
     private void onEditarPelicula(ActionEvent event) {
+        // Ya no necesitamos hacer nada aquí porque el formulario se carga automáticamente
+        // cuando se selecciona una película en la tabla
         Pelicula peliculaSeleccionada = tablaPeliculas.getSelectionModel().getSelectedItem();
         if (peliculaSeleccionada != null) {
-            navegarAFormularioPelicula(peliculaSeleccionada);
+            // Simplemente enfocar el primer campo del formulario
+            txtTitulo.requestFocus();
         }
+    }
+
+    private void actualizarModoFormulario() {
+        if (peliculaEnEdicion == null) {
+            // Modo crear
+            btnGuardar.setText("Crear");
+            lblEstadoFormulario.setText("Complete todos los campos obligatorios");
+            // Ocultar el botón "Nuevo" cuando está en modo crear
+            if (btnNuevo != null) {
+                btnNuevo.setVisible(false);
+                btnNuevo.setManaged(false);
+            }
+        } else {
+            // Modo editar
+            btnGuardar.setText("Actualizar");
+            lblEstadoFormulario.setText("Editando: " + peliculaEnEdicion.getTitulo());
+            // Mostrar el botón "Nuevo" cuando está en modo editar
+            if (btnNuevo != null) {
+                btnNuevo.setVisible(true);
+                btnNuevo.setManaged(true);
+            }
+        }
+        actualizarEstadoFormulario();
+    }
+
+    private void cargarDatosEnFormulario(Pelicula pelicula) {
+        if (pelicula == null) return;
+
+        // Cargar datos básicos
+        txtTitulo.setText(pelicula.getTitulo());
+        txtAnio.setText(String.valueOf(pelicula.getAnio()));
+        txtDuracion.setText(String.valueOf(pelicula.getDuracionMinutos()));
+        txtSinopsis.setText(pelicula.getSinopsis() != null ? pelicula.getSinopsis() : "");
+        txtImagenUrl.setText(pelicula.getImagenUrl() != null ? pelicula.getImagenUrl() : "");
+
+        // Cargar idioma
+        cmbIdioma.setValue(pelicula.getIdioma());
+
+        // Cargar géneros
+        String generosActuales = pelicula.getGenerosComoString();
+        if (generosActuales != null && !generosActuales.isEmpty()) {
+            String primerGenero = generosActuales.split(",")[0].trim();
+            cmbGenero.setValue(primerGenero);
+
+            // Preseleccionar géneros en la lista
+            listGeneros.getSelectionModel().clearSelection();
+            String[] generos = generosActuales.split(",");
+            for (String genero : generos) {
+                String generoLimpio = genero.trim();
+                if (listGeneros.getItems().contains(generoLimpio)) {
+                    listGeneros.getSelectionModel().select(generoLimpio);
+                }
+            }
+        }
+
+        peliculaEnEdicion = pelicula;
+        actualizarModoFormulario();
     }
 
     private void mostrarFormularioEditarPelicula(Pelicula peliculaOriginal) {
@@ -346,7 +606,7 @@ public class ControladorPelicula implements Initializable {
         // ComboBox para género principal
         ComboBox<String> cmbGenero = new ComboBox<>();
         cmbGenero.getItems().addAll(Genero.obtenerTodosLosGeneros());
-        
+
         // Establecer el primer género como valor principal
         String generosActuales = peliculaOriginal.getGenerosComoString();
         if (generosActuales != null && !generosActuales.isEmpty()) {
@@ -362,7 +622,7 @@ public class ControladorPelicula implements Initializable {
         listGeneros.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listGeneros.setPrefHeight(100);
         listGeneros.setPrefWidth(200);
-        
+
         // Preseleccionar géneros actuales en la lista
         if (generosActuales != null && !generosActuales.isEmpty()) {
             String[] generos = generosActuales.split(",");
@@ -408,7 +668,7 @@ public class ControladorPelicula implements Initializable {
         Label lblInfo = new Label("ID de la película: " + peliculaOriginal.getId());
         lblInfo.setStyle("-fx-font-weight: bold; -fx-text-fill: #333;");
         grid.add(lblInfo, 0, 8, 2, 1);
-        
+
         Label lblNota = new Label("* Campos obligatorios");
         lblNota.setStyle("-fx-font-style: italic; -fx-text-fill: #666;");
         grid.add(lblNota, 0, 9, 2, 1);
@@ -426,11 +686,11 @@ public class ControladorPelicula implements Initializable {
         // Listener para habilitar/deshabilitar botón guardar
         Runnable validarFormulario = () -> {
             boolean valido = !txtTitulo.getText().trim().isEmpty() &&
-                           !txtSinopsis.getText().trim().isEmpty() &&
-                           !txtDuracion.getText().trim().isEmpty() &&
-                           !txtAnio.getText().trim().isEmpty() &&
-                           cmbIdioma.getValue() != null &&
-                           cmbGenero.getValue() != null;
+                    !txtSinopsis.getText().trim().isEmpty() &&
+                    !txtDuracion.getText().trim().isEmpty() &&
+                    !txtAnio.getText().trim().isEmpty() &&
+                    cmbIdioma.getValue() != null &&
+                    cmbGenero.getValue() != null;
             botonGuardar.setDisable(!valido);
         };
 
@@ -443,18 +703,18 @@ public class ControladorPelicula implements Initializable {
 
         // Mostrar el diálogo
         Optional<ButtonType> resultado = dialog.showAndWait();
-        
+
         if (resultado.isPresent() && resultado.get() == btnGuardar) {
             try {
                 // Validar datos numéricos
                 int duracion = Integer.parseInt(txtDuracion.getText().trim());
                 int anio = Integer.parseInt(txtAnio.getText().trim());
-                
+
                 if (duracion <= 0) {
                     mostrarError("Error de validación", "La duración debe ser un número positivo");
                     return;
                 }
-                
+
                 if (anio < 1900 || anio > 2030) {
                     mostrarError("Error de validación", "El año debe estar entre 1900 y 2030");
                     return;
@@ -463,7 +723,7 @@ public class ControladorPelicula implements Initializable {
                 // Construir string de géneros
                 StringBuilder generosBuilder = new StringBuilder();
                 generosBuilder.append(cmbGenero.getValue());
-                
+
                 List<String> generosAdicionales = listGeneros.getSelectionModel().getSelectedItems();
                 for (String genero : generosAdicionales) {
                     if (!genero.equals(cmbGenero.getValue())) {
@@ -473,12 +733,12 @@ public class ControladorPelicula implements Initializable {
 
                 // Verificar si hay cambios en los datos
                 boolean hayDiferencias = !txtTitulo.getText().trim().equals(peliculaOriginal.getTitulo()) ||
-                                       !txtSinopsis.getText().trim().equals(peliculaOriginal.getSinopsis() != null ? peliculaOriginal.getSinopsis() : "") ||
-                                       duracion != peliculaOriginal.getDuracionMinutos() ||
-                                       anio != peliculaOriginal.getAnio() ||
-                                       !cmbIdioma.getValue().equals(peliculaOriginal.getIdioma()) ||
-                                       !generosBuilder.toString().equals(peliculaOriginal.getGenerosComoString()) ||
-                                       !txtImagenUrl.getText().trim().equals(peliculaOriginal.getImagenUrl() != null ? peliculaOriginal.getImagenUrl() : "");
+                        !txtSinopsis.getText().trim().equals(peliculaOriginal.getSinopsis() != null ? peliculaOriginal.getSinopsis() : "") ||
+                        duracion != peliculaOriginal.getDuracionMinutos() ||
+                        anio != peliculaOriginal.getAnio() ||
+                        !cmbIdioma.getValue().equals(peliculaOriginal.getIdioma()) ||
+                        !generosBuilder.toString().equals(peliculaOriginal.getGenerosComoString()) ||
+                        !txtImagenUrl.getText().trim().equals(peliculaOriginal.getImagenUrl() != null ? peliculaOriginal.getImagenUrl() : "");
 
                 if (!hayDiferencias) {
                     mostrarInformacion("Sin cambios", "No se detectaron cambios en los datos de la película.");
@@ -486,15 +746,15 @@ public class ControladorPelicula implements Initializable {
                 }
 
                 // Verificar duplicados solo si cambió el título o año
-                if (!txtTitulo.getText().trim().equals(peliculaOriginal.getTitulo()) || 
-                    anio != peliculaOriginal.getAnio()) {
-                    
+                if (!txtTitulo.getText().trim().equals(peliculaOriginal.getTitulo()) ||
+                        anio != peliculaOriginal.getAnio()) {
+
                     boolean existe = servicioPelicula.existePeliculaDuplicada(
-                        txtTitulo.getText().trim(), anio);
-                    
+                            txtTitulo.getText().trim(), anio);
+
                     if (existe) {
                         ManejadorMetodosComunes.mostrarVentanaAdvertencia(
-                            "Ya existe otra película con ese título y año. Se continuará con la actualización.");
+                                "Ya existe otra película con ese título y año. Se continuará con la actualización.");
                         // Continuamos con la actualización
                     }
                 }
@@ -507,19 +767,19 @@ public class ControladorPelicula implements Initializable {
 
                 // Actualizar la película
                 servicioPelicula.actualizarPelicula(
-                    peliculaOriginal.getId(),
-                    txtTitulo.getText().trim(),
-                    txtSinopsis.getText().trim(),
-                    duracion,
-                    anio,
-                    cmbIdioma.getValue(),
-                    generosBuilder.toString(),
-                    imagenUrl
+                        peliculaOriginal.getId(),
+                        txtTitulo.getText().trim(),
+                        txtSinopsis.getText().trim(),
+                        duracion,
+                        anio,
+                        cmbIdioma.getValue(),
+                        generosBuilder.toString(),
+                        imagenUrl
                 );
 
                 // Recargar la tabla
                 cargarPeliculas();
-                
+
                 // Intentar mantener la selección en la película editada
                 for (Pelicula pelicula : peliculasFiltradas) {
                     if (pelicula.getId() == peliculaOriginal.getId()) {
@@ -544,10 +804,10 @@ public class ControladorPelicula implements Initializable {
         if (peliculaSeleccionada != null) {
             // Mostrar advertencia de confirmación
             String mensaje = "¿Está seguro de eliminar esta película?\n\n" +
-                           "Título: " + peliculaSeleccionada.getTitulo() + 
-                           "\n\nATENCIÓN: Esta acción no se puede deshacer.";
+                    "Título: " + peliculaSeleccionada.getTitulo() +
+                    "\n\nATENCIÓN: Esta acción no se puede deshacer.";
             ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
-            
+
             // Proceder con la eliminación
             try {
                 servicioPelicula.eliminarPelicula(peliculaSeleccionada.getId());
@@ -565,16 +825,16 @@ public class ControladorPelicula implements Initializable {
     }
 
     private void mostrarErrorRestriccion(Pelicula pelicula) {
-        String mensaje = "No se puede eliminar la película '" + pelicula.getTitulo() + 
-                        "' porque está asociada con:\n\n" +
-                        "• Funciones programadas\n" +
-                        "• Cartelera\n" +
-                        "• Boletos vendidos\n" +
-                        "• Reservas existentes\n\n" +
-                        "ACCIÓN REQUERIDA:\n" +
-                        "Para eliminar esta película, primero debe eliminar todas las funciones\n" +
-                        "y entradas de cartelera asociadas en el gestor correspondiente.";
-        
+        String mensaje = "No se puede eliminar la película '" + pelicula.getTitulo() +
+                "' porque está asociada con:\n\n" +
+                "• Funciones programadas\n" +
+                "• Cartelera\n" +
+                "• Boletos vendidos\n" +
+                "• Reservas existentes\n\n" +
+                "ACCIÓN REQUERIDA:\n" +
+                "Para eliminar esta película, primero debe eliminar todas las funciones\n" +
+                "y entradas de cartelera asociadas en el gestor correspondiente.";
+
         ManejadorMetodosComunes.mostrarVentanaError(mensaje);
     }
 
@@ -602,44 +862,54 @@ public class ControladorPelicula implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         listaPeliculas = FXCollections.observableArrayList();
         peliculasFiltradas = FXCollections.observableArrayList();
-        
+
         configurarTabla();
         configurarFiltros();
         configurarEventos();
+        configurarFormularioPelicula(); // Nueva configuración para el formulario integrado
         cargarPeliculas();
     }
-    
+
     private void configurarTabla() {
         // Configurar las columnas de la tabla
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colAnio.setCellValueFactory(new PropertyValueFactory<>("anio"));
-        
+
         // Para el género, necesitamos un cellValueFactory personalizado
         colGenero.setCellValueFactory(cellData -> {
             return new javafx.beans.property.SimpleStringProperty(
-                cellData.getValue().getGenerosComoString()
+                    cellData.getValue().getGenerosComoString()
             );
         });
-        
+
         colDuracion.setCellValueFactory(new PropertyValueFactory<>("duracionMinutos"));
-        
+
         // Para el idioma, necesitamos un cellValueFactory personalizado
         colIdioma.setCellValueFactory(cellData -> {
             Idioma idioma = cellData.getValue().getIdioma();
             return new javafx.beans.property.SimpleStringProperty(
-                idioma != null ? idioma.getNombre() : "N/A"
+                    idioma != null ? idioma.getNombre() : "N/A"
             );
         });
 
         // Configurar selección de tabla
         tablaPeliculas.getSelectionModel().selectedItemProperty().addListener(
-            (obs, oldSelection, newSelection) -> {
-                boolean peliculaSeleccionada = newSelection != null;
-                btnEditar.setDisable(!peliculaSeleccionada);
-                btnEliminar.setDisable(!peliculaSeleccionada);
-                btnVerDetalles.setDisable(!peliculaSeleccionada);
-            }
+                (obs, oldSelection, newSelection) -> {
+                    boolean peliculaSeleccionada = newSelection != null;
+                    btnEliminar.setDisable(!peliculaSeleccionada);
+                    btnVerDetalles.setDisable(!peliculaSeleccionada);
+
+                    // Cargar datos en el formulario cuando se selecciona una película
+                    if (peliculaSeleccionada) {
+                        cargarDatosEnFormulario(newSelection);
+                    } else {
+                        // Si no hay selección, limpiar formulario y volver a modo crear
+                        limpiarFormulario();
+                        peliculaEnEdicion = null;
+                        actualizarModoFormulario();
+                    }
+                }
         );
 
         tablaPeliculas.setItems(peliculasFiltradas);
@@ -649,7 +919,7 @@ public class ControladorPelicula implements Initializable {
         // Llenar el combo de géneros con géneros estáticos iniciales
         cmbFiltroGenero.getItems().addAll(Genero.obtenerTodosLosGeneros());
         cmbFiltroGenero.setValue("Todos");
-        
+
         // Configurar evento de cambio en el filtro
         cmbFiltroGenero.setOnAction(e -> aplicarFiltros());
     }
@@ -660,10 +930,10 @@ public class ControladorPelicula implements Initializable {
     private void actualizarFiltroGeneros() {
         String valorActual = cmbFiltroGenero.getValue();
         cmbFiltroGenero.getItems().clear();
-        
+
         // Agregar "Todos" siempre
         cmbFiltroGenero.getItems().add("Todos");
-        
+
         // Obtener géneros únicos de las películas
         Set<String> generosUnicos = new HashSet<>();
         for (Pelicula pelicula : listaPeliculas) {
@@ -674,12 +944,12 @@ public class ControladorPelicula implements Initializable {
                 }
             }
         }
-        
+
         // Agregar géneros únicos ordenados alfabéticamente
         List<String> generosOrdenados = new ArrayList<>(generosUnicos);
         Collections.sort(generosOrdenados);
         cmbFiltroGenero.getItems().addAll(generosOrdenados);
-        
+
         // Restaurar el valor seleccionado si aún existe
         if (valorActual != null && cmbFiltroGenero.getItems().contains(valorActual)) {
             cmbFiltroGenero.setValue(valorActual);
@@ -691,6 +961,108 @@ public class ControladorPelicula implements Initializable {
     private void configurarEventos() {
         // Configurar búsqueda en tiempo real
         txtBuscar.textProperty().addListener((obs, oldText, newText) -> aplicarFiltros());
+    }
+
+    private void configurarFormularioPelicula() {
+        // Configurar ComboBox de idiomas
+        if (cmbIdioma != null) {
+            cmbIdioma.setItems(FXCollections.observableArrayList(Idioma.values()));
+            cmbIdioma.setConverter(new StringConverter<Idioma>() {
+                @Override
+                public String toString(Idioma idioma) {
+                    return idioma != null ? idioma.getNombre() : "";
+                }
+
+                @Override
+                public Idioma fromString(String string) {
+                    return null;
+                }
+            });
+        }
+
+        // Configurar ComboBox de géneros
+        if (cmbGenero != null) {
+            cmbGenero.setItems(FXCollections.observableArrayList(Genero.obtenerTodosLosGeneros()));
+        }
+
+        // Configurar ListView de géneros adicionales
+        if (listGeneros != null) {
+            listGeneros.setItems(FXCollections.observableArrayList(Genero.obtenerTodosLosGeneros()));
+            listGeneros.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        }
+
+        // Configurar validación de entrada numérica
+        if (txtAnio != null) {
+            txtAnio.textProperty().addListener((obs, oldText, newText) -> {
+                if (!newText.matches("\\d*")) {
+                    txtAnio.setText(newText.replaceAll("[^\\d]", ""));
+                }
+            });
+        }
+
+        if (txtDuracion != null) {
+            txtDuracion.textProperty().addListener((obs, oldText, newText) -> {
+                if (!newText.matches("\\d*")) {
+                    txtDuracion.setText(newText.replaceAll("[^\\d]", ""));
+                }
+            });
+        }
+
+        // Configurar TextArea sinopsis
+        if (txtSinopsis != null) {
+            txtSinopsis.setWrapText(true);
+            txtSinopsis.setEditable(true);
+            txtSinopsis.setDisable(false);
+        }
+
+        // Configurar validaciones del formulario
+        configurarValidacionesFormulario();
+    }
+
+    private void configurarValidacionesFormulario() {
+        // Listener para validar formulario en tiempo real
+        Runnable validarFormulario = this::actualizarEstadoFormulario;
+
+        if (txtTitulo != null) {
+            txtTitulo.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        }
+        if (txtSinopsis != null) {
+            txtSinopsis.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        }
+        if (txtDuracion != null) {
+            txtDuracion.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        }
+        if (txtAnio != null) {
+            txtAnio.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
+        }
+        if (cmbIdioma != null) {
+            cmbIdioma.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+        }
+        if (cmbGenero != null) {
+            cmbGenero.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
+        }
+    }
+
+    private void actualizarEstadoFormulario() {
+        if (lblEstadoFormulario != null && btnGuardar != null) {
+            boolean formularioValido = validarFormularioCompleto();
+            btnGuardar.setDisable(!formularioValido);
+
+            if (formularioValido) {
+                lblEstadoFormulario.setText("Formulario listo para guardar");
+            } else {
+                lblEstadoFormulario.setText("Complete todos los campos obligatorios");
+            }
+        }
+    }
+
+    private boolean validarFormularioCompleto() {
+        return txtTitulo != null && !txtTitulo.getText().trim().isEmpty() &&
+                txtAnio != null && !txtAnio.getText().trim().isEmpty() &&
+                txtDuracion != null && !txtDuracion.getText().trim().isEmpty() &&
+                txtSinopsis != null && !txtSinopsis.getText().trim().isEmpty() &&
+                cmbIdioma != null && cmbIdioma.getValue() != null &&
+                cmbGenero != null && cmbGenero.getValue() != null;
     }
 
     private void cargarPeliculas() {
@@ -706,22 +1078,22 @@ public class ControladorPelicula implements Initializable {
 
     private void aplicarFiltros() {
         peliculasFiltradas.clear();
-        
+
         String textoBusqueda = txtBuscar.getText().toLowerCase().trim();
         String generoSeleccionado = cmbFiltroGenero.getValue();
-        
+
         for (Pelicula pelicula : listaPeliculas) {
-            boolean coincideTexto = textoBusqueda.isEmpty() || 
-                pelicula.getTitulo().toLowerCase().contains(textoBusqueda) ||
-                pelicula.getGenerosComoString().toLowerCase().contains(textoBusqueda);
-                
+            boolean coincideTexto = textoBusqueda.isEmpty() ||
+                    pelicula.getTitulo().toLowerCase().contains(textoBusqueda) ||
+                    pelicula.getGenerosComoString().toLowerCase().contains(textoBusqueda);
+
             boolean coincideGenero = coincideConGenero(pelicula.getGenerosComoString(), generoSeleccionado);
-                
+
             if (coincideTexto && coincideGenero) {
                 peliculasFiltradas.add(pelicula);
             }
         }
-        
+
         actualizarEstadisticas();
     }
 
@@ -734,19 +1106,19 @@ public class ControladorPelicula implements Initializable {
         if (generoFiltro == null || "Todos".equals(generoFiltro)) {
             return true;
         }
-        
+
         // Si la película no tiene géneros, no coincide
         if (generosPelicula == null || generosPelicula.trim().isEmpty()) {
             return false;
         }
-        
+
         // Convertir a minúsculas para comparación insensible a mayúsculas
         String generosPeliculaLower = generosPelicula.toLowerCase();
         String generoFiltroLower = generoFiltro.toLowerCase();
-        
+
         // Separar los géneros de la película por comas y limpiar espacios
         String[] generos = generosPeliculaLower.split(",");
-        
+
         // Verificar si alguno de los géneros de la película coincide con el filtro
         for (String genero : generos) {
             String generoLimpio = genero.trim();
@@ -754,19 +1126,19 @@ public class ControladorPelicula implements Initializable {
                 return true;
             }
         }
-        
+
         return false;
     }
 
     private void actualizarEstadisticas() {
         int total = peliculasFiltradas.size();
         lblTotalPeliculas.setText("Total de películas: " + total);
-        
+
         if (total > 0) {
             double duracionPromedio = peliculasFiltradas.stream()
-                .mapToInt(Pelicula::getDuracionMinutos)
-                .average()
-                .orElse(0);
+                    .mapToInt(Pelicula::getDuracionMinutos)
+                    .average()
+                    .orElse(0);
             lblEstadisticas.setText(String.format("Duración promedio: %.1f min", duracionPromedio));
         } else {
             lblEstadisticas.setText("No hay películas que mostrar");
@@ -777,7 +1149,7 @@ public class ControladorPelicula implements Initializable {
         Alert detalles = new Alert(Alert.AlertType.INFORMATION);
         detalles.setTitle("Detalles de la Película");
         detalles.setHeaderText(pelicula.getTitulo());
-        
+
         StringBuilder contenido = new StringBuilder();
         contenido.append("ID: ").append(pelicula.getId()).append("\n");
         contenido.append("Año: ").append(pelicula.getAnio()).append("\n");
@@ -789,7 +1161,7 @@ public class ControladorPelicula implements Initializable {
         if (pelicula.getSinopsis() != null && !pelicula.getSinopsis().isEmpty()) {
             contenido.append("\nSinopsis:\n").append(pelicula.getSinopsis());
         }
-        
+
         detalles.setContentText(contenido.toString());
         detalles.showAndWait();
     }
@@ -801,20 +1173,20 @@ public class ControladorPelicula implements Initializable {
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }
-    
+
     @FXML
     private void onLogOut(ActionEvent event) {
         ManejadorMetodosComunes.mostrarVentanaAdvertencia("Sesión cerrada");
         // Cerrar la aplicación
         javafx.application.Platform.exit();
     }
-    
+
     @FXML
     private void onVolver(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) btnVolver.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (Exception e) {
@@ -826,14 +1198,14 @@ public class ControladorPelicula implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaFormularioPelicula.fxml"));
             Parent root = loader.load();
-            
+
             // Si hay una película, configurar para edición
             if (pelicula != null) {
                 ControladorFormularioPelicula controlador = loader.getController();
                 controlador.configurarParaEdicion(pelicula);
             }
-            
-            Stage stage = (Stage) btnNuevaPelicula.getScene().getWindow();
+
+            Stage stage = (Stage) btnVolver.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (Exception e) {
             mostrarError("Error de navegación", "No se pudo abrir el formulario: " + e.getMessage());
@@ -844,11 +1216,11 @@ public class ControladorPelicula implements Initializable {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaDetallesPelicula.fxml"));
             Parent root = loader.load();
-            
+
             // Configurar el controlador con la película seleccionada
             ControladorDetallesPelicula controlador = loader.getController();
             controlador.cargarPelicula(pelicula);
-            
+
             Stage stage = (Stage) btnVerDetalles.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (Exception e) {

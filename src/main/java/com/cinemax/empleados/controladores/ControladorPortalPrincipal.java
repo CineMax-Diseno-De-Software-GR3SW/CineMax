@@ -140,22 +140,26 @@ public class ControladorPortalPrincipal {
 
     @FXML
     private void onGestionPeliculas(ActionEvent event) {
-        navegarA("/vistas/peliculas/PantallaGestionPeliculas.fxml", "Gestión de Películas", event);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
+                "/vistas/peliculas/PantallaGestionPeliculas.fxml");
     }
 
     @FXML
     private void onGestionCartelera(ActionEvent event) {
-        navegarA("/vistas/peliculas/PantallaGestionCartelera.fxml", "Gestión de Cartelera", event);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
+                "/vistas/peliculas/PantallaGestionCartelera.fxml");
     }
 
     @FXML
     private void onGestionFunciones(ActionEvent event) {
-        navegarA("/vistas/peliculas/PantallaGestionFunciones.fxml", "Gestión de Funciones", event);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
+                "/vistas/peliculas/PantallaGestionFunciones.fxml");
     }
 
     @FXML
     private void onSeleccionFuncion(ActionEvent event) {
-        navegarA("/vistas/peliculas/PantallaSeleccionFuncion.fxml", "Selección de Función", event);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
+                "/vistas/peliculas/PantallaSeleccionFuncion.fxml");
     }
 
     // Metodo genérico para navegación
