@@ -5,7 +5,7 @@ import com.cinemax.venta_boletos.modelos.entidades.Factura;
 
 public class ServicioContenidoMensajeFactura {
 
-    public static ContenidoMensaje crear(Factura factura) {
+    public static ContenidoMensaje crearMensajeFactura(Factura factura) {
         String asunto = "Factura de su compra en CineMax";
         String cuerpo = "<div style='font-family:Arial,sans-serif;font-size:15px;color:#222;'>"
                 + "<h2 style='color:#0078D7;'>¡Gracias por tu compra en CineMax!</h2>"
