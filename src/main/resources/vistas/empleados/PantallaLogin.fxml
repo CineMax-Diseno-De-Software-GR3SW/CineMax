@@ -6,7 +6,7 @@
 
 <!-- stylesheets = "@ayu-theme.css" -->
 
-<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
+<VBox alignment="CENTER" minHeight="500" minWidth="800" spacing="20.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
 
     <Label styleClass="loginTitle" text="CineMAX">
         <font>
@@ -19,7 +19,7 @@
 
     <PasswordField fx:id="txtPassword" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Contraseña" />
 
-    <Button styleClass="primary-button" onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Iniciar Sesión">
+    <Button fx:id="btnIngresar" styleClass="primary-button" onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Iniciar Sesión">
       <font>
          <Font size="18.0" />
       </font></Button>

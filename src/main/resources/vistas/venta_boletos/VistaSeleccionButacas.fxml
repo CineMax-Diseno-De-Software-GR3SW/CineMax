@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas">
+   <top>
+      <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+         <children>
+            <Button fx:id="buttonVolver" onAction="#onBackAction" styleClass="stepper-button" text="←" />
+            <Label styleClass="section-title" text="Selecciona tus butacas" />
+            <Region HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+   </top>
+   
+   <right>
+      <VBox prefHeight="500.0" prefWidth="278.0" spacing="10.0" styleClass="tickets-section" BorderPane.alignment="CENTER">
+         <children>
+            <VBox fx:id="informacionFuncionContainer" prefHeight="650.0" prefWidth="278.0" spacing="10.0" styleClass="tickets-section" />
+            <Region VBox.vgrow="NEVER" />
+            <Button fx:id="buttonContinuar" onAction="#onContinuarAction" prefHeight="268.0" prefWidth="390.0" styleClass="primary-button" text="Continuar" VBox.vgrow="NEVER" />
+            <Region prefHeight="0.0" prefWidth="278.0" />
+         </children>
+      </VBox>
+   </right>
+   <center>
+      <VBox prefHeight="500.0" prefWidth="604.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT">
+               <children>
+                  <Label styleClass="section-title" text="Sala " />
+                  <Label fx:id="labelTipoSala" styleClass="movie-title" text="Tipo Sala" textFill="#f25f00" />
+                  <Region HBox.hgrow="ALWAYS" />
+               </children>
+            </HBox>
+            <!-- Contenedor donde se cargará programáticamente el mapa de butacas -->
+            <VBox fx:id="mapaButacasContainer" spacing="0.0" styleClass="tickets-section" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" />
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

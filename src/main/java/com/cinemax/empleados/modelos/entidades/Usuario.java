@@ -14,16 +14,17 @@ public class Usuario {
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaUltimaModificacion;
     private Rol rol;
+    private boolean requiereCambioClave;
 
     // Constructor
     public Usuario() {
         this.fechaCreacion = LocalDateTime.now();
         this.fechaUltimaModificacion = LocalDateTime.now();
-        this.activo = true;
+//        this.activo = true;
     }
 
     public Usuario(String nombreUsuario, String correo, String clave, String nombreCompleto,
-            String cedula, String celular, Rol rol, boolean activo) {
+            String cedula, String celular, Rol rol, boolean activo, boolean requiereCambioClave) {
         this();
         this.nombreUsuario = nombreUsuario;
         this.correo = correo;
@@ -33,6 +34,7 @@ public class Usuario {
         this.celular = celular;
         this.rol = rol;
         this.activo = activo;
+        this.requiereCambioClave = requiereCambioClave;
     }
 
     // Métodos de negocio
@@ -158,10 +160,10 @@ public class Usuario {
                 + activo + ", fechaCreacion=" + fechaCreacion;
     }
 
-    public String getTelefono() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTelefono'");
-    }
+//    public String getNumeroTelefono() {
+//        // TODO Auto-generated method stub
+//        throw new UnsupportedOperationException("Unimplemented method 'getTelefono'");
+//    }
 
     public void actualizarCorreo(String nuevoEmail) {
         this.correo = nuevoEmail;
@@ -170,5 +172,13 @@ public class Usuario {
     public void actualizarCelular(String nuevoCelular) { this.celular = nuevoCelular; }
 
     public void actualizarClave(String nuevaClave) { this.clave = nuevaClave;
+    }
+
+    public boolean isRequiereCambioClave() {
+        return requiereCambioClave;
+    }
+
+    public void setRequiereCambioClave(boolean requiereCambioClave) {
+        this.requiereCambioClave = requiereCambioClave;
     }
 }

@@ -77,6 +77,7 @@ public class UsuarioDAO {
     }
 
     public Usuario buscarPorNombreUsuario(String nombre) throws Exception {
+        //todo:sp actualizado
         String sql = "SELECT * FROM buscar_usuario_por_nombre_usuario('" + nombre + "')";
 
         // SELECT
@@ -227,6 +228,7 @@ public class UsuarioDAO {
 
         Timestamp fm = rs.getTimestamp("FECHAULTIMAMODIFICACION");
         if (fm != null) u.setFechaUltimaModificacion(fm.toLocalDateTime());
+        u.setRequiereCambioClave(rs.getBoolean("REQUIERECAMBIOCLAVE"));
 
         Rol rol = new Rol();
         rol.setId(rs.getLong("IDROL"));
@@ -290,4 +292,28 @@ public class UsuarioDAO {
 
 //        db.insertarModificarEliminar(sql);
     }
+
+    public void actualizarClaveTemporal(Long idUsuario, String nuevaClave) throws SQLException {
+        String sql = """
+                CALL actualizar_clavetemp_usuario(%d,'%s')
+                """.formatted(
+                idUsuario,
+                nuevaClave
+        );
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
+    }
+
+    public void setRequiereCambioClave(Long id, boolean cambioClave) throws SQLException {
+        String sql = """
+            CALL set_requiere_cambio_clave(%d, %b)
+            """.formatted(
+                id,
+                cambioClave
+        );
+
+        db.ejecutarActualizacion(sql);
+    }
+
 }

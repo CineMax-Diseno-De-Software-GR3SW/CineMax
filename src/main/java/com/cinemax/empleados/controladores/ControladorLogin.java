@@ -1,5 +1,6 @@
 package com.cinemax.empleados.controladores;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -39,30 +40,14 @@ public class ControladorLogin {
     }
 
     @FXML
-    private void onLoginClick(ActionEvent event) {
+    private void onLoginClick() {
         if(iniciarSesion()){
-            // URL url = getClass().getResource("/Vista/PantallaAdministrador.fxml");
-            // System.out.println(url); // Si imprime null, el archivo no se encuentra
-        // FXMLLoader Loader = new FXMLLoader(getClass().getResource("/Vista/PantallaLogin.fxml"));
-        
+            lblError.setVisible(false);
+            String rutaFXML = "/vistas/empleados/PantallaPortalPrincipal.fxml";
+            if(ServicioSesionSingleton.getInstancia().getUsuarioActivo().isRequiereCambioClave())
+                rutaFXML = "/vistas/empleados/PantallaCambioClaveObligatorio.fxml";
 
-            //FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/cinemax/moduloboletos/vistas/VentaDeBoletos/datos-cliente-view.fxml"));
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            try {
-                Parent root = loader.load();
-
-                ControladorPortalPrincipal controlador = loader.getController();
-                controlador.initialize();
-
-                // Obtener el Stage actual desde el botón o cualquier nodo
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setTitle("Portal del Administrador");
-                stage.setScene(new Scene(root));
-                stage.show();
-
-            } catch (Exception e) {
-e.printStackTrace();            }
-
+            ManejadorMetodosComunes.cambiarVentana((Stage)btnIngresar.getScene().getWindow(),rutaFXML);
         } else {
             lblError.setText("Usuario o contraseña incorrectos.");
             lblError.setVisible(true);

@@ -8,14 +8,14 @@ public class ValidadorUsuario {
         "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
     );
     
-    public boolean validarCorreo(String correo) {
+    public static boolean validarCorreo(String correo) {
         if (correo == null || correo.trim().isEmpty()) {
             return false;
         }
         return EMAIL_PATTERN.matcher(correo).matches();
     }
     
-    public boolean validarClave(String clave) {
+    public static boolean validarClave(String clave) {
         if (clave == null || clave.length() < 6) {
             return false;
         }

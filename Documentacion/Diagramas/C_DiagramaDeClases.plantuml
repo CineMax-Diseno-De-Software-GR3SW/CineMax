@@ -1,0 +1,196 @@
+@startuml
+title Diagrama de Clases - Gestión de Venta de Boletos
+
+skinparam linetype ortho
+
+' ------------------ CONTROLADORES ------------------
+
+package Controladores {
+
+    class ControladorVentaBoletos {
+        '- controladorPeliculaYFunciones: ControladorAsignadorFuncion
+        '- controladorSalas: ControladorSalas
+        + realizarVenta(): void
+    }
+
+    class ControladorAsignadorFuncion {
+        + asignarFuncion(controladorCartelera: ControladorCartelera): Funcion
+    }
+
+    class ControladorAsignadorButacas {
+        - butacasOcupadas: List<Butaca>
+        + asignarButacas(controladorDeConsultaSalas: ControladorDeConsultaSalas, funcion: Funcion, butacasOcupadas: Map): List<Butaca>
+    }
+
+    class ControladorBoleto {
+        ''- servicioGeneradorBoleto: ServicioGeneradorBoleto
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    class ControladorFacturacion {
+        ''- servicioFacturacion: ServicioFacturacion
+        + generarFactura(boletos: List<Boleto>, cliente: Cliente): Factura
+    }
+
+    ''class ControladorGeneradorArchivo {
+    ''    + generarArchivo(factura: Factura, servicioGeneradorArchivo: ServicioGeneradorArchivo): void
+    ''}
+
+    class ControladorEnvios {
+        - asunto: String
+        - cuerpo: String
+        + especificarAsunto(asunto: String): void
+        + especificarCuerpo(cuerpo: String): void
+        + enviar(correo: String, adjunto: PDF): void
+    }
+}
+
+' ------------------ SERVICIOS ------------------
+package Servicios{
+    interface ServicioEnvio {
+        + enviarCorreo(correo: String, asunto: String, cuerpo: String, adjunto: PDF): void
+    }
+
+    class ServicioCorreo {
+    }
+
+    class ServicioFacturacion {
+        + generarFactura(boletos: List<Boleto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): Factura
+        - generarCodigoFactura(): long
+        - getFechaActual(): String
+    }
+
+    class ServicioGeneradorBoleto{
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    interface ServicioGeneradorArchivo {
+        + generarFactura(factura: Factura): void
+        + generarBoletos(boletos: List<Producto>): void
+    }
+
+    class GeneradorArchivoPDF {
+        + generar(factura: Factura): void
+        + generar(boletos: List<Producto>): void
+        - crearCarpetaSiNoExiste(carpeta: String): void
+
+    }
+
+    class ServicioMostrarCartelera {
+        - controladorCartelera: ControladorCartelera
+        - peliculas: ObservableList<Pelicula>
+        - selectedPelicula: Pelicula
+        + getPeliculas(): ObservableList<Pelicula>
+        + getSelectedPelicula(): Pelicula
+        + setSelectedPelicula(pelicula: Pelicula): void
+        + inicializarListaPeliculas(): void
+        + seleccionarPelicula(peliculaSeleccionada: Pelicula, currentStage: Stage): void
+        + mostrarCartelera(): void
+    }
+}
+
+' ------------------ MODELOS ------------------
+package Modelos {
+
+    abstract class Producto {
+        - precio: double
+        + {abstract} calcularPrecio(): void
+        + setPrecio(precio: double): void
+        + getPrecio(): double
+    }
+
+    class Boleto {
+        - funcion: Funcion
+        - butaca: Butaca
+        + setFuncion(funcion: Funcion): void
+        + setButaca(butaca: Butaca): void
+        + getFuncion(): Funcion
+        + getButaca(): Butaca
+        + calcularPrecio(): void
+    }
+
+    class Factura {
+        - codigoFactura: long
+        - fecha: String
+        - cliente: Cliente
+        - productos: List<Producto>
+        - subtotal: double
+        - total: double
+        + calcularSubTotal(): void
+        + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
+        + setProductos(productos: List<Producto>): void
+        + getCodigoFactura(): long
+        + getFecha(): String
+        + getCliente(): Cliente
+        + getTotal(): double
+        + getSubTotal(): double
+        + getProductos(): List<Producto>
+    }
+
+    interface CalculadorImpuesto {
+        + calcularImpuesto(subtotal: double): double
+    }
+
+    class CalculadorIVA {
+        - {static} IVA_TASA: double
+        + calcularImpuesto(subtotal: double): double
+        + {static} getIVA_TASA(): double
+    }
+
+    class Cliente {
+        - idCliente: String
+        - tipoDocumento: String
+        - nombre: String
+        - apellido: String
+        - correoElectronico: String
+        + setIdCliente(idCliente: String): void
+        + setTipoDocumento(tipoDocumento: String): void
+        + setNombre(nombre: String): void
+        + setApellido(apellido: String): void
+        + setCorreoElectronico(correoElectronico: String): void
+        + getIdCliente(): String
+        + getTipoDocumento(): String
+        + getNombre(): String
+        + getApellido(): String
+        + getCorreoElectronico(): String
+    }
+}
+
+
+' ------------------ RELACIONES ------------------
+GeneradorArchivoPDF ..up|> ServicioGeneradorArchivo
+
+''ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
+
+ControladorVentaBoletos ..> ControladorAsignadorFuncion
+ControladorVentaBoletos ..> ControladorAsignadorButacas
+ControladorVentaBoletos ..> ControladorBoleto
+ControladorVentaBoletos ..> ControladorFacturacion
+
+ControladorVentaBoletos ..> ServicioGeneradorArchivo
+ControladorVentaBoletos ..> ControladorEnvios
+
+ControladorBoleto ..> ServicioGeneradorBoleto
+''ControladorBoleto ..> ServicioGeneradorBoleto
+
+ServicioGeneradorBoleto ..> Boleto
+
+ControladorFacturacion ..> ServicioFacturacion
+''ControladorFacturacion ..> ServicioFacturacion
+
+ServicioFacturacion ..> Factura
+ServicioFacturacion ..left> Cliente
+
+Boleto --up|> Producto
+
+Factura "1" --> "1..*" Producto
+Factura "1... *"--> "1" Cliente
+Factura ..> CalculadorImpuesto
+
+CalculadorIVA ..up|> CalculadorImpuesto
+
+ControladorEnvios ..> ServicioEnvio
+
+ServicioCorreo ..up|> ServicioEnvio
+
+@enduml

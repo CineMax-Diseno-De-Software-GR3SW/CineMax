@@ -18,7 +18,7 @@
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
-		<java.version>21</java.version>
+		<java.version>23</java.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<junit.version>5.10.0</junit.version>
 	</properties>
@@ -72,6 +72,13 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!-- Dependencia de PDF-->
+		<dependency>
+			<groupId>org.apache.pdfbox</groupId>
+			<artifactId>pdfbox</artifactId>
+			<version>2.0.29</version> <!-- Puedes usar la versión más reciente -->
+		</dependency>
+
 		<!-- Dependencias adicionales -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -81,11 +88,6 @@
 			<groupId>com.sun.mail</groupId>
 			<artifactId>jakarta.mail</artifactId>
 			<version>2.0.1</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.pdfbox</groupId>
-			<artifactId>pdfbox</artifactId>
-			<version>2.0.29</version>
 		</dependency>
 	</dependencies>
 

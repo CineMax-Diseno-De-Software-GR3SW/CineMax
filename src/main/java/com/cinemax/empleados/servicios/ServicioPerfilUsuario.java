@@ -6,11 +6,9 @@ import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 import java.sql.SQLException;
 
 public class ServicioPerfilUsuario {
-    private ValidadorUsuario validador;
     private UsuarioDAO usuarioDAO;
     
     public ServicioPerfilUsuario() {
-        this.validador = new ValidadorUsuario();
         this.usuarioDAO = new UsuarioDAO();
     }
     
@@ -19,7 +17,7 @@ public class ServicioPerfilUsuario {
             throw new IllegalArgumentException("El usuario no puede ser null");
         }
         
-        if (nuevoCorreo != null && !validador.validarCorreo(nuevoCorreo)) {
+        if (nuevoCorreo != null && !ValidadorUsuario.validarCorreo(nuevoCorreo)) {
             throw new IllegalArgumentException("El nuevo correo electrónico no es válido");
         }
         
@@ -44,7 +42,7 @@ public class ServicioPerfilUsuario {
             return false; // Clave actual incorrecta
         }
         
-        if (!validador.validarClave(nuevaClave)) {
+        if (!ValidadorUsuario.validarClave(nuevaClave)) {
             throw new IllegalArgumentException("La nueva clave no cumple con los requisitos de seguridad");
         }
         
