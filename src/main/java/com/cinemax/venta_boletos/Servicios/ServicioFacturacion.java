@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Servicios;
+package com.cinemax.venta_boletos.servicios;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -6,10 +6,10 @@ import java.util.Date;
 import java.util.List;
 import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.servicios.ContenidoMensaje;
-import com.cinemax.venta_boletos.Modelos.entidades.CalculadorImpuesto;
-import com.cinemax.venta_boletos.Modelos.entidades.Cliente;
-import com.cinemax.venta_boletos.Modelos.entidades.Factura;
-import com.cinemax.venta_boletos.Modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
+import com.cinemax.venta_boletos.modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
 
 
 public class ServicioFacturacion {

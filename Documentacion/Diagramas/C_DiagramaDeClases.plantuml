@@ -195,38 +195,39 @@ package modelos {
 
 ' ------------------ RELACIONES ------------------
 
-''ControladorGeneradorArchivo ..> ServicioGeneradorArchivo
+' Relaciones de composición y agregación (tienen instancias como atributos)
+ControladorFacturacion *--> ServicioFacturacion
+ControladorAsignadorButacas o--> ControladorInformacionLateral
+ControladorFacturacion o--> ControladorInformacionLateral
 
-ControladorVentaBoletos ..> ControladorAsignadorFuncion
-ControladorVentaBoletos ..> ControladorAsignadorButacas
-ControladorVentaBoletos ..> ControladorBoleto
-ControladorVentaBoletos ..> ControladorFacturacion
+' Relaciones de uso/dependencia (se crean o usan temporalmente)
+ControladorAsignadorButacas ..> ServicioGeneradorBoleto
+ControladorFacturacion ..> ContextoValidacion
+ControladorFacturacion ..> CalculadorIVA
+ControladorMostrarCartelera ..> ServicioMostrarCartelera
+ControladorMostrarFunciones ..> ServicioMostrarFunciones
 
-ControladorVentaBoletos ..> ServicioGeneradorArchivo
-ControladorVentaBoletos ..> ControladorEnvios
-
-ControladorBoleto ..> ServicioGeneradorBoleto
-''ControladorBoleto ..> ServicioGeneradorBoleto
-
+' Servicios que crean o usan entidades
 ServicioGeneradorBoleto ..> Boleto
-
-ControladorFacturacion ..> ServicioFacturacion
-''ControladorFacturacion ..> ServicioFacturacion
-
 ServicioFacturacion ..> Factura
-ServicioFacturacion ..left> Cliente
+ServicioFacturacion ..> ServicioGeneradorArchivoPDF
 ServicioFacturacion ..> ServicioContenidoMensajeFactura
+ServicioFacturacion ..left> Cliente
 
-Boleto --up|> Producto
-
-Factura "1" --> "1..*" Producto
-Factura "1... *"--> "1" Cliente
-Factura ..> CalculadorImpuesto
-
+' Relaciones de herencia e implementación
+Boleto --|> Producto
 CalculadorIVA ..up|> CalculadorImpuesto
 
+' Asociaciones entre entidades
+Factura "1" *-- "1..*" Producto
+Factura "1" *-- "1" Cliente
+Boleto "1" *-- "1" Funcion
+Boleto "1" *-- "1" Butaca
 
+' Patrón Strategy
 ContextoValidacion o--> EstrategiaValidacion
-ControladorFacturacion ..> ContextoValidacion
+
+' Uso de interfaces/clases abstractas
+Factura ..> CalculadorImpuesto
 
 @enduml

@@ -1,9 +1,9 @@
-package com.cinemax.venta_boletos.Servicios;
+package com.cinemax.venta_boletos.servicios;
 
 import java.util.List;
 
-import com.cinemax.venta_boletos.Modelos.entidades.Factura;
-import com.cinemax.venta_boletos.Modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
 
 /**
  * Interfaz para el servicio de generación de archivos de venta.

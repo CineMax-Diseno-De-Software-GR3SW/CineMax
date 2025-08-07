@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Servicios.strategy;
+package com.cinemax.venta_boletos.servicios.strategy;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 

@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Servicios.strategy;
+package com.cinemax.venta_boletos.servicios.strategy;
 
 /**
  * Estrategia de validación específica para números de pasaporte.

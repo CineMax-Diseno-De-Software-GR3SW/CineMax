@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -10,9 +10,9 @@ import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.controladores.ControladorDeConsultaSalas;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.venta_boletos.Modelos.entidades.Producto;
-import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
-import com.cinemax.venta_boletos.Servicios.ServicioGeneradorBoleto;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
+import com.cinemax.venta_boletos.servicios.ServicioGeneradorBoleto;
 
 // Imports para manejo de la interfaz JavaFX
 import javafx.fxml.FXMLLoader;

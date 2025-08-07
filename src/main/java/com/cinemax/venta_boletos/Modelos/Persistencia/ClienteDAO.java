@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Modelos.Persistencia;
+package com.cinemax.venta_boletos.modelos.persistencia;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cinemax.comun.ConexionBaseSingleton;
-import com.cinemax.venta_boletos.Modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 
 /**
  * Clase ClienteDAO que maneja las operaciones de persistencia para la entidad Cliente.
