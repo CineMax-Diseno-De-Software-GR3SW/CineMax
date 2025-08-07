@@ -3,16 +3,14 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="500.0" prefWidth="800.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula" styleClass="root">
+<BorderPane prefHeight="800.0" prefWidth="1400.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula" styleClass="root">
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
                 <Button fx:id="btnVolver" text="←" styleClass="stepper-button" onAction="#onVolver" />
-                <Label text="Gestor de Películas" styleClass="section-title" />
+                <Label text="Gestión de Películas" styleClass="section-title" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnNuevaPelicula" onAction="#onNuevaPelicula" styleClass="primary-button" text="+ Nueva Película" />
             </children>
             <padding>
                 <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
@@ -21,55 +19,141 @@
     </top>
 
     <center>
-        <VBox spacing="12.0">
+        <HBox spacing="20.0">
             <padding>
                 <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
             </padding>
 
-            <!-- Sección de búsqueda y filtros -->
-            <VBox spacing="10.0" styleClass="ticket-card">
-                <Label text="Búsqueda y Filtros" styleClass="section-title" />
-                <HBox spacing="10.0" alignment="CENTER_LEFT">
+            <!-- Panel izquierdo: Formulario de película -->
+            <VBox spacing="15.0" prefWidth="480.0" minWidth="480.0" maxWidth="480.0">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                    <VBox spacing="20.0">
+                        <padding>
+                            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                        </padding>
+
+                        <!-- Formulario de película integrado -->
+                        <VBox spacing="20.0" styleClass="ticket-card">
+                            <Label text="Datos de Película" styleClass="section-title" />
+
+                            <!-- Fila 1: Título -->
+                            <VBox spacing="8.0">
+                                <Label text="Título *" styleClass="form-label" />
+                                <TextField fx:id="txtTitulo" promptText="Ingrese el título de la película" styleClass="text-field" />
+                            </VBox>
+
+                            <!-- Fila 2: Año y Duración -->
+                            <HBox spacing="15.0" alignment="CENTER_LEFT">
+                                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                    <Label text="Año *" styleClass="form-label" />
+                                    <TextField fx:id="txtAnio" promptText="2024" styleClass="text-field" />
+                                </VBox>
+                                <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                                    <Label text="Duración (min) *" styleClass="form-label" />
+                                    <TextField fx:id="txtDuracion" promptText="120" styleClass="text-field" />
+                                </VBox>
+                            </HBox>
+
+                            <!-- Fila 3: Idioma -->
+                            <VBox spacing="8.0">
+                                <Label text="Idioma *" styleClass="form-label" />
+                                <ComboBox fx:id="cmbIdioma" promptText="Seleccione idioma" styleClass="combo-box" prefWidth="200.0" />
+                            </VBox>
+
+                            <!-- Fila 4: Sinopsis -->
+                            <VBox spacing="8.0">
+                                <Label text="Sinopsis *" styleClass="form-label" />
+                                <TextArea fx:id="txtSinopsis" promptText="Ingrese la sinopsis de la película"
+                                          wrapText="true" prefRowCount="3" styleClass="text-area" />
+                            </VBox>
+
+                            <!-- Fila 5: Género Principal -->
+                            <VBox spacing="8.0">
+                                <Label text="Género Principal *" styleClass="form-label" />
+                                <ComboBox fx:id="cmbGenero" promptText="Seleccione género principal" styleClass="combo-box" />
+                            </VBox>
+
+                            <!-- Fila 6: Géneros Adicionales -->
+                            <VBox spacing="8.0">
+                                <Label text="Géneros Adicionales" styleClass="form-label" />
+                                <ListView fx:id="listGeneros" prefHeight="100.0" styleClass="list-view" />
+                                <Label text="Ctrl + clic para múltiples" styleClass="help-text" />
+                            </VBox>
+
+                            <!-- Fila 7: URL de Imagen -->
+                            <VBox spacing="8.0">
+                                <Label text="URL de Imagen" styleClass="form-label" />
+                                <TextField fx:id="txtImagenUrl" promptText="https://ejemplo.com/imagen.jpg (opcional)" styleClass="text-field" />
+                            </VBox>
+                        </VBox>
+
+                        <!-- Botones del formulario -->
+                        <VBox spacing="10.0" alignment="CENTER">
+                            <Button fx:id="btnGuardar" text="Crear" styleClass="primary-button"
+                                    disable="true" prefWidth="200.0" onAction="#onGuardar" />
+                            <HBox spacing="10.0" alignment="CENTER">
+                                <Button fx:id="btnNuevo" text="Nuevo" styleClass="link-button"
+                                        prefWidth="90.0" onAction="#onLimpiarFormulario" />
+                                <Button fx:id="btnLimpiarFormulario" text="Limpiar" styleClass="link-button"
+                                        prefWidth="90.0" onAction="#onLimpiarFormulario" />
+                            </HBox>
+                        </VBox>
+
+                        <!-- Estado del formulario -->
+                        <HBox alignment="CENTER" styleClass="summary-pane">
+                            <Label fx:id="lblEstadoFormulario" text="Complete todos los campos obligatorios" styleClass="summary-details" />
+                        </HBox>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Panel derecho: Gestión de películas -->
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS">
+
+                <!-- Sección de búsqueda -->
+                <VBox spacing="10.0" styleClass="ticket-card">
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <children>
+                            <Label text="Buscar:" />
+                            <TextField fx:id="txtBuscar" promptText="Título, género..." prefWidth="200.0" styleClass="text-field" />
+                            <Button fx:id="btnBuscar" onAction="#onBuscar" text="🔍" styleClass="icon-button" />
+                            <Region HBox.hgrow="ALWAYS" />
+                            <ComboBox fx:id="cmbFiltroGenero" promptText="Filtrar por género" prefWidth="130.0" styleClass="combo-box" visible="false" managed="false" />
+                        </children>
+                    </HBox>
+                </VBox>
+
+                <!-- Tabla de películas -->
+                <TableView fx:id="tablaPeliculas" styleClass="table-view" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="60.0" minWidth="50.0" />
+                        <TableColumn fx:id="colTitulo" text="Título" prefWidth="300.0" minWidth="200.0" />
+                        <TableColumn fx:id="colAnio" text="Año" prefWidth="80.0" minWidth="70.0" />
+                        <TableColumn fx:id="colGenero" text="Género" prefWidth="150.0" minWidth="100.0" />
+                        <TableColumn fx:id="colDuracion" text="Duración" prefWidth="100.0" minWidth="80.0" />
+                        <TableColumn fx:id="colIdioma" text="Idioma" prefWidth="120.0" minWidth="80.0" />
+                    </columns>
+                </TableView>
+
+                <!-- Botones de acción -->
+                <HBox spacing="12.0" alignment="CENTER">
                     <children>
-                        <Label text="Buscar:" />
-                        <TextField fx:id="txtBuscar" promptText="Título, género..." prefWidth="200.0" styleClass="text-field" />
-                        <Button fx:id="btnBuscar" onAction="#onBuscar" text="Buscar" styleClass="stepper-button" />
-                        <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="link-button" />
-                        <Region HBox.hgrow="ALWAYS" />
-                        <ComboBox fx:id="cmbFiltroGenero" promptText="Filtrar por género" prefWidth="130.0" styleClass="combo-box" />
+                        <Button fx:id="btnEliminar" onAction="#onEliminarPelicula" text="Eliminar" disable="true" styleClass="primary-button" />
+                        <Button fx:id="btnVerDetalles" onAction="#onVerDetalles" text="Ver Detalles" disable="true" styleClass="link-button" />
+                    </children>
+                </HBox>
+
+                <!-- Información adicional -->
+                <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="summary-pane">
+                    <children>
+                        <Label fx:id="lblTotalPeliculas" text="Total de películas: 0" styleClass="summary-details" />
+                        <Label fx:id="lblEstadisticas" text="" styleClass="summary-details" visible="false" managed="false" />
                     </children>
                 </HBox>
             </VBox>
-
-            <!-- Tabla de películas -->
-            <TableView fx:id="tablaPeliculas" prefHeight="280.0" styleClass="table-view">
-                <columns>
-                    <TableColumn fx:id="colId" text="ID" prefWidth="40.0" />
-                    <TableColumn fx:id="colTitulo" text="Título" prefWidth="200.0" />
-                    <TableColumn fx:id="colAnio" text="Año" prefWidth="70.0" />
-                    <TableColumn fx:id="colGenero" text="Género" prefWidth="100.0" />
-                    <TableColumn fx:id="colDuracion" text="Duración" prefWidth="80.0" />
-                    <TableColumn fx:id="colIdioma" text="Idioma" prefWidth="80.0" />
-                </columns>
-            </TableView>
-
-            <!-- Botones de acción -->
-            <HBox spacing="12.0" alignment="CENTER">
-                <children>
-                    <Button fx:id="btnEditar" onAction="#onEditarPelicula" text="Editar" disable="true" styleClass="primary-button" />
-                    <Button fx:id="btnEliminar" onAction="#onEliminarPelicula" text="Eliminar" disable="true" styleClass="stepper-button" />
-                    <Button fx:id="btnVerDetalles" onAction="#onVerDetalles" text="Ver Detalles" disable="true" styleClass="link-button" />
-                </children>
-            </HBox>
-
-            <!-- Información adicional -->
-            <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="summary-pane">
-                <children>
-                    <Label fx:id="lblTotalPeliculas" text="Total de películas: 0" styleClass="summary-details" />
-                    <Region HBox.hgrow="ALWAYS" />
-                    <Label fx:id="lblEstadisticas" text="Estadísticas de películas" styleClass="summary-details" />
-                </children>
-            </HBox>
-        </VBox>
+        </HBox>
     </center>
 </BorderPane>
