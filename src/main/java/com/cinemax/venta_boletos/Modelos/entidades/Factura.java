@@ -17,7 +17,6 @@ public class Factura {
     private long codigoFactura;
     
     /** Fecha de emisión de la factura en formato String */
-    // private LocalDateTime fecha; // Comentado: implementación futura con LocalDateTime
     private String fecha;
     
     /** Cliente asociado a esta factura */

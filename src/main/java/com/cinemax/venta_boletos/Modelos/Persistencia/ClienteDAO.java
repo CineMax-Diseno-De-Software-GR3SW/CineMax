@@ -12,14 +12,25 @@ import java.util.List;
 import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 
+/**
+ * Clase ClienteDAO que maneja las operaciones de persistencia para la entidad Cliente.
+ * Utiliza procedimientos almacenados para crear, actualizar, eliminar y buscar clientes.
+ */
 public class ClienteDAO {
     
+    /** Instancia singleton para manejar la conexión a la base de datos */
     private final ConexionBaseSingleton conexionBase;
 
+    /** Constructor de la clase ClienteDAO que inicializa la conexión a la base de datos */
     public ClienteDAO() {
         this.conexionBase = ConexionBaseSingleton.getInstancia();
     }
 
+    /**
+     * Crea un nuevo cliente en la base de datos.
+     * @param cliente El objeto Cliente que contiene la información del cliente a insertar.
+     * @throws Exception Si ocurre un error al insertar el cliente.
+     */
     public void crearCliente(Cliente cliente) throws Exception {
         String sql = "{ CALL crear_cliente(?, ?, ?, ?, ?) }";
         try (Connection conn = conexionBase.conectar();
@@ -37,6 +48,11 @@ public class ClienteDAO {
         }
     }
 
+    /**
+     * Actualiza la información de un cliente existente en la base de datos.
+     * @param cliente El objeto Cliente que contiene la información actualizada del cliente.
+     * @throws Exception Si ocurre un error al actualizar el cliente.
+     */
     public void actualizarCliente(Cliente cliente) throws Exception {
         String sql = "{ CALL actualizar_cliente(?, ?, ?, ?) }"; // solo 4 parámetros
         try (Connection conn = conexionBase.conectar();
@@ -53,6 +69,11 @@ public class ClienteDAO {
         }
     }
 
+    /**
+     * Elimina un cliente de la base de datos.
+     * @param numeroDocumento El número de documento del cliente a eliminar.
+     * @throws Exception Si ocurre un error al eliminar el cliente.
+     */
     public void eliminarCliente(String numeroDocumento) throws Exception {
         String sql = "{ CALL eliminar_cliente(?) }";
         try (Connection conn = conexionBase.conectar();
@@ -65,7 +86,13 @@ public class ClienteDAO {
         }
     }
 
-   public Cliente buscarPorId(String numeroDocumento) throws Exception {
+    /**
+     * Busca un cliente por su número de documento.
+     * @param numeroDocumento El número de documento del cliente a buscar.
+     * @return El objeto Cliente encontrado o null si no se encuentra.
+     * @throws Exception Si ocurre un error al buscar el cliente.
+     */
+    public Cliente buscarPorId(String numeroDocumento) throws Exception {
         String sql = "SELECT * FROM obtener_cliente(?)";
         ResultSet rs = null;
         PreparedStatement ps = null;
@@ -94,6 +121,11 @@ public class ClienteDAO {
         }
     }
 
+    /**
+     * Lista todos los clientes en la base de datos.
+     * @return Una lista de objetos Cliente.
+     * @throws Exception Si ocurre un error al listar los clientes.
+     */
     public List<Cliente> listarTodos() throws Exception {
         List<Cliente> lista = new ArrayList<>();
         String sql = "SELECT * FROM listar_clientes()";
