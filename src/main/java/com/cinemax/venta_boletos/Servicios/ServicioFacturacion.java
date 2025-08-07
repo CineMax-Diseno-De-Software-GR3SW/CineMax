@@ -36,7 +36,7 @@ public class ServicioFacturacion {
         // Enviar el PDF al correo del cliente usando ServicioCorreoSingleton
         try {
             ServicioCorreoSingleton correo = ServicioCorreoSingleton.getInstancia();
-            ContenidoMensaje contenido = ServicioContenidoMensajeFactura.crear(factura);
+            ContenidoMensaje contenido = ServicioContenidoMensajeFactura.crearMensajeFactura(factura);
             // Construir la ruta del archivo PDF generado
             String rutaPDF = "PDFsGenerados_BoletoFactura/FacturasGeneradas/Factura_" + factura.getCodigoFactura() + ".pdf";
             File archivoPDF = new File(rutaPDF);

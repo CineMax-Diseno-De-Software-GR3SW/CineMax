@@ -274,7 +274,7 @@ public class ControladorAsignadorButacas {
 
             // 5. Inicializar datos ANTES de mostrar la vista (evita problemas de
             // renderizado)
-            controladorFacturacion.initData(boletosGenerados);
+            controladorFacturacion.cargarBoletosSeleccionados(boletosGenerados);
 
             // 6. Ahora sí cambiar la escena con todos los datos ya cargados
             Scene newScene = new Scene(root);

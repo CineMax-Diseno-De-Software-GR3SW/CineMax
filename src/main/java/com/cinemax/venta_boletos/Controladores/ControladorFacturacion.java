@@ -128,7 +128,7 @@ public class ControladorFacturacion {
      * 
      * @param boletos Lista de productos (boletos) que fueron seleccionados por el usuario.
      */
-    public void initData(List<Producto> boletos) {
+    public void cargarBoletosSeleccionados(List<Producto> boletos) {
         this.boletos = boletos;
 
         // 2. Validar si el controlador lateral está inicializado correctamente.

@@ -33,9 +33,9 @@ public class ControladorPortalPrincipal {
 
     // Otros botones del sistema
     @FXML
-    public Button btnConfiguracionSalas;
+    public Button btnGestionSalas;
     @FXML
-    public Button btnConfiguracionButacas;
+    public Button btnGestionButacas;
     @FXML
     private Button btnGestionUsuarios;
     @FXML
@@ -64,9 +64,9 @@ public class ControladorPortalPrincipal {
 
         habilitarOpcionSiTienePermiso(btnGestionUsuarios, Permiso.GESTIONAR_USUARIO);
         habilitarOpcionSiTienePermiso(btnVerReportes, Permiso.GESTIONAR_REPORTES);
-        habilitarOpcionSiTienePermiso(btnConfiguracionSalas, Permiso.GESTIONAR_SALA);
+        habilitarOpcionSiTienePermiso(btnGestionSalas, Permiso.GESTIONAR_SALA);
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
-        habilitarOpcionSiTienePermiso(btnConfiguracionButacas, Permiso.GESTIONAR_SALA);
+        habilitarOpcionSiTienePermiso(btnGestionButacas, Permiso.GESTIONAR_SALA);
     }
 
     /* Simplifica: si no tiene alguno de los permisos, oculta (sin dejar hueco) */
@@ -108,13 +108,17 @@ public class ControladorPortalPrincipal {
     }
 
     @FXML
-    public void onConfiguracionSalas(ActionEvent event) {
-        navegarA("/vistas/salas/VistaGSalas.fxml", "Configuración de Salas", event);
+    public void onGestionSalas(ActionEvent event) {
+       // navegarA("/vistas/salas/VistaGSalas.fxml", "Configuración de Salas", event);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionSalas.getScene().getWindow(),
+                "/vistas/salas/VistaGSalas.fxml");
     }
 
     @FXML
-    public void onConfiguracionButacas(ActionEvent event) {
-        navegarA("/vistas/salas/VistaGButacas.fxml", "Configuración de Butacas", event);
+    public void onGestionButacas(ActionEvent event) {
+        //navegarA("/vistas/salas/VistaGButacas.fxml", "Configuración de Butacas", event);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
+                "/vistas/salas/VistaGButacas.fxml");
     }
     @FXML
     private void onVenderBoleto(ActionEvent event) {

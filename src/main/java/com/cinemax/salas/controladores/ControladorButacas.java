@@ -38,56 +38,48 @@ public class ControladorButacas {
     @FXML private ComboBox<EstadoButaca> cmbEstado;
     @FXML private ComboBox<Sala> cmbSala;
     @FXML private Label lblEstado;
+    @FXML private Label lblTotalButacas;
 
     private final ObservableList<Sala>   salas   = FXCollections.observableArrayList();
     private final ObservableList<Butaca> butacas = FXCollections.observableArrayList();
 
+
     @FXML
     public void initialize() throws Exception {
+        // Inicializa ComboBox de estado de butaca
+        cmbEstado.setItems(FXCollections.observableArrayList(EstadoButaca.values()));
+
+        // Carga las salas disponibles en el ComboBox
         salas.setAll(salaService.listarSalas());
         cmbSala.setItems(salas);
 
-        cmbSala.setCellFactory(listView -> new ListCell<Sala>() {
-            @Override
-            protected void updateItem(Sala sala, boolean empty) {
-                super.updateItem(sala, empty);
-                setText(empty || sala == null
-                        ? null
-                        : String.valueOf(sala.getId()));
-                setStyle("-fx-text-fill: #000000;");
-            }
-        });
-        cmbSala.setButtonCell(new ListCell<Sala>() {
-            @Override
-            protected void updateItem(Sala sala, boolean empty) {
-                super.updateItem(sala, empty);
-                setText(empty || sala == null
-                        ? null
-                        : String.valueOf(sala.getId()));
-                setStyle("-fx-text-fill: #ffffff;");
-            }
-        });
-
+        // Configura las columnas de la tabla
         colId.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getId()).asObject());
         colFila.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getFila()));
         colColumna.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getColumna()));
         colEstado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEstado()));
         colIdSala.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getIdSala()).asObject());
 
+        // Asocia la lista de butacas a la tabla
         tablaButacas.setItems(butacas);
-        cmbEstado.setItems(FXCollections.observableArrayList(EstadoButaca.values()));
 
+        // Listener para seleccionar una butaca y mostrar sus datos en el formulario
         tablaButacas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, sel) -> {
             if (sel != null) {
                 txtFila.setText(sel.getFila());
                 txtColumna.setText(sel.getColumna());
                 cmbEstado.setValue(EstadoButaca.valueOf(sel.getEstado()));
-                salas.stream()
+                // Busca la sala correspondiente por ID
+                Sala salaSeleccionada = salas.stream()
                         .filter(s -> s.getId() == sel.getIdSala())
                         .findFirst()
-                        .ifPresent(s -> cmbSala.setValue(s));
+                        .orElse(null);
+                cmbSala.setValue(salaSeleccionada);
             }
         });
+
+        // Carga todas las butacas al iniciar la vista
+        listarButacasPorSala(null);
     }
 
     @FXML
@@ -112,6 +104,23 @@ public class ControladorButacas {
         return true;
     }
 
+    /**
+     *     @FXML
+     *     private void listarButacasPorSala(ActionEvent e) {
+     *         try {
+     *             String txt = txtBuscarIdSala.getText().trim();
+     *             List<Butaca> lista = txt.isEmpty()
+     *                     ? servicio.listarTodasButacas()
+     *                     : servicio.listarButacasPorSala(Integer.parseInt(txt));
+     *             butacas.setAll(lista);
+     *             lblEstado.setText("Mostrando " + lista.size() + " butacas");
+     *         } catch (Exception ex) {
+     *             //ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
+     *
+     *         }
+     *     }
+     * @param
+     */
     @FXML
     private void listarButacasPorSala(ActionEvent e) {
         try {
@@ -119,10 +128,14 @@ public class ControladorButacas {
             List<Butaca> lista = txt.isEmpty()
                     ? servicio.listarTodasButacas()
                     : servicio.listarButacasPorSala(Integer.parseInt(txt));
-            butacas.setAll(lista);
-            lblEstado.setText("Mostrando " + lista.size() + " butacas");
+            tablaButacas.getItems().setAll(lista);
+            lblTotalButacas.setText("Total Butacas: " + lista.size());
+            // Si tienes un label de estado, puedes actualizarlo aquí también
+            // lblEstadoFooter.setText("Listo");
         } catch (Exception ex) {
-            ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
+            tablaButacas.getItems().clear();
+            lblTotalButacas.setText("Total Butacas: 0");
+            // lblEstadoFooter.setText("Error al cargar butacas");
         }
     }
 
@@ -144,7 +157,7 @@ public class ControladorButacas {
             servicio.crearButaca(b);
 
             listarButacasPorSala(null);
-            limpiarCampos();
+            //limpiarCampos();
             ManejadorMetodosComunes.mostrarVentanaExito("Butaca creada correctamente.");
         } catch (Exception ex) {
             String msg = ex.getMessage().toLowerCase();
@@ -172,7 +185,7 @@ public class ControladorButacas {
             servicio.actualizarButaca(sel);
 
             listarButacasPorSala(null);
-            limpiarCampos();
+            //limpiarCampos();
             ManejadorMetodosComunes.mostrarVentanaExito("Butaca actualizada correctamente.");
         } catch (Exception ex) {
             String msg = ex.getMessage().toLowerCase();
@@ -194,7 +207,7 @@ public class ControladorButacas {
 
             servicio.eliminarButaca(sel.getId());
             listarButacasPorSala(null);
-            limpiarCampos();
+           // limpiarCampos();
             ManejadorMetodosComunes.mostrarVentanaExito("Butaca eliminada correctamente.");
         } catch (Exception ex) {
             ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
@@ -213,12 +226,14 @@ public class ControladorButacas {
         }
     }
 
-    @FXML
-    private void limpiarCampos() {
-        txtFila.clear();
-        txtColumna.clear();
-        cmbEstado.getSelectionModel().clearSelection();
-        cmbSala.getSelectionModel().clearSelection();
-        tablaButacas.getSelectionModel().clearSelection();
-    }
+/**
+ *     @FXML
+ *     private void limpiarCampos() {
+ *         txtFila.clear();
+ *         txtColumna.clear();
+ *         cmbEstado.getSelectionModel().clearSelection();
+ *         cmbSala.getSelectionModel().clearSelection();
+ *         tablaButacas.getSelectionModel().clearSelection();
+ *     }
+ */
 }

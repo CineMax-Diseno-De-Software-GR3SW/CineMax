@@ -1,121 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.Insets?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml"
+            prefHeight="550.0" prefWidth="800.0"
             fx:controller="com.cinemax.salas.controladores.ControladorButacas"
             stylesheets="@../temas/styles.css"
             styleClass="root">
+
+    <!-- HEADER -->
     <top>
         <BorderPane styleClass="header-bar">
             <left>
-                <Button fx:id="btnBack"
-                        text="←"
-                        onAction="#onBackAction"
-                        styleClass="icon-button"
-                        style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Button fx:id="btnBack" text="←" styleClass="stepper-button" onAction="#onBackAction" />
+                    <Label text="Gestión de Butacas" styleClass="section-title"/>
+                </HBox>
             </left>
-            <center>
-                <Label text="Gestión de Butacas" styleClass="section-title"/>
-            </center>
         </BorderPane>
     </top>
 
+    <!-- CENTER -->
     <center>
-        <SplitPane dividerPositions="0.43">
-            <VBox spacing="18" styleClass="ticket-card">
-                <TitledPane text="Datos de la Butaca" expanded="true" styleClass="ticket-details-card">
-                    <content>
-                        <GridPane hgap="16" vgap="16" styleClass="ticket-card">
-                            <Label text="Fila:*" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
-                            <TextField fx:id="txtFila" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
-                            <Label text="Columna:*" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label"/>
-                            <TextField fx:id="txtColumna" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="text-field"/>
-                            <Label text="Estado:*" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
-                            <ComboBox fx:id="cmbEstado" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="combo-box"/>
-                            <Label text="Sala:*" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="label"/>
-                            <ComboBox fx:id="cmbSala" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="combo-box"/>
-                        </GridPane>
-                    </content>
-                </TitledPane>
-                <HBox spacing="16" alignment="CENTER">
-                    <Button text="Crear" onAction="#crearButaca" styleClass="primary-button"
-                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                    <Button text="Actualizar" onAction="#actualizarButaca" styleClass="primary-button"
-                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                </HBox>
-                <HBox spacing="16" alignment="CENTER">
-                    <Button text="Eliminar" onAction="#eliminarButaca" styleClass="primary-button"
-                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                    <Button text="Limpiar" onAction="#limpiarCampos" styleClass="primary-button"
-                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                </HBox>
-            </VBox>
-            <VBox spacing="16" styleClass="ticket-card">
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <TextField fx:id="txtBuscarIdSala" promptText="Buscar por ID Sala" styleClass="text-field"/>
-                    <Button text="🔍" onAction="#listarButacasPorSala" styleClass="icon-button"
-                            style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;"/>
-                    <Button text="Listar todas" onAction="#listarTodasButacas" styleClass="primary-button"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                    <Label fx:id="lblEstado" text="Listo" styleClass="label"/>
-                </HBox>
+        <GridPane hgap="24" vgap="0" style="-fx-padding: 24;">
+            <columnConstraints>
+                <ColumnConstraints percentWidth="35"/>
+                <ColumnConstraints percentWidth="65"/>
+            </columnConstraints>
 
-                <TableView fx:id="tablaButacas" prefHeight="400" prefWidth="400" styleClass="tabla">
+            <!-- Panel Izquierdo: Formulario -->
+            <VBox spacing="18" styleClass="ticket-card" GridPane.columnIndex="0" alignment="TOP_CENTER">
+                <Label text="Datos de la Butaca" styleClass="section-title"/>
+                <GridPane hgap="12" vgap="14">
+                    <Label text="Fila:*" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
+                    <TextField fx:id="txtFila" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="text-field"/>
+                    <Label text="Columna:*" GridPane.rowIndex="1" GridPane.columnIndex="0" styleClass="label"/>
+                    <TextField fx:id="txtColumna" GridPane.rowIndex="1" GridPane.columnIndex="1" styleClass="text-field"/>
+                    <Label text="Estado:*" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
+                    <ComboBox fx:id="cmbEstado" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="combo-box"/>
+                    <Label text="Sala:*" GridPane.rowIndex="3" GridPane.columnIndex="0" styleClass="label"/>
+                    <ComboBox fx:id="cmbSala" GridPane.rowIndex="3" GridPane.columnIndex="1" styleClass="combo-box"/>
+                </GridPane>
+                <Button text="Crear" onAction="#crearButaca" styleClass="primary-button" maxWidth="Infinity"/>
+            </VBox>
+
+            <!-- Panel Derecho: Búsqueda y Tabla -->
+            <VBox spacing="16" styleClass="ticket-card" GridPane.columnIndex="1" alignment="TOP_CENTER">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Buscar ID Sala:"/>
+                    <TextField fx:id="txtBuscarIdSala" promptText="ID Sala..." prefWidth="200.0" styleClass="text-field"/>
+                    <Button text="🔍" onAction="#listarButacasPorSala" styleClass="icon-button"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                </HBox>
+                <TableView fx:id="tablaButacas" prefHeight="350" styleClass="tabla">
                     <columns>
                         <TableColumn fx:id="colId" prefWidth="50">
-                            <graphic>
-                                <Label text="ID" />
-                            </graphic>
-                            <cellValueFactory>
-                                <PropertyValueFactory property="id"/>
-                            </cellValueFactory>
+                            <graphic><Label text="ID"/></graphic>
+                            <cellValueFactory><PropertyValueFactory property="id"/></cellValueFactory>
                         </TableColumn>
                         <TableColumn fx:id="colFila" prefWidth="80">
-                            <graphic>
-                                <Label text="Fila"/>
-                            </graphic>
-                            <cellValueFactory>
-                                <PropertyValueFactory property="fila"/>
-                            </cellValueFactory>
+                            <graphic><Label text="Fila"/></graphic>
+                            <cellValueFactory><PropertyValueFactory property="fila"/></cellValueFactory>
                         </TableColumn>
                         <TableColumn fx:id="colColumna" prefWidth="80">
-                            <graphic>
-                                <Label text="Columna" />
-                            </graphic>
-                            <cellValueFactory>
-                                <PropertyValueFactory property="columna"/>
-                            </cellValueFactory>
+                            <graphic><Label text="Columna"/></graphic>
+                            <cellValueFactory><PropertyValueFactory property="columna"/></cellValueFactory>
                         </TableColumn>
                         <TableColumn fx:id="colEstado" prefWidth="100">
-                            <graphic>
-                                <Label text="Estado" />
-                            </graphic>
-                            <cellValueFactory>
-                                <PropertyValueFactory property="estado"/>
-                            </cellValueFactory>
+                            <graphic><Label text="Estado"/></graphic>
+                            <cellValueFactory><PropertyValueFactory property="estado"/></cellValueFactory>
                         </TableColumn>
                         <TableColumn fx:id="colIdSala" prefWidth="100">
-                            <graphic>
-                                <Label text="ID Sala" />
-                            </graphic>
-                            <cellValueFactory>
-                                <PropertyValueFactory property="salaId"/>
-                            </cellValueFactory>
+                            <graphic><Label text="ID Sala"/></graphic>
+                            <cellValueFactory><PropertyValueFactory property="salaId"/></cellValueFactory>
                         </TableColumn>
                     </columns>
                 </TableView>
+                <HBox spacing="16" alignment="CENTER">
+                     <Button text="Actualizar" onAction="#actualizarButaca" styleClass="primary-button" maxWidth="Infinity"/>
+                     <Button text="Eliminar" onAction="#eliminarButaca" styleClass="primary-button" maxWidth="Infinity"/>
+                </HBox>
             </VBox>
-        </SplitPane>
+        </GridPane>
     </center>
 
+    <!-- FOOTER -->
     <bottom>
-        <HBox alignment="CENTER_LEFT" styleClass="header-bar">
-            <Label text="© CineMax" styleClass="label"/>
+        <HBox alignment="CENTER_LEFT" styleClass="ticket-card">
+            <Label fx:id="lblTotalButacas" text="Total Butacas: 0" styleClass="label"/>
             <Region HBox.hgrow="ALWAYS"/>
-            <Label fx:id="lblEstado" text="Listo" styleClass="ticket-price"/>
+            <Label fx:id="lblEstadoFooter" text="Listo" styleClass="label"/>
         </HBox>
     </bottom>
 </BorderPane>
