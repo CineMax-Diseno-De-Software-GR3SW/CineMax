@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.shape.Path?>
+<?import javafx.scene.shape.MoveTo?>
+<?import javafx.scene.shape.QuadCurveTo?>
+<?import javafx.scene.shape.LineTo?>
+<?import javafx.scene.shape.ClosePath?>
+<?import javafx.scene.shape.Rectangle?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.cinemax.salas.controladores.ControladorDeConsultaSalas"
+            style="-fx-background-color: linear-gradient(to bottom, #23272e 0%, #181a20 100%);
+                   -fx-font-family: 'Segoe UI Emoji','Segoe UI', Arial, sans-serif;">
+
+    <!-- TOP: Title bar -->
+    <top>
+        <HBox alignment="center"
+              style="-fx-background-color: #181a20; -fx-padding: 16;">
+            <Label text="Mapa de Butacas"
+                   style="-fx-font-family: 'Georgia'; -fx-font-size: 34px; -fx-font-weight: bold;
+                          -fx-text-fill: linear-gradient(to bottom, #FFA726 60%, #FF9800 100%);
+                          -fx-effect: dropshadow(gaussian, #000000cc, 16, 0.4, 0, 4);
+                          -fx-letter-spacing: 2px;" />
+        </HBox>
+    </top>
+
+    <!-- CENTER: Main content -->
+    <center>
+        <VBox fx:id="vbox" alignment="TOP_CENTER" spacing="18"
+              style="-fx-background-color: #23272e; -fx-background-radius: 16; -fx-padding: 32 48 32 48;">
+            <HBox spacing="16" alignment="CENTER_LEFT">
+                <ComboBox fx:id="comboSalas" prefWidth="220"
+                          style="-fx-background-radius: 8; -fx-background-color: #23272e; -fx-text-fill: #FFA726;"/>
+                <Label fx:id="lblNombreSala" text=""
+                       style="-fx-font-size: 22px; -fx-font-family: 'Georgia'; -fx-font-weight: bold; -fx-text-fill: #FFA726;"/>
+            </HBox>
+            <Label text="Pantalla"
+                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #f5f5f5;"/>
+            <HBox alignment="CENTER">
+                <AnchorPane minWidth="400" minHeight="100">
+                    <Path stroke="#FF9800" strokeWidth="12" fill="transparent" strokeLineCap="ROUND">
+                        <elements>
+                            <MoveTo x="10" y="40"/>
+                            <QuadCurveTo controlX="200" controlY="0" x="390" y="40"/>
+                        </elements>
+                    </Path>
+                    <Path fill="linear-gradient(from 0% 0% to 0% 100%, rgba(255,255,255,0.4) 60%, transparent 100%)" stroke="transparent">
+                        <elements>
+                            <MoveTo x="10" y="46"/>
+                            <QuadCurveTo controlX="200" controlY="6" x="390" y="46"/>
+                            <LineTo x="390" y="50"/>
+                            <LineTo x="10" y="50"/>
+                            <ClosePath/>
+                        </elements>
+                    </Path>
+                </AnchorPane>
+            </HBox>
+            <GridPane fx:id="gridButacas"
+                      hgap="10" vgap="10"
+                      alignment="CENTER"
+                      style="-fx-background-color: transparent;">
+                <VBox.margin>
+                    <Insets top="-35" right="0" bottom="0" left="0"/>
+                </VBox.margin>
+            </GridPane>
+            <HBox spacing="20" alignment="CENTER">
+                <Rectangle width="20" height="20" fill="green" arcWidth="6" arcHeight="6"/>
+                <Label text="Disponible" style="-fx-text-fill: #f5f5f5;"/>
+                <Rectangle width="20" height="20" fill="red" arcWidth="6" arcHeight="6"/>
+                <Label text="Ocupada" style="-fx-text-fill: #f5f5f5;"/>
+                <Rectangle width="20" height="20" fill="gray" arcWidth="6" arcHeight="6"/>
+                <Label text="Inhabilitada" style="-fx-text-fill: #f5f5f5;"/>
+            </HBox>
+        </VBox>
+    </center>
+
+    <!-- BOTTOM: Status bar -->
+    <bottom>
+        <HBox alignment="CENTER_LEFT"
+              style="-fx-background-color:#181a20; -fx-padding:8 32;">
+            <Label text="© CineMax" style="-fx-text-fill:#555;"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="lblEstado" text="Listo" style="-fx-text-fill:#FFA726;"/>
+        </HBox>
+    </bottom>
+</BorderPane>

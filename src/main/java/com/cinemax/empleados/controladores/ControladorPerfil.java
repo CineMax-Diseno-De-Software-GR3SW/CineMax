@@ -2,17 +2,22 @@ package com.cinemax.empleados.controladores;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
+import com.cinemax.empleados.servicios.ServicioUsuarios;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -39,9 +44,6 @@ public class ControladorPerfil implements Initializable {
     private TextField txtTelefono;
 
     @FXML
-    private Button btnEditarPerfil;
-
-    @FXML
     private Button btnCambiarContrasena;
 
     private ServicioSesionSingleton sesionSingleton;
@@ -49,10 +51,13 @@ public class ControladorPerfil implements Initializable {
     private boolean editandoEmail = false;
 
     private boolean editandoTelefono = false;
+    private ServicioPerfilUsuario servicioPerfilUsuario;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         sesionSingleton = ServicioSesionSingleton.getInstancia();
+        servicioPerfilUsuario = new ServicioPerfilUsuario();
+
         cargarDatosUsuario();
     }
 
@@ -123,6 +128,17 @@ public class ControladorPerfil implements Initializable {
             String nuevoEmail = txtEmail.getText();
             // Aquí podrías guardar el email a base de datos o backend
             System.out.println("Nuevo email guardado: " + nuevoEmail);
+            // Relación con el servicio actualizarCorreo
+            try {
+                servicioPerfilUsuario.actualizarCorreo(sesionSingleton.getUsuarioActivo(),nuevoEmail);
+                ManejadorMetodosComunes.mostrarVentanaExito("Correo actualizado exitosamente");
+
+//                mostrarAlerta(Alert.AlertType.INFORMATION, "Correo Registrado", "Actualizacion", "Correo " + nuevoEmail + " registrado exitosamente");
+            } catch (SQLException e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar el correo");
+
+//                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el correo", "Error", e.getMessage());
+            }
         }
     }
 
@@ -132,9 +148,29 @@ public class ControladorPerfil implements Initializable {
         txtTelefono.setEditable(editandoTelefono);
 
         if (!editandoTelefono) {
-            String nuevoTelefono = txtTelefono.getText();
+            String nuevoCelular = txtTelefono.getText();
             // Aquí podrías guardar el teléfono a base de datos o backend
-            System.out.println("Nuevo teléfono guardado: " + nuevoTelefono);
+//            System.out.println("Nuevo teléfono guardado: " + nuevoCelular);
+            try {
+                servicioPerfilUsuario.actualizarCelular(sesionSingleton.getUsuarioActivo(),nuevoCelular);
+                ManejadorMetodosComunes.mostrarVentanaExito("Celular actualizado exitosamente");
+
+//                mostrarAlerta(Alert.AlertType.INFORMATION, "Celular Registrado", "Actualizacion", "Celular " + nuevoCelular + " registrado exitosamente");
+            } catch (SQLException e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al registrar el celular");
+
+//                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el celular", "Error", e.getMessage());
+            }
         }
     }
+
+
+
+//    private void mostrarAlerta(Alert.AlertType type, String title, String header, String content) {
+//        Alert alert = new Alert(type);
+//        alert.setTitle(title);
+//        alert.setHeaderText(header);
+//        alert.setContentText(content);
+//        alert.showAndWait();
+//    }
 }

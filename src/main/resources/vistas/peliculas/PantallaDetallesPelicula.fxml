@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="900.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorDetallesPelicula" styleClass="root">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button fx:id="btnVolver" text="←" styleClass="stepper-button" onAction="#onVolver" />
+                <Label text="Detalles de Película" styleClass="section-title" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnEditar" text="Editar" styleClass="primary-button" onAction="#onEditar" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToWidth="true" styleClass="scroll-pane">
+            <VBox spacing="25.0">
+                <padding>
+                    <Insets bottom="30.0" left="40.0" right="40.0" top="30.0" />
+                </padding>
+                
+                <!-- Información principal -->
+                <HBox spacing="30.0" styleClass="ticket-card">
+                    <!-- Imagen de la película -->
+                    <VBox spacing="10.0" alignment="CENTER" prefWidth="200.0">
+                        <ImageView fx:id="imgPelicula" fitWidth="180.0" fitHeight="270.0" preserveRatio="true" />
+                        <Label fx:id="lblUrlImagen" text="URL no disponible" styleClass="help-text" wrapText="true" />
+                    </VBox>
+                    
+                    <!-- Información básica -->
+                    <VBox spacing="15.0" HBox.hgrow="ALWAYS">
+                        <Label fx:id="lblTitulo" text="Título de la Película" styleClass="movie-title" />
+                        
+                        <HBox spacing="20.0">
+                            <VBox spacing="5.0">
+                                <Label text="ID" styleClass="detail-label" />
+                                <Label fx:id="lblId" text="1" styleClass="detail-value" />
+                            </VBox>
+                            <VBox spacing="5.0">
+                                <Label text="Año" styleClass="detail-label" />
+                                <Label fx:id="lblAnio" text="2024" styleClass="detail-value" />
+                            </VBox>
+                            <VBox spacing="5.0">
+                                <Label text="Duración" styleClass="detail-label" />
+                                <Label fx:id="lblDuracion" text="120 min" styleClass="detail-value" />
+                            </VBox>
+                            <VBox spacing="5.0">
+                                <Label text="Idioma" styleClass="detail-label" />
+                                <Label fx:id="lblIdioma" text="Español" styleClass="detail-value" />
+                            </VBox>
+                        </HBox>
+                        
+                        <VBox spacing="5.0">
+                            <Label text="Géneros" styleClass="detail-label" />
+                            <Label fx:id="lblGeneros" text="Acción, Aventura" styleClass="detail-value" wrapText="true" />
+                        </VBox>
+                    </VBox>
+                </HBox>
+                
+                <!-- Sinopsis -->
+                <VBox spacing="15.0" styleClass="ticket-card">
+                    <Label text="Sinopsis" styleClass="section-title" />
+                    <ScrollPane fitToWidth="true" prefHeight="150.0" styleClass="scroll-pane-content">
+                        <Label fx:id="lblSinopsis" text="Aquí aparecerá la sinopsis de la película..." 
+                               styleClass="detail-value" wrapText="true" />
+                    </ScrollPane>
+                </VBox>
+                
+                <!-- Información técnica y botones eliminados -->
+            </VBox>
+        </ScrollPane>
+    </center>
+    
+    <bottom>
+        <HBox alignment="CENTER_LEFT" styleClass="footer-bar">
+            <children>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="lblUltimaModificacion" text="Última modificación: No disponible" styleClass="summary-details" />
+            </children>
+            <padding>
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+            </padding>
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -13,6 +13,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -48,15 +49,15 @@ import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import java.net.URL;
+import javafx.scene.control.ButtonType;
 
-
-// Interfaz Strategy
+// Interfaz Strategy para la exportación de reportes
 interface ExportStrategy {
     void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
             throws Exception;
 }
 
-// Implementación PDF
+// Implementación de ExportStrategy para PDF
 class ExportPDFStrategy implements ExportStrategy {
     @Override
     public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
@@ -98,7 +99,6 @@ class ExportPDFStrategy implements ExportStrategy {
                 yPosition -= 30;
 
                 // Tabla
-                float tableWidth = 400;
                 float rowHeight = 25;
                 float col1X = margin;
                 float col2X = margin + 100;
@@ -163,7 +163,7 @@ class ExportPDFStrategy implements ExportStrategy {
     }
 }
 
-// Implementación CSV
+// Implementación de ExportStrategy para CSV
 class ExportCSVStrategy implements ExportStrategy {
     @Override
     public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
@@ -217,8 +217,30 @@ public class ControladorReportesPrincipal {
     private TableColumn<ReporteGenerado, Integer> colAcciones;
 
     private ObservableList<ReporteGenerado> reportesGenerados = FXCollections.observableArrayList();
-    
+
     private VentasService ventasService = new VentasService();
+
+    // Datos simulados para las gráficas
+    private final List<ReporteVentaDTO> datosSimulados = Arrays.asList(
+            new ReporteVentaDTO("2024-07-01", 80, 2400.0, "VIP", "3D"),
+            new ReporteVentaDTO("2024-07-01", 40, 1200.0, "Normal", "2D"),
+            new ReporteVentaDTO("2024-07-02", 60, 1800.0, "VIP", "2D"),
+            new ReporteVentaDTO("2024-07-02", 38, 1140.0, "Normal", "3D"),
+            new ReporteVentaDTO("2024-07-03", 90, 2700.0, "VIP", "3D"),
+            new ReporteVentaDTO("2024-07-03", 66, 1980.0, "Normal", "2D"),
+            new ReporteVentaDTO("2024-07-04", 75, 2250.0, "VIP", "2D"),
+            new ReporteVentaDTO("2024-07-04", 45, 1350.0, "Normal", "3D"),
+            new ReporteVentaDTO("2024-07-05", 85, 2550.0, "VIP", "3D"),
+            new ReporteVentaDTO("2024-07-05", 55, 1650.0, "Normal", "2D"));
+
+    // Datos simulados para reportes generados
+    private final List<ReporteGenerado> reportesSimulados = Arrays.asList(
+            new ReporteGenerado(1, "Reporte_Ventas_20241201_1430", "PDF", LocalDateTime.now().minusDays(2),
+                    "C:/reportes/reporte_ventas_20241201.pdf", "Reporte de ventas del 01/12/2024 al 05/12/2024"),
+            new ReporteGenerado(2, "Reporte_Ventas_20241128_0915", "CSV", LocalDateTime.now().minusDays(5),
+                    "C:/reportes/reporte_ventas_20241128.csv", "Reporte de ventas del 25/11/2024 al 30/11/2024"),
+            new ReporteGenerado(3, "Reporte_Ventas_20241125_1620", "PDF", LocalDateTime.now().minusDays(8),
+                    "C:/reportes/reporte_ventas_20241125.pdf", "Reporte de ventas del 20/11/2024 al 25/11/2024"));
 
     @FXML
     private void initialize() {
@@ -271,19 +293,35 @@ public class ControladorReportesPrincipal {
     private void configurarTablaReportes() {
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
+
+        // Configurar formato de fecha en la tabla
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
+        colFecha.setCellFactory(column -> new TableCell<ReporteGenerado, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+                }
+            }
+        });
 
         // Configurar columna de acciones
         colAcciones.setCellFactory(col -> new TableCell<ReporteGenerado, Integer>() {
             private final Button btnDescargar = new Button("📄");
             private final Button btnVer = new Button("👁");
             private final Button btnEliminar = new Button("🗑");
+            private final HBox buttons = new HBox(5);
 
             {
                 btnDescargar.setTooltip(new Tooltip("Descargar"));
                 btnVer.setTooltip(new Tooltip("Ver previsualización"));
                 btnEliminar.setTooltip(new Tooltip("Eliminar"));
+
+                buttons.getChildren().addAll(btnVer, btnDescargar, btnEliminar);
 
                 btnDescargar.setOnAction(e -> {
                     ReporteGenerado reporte = getTableView().getItems().get(getIndex());
@@ -298,6 +336,7 @@ public class ControladorReportesPrincipal {
                 btnEliminar.setOnAction(e -> {
                     ReporteGenerado reporte = getTableView().getItems().get(getIndex());
                     reportesGenerados.remove(reporte);
+                    mostrarAlerta("Éxito", "Reporte eliminado de la lista.");
                 });
             }
 
@@ -307,8 +346,6 @@ public class ControladorReportesPrincipal {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    HBox buttons = new HBox(5);
-                    buttons.getChildren().addAll(btnVer, btnDescargar, btnEliminar);
                     setGraphic(buttons);
                 }
             }
@@ -318,22 +355,62 @@ public class ControladorReportesPrincipal {
     }
 
     private void cargarReportesSimulados() {
-        reportesGenerados.addAll(
-            new ReporteGenerado(1, "Reporte_Ventas_20241201_1430", "PDF", LocalDateTime.now().minusDays(2),
-                    "C:/reportes/reporte_ventas_20241201.pdf", "Reporte de ventas del 01/12/2024 al 05/12/2024"),
-            new ReporteGenerado(2, "Reporte_Ventas_20241128_0915", "CSV", LocalDateTime.now().minusDays(5),
-                    "C:/reportes/reporte_ventas_20241128.csv", "Reporte de ventas del 25/11/2024 al 30/11/2024"),
-            new ReporteGenerado(3, "Reporte_Ventas_20241125_1620", "PDF", LocalDateTime.now().minusDays(8),
-                    "C:/reportes/reporte_ventas_20241125.pdf", "Reporte de ventas del 20/11/2024 al 25/11/2024")
-        );
+        reportesGenerados.addAll(reportesSimulados);
     }
 
     private void inicializarGraficasVacias() {
         if (barChart != null) {
+            barChart.getData().clear();
             barChart.setTitle("Seleccione filtros y presione 'Filtrar' para ver datos");
         }
         if (pieChart != null) {
+            pieChart.getData().clear();
             pieChart.setTitle("Seleccione filtros y presione 'Filtrar' para ver datos");
+        }
+    }
+
+    @FXML
+    private void goToReporteProgramado(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/reportes/ModuloReportesProgramados.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error de Navegación", "No se pudo cargar la pantalla de reportes programados.");
+        }
+    }
+
+    @FXML
+    private void onCerrarSesion(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Login");
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error de Navegación", "No se pudo cargar la pantalla de login.");
+        }
+    }
+
+    @FXML
+    private void onBackAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error de Navegación", "No se pudo volver a la pantalla principal.");
         }
     }
 
@@ -346,16 +423,16 @@ public class ControladorReportesPrincipal {
         String tipoBoleto = choiceTipoBoleto.getValue();
 
         if (desde == null || hasta == null) {
-            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin");
+            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin.");
             return;
         }
 
         try {
             // Obtener datos REALES de la base de datos con todos los filtros
             List<ReporteVentaDTO> datosFiltrados = ventasService.getVentasFiltradas(desde, hasta, sala, tipoBoleto, horario);
-            
+
             if (datosFiltrados.isEmpty()) {
-                mostrarAlerta("Sin Datos", "No hay datos para mostrar con los filtros seleccionados");
+                mostrarAlerta("Sin Datos", "No hay datos para mostrar con los filtros seleccionados.");
                 // Limpiar gráficas
                 barChart.getData().clear();
                 pieChart.getData().clear();
@@ -365,31 +442,31 @@ public class ControladorReportesPrincipal {
             }
 
             // Actualizar gráficas con datos REALES
-            actualizarGraficaBarrasReal(datosFiltrados);
-            actualizarGraficaPastelReal(datosFiltrados);
+            actualizarGraficaBarras(datosFiltrados);
+            actualizarGraficaPastel(datosFiltrados);
 
             // Mostrar mensaje de confirmación con estadísticas reales
             int totalBoletos = datosFiltrados.stream().mapToInt(v -> v.boletosVendidos).sum();
             double totalIngresos = datosFiltrados.stream().mapToDouble(v -> v.ingresos).sum();
-            
+
             mostrarAlerta("Filtros Aplicados - Datos Reales",
                     "Se han aplicado los filtros:\n" +
-                    "• Desde: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
-                    "• Hasta: " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
-                    "• Horario: " + horario + "\n" +
-                    "• Sala: " + sala + "\n" +
-                    "• Tipo Boleto: " + tipoBoleto + "\n\n" +
-                    "Resultados obtenidos de la base de datos:\n" +
-                    "• Total boletos vendidos: " + totalBoletos + "\n" +
-                    "• Total ingresos: $" + String.format("%.2f", totalIngresos));
-                    
+                            "• Desde: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
+                            "• Hasta: " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
+                            "• Horario: " + horario + "\n" +
+                            "• Sala: " + sala + "\n" +
+                            "• Tipo Boleto: " + tipoBoleto + "\n\n" +
+                            "Resultados obtenidos de la base de datos:\n" +
+                            "• Total boletos vendidos: " + totalBoletos + "\n" +
+                            "• Total ingresos: $" + String.format("%.2f", totalIngresos));
+
         } catch (Exception e) {
             e.printStackTrace();
             mostrarAlerta("Error", "Error al obtener datos de la base de datos: " + e.getMessage());
         }
     }
 
-    private void actualizarGraficaBarrasReal(List<ReporteVentaDTO> datos) {
+    private void actualizarGraficaBarras(List<ReporteVentaDTO> datos) {
         if (barChart != null) {
             barChart.getData().clear();
 
@@ -439,7 +516,7 @@ public class ControladorReportesPrincipal {
         }
     }
 
-    private void actualizarGraficaPastelReal(List<ReporteVentaDTO> datos) {
+    private void actualizarGraficaPastel(List<ReporteVentaDTO> datos) {
         if (pieChart != null) {
             pieChart.getData().clear();
 
@@ -488,32 +565,65 @@ public class ControladorReportesPrincipal {
         String tipoBoleto = choiceTipoBoleto.getValue();
 
         if (desde == null || hasta == null) {
-            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin");
+            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin.");
             return;
         }
 
         try {
             // Obtener datos REALES filtrados
             List<ReporteVentaDTO> datosFiltrados = ventasService.getVentasFiltradas(desde, hasta, sala, tipoBoleto, horario);
-            
+
             if (datosFiltrados.isEmpty()) {
-                mostrarAlerta("Sin Datos", "No hay datos para mostrar con los filtros seleccionados en la base de datos");
+                mostrarAlerta("Sin Datos", "No hay datos para mostrar con los filtros seleccionados en la base de datos.");
                 return;
             }
 
             // Mostrar previsualización del reporte con datos REALES
-            mostrarPrevisualizacionReporteReal(datosFiltrados, true);
-            
+            mostrarPrevisualizacionReporte(datosFiltrados, true);
+
         } catch (Exception e) {
             e.printStackTrace();
             mostrarAlerta("Error", "Error al obtener datos de la base de datos: " + e.getMessage());
         }
     }
 
-    private void mostrarPrevisualizacionReporteReal(List<ReporteVentaDTO> datos, boolean permitirDescarga) {
+    private void verPrevisualizacion(ReporteGenerado reporte) {
+        // En una aplicación real, aquí cargarías los datos del reporte guardado
+        // Por ahora, usamos datos simulados para la demostración
+        mostrarPrevisualizacionReporte(datosSimulados, false);
+    }
+
+    private void descargarReporte(ReporteGenerado reporte) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte");
+
+        // Configurar la extensión del archivo según el tipo de reporte
+        if ("PDF".equals(reporte.getTipo())) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        } else if ("CSV".equals(reporte.getTipo())) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
+        }
+
+        // Sugerir un nombre de archivo
+        fileChooser.setInitialFileName(reporte.getNombre());
+
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                // Aquí deberías tener la lógica para generar y guardar el reporte
+                // Por ahora, solo mostramos una alerta
+                mostrarAlerta("Éxito", "Reporte " + reporte.getTipo() + " guardado en: " + file.getAbsolutePath());
+            } catch (Exception e) {
+                mostrarAlerta("Error", "No se pudo guardar el reporte: " + e.getMessage());
+            }
+        }
+    }
+
+    private void mostrarPrevisualizacionReporte(List<ReporteVentaDTO> datos, boolean permitirDescarga) {
         try {
             Stage ventanaPrevia = new Stage();
-            ventanaPrevia.setTitle("Previsualización del Reporte - CineMax (DATOS REALES)");
+            ventanaPrevia.setTitle("Previsualización del Reporte - CineMax");
             ventanaPrevia.setResizable(true);
 
             VBox contenido = new VBox(15);
@@ -522,332 +632,119 @@ public class ControladorReportesPrincipal {
 
             // Header del reporte
             VBox headerBox = new VBox(10);
-            headerBox.setStyle(
-                    "-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+            headerBox.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
 
-            Label titulo = new Label("REPORTE DE VENTAS - CINEMAX (DATOS REALES)");
-            titulo.setStyle(
-                    "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-alignment: center; -fx-pref-width: 760;");
+            Label titulo = new Label("REPORTE DE VENTAS - CINEMAX");
+            titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-alignment: center; -fx-pref-width: 760;");
             titulo.setMaxWidth(Double.MAX_VALUE);
             titulo.setAlignment(Pos.CENTER);
 
-            LocalDate desde = dateDesde.getValue();
-            LocalDate hasta = dateHasta.getValue();
-            String horario = choiceHorario.getValue();
-            String sala = choiceSala.getValue();
-            String tipoBoleto = choiceTipoBoleto.getValue();
+            // Información extra
+            Label infoFecha = new Label("Período: " + dateDesde.getValue() + " - " + dateHasta.getValue());
+            infoFecha.setStyle("-fx-text-fill: #bdc3c7;");
 
-            Label fechaGen = new Label("Período: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
-                    " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            fechaGen.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
+            headerBox.getChildren().addAll(titulo, infoFecha);
 
-            Label horarioLabel = new Label("Horario: " + horario + " | Sala: " + sala + " | Tipo: " + tipoBoleto);
-            horarioLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
+            // Contenido del reporte (tabla)
+            TableView<ReporteVentaDTO> tablaPrevia = new TableView<>();
+            tablaPrevia.setItems(FXCollections.observableArrayList(datos));
+            tablaPrevia.setPrefHeight(250);
 
-            Label estado = new Label("Estado: Generado con datos reales el "
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-            estado.setStyle("-fx-font-size: 12px; -fx-text-fill: #27ae60; -fx-font-weight: bold;");
+            // Columnas de la tabla de previsualización
+            TableColumn<ReporteVentaDTO, String> colFechaPrev = new TableColumn<>("Fecha");
+            colFechaPrev.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+            TableColumn<ReporteVentaDTO, String> colTipoBoletoPrev = new TableColumn<>("Tipo Boleto");
+            colTipoBoletoPrev.setCellValueFactory(new PropertyValueFactory<>("tipoBoleto"));
+            TableColumn<ReporteVentaDTO, String> colFormatoPrev = new TableColumn<>("Formato");
+            colFormatoPrev.setCellValueFactory(new PropertyValueFactory<>("formato"));
+            TableColumn<ReporteVentaDTO, Integer> colBoletosPrev = new TableColumn<>("Boletos Vendidos");
+            colBoletosPrev.setCellValueFactory(new PropertyValueFactory<>("boletosVendidos"));
+            TableColumn<ReporteVentaDTO, Double> colIngresosPrev = new TableColumn<>("Ingresos");
+            colIngresosPrev.setCellValueFactory(new PropertyValueFactory<>("ingresos"));
 
-            headerBox.getChildren().addAll(titulo, fechaGen, horarioLabel, estado);
+            tablaPrevia.getColumns().addAll(colFechaPrev, colTipoBoletoPrev, colFormatoPrev, colBoletosPrev, colIngresosPrev);
 
-            // Contenido del reporte con gráficas REALES
-            VBox contenidoReporte = generarContenidoReporteCompletoReal(datos);
-
-            HBox barraNota = new HBox();
-            barraNota.setStyle(
-                    "-fx-background-color: #2B2B2B; -fx-padding: 12 0 12 0; -fx-border-radius: 0; -fx-border-width: 0;");
-            barraNota.setAlignment(Pos.CENTER_LEFT);
-            barraNota.setMaxWidth(Double.MAX_VALUE);
-
-            // Nota sobre el reporte
-            Label notaReporte = new Label(
-                    "📊 Este reporte incluye datos REALES obtenidos directamente de la base de datos PostgreSQL.");
-            notaReporte.setStyle(
-                    "-fx-font-size: 12px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-padding: 0 20 0 20;");
-            notaReporte.setMaxWidth(Double.MAX_VALUE);
-
-            barraNota.getChildren().add(notaReporte);
-
-            // Botones
-            HBox botonesBox = new HBox(10);
-            botonesBox.setAlignment(Pos.CENTER);
-
-            if (permitirDescarga) {
-                Button btnDescargarPDF = new Button("📄 Descargar como PDF");
-                btnDescargarPDF.setStyle(
-                        "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
-                btnDescargarPDF.setOnAction(e -> {
-                    ventanaPrevia.close();
-                    exportarReporteReal(new ExportPDFStrategy(), "pdf", datos);
-                });
-
-                Button btnDescargarCSV = new Button("📊 Descargar como CSV");
-                btnDescargarCSV.setStyle(
-                        "-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
-                btnDescargarCSV.setOnAction(e -> {
-                    ventanaPrevia.close();
-                    exportarReporteReal(new ExportCSVStrategy(), "csv", datos);
-                });
-
-                botonesBox.getChildren().addAll(btnDescargarPDF, btnDescargarCSV);
-            }
-
-            Button btnCerrar = new Button("Cerrar");
-            btnCerrar.setStyle(
-                    "-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 30;");
-            btnCerrar.setOnAction(e -> ventanaPrevia.close());
-
-            botonesBox.getChildren().add(btnCerrar);
-
-            // Contenido completo
-            ScrollPane scrollPane = new ScrollPane();
-            VBox contenidoCompleto = new VBox(15);
-            contenidoCompleto.getChildren().addAll(headerBox, contenidoReporte, barraNota);
-            scrollPane.setContent(contenidoCompleto);
+            ScrollPane scrollPane = new ScrollPane(tablaPrevia);
             scrollPane.setFitToWidth(true);
 
-            contenido.getChildren().addAll(scrollPane, botonesBox);
+            contenido.getChildren().addAll(headerBox, scrollPane);
 
-            Scene escena = new Scene(contenido, 800, 700);
-            ventanaPrevia.setScene(escena);
+            // Botones de acción
+            if (permitirDescarga) {
+                HBox botonesAccion = new HBox(10);
+                botonesAccion.setAlignment(Pos.CENTER_RIGHT);
+
+                ChoiceBox<String> choiceTipoExportacion = new ChoiceBox<>();
+                choiceTipoExportacion.getItems().addAll("PDF", "CSV");
+                choiceTipoExportacion.setValue("PDF");
+
+                Button btnExportar = new Button("Exportar");
+                btnExportar.setOnAction(e -> {
+                    String tipo = choiceTipoExportacion.getValue();
+                    exportarReporte(datos, tipo);
+                    ventanaPrevia.close();
+                });
+
+                Button btnCancelar = new Button("Cancelar");
+                btnCancelar.setOnAction(e -> ventanaPrevia.close());
+
+                botonesAccion.getChildren().addAll(new Label("Exportar como:"), choiceTipoExportacion, btnExportar, btnCancelar);
+                contenido.getChildren().add(botonesAccion);
+            }
+
+            Scene scene = new Scene(contenido, 800, 600);
+            ventanaPrevia.setScene(scene);
             ventanaPrevia.initModality(Modality.APPLICATION_MODAL);
             ventanaPrevia.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo mostrar la previsualización del reporte.");
-        }
-    }
-
-    // Método para generar contenido del reporte con datos reales
-    private VBox generarContenidoReporteCompletoReal(List<ReporteVentaDTO> datos) {
-        VBox contenido = new VBox(20);
-        contenido.setStyle(
-                "-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
-
-        // Sección de resumen de datos
-        Label tituloSeccion = new Label("📊 RESUMEN DE VENTAS");
-        tituloSeccion.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
-
-        VBox tablaDatos = new VBox(5);
-        tablaDatos.setStyle(
-                "-fx-background-color: #2B2B2B; -fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10; -fx-text-fill: #ecf0f1;");
-
-        // Headers de la tabla
-        HBox headerTabla = new HBox();
-        headerTabla.setStyle("-fx-background-color: #3498db; -fx-padding: 8;");
-        headerTabla.getChildren().addAll(
-                crearCeldaTabla("Fecha", true),
-                crearCeldaTabla("Tipo Boleto", true),
-                crearCeldaTabla("Formato", true),
-                crearCeldaTabla("Boletos", true),
-                crearCeldaTabla("Ingresos", true));
-
-        // Datos de la tabla
-        VBox filasDatos = new VBox(2);
-        int totalBoletos = 0;
-        double totalIngresos = 0;
-
-        for (ReporteVentaDTO dato : datos) {
-            filasDatos.getChildren().add(crearFilaTablaCompleta(dato));
-            totalBoletos += dato.boletosVendidos;
-            totalIngresos += dato.ingresos;
-        }
-
-        // Fila de total
-        HBox totalRow = new HBox();
-        totalRow.setStyle("-fx-background-color: #2ecc71; -fx-padding: 8;");
-        totalRow.getChildren().addAll(
-                crearCeldaTabla("TOTAL:", true),
-                crearCeldaTabla("", true),
-                crearCeldaTabla("", true),
-                crearCeldaTabla(String.valueOf(totalBoletos), true),
-                crearCeldaTabla(String.format("$%.2f", totalIngresos), true));
-
-        tablaDatos.getChildren().addAll(headerTabla, filasDatos, totalRow);
-
-        // Estadísticas adicionales
-        Label tituloEstadisticas = new Label("📋 ESTADÍSTICAS ADICIONALES");
-        tituloEstadisticas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
-
-        VBox estadisticasBox = new VBox(10);
-        estadisticasBox.setStyle("-fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 15;");
-
-        // Calcular estadísticas
-        Map<String, Integer> boletosPorTipo = new HashMap<>();
-        Map<String, Integer> boletosPorFormato = new HashMap<>();
-
-        for (ReporteVentaDTO dato : datos) {
-            boletosPorTipo.merge(dato.tipoBoleto, dato.boletosVendidos, Integer::sum);
-            boletosPorFormato.merge(dato.formato, dato.boletosVendidos, Integer::sum);
-        }
-
-        estadisticasBox.getChildren().addAll(
-                crearEstadistica("Total de Boletos Vendidos", String.valueOf(totalBoletos)),
-                crearEstadistica("Total de Ingresos", String.format("$%.2f", totalIngresos)),
-                crearEstadistica("Promedio por Boleto", String.format("$%.2f", totalIngresos / totalBoletos)),
-                crearEstadistica("Boletos VIP", String.valueOf(boletosPorTipo.getOrDefault("VIP", 0))),
-                crearEstadistica("Boletos Normal", String.valueOf(boletosPorTipo.getOrDefault("Normal", 0))),
-                crearEstadistica("Boletos 2D", String.valueOf(boletosPorFormato.getOrDefault("2D", 0))),
-                crearEstadistica("Boletos 3D", String.valueOf(boletosPorFormato.getOrDefault("3D", 0))));
-
-        contenido.getChildren().addAll(tituloSeccion, tablaDatos, tituloEstadisticas, estadisticasBox);
-
-        return contenido;
-    }
-
-    private HBox crearFilaTablaCompleta(ReporteVentaDTO dato) {
-        HBox fila = new HBox();
-        fila.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 0 0 1 0;");
-
-        Label celdaFecha = crearCeldaTabla(dato.fecha, false);
-        Label celdaTipo = crearCeldaTabla(dato.tipoBoleto, false);
-        Label celdaFormato = crearCeldaTabla(dato.formato, false);
-        Label celdaBoletos = crearCeldaTabla(String.valueOf(dato.boletosVendidos), false);
-        Label celdaIngresos = crearCeldaTabla(String.format("$%.2f", dato.ingresos), false);
-
-        fila.getChildren().addAll(celdaFecha, celdaTipo, celdaFormato, celdaBoletos, celdaIngresos);
-        return fila;
-    }
-
-    private HBox crearEstadistica(String titulo, String valor) {
-        HBox estadistica = new HBox(10);
-        estadistica.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 8; -fx-border-radius: 3px;");
-
-        Label lblTitulo = new Label(titulo + ":");
-        lblTitulo.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-min-width: 150;");
-
-        Label lblValor = new Label(valor);
-        lblValor.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
-
-        estadistica.getChildren().addAll(lblTitulo, lblValor);
-        return estadistica;
-    }
-
-    private Label crearCeldaTabla(String texto, boolean esHeader) {
-        Label celda = new Label(texto);
-        celda.setPrefWidth(120);
-        celda.setMaxWidth(120);
-        celda.setStyle(esHeader ? "-fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;"
-                : "-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
-        return celda;
-    }
-
-    // Método para exportar reportes con datos reales
-    private void exportarReporteReal(ExportStrategy strategy, String tipo, List<ReporteVentaDTO> datosReales) {
-        try {
-            LocalDate desde = dateDesde.getValue();
-            LocalDate hasta = dateHasta.getValue();
-
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
-            fileChooser.setInitialFileName("reporte_ventas_real." + tipo);
-            if (tipo.equals("pdf")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
-            } else if (tipo.equals("csv")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
-            }
-            Stage stage = (Stage) btnBack.getScene().getWindow();
-            File archivo = fileChooser.showSaveDialog(stage);
-
-            if (archivo != null) {
-                Map<String, Object> infoExtra = new HashMap<>();
-                infoExtra.put("subtitulo", "Reporte generado con datos reales el "
-                        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-
-                strategy.exportar(datosReales, archivo, "REPORTE DE VENTAS - CINEMAX (DATOS REALES)", infoExtra);
-
-                // Agregar el nuevo reporte a la lista
-                ReporteGenerado nuevoReporte = new ReporteGenerado(
-                        reportesGenerados.size() + 1,
-                        "Reporte_Ventas_Real_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")),
-                        tipo.toUpperCase(),
-                        LocalDateTime.now(),
-                        archivo.getAbsolutePath(),
-                        "Reporte con datos reales del " + desde + " al " + hasta);
-                reportesGenerados.add(0, nuevoReporte);
-
-                mostrarAlerta("Éxito", "El reporte con datos reales ha sido exportado correctamente.");
-            }
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo exportar el reporte: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
-
-    // Métodos auxiliares para la tabla de reportes
-    private void descargarReporte(ReporteGenerado reporte) {
-        try {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Guardar " + reporte.getTipo());
-            fileChooser.setInitialFileName(reporte.getNombre() + "." + reporte.getTipo().toLowerCase());
-            
-            if (reporte.getTipo().equals("PDF")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
-            } else {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
-            }
-            
-            Stage stage = (Stage) tablaReportes.getScene().getWindow();
-            File archivo = fileChooser.showSaveDialog(stage);
-            
-            if (archivo != null) {
-                // Simular descarga
-                mostrarAlerta("Descarga", "Reporte descargado: " + archivo.getAbsolutePath());
-            }
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo descargar el reporte: " + e.getMessage());
-        }
-    }
-
-    private void verPrevisualizacion(ReporteGenerado reporte) {
-        try {
-            // Obtener datos reales para la previsualización
-            LocalDate desde = LocalDate.now().minusDays(7);
-            LocalDate hasta = LocalDate.now();
-            List<ReporteVentaDTO> datosReales = ventasService.getVentasFiltradas(desde, hasta, null, null, null);
-            
-            mostrarPrevisualizacionReporteReal(datosReales, false);
-        } catch (Exception e) {
             mostrarAlerta("Error", "No se pudo mostrar la previsualización: " + e.getMessage());
         }
     }
 
-    @FXML
-    private void goToReportesProgramados(ActionEvent event) {
-        try {
-            URL fxmlUrl = getClass().getResource("/vistas/reportes/ModuloReportesProgramados.fxml");
-            if (fxmlUrl == null) {
-                throw new IOException("FXML file not found: /vistas/reportes/ModuloReportesProgramados.fxml");
-            }
-            FXMLLoader loader = new FXMLLoader(fxmlUrl);
-            Parent root = loader.load();
+    private void exportarReporte(List<ReporteVentaDTO> datos, String tipo) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte");
 
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.setTitle("Reportes Programados");
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error de Navegación");
-            alert.setHeaderText("No se pudo cargar la vista de reportes programados");
-            alert.setContentText("Asegúrese de que el archivo FXML exista en la ruta correcta.");
-            alert.showAndWait();
+        String titulo = "Reporte de Ventas (" + dateDesde.getValue() + " - " + dateHasta.getValue() + ")";
+        fileChooser.setInitialFileName("reporte_ventas_" + LocalDate.now().toString());
+
+        File file = null;
+        ExportStrategy strategy = null;
+
+        if ("PDF".equalsIgnoreCase(tipo)) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+            file = fileChooser.showSaveDialog(null);
+            strategy = new ExportPDFStrategy();
+        } else if ("CSV".equalsIgnoreCase(tipo)) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
+            file = fileChooser.showSaveDialog(null);
+            strategy = new ExportCSVStrategy();
         }
-    }
 
-    @FXML
-    public void onBackAction(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (file != null && strategy != null) {
+            try {
+                Map<String, Object> infoExtra = new HashMap<>();
+                infoExtra.put("subtitulo", "Período: " + dateDesde.getValue() + " - " + dateHasta.getValue());
+                strategy.exportar(datos, file, "REPORTE DE VENTAS - CINEMAX", infoExtra);
+                mostrarAlerta("Éxito", "Reporte guardado exitosamente en: " + file.getAbsolutePath());
+                
+                // Guardar el reporte generado en la lista
+                ReporteGenerado nuevoReporte = new ReporteGenerado(
+                    reportesGenerados.size() + 1,
+                    file.getName(),
+                    tipo,
+                    LocalDateTime.now(),
+                    file.getAbsolutePath(),
+                    "Reporte de ventas del " + dateDesde.getValue() + " al " + dateHasta.getValue()
+                );
+                reportesGenerados.add(nuevoReporte);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                mostrarAlerta("Error", "Error al exportar el reporte: " + e.getMessage());
+            }
         }
     }
 
@@ -858,18 +755,4 @@ public class ControladorReportesPrincipal {
         alert.setContentText(mensaje);
         alert.showAndWait();
     }
-    @FXML
-    public void onCerrarSesion(ActionEvent event) {
-    try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
-        Parent root = loader.load();
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setTitle("Portal del Administrador");
-        stage.setScene(new Scene(root));
-        stage.show();
-    } catch (IOException e) {
-        e.printStackTrace();
-        mostrarAlerta("Error", "No se pudo cargar la pantalla de login: " + e.getMessage());
-    }
-}
 }

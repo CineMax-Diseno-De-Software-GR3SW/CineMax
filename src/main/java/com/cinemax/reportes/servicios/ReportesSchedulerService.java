@@ -104,7 +104,7 @@ public class ReportesSchedulerService {
                     reporte.setFechaGeneracion(proximaEjecucion);
                     
                     System.out.println("Reporte ejecutado: " + reporte.getNombre() + 
-                                     " - Próxima ejecución: " + proximaEjecucion);
+                                       " - Próxima ejecución: " + proximaEjecucion);
                     
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -196,7 +196,7 @@ public class ReportesSchedulerService {
 
     // Método para programar un reporte con configuración específica
     public void programarReporte(String nombre, String frecuencia, LocalDate fechaDesde, LocalDate fechaHasta, 
-                                String sala, String tipoBoleto, String horario) {
+                                 String sala, String tipoBoleto, String horario) {
         try {
             // Calcular primera ejecución
             LocalDateTime primeraEjecucion = calcularSiguienteEjecucion(LocalDateTime.now(), frecuencia);
@@ -227,7 +227,7 @@ public class ReportesSchedulerService {
             reportesPendientes.add(reporteProgramado);
             
             System.out.println("Reporte programado exitosamente: " + nombre + 
-                             " - Primera ejecución: " + primeraEjecucion);
+                               " - Primera ejecución: " + primeraEjecucion);
             
         } catch (Exception e) {
             e.printStackTrace();
