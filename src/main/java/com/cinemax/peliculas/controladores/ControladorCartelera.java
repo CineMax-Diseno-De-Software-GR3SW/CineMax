@@ -11,7 +11,6 @@ import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
-import com.cinemax.comun.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -23,7 +22,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -35,39 +33,94 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * Controlador para la gestión y visualización de la cartelera cinematográfica.
+ *
+ * <p>Esta clase maneja la interfaz gráfica de la cartelera del cine, permitiendo
+ * visualizar las películas disponibles con funciones futuras programadas.
+ * Incluye funcionalidades de búsqueda, filtrado y navegación a detalles.
+ *
+ * <p>Funcionalidades principales:
+ * <ul>
+ *   <li>Carga asíncrona de películas con funciones futuras</li>
+ *   <li>Visualización en grilla con imágenes y información básica</li>
+ *   <li>Búsqueda por título e ID de película</li>
+ *   <li>Selección de películas para ver detalles</li>
+ *   <li>Indicadores de progreso durante cargas de datos</li>
+ *   <li>Actualización manual de la cartelera</li>
+ * </ul>
+ *
+ * @author GR3SW
+ * @version 1.0
+ * @since 1.0
+ */
 public class ControladorCartelera implements Initializable {
 
+    /** Servicio de negocio para operaciones con películas */
     private ServicioPelicula servicioPelicula;
+
+    /** Modelo de cartelera que contiene las películas disponibles */
     private Cartelera cartelera;
+
+    /** DAO para acceso a datos de funciones */
     private FuncionDAO funcionDAO;
+
+    /** DAO para acceso a datos de películas */
     private PeliculaDAO peliculaDAO;
 
     // Componentes de la interfaz FXML
+    /** Campo de texto para búsqueda por título */
     @FXML private TextField txtBuscarTitulo;
+
+    /** Campo de texto para búsqueda por ID */
     @FXML private TextField txtBuscarId;
+
+    /** Contenedor en grilla para mostrar las películas */
     @FXML private GridPane grillaCartelera;
 
+    /** Botón para actualizar la cartelera */
     @FXML private Button btnActualizarCartelera;
+
+    /** Botón para volver al menú principal */
     @FXML private Button btnVolver;
+
+    /** Botón para buscar por título */
     @FXML private Button btnBuscarTitulo;
+
+    /** Botón para buscar por ID */
     @FXML private Button btnBuscarId;
+
+    /** Botón para limpiar búsquedas */
     @FXML private Button btnLimpiarBusqueda;
+
+    /** Botón para ver detalles de película seleccionada */
     @FXML private Button btnVerDetalles;
 
+    /** Label que muestra el total de películas */
     @FXML private Label lblTotalPeliculas;
+
+    /** Label que muestra el estado actual de la cartelera */
     @FXML private Label lblEstadoCartelera;
 
-    // Datos para la tabla
+    // Datos para la gestión de películas
+    /** Lista observable de todas las películas en cartelera */
     private ObservableList<Pelicula> listaPeliculasCartelera;
+
+    /** Lista observable de películas filtradas por búsqueda */
     private ObservableList<Pelicula> peliculasFiltradas;
 
-    // Variable para rastrear la película seleccionada
+    /** Película actualmente seleccionada por el usuario */
     private Pelicula peliculaSeleccionada;
 
-    // Indicador de carga
+    /** Indicador visual de progreso durante cargas */
     private ProgressIndicator indicadorCarga;
+
+    /** Contenedor principal para el indicador de carga */
     private StackPane contenedorPrincipal;
 
+    /**
+     * Constructor que inicializa los servicios y estructuras de datos.
+     */
     public ControladorCartelera() {
         this.servicioPelicula = new ServicioPelicula();
         this.cartelera = new Cartelera(new ArrayList<>());
@@ -77,6 +130,12 @@ public class ControladorCartelera implements Initializable {
         this.peliculasFiltradas = FXCollections.observableArrayList();
     }
 
+    /**
+     * Inicializa el controlador después de que se ha cargado el FXML.
+     *
+     * @param location La ubicación utilizada para resolver rutas relativas para el objeto raíz
+     * @param resources Los recursos utilizados para localizar el objeto raíz
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Inicializar el botón Ver Detalles como deshabilitado
@@ -86,6 +145,9 @@ public class ControladorCartelera implements Initializable {
         cargarCarteleraAsync();
     }
 
+    /**
+     * Configura el indicador de progreso visual para operaciones asíncronas.
+     */
     private void configurarIndicadorCarga() {
         // Crear indicador de carga con estilos del tema
         if (indicadorCarga == null) {
@@ -98,9 +160,13 @@ public class ControladorCartelera implements Initializable {
 
         // Enfoque simplificado: no modificar la estructura FXML
         // Solo usar el indicador para mostrar estado en los labels
-        System.out.println("Indicador de carga configurado con tema styles.css");
     }
 
+    /**
+     * Controla la visibilidad del indicador de carga y el estado de los controles.
+     *
+     * @param mostrar true para mostrar el indicador y deshabilitar controles, false para ocultarlo
+     */
     private void mostrarIndicadorCarga(boolean mostrar) {
         Platform.runLater(() -> {
             indicadorCarga.setVisible(mostrar);
@@ -114,6 +180,12 @@ public class ControladorCartelera implements Initializable {
         });
     }
 
+    /**
+     * Carga la cartelera de forma asíncrona obteniendo películas con funciones futuras.
+     *
+     * <p>Este método ejecuta la carga en un hilo separado para no bloquear la UI,
+     * mostrando indicadores de progreso y manejando errores apropiadamente.
+     */
     private void cargarCarteleraAsync() {
         Task<List<Pelicula>> task = new Task<List<Pelicula>>() {
             @Override
@@ -187,11 +259,19 @@ public class ControladorCartelera implements Initializable {
         thread.start();
     }
 
+    /**
+     * Maneja el evento de actualización manual de la cartelera.
+     *
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onActualizarCartelera(ActionEvent event) {
         actualizarCarteleraAsync();
     }
 
+    /**
+     * Actualiza la cartelera de forma asíncrona y muestra mensaje de confirmación.
+     */
     private void actualizarCarteleraAsync() {
         Task<List<Pelicula>> task = new Task<List<Pelicula>>() {
             @Override
@@ -271,6 +351,11 @@ public class ControladorCartelera implements Initializable {
         thread.start();
     }
 
+    /**
+     * Actualiza la grilla visual con las películas proporcionadas.
+     *
+     * @param peliculas Lista de películas a mostrar en la grilla
+     */
     private void actualizarGrilla(List<Pelicula> peliculas) {
         grillaCartelera.getChildren().clear();
 
@@ -379,6 +464,9 @@ public class ControladorCartelera implements Initializable {
         });
     }
 
+    /**
+     * Limpia la selección visual previa de películas en la grilla.
+     */
     private void limpiarSeleccionPrevia() {
         // Restaurar estilo normal a todos los contenedores removiendo bordes
         grillaCartelera.getChildren().forEach(node -> {
@@ -390,6 +478,12 @@ public class ControladorCartelera implements Initializable {
         btnVerDetalles.setDisable(true);
     }
 
+    /**
+     * Carga una imagen de forma asíncrona en un ImageView.
+     *
+     * @param imageView El ImageView donde cargar la imagen
+     * @param urlImagen URL de la imagen a cargar
+     */
     private void cargarImagenAsync(ImageView imageView, String urlImagen) {
         Task<Image> task = new Task<Image>() {
             @Override
@@ -419,6 +513,9 @@ public class ControladorCartelera implements Initializable {
         thread.start();
     }
 
+    /**
+     * Realiza búsqueda de películas por título.
+     */
     @FXML
     private void buscarPorTitulo() {
         String titulo = txtBuscarTitulo.getText().trim().toLowerCase();
@@ -442,6 +539,9 @@ public class ControladorCartelera implements Initializable {
         lblEstadoCartelera.setText("Películas encontradas: " + peliculasFiltradas.size());
     }
 
+    /**
+     * Realiza búsqueda de películas por ID.
+     */
     @FXML
     private void buscarPorId() {
         String idTexto = txtBuscarId.getText().trim();
@@ -475,6 +575,9 @@ public class ControladorCartelera implements Initializable {
         }
     }
 
+    /**
+     * Muestra todas las películas disponibles en la cartelera.
+     */
     private void mostrarTodasLasPeliculas() {
         // Limpiar selección al mostrar todas
         peliculaSeleccionada = null;
@@ -486,15 +589,19 @@ public class ControladorCartelera implements Initializable {
         lblEstadoCartelera.setText("Mostrando todas las películas.");
     }
 
+    /**
+     * Actualiza las estadísticas mostradas en la interfaz.
+     */
     private void actualizarEstadisticas() {
         int total = peliculasFiltradas.size();
         lblTotalPeliculas.setText("Películas mostradas: " + total + " de " + listaPeliculasCartelera.size());
     }
 
-    private void mostrarDetallesPelicula(Pelicula pelicula) {
-        navegarADetallesCartelera(pelicula);
-    }
-
+    /**
+     * Navega a la pantalla de detalles de la película seleccionada.
+     *
+     * @param pelicula Película de la cual mostrar detalles
+     */
     private void navegarADetallesCartelera(Pelicula pelicula) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaDetallesCartelera.fxml"));
@@ -511,24 +618,51 @@ public class ControladorCartelera implements Initializable {
         }
     }
 
+    /**
+     * Muestra un mensaje de error al usuario.
+     *
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje de error
+     */
     private void mostrarError(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
+    /**
+     * Muestra un mensaje informativo al usuario.
+     *
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje informativo
+     */
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }
 
+    /**
+     * Maneja el evento de búsqueda por título.
+     *
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onBuscarTitulo(ActionEvent event) {
         buscarPorTitulo();
     }
 
+    /**
+     * Maneja el evento de búsqueda por ID.
+     *
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onBuscarId(ActionEvent event) {
         buscarPorId();
     }
 
+    /**
+     * Maneja el evento de limpiar búsqueda.
+     *
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onLimpiarBusqueda(ActionEvent event) {
         txtBuscarTitulo.clear();
@@ -536,10 +670,15 @@ public class ControladorCartelera implements Initializable {
         mostrarTodasLasPeliculas();
     }
 
+    /**
+     * Maneja el evento de ver detalles de la película seleccionada.
+     *
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onVerDetalles(ActionEvent event) {
         if (peliculaSeleccionada != null) {
-            mostrarDetallesPelicula(peliculaSeleccionada);
+            navegarADetallesCartelera(peliculaSeleccionada);
         } else {
             mostrarError("Sin selección", "Por favor, seleccione una película de la cartelera para ver sus detalles.");
         }
@@ -561,6 +700,11 @@ public class ControladorCartelera implements Initializable {
         }
     }
 
+    /**
+     * Maneja el evento de volver al portal principal.
+     *
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onVolver(ActionEvent event) {
         try {

@@ -9,7 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
@@ -41,14 +40,130 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+/**
+ * Controlador para la gestión integral de funciones cinematográficas.
+ *
+ * <p>Esta clase maneja la interfaz gráfica que combina la gestión de funciones
+ * con un formulario integrado para creación y edición. Proporciona una experiencia
+ * unificada donde los usuarios pueden ver, buscar, crear, editar y eliminar
+ * funciones desde una sola pantalla.
+ *
+ * <p>Funcionalidades principales:
+ * <ul>
+ *   <li>Gestión completa de funciones (CRUD) con formulario integrado</li>
+ *   <li>Visualización en tabla con filtrado y búsqueda en tiempo real</li>
+ *   <li>Formulario de creación/edición embebido en la misma vista</li>
+ *   <li>Validaciones en tiempo real y cálculo automático de horarios</li>
+ *   <li>Modo dual: creación de nuevas funciones y edición de existentes</li>
+ *   <li>Navegación a detalles completos de funciones</li>
+ *   <li>Estadísticas y resúmenes informativos</li>
+ * </ul>
+ *
+ * @author GR3SW
+ * @version 1.0
+ * @since 1.0
+ */
 public class ControladorFunciones implements Initializable {
 
+    /** Servicio para operaciones de negocio con funciones */
     private ServicioFuncion servicioFuncion;
+    
+    /** DAO para acceso directo a datos de funciones */
     private FuncionDAO funcionDAO;
+    
+    /** DAO para acceso a datos de películas */
     private PeliculaDAO peliculaDAO;
+    
+    /** Servicio para operaciones con salas */
     private SalaService salaService;
 
-    // Constructor
+    // Componentes de la interfaz FXML para búsqueda y tabla
+    /** Campo de texto para búsqueda general */
+    @FXML private TextField txtBuscar;
+    
+    /** Tabla principal de funciones */
+    @FXML private TableView<Funcion> tablaFunciones;
+    
+    /** Columna de ID de función */
+    @FXML private TableColumn<Funcion, Integer> colId;
+    
+    /** Columna de película */
+    @FXML private TableColumn<Funcion, String> colPelicula;
+    
+    /** Columna de sala */
+    @FXML private TableColumn<Funcion, String> colSala;
+    
+    /** Columna de fecha y hora de inicio */
+    @FXML private TableColumn<Funcion, String> colFechaHoraInicio;
+    
+    /** Columna de fecha y hora de fin */
+    @FXML private TableColumn<Funcion, String> colFechaHoraFin;
+    
+    /** Columna de formato de proyección */
+    @FXML private TableColumn<Funcion, String> colFormato;
+    
+    /** Columna de tipo de estreno */
+    @FXML private TableColumn<Funcion, String> colTipoEstreno;
+
+    /** Botón para realizar búsqueda */
+    @FXML private Button btnBuscar;
+    
+    /** Botón para eliminar función seleccionada */
+    @FXML private Button btnEliminar;
+    
+    /** Botón para ver detalles de función */
+    @FXML private Button btnVerDetalles;
+    
+    /** Botón para volver al menú principal */
+    @FXML private Button btnVolver;
+
+    /** Label que muestra el total de funciones */
+    @FXML private Label lblTotalFunciones;
+    
+    /** Label que muestra estadísticas adicionales */
+    @FXML private Label lblEstadisticas;
+
+    // Campos del formulario de función integrado
+    /** ComboBox para selección de película */
+    @FXML private ComboBox<Pelicula> cmbPelicula;
+    
+    /** ComboBox para selección de sala */
+    @FXML private ComboBox<Sala> cmbSala;
+    
+    /** Selector de fecha */
+    @FXML private DatePicker dateFecha;
+    
+    /** Campo de texto para hora */
+    @FXML private TextField txtHora;
+    
+    /** ComboBox para formato de función */
+    @FXML private ComboBox<FormatoFuncion> cmbFormato;
+    
+    /** ComboBox para tipo de estreno */
+    @FXML private ComboBox<TipoEstreno> cmbTipoEstreno;
+    
+    /** Botón para guardar función */
+    @FXML private Button btnGuardar;
+    
+    /** Botón para crear nueva función */
+    @FXML private Button btnNuevo;
+    
+    /** Botón para limpiar formulario */
+    @FXML private Button btnLimpiarFormulario;
+
+    // Datos para la gestión de funciones
+    /** Lista observable de todas las funciones */
+    private ObservableList<Funcion> listaFunciones;
+    
+    /** Lista observable de funciones filtradas */
+    private ObservableList<Funcion> funcionesFiltradas;
+
+    /** Función actualmente en modo de edición */
+    private Funcion funcionEnEdicion = null;
+
+    /**
+     * Constructor que inicializa todos los servicios necesarios.
+     */
     public ControladorFunciones() {
         this.servicioFuncion = new ServicioFuncion();
         this.funcionDAO = new FuncionDAO();
@@ -56,67 +171,28 @@ public class ControladorFunciones implements Initializable {
         this.salaService = new SalaService();
     }
 
-    // Componentes de la interfaz FXML
-    @FXML
-    private TextField txtBuscar;
-    @FXML
-    private TableView<Funcion> tablaFunciones;
-    @FXML
-    private TableColumn<Funcion, Integer> colId;
-    @FXML
-    private TableColumn<Funcion, String> colPelicula;
-    @FXML
-    private TableColumn<Funcion, String> colSala;
-    @FXML
-    private TableColumn<Funcion, String> colFechaHoraInicio;
-    @FXML
-    private TableColumn<Funcion, String> colFechaHoraFin;
-    @FXML
-    private TableColumn<Funcion, String> colFormato;
-    @FXML
-    private TableColumn<Funcion, String> colTipoEstreno;
+    /**
+     * Inicializa el controlador después de que se ha cargado el FXML.
+     * 
+     * @param location La ubicación utilizada para resolver rutas relativas para el objeto raíz
+     * @param resources Los recursos utilizados para localizar el objeto raíz
+     */
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        listaFunciones = FXCollections.observableArrayList();
+        funcionesFiltradas = FXCollections.observableArrayList();
 
-    @FXML
-    private Button btnBuscar;
-    @FXML
-    private Button btnEliminar;
-    @FXML
-    private Button btnVerDetalles;
-    @FXML
-    private Button btnVolver;
+        configurarTabla();
+        configurarEventos();
+        configurarFormularioFuncion();
+        cargarFunciones();
+    }
 
-    @FXML
-    private Label lblTotalFunciones;
-    @FXML
-    private Label lblEstadisticas;
-
-    // Campos del formulario de función integrado
-    @FXML
-    private ComboBox<Pelicula> cmbPelicula;
-    @FXML
-    private ComboBox<Sala> cmbSala;
-    @FXML
-    private DatePicker dateFecha;
-    @FXML
-    private TextField txtHora;
-    @FXML
-    private ComboBox<FormatoFuncion> cmbFormato;
-    @FXML
-    private ComboBox<TipoEstreno> cmbTipoEstreno;
-    @FXML
-    private Button btnGuardar;
-    @FXML
-    private Button btnNuevo;
-    @FXML
-    private Button btnLimpiarFormulario;
-
-    // Datos para la tabla
-    private ObservableList<Funcion> listaFunciones;
-    private ObservableList<Funcion> funcionesFiltradas;
-
-    // Variable para controlar el modo de edición
-    private Funcion funcionEnEdicion = null;
-
+    /**
+     * Maneja el evento de guardar función (crear o actualizar).
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onGuardar(ActionEvent event) {
         try {
@@ -227,11 +303,19 @@ public class ControladorFunciones implements Initializable {
         }
     }
 
+    /**
+     * Maneja el evento de limpiar formulario.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onLimpiarFormulario(ActionEvent event) {
         limpiarFormulario();
     }
 
+    /**
+     * Limpia todos los campos del formulario y resetea el estado.
+     */
     private void limpiarFormulario() {
         if (cmbPelicula != null) cmbPelicula.setValue(null);
         if (cmbSala != null) cmbSala.setValue(null);
@@ -248,6 +332,9 @@ public class ControladorFunciones implements Initializable {
         tablaFunciones.getSelectionModel().clearSelection();
     }
 
+    /**
+     * Actualiza el modo visual del formulario (crear vs editar).
+     */
     private void actualizarModoFormulario() {
         if (funcionEnEdicion == null) {
             // Modo crear
@@ -270,6 +357,11 @@ public class ControladorFunciones implements Initializable {
         actualizarEstadoFormulario();
     }
 
+    /**
+     * Carga los datos de una función en el formulario para edición.
+     * 
+     * @param funcion Función a cargar en el formulario
+     */
     private void cargarDatosEnFormulario(Funcion funcion) {
         if (funcion == null) return;
 
@@ -287,32 +379,60 @@ public class ControladorFunciones implements Initializable {
         actualizarModoFormulario();
     }
 
+    /**
+     * Maneja el evento de eliminar función seleccionada.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onEliminarFuncion(ActionEvent event) {
         Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
         if (funcionSeleccionada != null) {
-            String mensaje = "¿Está seguro de eliminar esta función?\n\n" +
-                           "Función ID: " + funcionSeleccionada.getId() +
-                           "\nPelícula: " + funcionSeleccionada.getPelicula().getTitulo() +
-                           "\n\nATENCIÓN: Esta acción no se puede deshacer.";
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
-
-            // Proceder con la eliminación
-            try {
-                funcionDAO.eliminar(funcionSeleccionada.getId());
-                cargarFunciones();
-                mostrarInformacion("Éxito", "Función eliminada correctamente");
-            } catch (Exception e) {
-                String mensajeError = e.getMessage();
-                if (mensajeError != null && (mensajeError.contains("foreign key constraint") || mensajeError.contains("violates"))) {
-                    mostrarErrorRestriccion(funcionSeleccionada);
-                } else {
-                    mostrarError("Error", "No se pudo eliminar la función: " + mensajeError);
-                }
-            }
+            confirmarYEliminarFuncion(funcionSeleccionada);
         }
     }
 
+    /**
+     * Confirma y procede con la eliminación de una función.
+     * 
+     * @param funcion Función a eliminar
+     */
+    private void confirmarYEliminarFuncion(Funcion funcion) {
+        String mensaje = "¿Está seguro de eliminar esta función?\n\n" +
+                       "Función ID: " + funcion.getId() +
+                       "\nPelícula: " + funcion.getPelicula().getTitulo() +
+                       "\n\nATENCIÓN: Esta acción no se puede deshacer.";
+        ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
+
+        try {
+            funcionDAO.eliminar(funcion.getId());
+            cargarFunciones();
+            mostrarInformacion("Éxito", "Función eliminada correctamente");
+        } catch (Exception e) {
+            manejarErrorEliminacion(e, funcion);
+        }
+    }
+
+    /**
+     * Maneja errores específicos de eliminación de funciones.
+     * 
+     * @param e Excepción ocurrida
+     * @param funcion Función que se intentó eliminar
+     */
+    private void manejarErrorEliminacion(Exception e, Funcion funcion) {
+        String mensajeError = e.getMessage();
+        if (mensajeError != null && (mensajeError.contains("foreign key constraint") || mensajeError.contains("violates"))) {
+            mostrarErrorRestriccion(funcion);
+        } else {
+            mostrarError("Error", "No se pudo eliminar la función: " + mensajeError);
+        }
+    }
+
+    /**
+     * Muestra un mensaje de error específico para restricciones de eliminación.
+     * 
+     * @param funcion Función que no se pudo eliminar
+     */
     private void mostrarErrorRestriccion(Funcion funcion) {
         String mensaje = "No se puede eliminar la función ID " + funcion.getId() +
                         " porque está asociada con:\n\n" +
@@ -327,6 +447,11 @@ public class ControladorFunciones implements Initializable {
         ManejadorMetodosComunes.mostrarVentanaError(mensaje);
     }
 
+    /**
+     * Maneja el evento de ver detalles de función.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onVerDetalles(ActionEvent event) {
         Funcion funcionSeleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
@@ -335,24 +460,29 @@ public class ControladorFunciones implements Initializable {
         }
     }
 
+    /**
+     * Maneja el evento de búsqueda.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onBuscar(ActionEvent event) {
         aplicarFiltros();
     }
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
-        listaFunciones = FXCollections.observableArrayList();
-        funcionesFiltradas = FXCollections.observableArrayList();
-
-        configurarTabla();
-        configurarEventos();
-        configurarFormularioFuncion();
-        cargarFunciones();
+    /**
+     * Configura la tabla de funciones con sus columnas y eventos.
+     */
+    private void configurarTabla() {
+        configurarColumnas();
+        configurarSeleccionTabla();
+        tablaFunciones.setItems(funcionesFiltradas);
     }
 
-    private void configurarTabla() {
-        // Configurar las columnas de la tabla
+    /**
+     * Configura las columnas de la tabla con sus respectivos cell value factories.
+     */
+    private void configurarColumnas() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
 
         colPelicula.setCellValueFactory(cellData -> {
@@ -369,26 +499,35 @@ public class ControladorFunciones implements Initializable {
             );
         });
 
+        configurarColumnasFechaHora();
+        configurarColumnasEnum();
+    }
+
+    /**
+     * Configura las columnas de fecha y hora con formato apropiado.
+     */
+    private void configurarColumnasFechaHora() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
         colFechaHoraInicio.setCellValueFactory(cellData -> {
             LocalDateTime fechaHora = cellData.getValue().getFechaHoraInicio();
-            if (fechaHora != null) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                return new javafx.beans.property.SimpleStringProperty(fechaHora.format(formatter));
-            } else {
-                return new javafx.beans.property.SimpleStringProperty("N/A");
-            }
+            return new javafx.beans.property.SimpleStringProperty(
+                fechaHora != null ? fechaHora.format(formatter) : "N/A"
+            );
         });
 
         colFechaHoraFin.setCellValueFactory(cellData -> {
             LocalDateTime fechaHora = cellData.getValue().getFechaHoraFin();
-            if (fechaHora != null) {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-                return new javafx.beans.property.SimpleStringProperty(fechaHora.format(formatter));
-            } else {
-                return new javafx.beans.property.SimpleStringProperty("N/A");
-            }
+            return new javafx.beans.property.SimpleStringProperty(
+                fechaHora != null ? fechaHora.format(formatter) : "N/A"
+            );
         });
+    }
 
+    /**
+     * Configura las columnas de enumeraciones (formato, tipo de estreno).
+     */
+    private void configurarColumnasEnum() {
         colFormato.setCellValueFactory(cellData -> {
             FormatoFuncion formato = cellData.getValue().getFormato();
             return new javafx.beans.property.SimpleStringProperty(
@@ -402,36 +541,53 @@ public class ControladorFunciones implements Initializable {
                 tipo != null ? tipo.name() : "N/A"
             );
         });
+    }
 
-        // Configurar selección de tabla
+    /**
+     * Configura el comportamiento de selección de la tabla.
+     */
+    private void configurarSeleccionTabla() {
         tablaFunciones.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
                     boolean funcionSeleccionada = newSelection != null;
                     btnEliminar.setDisable(!funcionSeleccionada);
                     btnVerDetalles.setDisable(!funcionSeleccionada);
 
-                    // Cargar datos en el formulario cuando se selecciona una función
                     if (funcionSeleccionada) {
                         cargarDatosEnFormulario(newSelection);
                     } else {
-                        // Si no hay selección, limpiar formulario y volver a modo crear
                         limpiarFormulario();
                         funcionEnEdicion = null;
                         actualizarModoFormulario();
                     }
                 }
         );
-
-        tablaFunciones.setItems(funcionesFiltradas);
     }
 
+    /**
+     * Configura los eventos de la interfaz.
+     */
     private void configurarEventos() {
         // Configurar búsqueda en tiempo real
         txtBuscar.textProperty().addListener((obs, oldText, newText) -> aplicarFiltros());
     }
 
+    /**
+     * Configura el formulario integrado de función.
+     */
     private void configurarFormularioFuncion() {
-        // Configurar ComboBox de películas
+        configurarComboBoxPeliculas();
+        configurarComboBoxSalas();
+        configurarComboBoxFormatos();
+        configurarComboBoxTiposEstreno();
+        configurarValidacionHora();
+        configurarValidacionesFormulario();
+    }
+
+    /**
+     * Configura el ComboBox de películas.
+     */
+    private void configurarComboBoxPeliculas() {
         if (cmbPelicula != null) {
             try {
                 List<Pelicula> peliculas = peliculaDAO.listarTodas();
@@ -448,11 +604,15 @@ public class ControladorFunciones implements Initializable {
                     }
                 });
             } catch (SQLException e) {
-                System.err.println("Error al cargar películas: " + e.getMessage());
+                // Error manejado silenciosamente
             }
         }
+    }
 
-        // Configurar ComboBox de salas
+    /**
+     * Configura el ComboBox de salas.
+     */
+    private void configurarComboBoxSalas() {
         if (cmbSala != null) {
             try {
                 List<Sala> salas = salaService.listarSalas();
@@ -469,21 +629,33 @@ public class ControladorFunciones implements Initializable {
                     }
                 });
             } catch (Exception e) {
-                System.err.println("Error al cargar salas: " + e.getMessage());
+                // Error manejado silenciosamente
             }
         }
+    }
 
-        // Configurar ComboBox de formatos
+    /**
+     * Configura el ComboBox de formatos.
+     */
+    private void configurarComboBoxFormatos() {
         if (cmbFormato != null) {
             cmbFormato.setItems(FXCollections.observableArrayList(FormatoFuncion.values()));
         }
+    }
 
-        // Configurar ComboBox de tipos de estreno
+    /**
+     * Configura el ComboBox de tipos de estreno.
+     */
+    private void configurarComboBoxTiposEstreno() {
         if (cmbTipoEstreno != null) {
             cmbTipoEstreno.setItems(FXCollections.observableArrayList(TipoEstreno.values()));
         }
+    }
 
-        // Configurar validación de entrada de hora
+    /**
+     * Configura la validación de entrada para el campo de hora.
+     */
+    private void configurarValidacionHora() {
         if (txtHora != null) {
             txtHora.textProperty().addListener((obs, oldText, newText) -> {
                 // Permitir solo formato HH:MM
@@ -492,13 +664,12 @@ public class ControladorFunciones implements Initializable {
                 }
             });
         }
-
-        // Configurar validaciones del formulario
-        configurarValidacionesFormulario();
     }
 
+    /**
+     * Configura las validaciones del formulario en tiempo real.
+     */
     private void configurarValidacionesFormulario() {
-        // Listener para validar formulario en tiempo real
         Runnable validarFormulario = this::actualizarEstadoFormulario;
 
         if (cmbPelicula != null) {
@@ -521,6 +692,9 @@ public class ControladorFunciones implements Initializable {
         }
     }
 
+    /**
+     * Actualiza el estado del formulario y habilita/deshabilita el botón guardar.
+     */
     private void actualizarEstadoFormulario() {
         if (btnGuardar != null) {
             boolean formularioValido = validarFormularioCompleto();
@@ -528,6 +702,11 @@ public class ControladorFunciones implements Initializable {
         }
     }
 
+    /**
+     * Valida que todos los campos obligatorios del formulario estén completos.
+     * 
+     * @return true si el formulario es válido, false en caso contrario
+     */
     private boolean validarFormularioCompleto() {
         return cmbPelicula != null && cmbPelicula.getValue() != null &&
                cmbSala != null && cmbSala.getValue() != null &&
@@ -537,6 +716,9 @@ public class ControladorFunciones implements Initializable {
                cmbTipoEstreno != null && cmbTipoEstreno.getValue() != null;
     }
 
+    /**
+     * Carga todas las funciones desde la base de datos.
+     */
     private void cargarFunciones() {
         try {
             listaFunciones.clear();
@@ -547,20 +729,16 @@ public class ControladorFunciones implements Initializable {
         }
     }
 
+    /**
+     * Aplica los filtros de búsqueda a la lista de funciones.
+     */
     private void aplicarFiltros() {
         funcionesFiltradas.clear();
 
         String textoBusqueda = txtBuscar.getText() != null ? txtBuscar.getText().toLowerCase().trim() : "";
 
         for (Funcion funcion : listaFunciones) {
-            boolean coincideTexto = textoBusqueda.isEmpty() ||
-                String.valueOf(funcion.getId()).contains(textoBusqueda) ||
-                (funcion.getPelicula() != null && funcion.getPelicula().getTitulo() != null &&
-                 funcion.getPelicula().getTitulo().toLowerCase().contains(textoBusqueda)) ||
-                (funcion.getSala() != null && funcion.getSala().getNombre() != null &&
-                 funcion.getSala().getNombre().toLowerCase().contains(textoBusqueda));
-
-            if (coincideTexto) {
+            if (cumpleCriteriosBusqueda(funcion, textoBusqueda)) {
                 funcionesFiltradas.add(funcion);
             }
         }
@@ -568,6 +746,28 @@ public class ControladorFunciones implements Initializable {
         actualizarEstadisticas();
     }
 
+    /**
+     * Verifica si una función cumple con los criterios de búsqueda.
+     * 
+     * @param funcion Función a evaluar
+     * @param textoBusqueda Texto de búsqueda
+     * @return true si cumple los criterios, false en caso contrario
+     */
+    private boolean cumpleCriteriosBusqueda(Funcion funcion, String textoBusqueda) {
+        if (textoBusqueda.isEmpty()) {
+            return true;
+        }
+
+        return String.valueOf(funcion.getId()).contains(textoBusqueda) ||
+               (funcion.getPelicula() != null && funcion.getPelicula().getTitulo() != null &&
+                funcion.getPelicula().getTitulo().toLowerCase().contains(textoBusqueda)) ||
+               (funcion.getSala() != null && funcion.getSala().getNombre() != null &&
+                funcion.getSala().getNombre().toLowerCase().contains(textoBusqueda));
+    }
+
+    /**
+     * Actualiza las estadísticas mostradas en la interfaz.
+     */
     private void actualizarEstadisticas() {
         int total = funcionesFiltradas.size();
         lblTotalFunciones.setText("Total de funciones: " + total);
@@ -575,21 +775,16 @@ public class ControladorFunciones implements Initializable {
         if (total == 0) {
             lblEstadisticas.setText("No hay funciones que mostrar");
         } else {
-            lblEstadisticas.setText(""); // Limpiar el label de estadísticas
+            lblEstadisticas.setText("");
         }
     }
 
-    private void mostrarError(String titulo, String mensaje) {
-        ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
-    }
-
-    private void mostrarInformacion(String titulo, String mensaje) {
-        ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
-    }
-
     /**
-     * Método público para obtener funciones por nombre de película
-     * Delega la lógica al servicio correspondiente
+     * Obtiene las funciones de una película específica por su nombre.
+     * 
+     * <p>Método público que delega la lógica al servicio correspondiente
+     * para búsquedas especializadas por película.
+     *
      * @param nombrePelicula El título de la película
      * @return Lista de funciones de la película especificada
      */
@@ -597,18 +792,20 @@ public class ControladorFunciones implements Initializable {
         try {
             return servicioFuncion.obtenerFuncionesPorNombrePelicula(nombrePelicula);
         } catch (Exception e) {
-            // Log del error pero no mostrar UI desde aquí
-            System.err.println("Error al obtener funciones por película: " + e.getMessage());
-            return new ArrayList<>(); // Retornar lista vacía en caso de error
+            return new ArrayList<>();
         }
     }
 
+    /**
+     * Navega a la pantalla de detalles de una función específica.
+     * 
+     * @param funcion Función de la cual mostrar detalles
+     */
     private void navegarADetallesFuncion(Funcion funcion) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaDetallesFuncion.fxml"));
             Parent root = loader.load();
 
-            // Configurar el controlador con la función seleccionada
             ControladorDetallesFuncion controlador = loader.getController();
             controlador.cargarFuncion(funcion);
 
@@ -619,6 +816,11 @@ public class ControladorFunciones implements Initializable {
         }
     }
 
+    /**
+     * Maneja el evento de volver al portal principal.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onVolver(ActionEvent event) {
         try {
@@ -630,5 +832,25 @@ public class ControladorFunciones implements Initializable {
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("No se pudo volver al portal: " + e.getMessage());
         }
+    }
+
+    /**
+     * Muestra un mensaje de error al usuario.
+     * 
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje de error
+     */
+    private void mostrarError(String titulo, String mensaje) {
+        ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
+    }
+
+    /**
+     * Muestra un mensaje informativo al usuario.
+     * 
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje informativo
+     */
+    private void mostrarInformacion(String titulo, String mensaje) {
+        ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }
 }

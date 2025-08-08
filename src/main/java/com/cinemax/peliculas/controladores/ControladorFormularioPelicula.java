@@ -10,15 +10,12 @@ import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
 
-
-
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -29,36 +26,100 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+/**
+ * Controlador para el formulario de creación y edición de películas.
+ *
+ * <p>Esta clase maneja la interfaz gráfica para crear nuevas películas o editar
+ * películas existentes, incluyendo validaciones en tiempo real, manejo de géneros
+ * múltiples y configuración completa de todos los datos de una película.
+ *
+ * <p>Funcionalidades principales:
+ * <ul>
+ *   <li>Creación de nuevas películas con validaciones completas</li>
+ *   <li>Edición de películas existentes</li>
+ *   <li>Validación en tiempo real de campos obligatorios</li>
+ *   <li>Manejo de selección múltiple de géneros</li>
+ *   <li>Validación de rangos numéricos (año, duración)</li>
+ *   <li>Configuración dinámica de ComboBox con datos estáticos</li>
+ *   <li>Manejo de modo creación vs. edición</li>
+ * </ul>
+ *
+ * @author GR3SW
+ * @version 1.0
+ * @since 1.0
+ */
 public class ControladorFormularioPelicula implements Initializable {
 
+    /** Título de la pantalla */
     @FXML private Label lblTituloPantalla;
+    
+    /** Indicador de modo de edición */
     @FXML private Label lblModoEdicion;
+    
+    /** Estado actual del formulario */
     @FXML private Label lblEstadoFormulario;
     
+    /** Campo de título de la película */
     @FXML private TextField txtTitulo;
+    
+    /** Campo de año de estreno */
     @FXML private TextField txtAnio;
+    
+    /** Campo de duración en minutos */
     @FXML private TextField txtDuracion;
+    
+    /** Campo de URL de imagen */
     @FXML private TextField txtImagenUrl;
+    
+    /** Área de texto para sinopsis */
     @FXML private TextArea txtSinopsis;
     
+    /** ComboBox para selección de idioma */
     @FXML private ComboBox<Idioma> cmbIdioma;
+    
+    /** ComboBox para selección de género principal */
     @FXML private ComboBox<String> cmbGenero;
+    
+    /** Lista para selección múltiple de géneros */
     @FXML private ListView<String> listGeneros;
     
+    /** Botón para guardar película */
     @FXML private Button btnGuardar;
+    
+    /** Botón para cancelar operación */
     @FXML private Button btnCancelar;
+    
+    /** Botón para limpiar formulario */
     @FXML private Button btnLimpiar;
+    
+    /** Botón para volver */
     @FXML private Button btnVolver;
+    
+    /** Botón para cerrar sesión */
     @FXML private Button btnLogOut;
 
+    /** Servicio para operaciones con películas */
     private ServicioPelicula servicioPelicula;
-    private Pelicula peliculaEditando; // null para nueva película, objeto para edición
+    
+    /** Película en modo edición (null para creación) */
+    private Pelicula peliculaEditando;
+    
+    /** Indicador de modo de edición */
     private boolean modoEdicion = false;
 
+    /**
+     * Constructor que inicializa el servicio de películas.
+     */
     public ControladorFormularioPelicula() {
         this.servicioPelicula = new ServicioPelicula();
     }
 
+    /**
+     * Inicializa el controlador después de que se ha cargado el FXML.
+     * 
+     * @param location La ubicación utilizada para resolver rutas relativas para el objeto raíz
+     * @param resources Los recursos utilizados para localizar el objeto raíz
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configurarFormulario();
@@ -66,13 +127,30 @@ public class ControladorFormularioPelicula implements Initializable {
         actualizarEstadoFormulario();
     }
 
+    /**
+     * Configura los componentes del formulario con validaciones y convertidores.
+     */
     private void configurarFormulario() {
-        // Configurar TextArea sinopsis
+        configurarTextArea();
+        configurarComboBoxIdiomas();
+        configurarComboBoxGeneros();
+        configurarListaGeneros();
+        configurarValidacionesNumericas();
+    }
+
+    /**
+     * Configura el área de texto para sinopsis.
+     */
+    private void configurarTextArea() {
         txtSinopsis.setWrapText(true);
         txtSinopsis.setEditable(true);
         txtSinopsis.setDisable(false);
-        
-        // Configurar ComboBox de idiomas
+    }
+
+    /**
+     * Configura el ComboBox de idiomas con convertidor personalizado.
+     */
+    private void configurarComboBoxIdiomas() {
         cmbIdioma.setItems(FXCollections.observableArrayList(Idioma.values()));
         cmbIdioma.setConverter(new StringConverter<Idioma>() {
             @Override
@@ -85,15 +163,27 @@ public class ControladorFormularioPelicula implements Initializable {
                 return null;
             }
         });
+    }
 
-        // Configurar ComboBox de géneros
+    /**
+     * Configura el ComboBox de géneros con datos estáticos.
+     */
+    private void configurarComboBoxGeneros() {
         cmbGenero.setItems(FXCollections.observableArrayList(Genero.obtenerTodosLosGeneros()));
+    }
 
-        // Configurar ListView de géneros adicionales
+    /**
+     * Configura la lista de géneros para selección múltiple.
+     */
+    private void configurarListaGeneros() {
         listGeneros.setItems(FXCollections.observableArrayList(Genero.obtenerTodosLosGeneros()));
         listGeneros.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+    }
 
-        // Configurar validación de entrada numérica
+    /**
+     * Configura las validaciones para campos numéricos.
+     */
+    private void configurarValidacionesNumericas() {
         txtAnio.textProperty().addListener((obs, oldText, newText) -> {
             if (!newText.matches("\\d*")) {
                 txtAnio.setText(newText.replaceAll("[^\\d]", ""));
@@ -107,8 +197,10 @@ public class ControladorFormularioPelicula implements Initializable {
         });
     }
 
+    /**
+     * Configura las validaciones en tiempo real del formulario.
+     */
     private void configurarValidaciones() {
-        // Listener para validar formulario en tiempo real
         Runnable validarFormulario = this::actualizarEstadoFormulario;
 
         txtTitulo.textProperty().addListener((obs, oldText, newText) -> validarFormulario.run());
@@ -119,6 +211,9 @@ public class ControladorFormularioPelicula implements Initializable {
         cmbGenero.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
     }
 
+    /**
+     * Actualiza el estado visual del formulario basándose en la validación.
+     */
     private void actualizarEstadoFormulario() {
         boolean valido = esFormularioValido();
         btnGuardar.setDisable(!valido);
@@ -132,6 +227,11 @@ public class ControladorFormularioPelicula implements Initializable {
         }
     }
 
+    /**
+     * Valida que todos los campos obligatorios estén completos.
+     * 
+     * @return true si el formulario es válido, false en caso contrario
+     */
     private boolean esFormularioValido() {
         return !txtTitulo.getText().trim().isEmpty() &&
                !txtSinopsis.getText().trim().isEmpty() &&
@@ -141,6 +241,11 @@ public class ControladorFormularioPelicula implements Initializable {
                cmbGenero.getValue() != null;
     }
 
+    /**
+     * Configura el formulario para editar una película existente.
+     * 
+     * @param pelicula La película a editar
+     */
     public void configurarParaEdicion(Pelicula pelicula) {
         this.peliculaEditando = pelicula;
         this.modoEdicion = true;
@@ -149,7 +254,16 @@ public class ControladorFormularioPelicula implements Initializable {
         lblModoEdicion.setText("Modo: Edición - ID: " + pelicula.getId());
         btnGuardar.setText("Guardar Cambios");
 
-        // Cargar datos de la película
+        cargarDatosPelicula(pelicula);
+        actualizarEstadoFormulario();
+    }
+
+    /**
+     * Carga los datos de una película en el formulario.
+     * 
+     * @param pelicula Película cuyos datos cargar
+     */
+    private void cargarDatosPelicula(Pelicula pelicula) {
         txtTitulo.setText(pelicula.getTitulo());
         txtSinopsis.setText(pelicula.getSinopsis() != null ? pelicula.getSinopsis() : "");
         txtDuracion.setText(String.valueOf(pelicula.getDuracionMinutos()));
@@ -158,13 +272,22 @@ public class ControladorFormularioPelicula implements Initializable {
 
         cmbIdioma.setValue(pelicula.getIdioma());
 
-        // Configurar géneros
+        cargarGenerosPelicula(pelicula);
+    }
+
+    /**
+     * Carga los géneros de la película en los controles correspondientes.
+     * 
+     * @param pelicula Película cuyos géneros cargar
+     */
+    private void cargarGenerosPelicula(Pelicula pelicula) {
         String generosActuales = pelicula.getGenerosComoString();
         if (generosActuales != null && !generosActuales.isEmpty()) {
             String primerGenero = generosActuales.split(",")[0].trim();
             cmbGenero.setValue(primerGenero);
 
             // Preseleccionar géneros en la lista
+            listGeneros.getSelectionModel().clearSelection();
             String[] generos = generosActuales.split(",");
             for (String genero : generos) {
                 String generoLimpio = genero.trim();
@@ -173,73 +296,36 @@ public class ControladorFormularioPelicula implements Initializable {
                 }
             }
         }
-
-        actualizarEstadoFormulario();
     }
 
+    /**
+     * Maneja el evento de guardar película (crear o actualizar).
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onGuardar(ActionEvent event) {
         try {
-            // Validar datos numéricos
+            if (!validarDatosNumericos()) {
+                return;
+            }
+
             int duracion = Integer.parseInt(txtDuracion.getText().trim());
             int anio = Integer.parseInt(txtAnio.getText().trim());
 
-            if (duracion <= 0) {
-                mostrarError("Error de validación", "La duración debe ser un número positivo");
+            if (!validarRangosNumericos(duracion, anio)) {
                 return;
             }
 
-            if (anio < 1900 || anio > 2030) {
-                mostrarError("Error de validación", "El año debe estar entre 1900 y 2030");
-                return;
-            }
-
-            // Construir string de géneros
-            StringBuilder generosBuilder = new StringBuilder();
-            generosBuilder.append(cmbGenero.getValue());
-
-            List<String> generosAdicionales = listGeneros.getSelectionModel().getSelectedItems();
-            for (String genero : generosAdicionales) {
-                if (!genero.equals(cmbGenero.getValue())) {
-                    generosBuilder.append(", ").append(genero);
-                }
-            }
-
-            String imagenUrl = txtImagenUrl.getText().trim();
-            if (imagenUrl.isEmpty()) {
-                imagenUrl = null;
-            }
+            String generosString = construirStringGeneros();
+            String imagenUrl = txtImagenUrl.getText().trim().isEmpty() ? null : txtImagenUrl.getText().trim();
 
             if (modoEdicion) {
-                // Actualizar película existente
-                servicioPelicula.actualizarPelicula(
-                    peliculaEditando.getId(),
-                    txtTitulo.getText().trim(),
-                    txtSinopsis.getText().trim(),
-                    duracion,
-                    anio,
-                    cmbIdioma.getValue(),
-                    generosBuilder.toString(),
-                    imagenUrl
-                );
-
-                mostrarInformacion("Éxito", "Película actualizada exitosamente: " + txtTitulo.getText().trim());
+                actualizarPeliculaExistente(duracion, anio, generosString, imagenUrl);
             } else {
-                // Crear nueva película
-                Pelicula nuevaPelicula = servicioPelicula.crearPelicula(
-                    txtTitulo.getText().trim(),
-                    txtSinopsis.getText().trim(),
-                    duracion,
-                    anio,
-                    cmbIdioma.getValue(),
-                    generosBuilder.toString(),
-                    imagenUrl
-                );
-
-                mostrarInformacion("Éxito", "Película creada exitosamente: " + nuevaPelicula.getTitulo());
+                crearNuevaPelicula(duracion, anio, generosString, imagenUrl);
             }
 
-            // Volver a la pantalla principal
             volverAPantallaPrincipal();
 
         } catch (NumberFormatException e) {
@@ -250,11 +336,124 @@ public class ControladorFormularioPelicula implements Initializable {
         }
     }
 
+    /**
+     * Valida que los campos numéricos contengan números válidos.
+     * 
+     * @return true si son válidos, false en caso contrario
+     */
+    private boolean validarDatosNumericos() {
+        try {
+            Integer.parseInt(txtDuracion.getText().trim());
+            Integer.parseInt(txtAnio.getText().trim());
+            return true;
+        } catch (NumberFormatException e) {
+            mostrarError("Error de formato", "La duración y el año deben ser números válidos");
+            return false;
+        }
+    }
+
+    /**
+     * Valida que los valores numéricos estén en rangos aceptables.
+     * 
+     * @param duracion Duración a validar
+     * @param anio Año a validar
+     * @return true si están en rango válido, false en caso contrario
+     */
+    private boolean validarRangosNumericos(int duracion, int anio) {
+        if (duracion <= 0) {
+            mostrarError("Error de validación", "La duración debe ser un número positivo");
+            return false;
+        }
+
+        if (anio < 1900 || anio > 2030) {
+            mostrarError("Error de validación", "El año debe estar entre 1900 y 2030");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Construye la cadena de géneros basándose en las selecciones del usuario.
+     * 
+     * @return Cadena con los géneros separados por comas
+     */
+    private String construirStringGeneros() {
+        StringBuilder generosBuilder = new StringBuilder();
+        generosBuilder.append(cmbGenero.getValue());
+
+        List<String> generosAdicionales = listGeneros.getSelectionModel().getSelectedItems();
+        for (String genero : generosAdicionales) {
+            if (!genero.equals(cmbGenero.getValue())) {
+                generosBuilder.append(", ").append(genero);
+            }
+        }
+
+        return generosBuilder.toString();
+    }
+
+    /**
+     * Actualiza una película existente.
+     * 
+     * @param duracion Nueva duración
+     * @param anio Nuevo año
+     * @param generosString Nuevos géneros
+     * @param imagenUrl Nueva URL de imagen
+     * @throws Exception Si ocurre un error durante la actualización
+     */
+    private void actualizarPeliculaExistente(int duracion, int anio, String generosString, String imagenUrl) throws Exception {
+        servicioPelicula.actualizarPelicula(
+            peliculaEditando.getId(),
+            txtTitulo.getText().trim(),
+            txtSinopsis.getText().trim(),
+            duracion,
+            anio,
+            cmbIdioma.getValue(),
+            generosString,
+            imagenUrl
+        );
+
+        mostrarInformacion("Éxito", "Película actualizada exitosamente: " + txtTitulo.getText().trim());
+    }
+
+    /**
+     * Crea una nueva película.
+     * 
+     * @param duracion Duración de la película
+     * @param anio Año de estreno
+     * @param generosString Géneros de la película
+     * @param imagenUrl URL de la imagen
+     * @throws Exception Si ocurre un error durante la creación
+     */
+    private void crearNuevaPelicula(int duracion, int anio, String generosString, String imagenUrl) throws Exception {
+        Pelicula nuevaPelicula = servicioPelicula.crearPelicula(
+            txtTitulo.getText().trim(),
+            txtSinopsis.getText().trim(),
+            duracion,
+            anio,
+            cmbIdioma.getValue(),
+            generosString,
+            imagenUrl
+        );
+
+        mostrarInformacion("Éxito", "Película creada exitosamente: " + nuevaPelicula.getTitulo());
+    }
+
+    /**
+     * Maneja el evento de cancelar operación.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onCancelar(ActionEvent event) {
         volverAPantallaPrincipal();
     }
 
+    /**
+     * Maneja el evento de limpiar formulario.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onLimpiar(ActionEvent event) {
         if (!modoEdicion) {
@@ -262,17 +461,30 @@ public class ControladorFormularioPelicula implements Initializable {
         }
     }
 
+    /**
+     * Maneja el evento de volver.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onVolver(ActionEvent event) {
         volverAPantallaPrincipal();
     }
 
+    /**
+     * Maneja el evento de cerrar sesión.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onLogOut(ActionEvent event) {
         ManejadorMetodosComunes.mostrarVentanaAdvertencia("Sesión cerrada");
         javafx.application.Platform.exit();
     }
 
+    /**
+     * Limpia todos los campos del formulario.
+     */
     private void limpiarFormulario() {
         txtTitulo.clear();
         txtSinopsis.clear();
@@ -285,6 +497,9 @@ public class ControladorFormularioPelicula implements Initializable {
         actualizarEstadoFormulario();
     }
 
+    /**
+     * Navega de vuelta a la pantalla principal de gestión de películas.
+     */
     private void volverAPantallaPrincipal() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaGestionPeliculas.fxml"));
@@ -296,10 +511,22 @@ public class ControladorFormularioPelicula implements Initializable {
         }
     }
 
+    /**
+     * Muestra un mensaje de error al usuario.
+     * 
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje de error
+     */
     private void mostrarError(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
+    /**
+     * Muestra un mensaje informativo al usuario.
+     * 
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje informativo
+     */
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }
