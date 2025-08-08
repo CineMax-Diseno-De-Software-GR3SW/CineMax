@@ -109,8 +109,6 @@ public class ControladorFunciones implements Initializable {
     private Button btnNuevo;
     @FXML
     private Button btnLimpiarFormulario;
-    @FXML
-    private Label lblEstadoFormulario;
 
     // Datos para la tabla
     private ObservableList<Funcion> listaFunciones;
@@ -254,9 +252,6 @@ public class ControladorFunciones implements Initializable {
         if (funcionEnEdicion == null) {
             // Modo crear
             btnGuardar.setText("Crear");
-            if (lblEstadoFormulario != null) {
-                lblEstadoFormulario.setText("Complete todos los campos obligatorios");
-            }
             // Ocultar el botón "Nuevo" cuando está en modo crear
             if (btnNuevo != null) {
                 btnNuevo.setVisible(false);
@@ -265,9 +260,6 @@ public class ControladorFunciones implements Initializable {
         } else {
             // Modo editar
             btnGuardar.setText("Actualizar");
-            if (lblEstadoFormulario != null) {
-                lblEstadoFormulario.setText("Editando función ID: " + funcionEnEdicion.getId());
-            }
             // Mostrar el botón "Nuevo" cuando está en modo editar
             if (btnNuevo != null) {
                 btnNuevo.setVisible(true);
@@ -530,15 +522,9 @@ public class ControladorFunciones implements Initializable {
     }
 
     private void actualizarEstadoFormulario() {
-        if (lblEstadoFormulario != null && btnGuardar != null) {
+        if (btnGuardar != null) {
             boolean formularioValido = validarFormularioCompleto();
             btnGuardar.setDisable(!formularioValido);
-
-            if (formularioValido) {
-                lblEstadoFormulario.setText("Formulario listo para guardar");
-            } else {
-                lblEstadoFormulario.setText("Complete todos los campos obligatorios");
-            }
         }
     }
 
