@@ -48,14 +48,16 @@ import javafx.stage.Modality;
 import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import java.net.URL;
+import javafx.scene.control.ButtonType;
 
-// Interfaz Strategy
+// Interfaz Strategy para la exportación de reportes
 interface ExportStrategy {
     void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
             throws Exception;
 }
 
-// Implementación PDF
+// Implementación de ExportStrategy para PDF
 class ExportPDFStrategy implements ExportStrategy {
     @Override
     public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
@@ -97,7 +99,6 @@ class ExportPDFStrategy implements ExportStrategy {
                 yPosition -= 30;
 
                 // Tabla
-                float tableWidth = 400;
                 float rowHeight = 25;
                 float col1X = margin;
                 float col2X = margin + 100;
@@ -162,7 +163,7 @@ class ExportPDFStrategy implements ExportStrategy {
     }
 }
 
-// Implementación CSV
+// Implementación de ExportStrategy para CSV
 class ExportCSVStrategy implements ExportStrategy {
     @Override
     public void exportar(List<ReporteVentaDTO> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
@@ -195,6 +196,10 @@ public class ControladorReportesPrincipal {
     @FXML
     private ChoiceBox<String> choiceHorario;
     @FXML
+    private ChoiceBox<String> choiceSala;
+    @FXML
+    private ChoiceBox<String> choiceTipoBoleto;
+    @FXML
     private BarChart<String, Number> barChart;
     @FXML
     private PieChart pieChart;
@@ -212,11 +217,10 @@ public class ControladorReportesPrincipal {
     private TableColumn<ReporteGenerado, Integer> colAcciones;
 
     private ObservableList<ReporteGenerado> reportesGenerados = FXCollections.observableArrayList();
-    
-    private VentasService ventasService = new VentasService();
-    private Map<String, Object> datos = ventasService.getResumenDeVentas();;
 
-    // Datos quemados para las gráficas
+    private VentasService ventasService = new VentasService();
+
+    // Datos simulados para las gráficas
     private final List<ReporteVentaDTO> datosSimulados = Arrays.asList(
             new ReporteVentaDTO("2024-07-01", 80, 2400.0, "VIP", "3D"),
             new ReporteVentaDTO("2024-07-01", 40, 1200.0, "Normal", "2D"),
@@ -240,34 +244,59 @@ public class ControladorReportesPrincipal {
 
     @FXML
     private void initialize() {
+        // Configurar opciones de horario
         choiceHorario.getItems().addAll("Todos", "Matutino", "Nocturno");
         choiceHorario.setValue("Todos");
+
+        // Configurar opciones de tipo de boleto
+        choiceTipoBoleto.getItems().addAll("Todos", "VIP", "Normal");
+        choiceTipoBoleto.setValue("Todos");
+
+        // Cargar salas desde la base de datos
+        cargarSalasDesdeBaseDatos();
 
         // Configurar tabla de reportes
         configurarTablaReportes();
 
-        // Cargar reportes simulados
+        // Cargar reportes simulados (mantener para reportes anteriores)
         cargarReportesSimulados();
 
         // Inicializar gráficas vacías
         inicializarGraficasVacias();
 
-        System.out.println("Total boletos: " + datos.get("total_boletos_vendidos"));
-        System.out.println("Total facturas: " + datos.get("total_facturas"));
-        System.out.println("Ingreso total: " + datos.get("ingreso_total"));
-        System.out.println("Total funciones: " + datos.get("total_funciones"));
-        System.out.println("Fecha inicio: " + datos.get("fecha_inicio"));
-        System.out.println("Fecha fin: " + datos.get("fecha_fin"));
+        // Obtener datos reales del resumen
+        Map<String, Object> datosReales = ventasService.getResumenDeVentas();
+        System.out.println("=== DATOS REALES DE LA BASE DE DATOS ===");
+        System.out.println("Total boletos: " + datosReales.get("total_boletos_vendidos"));
+        System.out.println("Total facturas: " + datosReales.get("total_facturas"));
+        System.out.println("Ingreso total: " + datosReales.get("ingreso_total"));
+        System.out.println("Total funciones: " + datosReales.get("total_funciones"));
+        System.out.println("Fecha inicio: " + datosReales.get("fecha_inicio"));
+        System.out.println("Fecha fin: " + datosReales.get("fecha_fin"));
+    }
+
+    private void cargarSalasDesdeBaseDatos() {
+        try {
+            List<String> salas = ventasService.getSalasDisponibles();
+            choiceSala.getItems().clear();
+            choiceSala.getItems().addAll(salas);
+            choiceSala.setValue("Todas");
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Fallback en caso de error
+            choiceSala.getItems().addAll("Todas", "Sala 1", "Sala 2", "Sala 3");
+            choiceSala.setValue("Todas");
+            mostrarAlerta("Advertencia", "No se pudieron cargar las salas desde la base de datos. Se usarán valores por defecto.");
+        }
     }
 
     private void configurarTablaReportes() {
-        // Configurar las columnas
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
-        // Configurar formato de fecha
+        // Configurar formato de fecha en la tabla
+        colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         colFecha.setCellFactory(column -> new TableCell<ReporteGenerado, LocalDateTime>() {
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
@@ -280,15 +309,34 @@ public class ControladorReportesPrincipal {
             }
         });
 
-        // Configurar columna de acciones con botón para abrir
-        colAcciones.setCellFactory(column -> new TableCell<ReporteGenerado, Integer>() {
-            private final Button btnAbrir = new Button("Abrir");
+        // Configurar columna de acciones
+        colAcciones.setCellFactory(col -> new TableCell<ReporteGenerado, Integer>() {
+            private final Button btnDescargar = new Button("📄");
+            private final Button btnVer = new Button("👁");
+            private final Button btnEliminar = new Button("🗑");
+            private final HBox buttons = new HBox(5);
 
             {
-                btnAbrir.getStyleClass().add("table-button");
-                btnAbrir.setOnAction(event -> {
+                btnDescargar.setTooltip(new Tooltip("Descargar"));
+                btnVer.setTooltip(new Tooltip("Ver previsualización"));
+                btnEliminar.setTooltip(new Tooltip("Eliminar"));
+
+                buttons.getChildren().addAll(btnVer, btnDescargar, btnEliminar);
+
+                btnDescargar.setOnAction(e -> {
                     ReporteGenerado reporte = getTableView().getItems().get(getIndex());
-                    abrirReporte(reporte);
+                    descargarReporte(reporte);
+                });
+
+                btnVer.setOnAction(e -> {
+                    ReporteGenerado reporte = getTableView().getItems().get(getIndex());
+                    verPrevisualizacion(reporte);
+                });
+
+                btnEliminar.setOnAction(e -> {
+                    ReporteGenerado reporte = getTableView().getItems().get(getIndex());
+                    reportesGenerados.remove(reporte);
+                    mostrarAlerta("Éxito", "Reporte eliminado de la lista.");
                 });
             }
 
@@ -298,7 +346,7 @@ public class ControladorReportesPrincipal {
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(btnAbrir);
+                    setGraphic(buttons);
                 }
             }
         });
@@ -307,31 +355,17 @@ public class ControladorReportesPrincipal {
     }
 
     private void cargarReportesSimulados() {
-        reportesGenerados.clear();
         reportesGenerados.addAll(reportesSimulados);
     }
 
     private void inicializarGraficasVacias() {
-        // Limpiar gráfica de barras
         if (barChart != null) {
             barChart.getData().clear();
-            barChart.setTitle("Seleccione filtros y haga clic en 'Filtrar' para ver datos");
+            barChart.setTitle("Seleccione filtros y presione 'Filtrar' para ver datos");
         }
-
-        // Limpiar gráfica de pastel
         if (pieChart != null) {
             pieChart.getData().clear();
-            pieChart.setTitle("Seleccione filtros y haga clic en 'Filtrar' para ver datos");
-        }
-    }
-
-    private void abrirReporte(ReporteGenerado reporte) {
-        try {
-            // Mostrar previsualización del reporte sin opciones de descarga
-            mostrarPrevisualizacionReporte(datosSimulados, false);
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo mostrar la previsualización del reporte: " + e.getMessage());
-            e.printStackTrace();
+            pieChart.setTitle("Seleccione filtros y presione 'Filtrar' para ver datos");
         }
     }
 
@@ -346,6 +380,7 @@ public class ControladorReportesPrincipal {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            mostrarAlerta("Error de Navegación", "No se pudo cargar la pantalla de reportes programados.");
         }
     }
 
@@ -360,6 +395,22 @@ public class ControladorReportesPrincipal {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
+            mostrarAlerta("Error de Navegación", "No se pudo cargar la pantalla de login.");
+        }
+    }
+
+    @FXML
+    private void onBackAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarAlerta("Error de Navegación", "No se pudo volver a la pantalla principal.");
         }
     }
 
@@ -368,32 +419,51 @@ public class ControladorReportesPrincipal {
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
         String horario = choiceHorario.getValue();
+        String sala = choiceSala.getValue();
+        String tipoBoleto = choiceTipoBoleto.getValue();
 
         if (desde == null || hasta == null) {
-            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin");
+            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin.");
             return;
         }
 
-        // Usar datos simulados filtrados por fecha
-        List<ReporteVentaDTO> datosFiltrados = filtrarDatosSimulados(desde, hasta, horario);
+        try {
+            // Obtener datos REALES de la base de datos con todos los filtros
+            List<ReporteVentaDTO> datosFiltrados = ventasService.getVentasFiltradas(desde, hasta, sala, tipoBoleto, horario);
 
-        // Actualizar gráficas con datos filtrados
-        actualizarGraficaBarras(datosFiltrados);
-        actualizarGraficaPastel(datosFiltrados);
+            if (datosFiltrados.isEmpty()) {
+                mostrarAlerta("Sin Datos", "No hay datos para mostrar con los filtros seleccionados.");
+                // Limpiar gráficas
+                barChart.getData().clear();
+                pieChart.getData().clear();
+                barChart.setTitle("No hay datos para el período seleccionado");
+                pieChart.setTitle("No hay datos para el período seleccionado");
+                return;
+            }
 
-        // Mostrar mensaje de confirmación
-        mostrarAlerta("Filtros Aplicados",
-                "Se han aplicado los filtros:\n" +
-                        "• Desde: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
-                        "• Hasta: " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
-                        "• Horario: " + horario + "\n\n" +
-                        "Las gráficas ahora muestran los datos correspondientes.");
-    }
+            // Actualizar gráficas con datos REALES
+            actualizarGraficaBarras(datosFiltrados);
+            actualizarGraficaPastel(datosFiltrados);
 
-    private List<ReporteVentaDTO> filtrarDatosSimulados(LocalDate desde, LocalDate hasta, String horario) {
-        // Simular filtrado de datos (en realidad siempre devuelve los mismos datos)
-        // En una implementación real, aquí se filtrarían los datos por fecha y horario
-        return datosSimulados;
+            // Mostrar mensaje de confirmación con estadísticas reales
+            int totalBoletos = datosFiltrados.stream().mapToInt(v -> v.boletosVendidos).sum();
+            double totalIngresos = datosFiltrados.stream().mapToDouble(v -> v.ingresos).sum();
+
+            mostrarAlerta("Filtros Aplicados - Datos Reales",
+                    "Se han aplicado los filtros:\n" +
+                            "• Desde: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
+                            "• Hasta: " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
+                            "• Horario: " + horario + "\n" +
+                            "• Sala: " + sala + "\n" +
+                            "• Tipo Boleto: " + tipoBoleto + "\n\n" +
+                            "Resultados obtenidos de la base de datos:\n" +
+                            "• Total boletos vendidos: " + totalBoletos + "\n" +
+                            "• Total ingresos: $" + String.format("%.2f", totalIngresos));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "Error al obtener datos de la base de datos: " + e.getMessage());
+        }
     }
 
     private void actualizarGraficaBarras(List<ReporteVentaDTO> datos) {
@@ -405,7 +475,7 @@ public class ControladorReportesPrincipal {
                 return;
             }
 
-            // Agrupar datos por fecha y tipo de boleto
+            // Agrupar datos REALES por fecha y tipo de boleto
             Map<String, Map<String, Integer>> datosAgrupados = new HashMap<>();
 
             for (ReporteVentaDTO venta : datos) {
@@ -437,7 +507,7 @@ public class ControladorReportesPrincipal {
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
 
-            String titulo = "Ventas por Tipo de Boleto";
+            String titulo = "Ventas por Tipo de Boleto - DATOS REALES";
             if (desde != null && hasta != null) {
                 titulo += " (" + desde.format(DateTimeFormatter.ofPattern("dd/MM")) +
                         " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM")) + ")";
@@ -455,14 +525,15 @@ public class ControladorReportesPrincipal {
                 return;
             }
 
-            // Agrupar datos por formato (2D vs 3D)
+            // Agrupar datos REALES por formato (2D vs 3D)
             Map<String, Integer> datosPorFormato = new HashMap<>();
 
             for (ReporteVentaDTO dato : datos) {
-                datosPorFormato.merge(dato.formato, dato.boletosVendidos, Integer::sum);
+                String formato = dato.formato != null && !dato.formato.isEmpty() ? dato.formato : "2D";
+                datosPorFormato.merge(formato, dato.boletosVendidos, Integer::sum);
             }
 
-            // Agregar datos al gráfico de pastel (solo una vez)
+            // Agregar datos al gráfico de pastel
             for (Map.Entry<String, Integer> entry : datosPorFormato.entrySet()) {
                 pieChart.getData()
                         .add(new PieChart.Data(entry.getKey() + " (" + entry.getValue() + ")", entry.getValue()));
@@ -476,7 +547,7 @@ public class ControladorReportesPrincipal {
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
 
-            String titulo = "Distribución 2D vs 3D";
+            String titulo = "Distribución por Formato - DATOS REALES";
             if (desde != null && hasta != null) {
                 titulo += " (" + desde.format(DateTimeFormatter.ofPattern("dd/MM")) +
                         " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM")) + ")";
@@ -490,34 +561,62 @@ public class ControladorReportesPrincipal {
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
         String horario = choiceHorario.getValue();
+        String sala = choiceSala.getValue();
+        String tipoBoleto = choiceTipoBoleto.getValue();
 
         if (desde == null || hasta == null) {
-            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin");
+            mostrarAlerta("Error", "Por favor seleccione las fechas de inicio y fin.");
             return;
         }
 
-        // Verificar si hay datos para mostrar
-        List<ReporteVentaDTO> datosFiltrados = filtrarDatosSimulados(desde, hasta, horario);
-        if (datosFiltrados.isEmpty()) {
-            mostrarAlerta("Sin Datos", "No hay datos para mostrar con los filtros seleccionados");
-            return;
-        }
+        try {
+            // Obtener datos REALES filtrados
+            List<ReporteVentaDTO> datosFiltrados = ventasService.getVentasFiltradas(desde, hasta, sala, tipoBoleto, horario);
 
-        // Mostrar previsualización del reporte
-        mostrarPrevisualizacionReporte(datosFiltrados, true);
+            if (datosFiltrados.isEmpty()) {
+                mostrarAlerta("Sin Datos", "No hay datos para mostrar con los filtros seleccionados en la base de datos.");
+                return;
+            }
+
+            // Mostrar previsualización del reporte con datos REALES
+            mostrarPrevisualizacionReporte(datosFiltrados, true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            mostrarAlerta("Error", "Error al obtener datos de la base de datos: " + e.getMessage());
+        }
     }
 
-    @FXML
-    void onBackAction(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void verPrevisualizacion(ReporteGenerado reporte) {
+        // En una aplicación real, aquí cargarías los datos del reporte guardado
+        // Por ahora, usamos datos simulados para la demostración
+        mostrarPrevisualizacionReporte(datosSimulados, false);
+    }
+
+    private void descargarReporte(ReporteGenerado reporte) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte");
+
+        // Configurar la extensión del archivo según el tipo de reporte
+        if ("PDF".equals(reporte.getTipo())) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+        } else if ("CSV".equals(reporte.getTipo())) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
+        }
+
+        // Sugerir un nombre de archivo
+        fileChooser.setInitialFileName(reporte.getNombre());
+
+        File file = fileChooser.showSaveDialog(null);
+
+        if (file != null) {
+            try {
+                // Aquí deberías tener la lógica para generar y guardar el reporte
+                // Por ahora, solo mostramos una alerta
+                mostrarAlerta("Éxito", "Reporte " + reporte.getTipo() + " guardado en: " + file.getAbsolutePath());
+            } catch (Exception e) {
+                mostrarAlerta("Error", "No se pudo guardar el reporte: " + e.getMessage());
+            }
         }
     }
 
@@ -533,386 +632,119 @@ public class ControladorReportesPrincipal {
 
             // Header del reporte
             VBox headerBox = new VBox(10);
-            headerBox.setStyle(
-                    "-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+            headerBox.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
 
             Label titulo = new Label("REPORTE DE VENTAS - CINEMAX");
-            titulo.setStyle(
-                    "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-alignment: center; -fx-pref-width: 760;");
+            titulo.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-alignment: center; -fx-pref-width: 760;");
             titulo.setMaxWidth(Double.MAX_VALUE);
             titulo.setAlignment(Pos.CENTER);
 
-            LocalDate desde = dateDesde.getValue();
-            LocalDate hasta = dateHasta.getValue();
-            String horario = choiceHorario.getValue();
+            // Información extra
+            Label infoFecha = new Label("Período: " + dateDesde.getValue() + " - " + dateHasta.getValue());
+            infoFecha.setStyle("-fx-text-fill: #bdc3c7;");
 
-            Label fechaGen = new Label("Período: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
-                    " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-            fechaGen.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
+            headerBox.getChildren().addAll(titulo, infoFecha);
 
-            Label horarioLabel = new Label("Horario: " + horario);
-            horarioLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
+            // Contenido del reporte (tabla)
+            TableView<ReporteVentaDTO> tablaPrevia = new TableView<>();
+            tablaPrevia.setItems(FXCollections.observableArrayList(datos));
+            tablaPrevia.setPrefHeight(250);
 
-            Label estado = new Label("Estado: Generado el "
-                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-            estado.setStyle("-fx-font-size: 12px; -fx-text-fill: #27ae60; -fx-font-weight: bold;");
+            // Columnas de la tabla de previsualización
+            TableColumn<ReporteVentaDTO, String> colFechaPrev = new TableColumn<>("Fecha");
+            colFechaPrev.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+            TableColumn<ReporteVentaDTO, String> colTipoBoletoPrev = new TableColumn<>("Tipo Boleto");
+            colTipoBoletoPrev.setCellValueFactory(new PropertyValueFactory<>("tipoBoleto"));
+            TableColumn<ReporteVentaDTO, String> colFormatoPrev = new TableColumn<>("Formato");
+            colFormatoPrev.setCellValueFactory(new PropertyValueFactory<>("formato"));
+            TableColumn<ReporteVentaDTO, Integer> colBoletosPrev = new TableColumn<>("Boletos Vendidos");
+            colBoletosPrev.setCellValueFactory(new PropertyValueFactory<>("boletosVendidos"));
+            TableColumn<ReporteVentaDTO, Double> colIngresosPrev = new TableColumn<>("Ingresos");
+            colIngresosPrev.setCellValueFactory(new PropertyValueFactory<>("ingresos"));
 
-            headerBox.getChildren().addAll(titulo, fechaGen, horarioLabel, estado);
+            tablaPrevia.getColumns().addAll(colFechaPrev, colTipoBoletoPrev, colFormatoPrev, colBoletosPrev, colIngresosPrev);
 
-            // Contenido del reporte con gráficas
-            VBox contenidoReporte = generarContenidoReporteCompleto(datos);
-
-            HBox barraNota = new HBox();
-            barraNota.setStyle(
-                    "-fx-background-color: #2B2B2B; -fx-padding: 12 0 12 0; -fx-border-radius: 0; -fx-border-width: 0;");
-            barraNota.setAlignment(Pos.CENTER_LEFT);
-            barraNota.setMaxWidth(Double.MAX_VALUE);
-
-            // Nota sobre el reporte
-            Label notaReporte = new Label(
-                    "📊 Este reporte incluye datos de ventas, gráficas de distribución y análisis detallado del período seleccionado.");
-            notaReporte.setStyle(
-                    "-fx-font-size: 12px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-padding: 0 20 0 20;");
-            notaReporte.setMaxWidth(Double.MAX_VALUE);
-
-            barraNota.getChildren().add(notaReporte);
-
-            // Botones
-            HBox botonesBox = new HBox(10);
-            botonesBox.setAlignment(Pos.CENTER);
-
-            if (permitirDescarga) {
-                Button btnDescargarPDF = new Button("📄 Descargar como PDF");
-                btnDescargarPDF.setStyle(
-                        "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
-                btnDescargarPDF.setOnAction(e -> {
-                    ventanaPrevia.close();
-                    exportarReporte(new ExportPDFStrategy(), "pdf");
-                });
-
-                Button btnDescargarCSV = new Button("📊 Descargar como CSV");
-                btnDescargarCSV.setStyle(
-                        "-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
-                btnDescargarCSV.setOnAction(e -> {
-                    ventanaPrevia.close();
-                    exportarReporte(new ExportCSVStrategy(), "csv");
-                });
-
-                botonesBox.getChildren().addAll(btnDescargarPDF, btnDescargarCSV);
-            }
-
-            Button btnCerrar = new Button("Cerrar");
-            btnCerrar.setStyle(
-                    "-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 30;");
-            btnCerrar.setOnAction(e -> ventanaPrevia.close());
-
-            botonesBox.getChildren().add(btnCerrar);
-
-            // Lo que se va a mostrar en el componente
-            ScrollPane scrollPane = new ScrollPane();
-            VBox contenidoCompleto = new VBox(15);
-            contenidoCompleto.getChildren().addAll(headerBox, contenidoReporte, barraNota);
-            scrollPane.setContent(contenidoCompleto);
+            ScrollPane scrollPane = new ScrollPane(tablaPrevia);
             scrollPane.setFitToWidth(true);
 
-            contenido.getChildren().addAll(scrollPane, botonesBox);
+            contenido.getChildren().addAll(headerBox, scrollPane);
 
-            Scene escena = new Scene(contenido, 800, 700);
-            ventanaPrevia.setScene(escena);
+            // Botones de acción
+            if (permitirDescarga) {
+                HBox botonesAccion = new HBox(10);
+                botonesAccion.setAlignment(Pos.CENTER_RIGHT);
+
+                ChoiceBox<String> choiceTipoExportacion = new ChoiceBox<>();
+                choiceTipoExportacion.getItems().addAll("PDF", "CSV");
+                choiceTipoExportacion.setValue("PDF");
+
+                Button btnExportar = new Button("Exportar");
+                btnExportar.setOnAction(e -> {
+                    String tipo = choiceTipoExportacion.getValue();
+                    exportarReporte(datos, tipo);
+                    ventanaPrevia.close();
+                });
+
+                Button btnCancelar = new Button("Cancelar");
+                btnCancelar.setOnAction(e -> ventanaPrevia.close());
+
+                botonesAccion.getChildren().addAll(new Label("Exportar como:"), choiceTipoExportacion, btnExportar, btnCancelar);
+                contenido.getChildren().add(botonesAccion);
+            }
+
+            Scene scene = new Scene(contenido, 800, 600);
+            ventanaPrevia.setScene(scene);
             ventanaPrevia.initModality(Modality.APPLICATION_MODAL);
             ventanaPrevia.showAndWait();
 
         } catch (Exception e) {
             e.printStackTrace();
-            mostrarAlerta("Error", "No se pudo mostrar la previsualización del reporte.");
+            mostrarAlerta("Error", "No se pudo mostrar la previsualización: " + e.getMessage());
         }
     }
 
-    private VBox generarContenidoReporteCompleto(List<ReporteVentaDTO> datos) {
-        VBox contenido = new VBox(20);
-        contenido.setStyle(
-                "-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
+    private void exportarReporte(List<ReporteVentaDTO> datos, String tipo) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Guardar Reporte");
 
-        // Sección de resumen de datos
-        Label tituloSeccion = new Label("📊 RESUMEN DE VENTAS");
-        tituloSeccion.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
+        String titulo = "Reporte de Ventas (" + dateDesde.getValue() + " - " + dateHasta.getValue() + ")";
+        fileChooser.setInitialFileName("reporte_ventas_" + LocalDate.now().toString());
 
-        VBox tablaDatos = new VBox(5);
-        tablaDatos.setStyle(
-                "-fx-background-color: #2B2B2B; -fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10; -fx-text-fill: #ecf0f1;");
+        File file = null;
+        ExportStrategy strategy = null;
 
-        // Headers de la tabla
-        HBox headerTabla = new HBox();
-        headerTabla.setStyle("-fx-background-color: #3498db; -fx-padding: 8;");
-        headerTabla.getChildren().addAll(
-                crearCeldaTabla("Fecha", true),
-                crearCeldaTabla("Tipo Boleto", true),
-                crearCeldaTabla("Formato", true),
-                crearCeldaTabla("Boletos", true),
-                crearCeldaTabla("Ingresos", true));
-
-        // Datos de la tabla
-        VBox filasDatos = new VBox(2);
-        int totalBoletos = 0;
-        double totalIngresos = 0;
-
-        for (ReporteVentaDTO dato : datos) {
-            filasDatos.getChildren().add(crearFilaTablaCompleta(dato));
-            totalBoletos += dato.boletosVendidos;
-            totalIngresos += dato.ingresos;
+        if ("PDF".equalsIgnoreCase(tipo)) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF", "*.pdf"));
+            file = fileChooser.showSaveDialog(null);
+            strategy = new ExportPDFStrategy();
+        } else if ("CSV".equalsIgnoreCase(tipo)) {
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV", "*.csv"));
+            file = fileChooser.showSaveDialog(null);
+            strategy = new ExportCSVStrategy();
         }
 
-        // Fila de total
-        HBox totalRow = new HBox();
-        totalRow.setStyle("-fx-background-color: #2ecc71; -fx-padding: 8;");
-        totalRow.getChildren().addAll(
-                crearCeldaTabla("TOTAL:", true),
-                crearCeldaTabla("", true),
-                crearCeldaTabla("", true),
-                crearCeldaTabla(String.valueOf(totalBoletos), true),
-                crearCeldaTabla(String.format("$%.2f", totalIngresos), true));
-
-        tablaDatos.getChildren().addAll(headerTabla, filasDatos, totalRow);
-
-        // Sección de gráficas reales
-        Label tituloGraficas = new Label("📈 GRÁFICAS DE ANÁLISIS");
-        tituloGraficas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
-
-        VBox graficasBox = new VBox(15);
-        graficasBox.setStyle("-fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 15;");
-
-        // Gráfica de barras real
-        VBox graficaBarras = new VBox(10);
-        graficaBarras.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 15; -fx-border-radius: 5px;");
-        Label lblGraficaBarras = new Label("📊 Gráfica de Barras: Ventas por Tipo de Boleto (VIP vs Normal)");
-        lblGraficaBarras.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-font-size: 14px;");
-
-        BarChart<String, Number> barChartPreview = crearGraficaBarrasPreview(datos);
-        barChartPreview.setPrefHeight(300);
-        barChartPreview.setPrefWidth(600);
-
-        graficaBarras.getChildren().addAll(lblGraficaBarras, barChartPreview);
-
-        // Gráfica de pastel real
-        VBox graficaPastel = new VBox(10);
-        graficaPastel.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 15; -fx-border-radius: 5px;");
-        Label lblGraficaPastel = new Label("🥧 Gráfica de Pastel: Distribución de Boletos por Formato (2D vs 3D)");
-        lblGraficaPastel.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-font-size: 14px;");
-
-        PieChart pieChartPreview = crearGraficaPastelPreview(datos);
-        pieChartPreview.setPrefHeight(300);
-        pieChartPreview.setPrefWidth(400);
-
-        graficaPastel.getChildren().addAll(lblGraficaPastel, pieChartPreview);
-
-        graficasBox.getChildren().addAll(graficaBarras, graficaPastel);
-
-        // Estadísticas adicionales
-        Label tituloEstadisticas = new Label("📋 ESTADÍSTICAS ADICIONALES");
-        tituloEstadisticas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
-
-        VBox estadisticasBox = new VBox(10);
-        estadisticasBox.setStyle("-fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 15;");
-
-        // Calcular estadísticas
-        Map<String, Integer> boletosPorTipo = new HashMap<>();
-        Map<String, Integer> boletosPorFormato = new HashMap<>();
-
-        for (ReporteVentaDTO dato : datos) {
-            boletosPorTipo.merge(dato.tipoBoleto, dato.boletosVendidos, Integer::sum);
-            boletosPorFormato.merge(dato.formato, dato.boletosVendidos, Integer::sum);
-        }
-
-        estadisticasBox.getChildren().addAll(
-                crearEstadistica("Total de Boletos Vendidos", String.valueOf(totalBoletos)),
-                crearEstadistica("Total de Ingresos", String.format("$%.2f", totalIngresos)),
-                crearEstadistica("Promedio por Boleto", String.format("$%.2f", totalIngresos / totalBoletos)),
-                crearEstadistica("Boletos VIP", String.valueOf(boletosPorTipo.getOrDefault("VIP", 0))),
-                crearEstadistica("Boletos Normal", String.valueOf(boletosPorTipo.getOrDefault("Normal", 0))),
-                crearEstadistica("Boletos 2D", String.valueOf(boletosPorFormato.getOrDefault("2D", 0))),
-                crearEstadistica("Boletos 3D", String.valueOf(boletosPorFormato.getOrDefault("3D", 0))));
-
-        contenido.getChildren().addAll(tituloSeccion, tablaDatos, tituloGraficas, graficasBox, tituloEstadisticas,
-                estadisticasBox);
-
-        return contenido;
-    }
-
-    private HBox crearFilaTablaCompleta(ReporteVentaDTO dato) {
-        HBox fila = new HBox();
-        fila.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 0 0 1 0;");
-
-        Label celdaFecha = crearCeldaTabla(dato.fecha, false);
-        Label celdaTipo = crearCeldaTabla(dato.tipoBoleto, false);
-        Label celdaFormato = crearCeldaTabla(dato.formato, false);
-        Label celdaBoletos = crearCeldaTabla(String.valueOf(dato.boletosVendidos), false);
-        Label celdaIngresos = crearCeldaTabla(String.format("$%.2f", dato.ingresos), false);
-
-        fila.getChildren().addAll(celdaFecha, celdaTipo, celdaFormato, celdaBoletos, celdaIngresos);
-        return fila;
-    }
-
-    private HBox crearEstadistica(String titulo, String valor) {
-        HBox estadistica = new HBox(10);
-        estadistica.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 8; -fx-border-radius: 3px;");
-
-        Label lblTitulo = new Label(titulo + ":");
-        lblTitulo.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-min-width: 150;");
-
-        Label lblValor = new Label(valor);
-        lblValor.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
-
-        estadistica.getChildren().addAll(lblTitulo, lblValor);
-        return estadistica;
-    }
-
-    private BarChart<String, Number> crearGraficaBarrasPreview(List<ReporteVentaDTO> datos) {
-        BarChart<String, Number> barChartPreview = new BarChart<>(new CategoryAxis(), new NumberAxis());
-        barChartPreview.setTitle("Ventas por Tipo de Boleto (VIP vs Normal)");
-        barChartPreview.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px;");
-
-        // Configurar ejes
-        CategoryAxis xAxis = (CategoryAxis) barChartPreview.getXAxis();
-        NumberAxis yAxis = (NumberAxis) barChartPreview.getYAxis();
-        xAxis.setLabel("Fecha");
-        yAxis.setLabel("Cantidad de Boletos Vendidos");
-
-        // Aplicar estilos a los ejes
-        xAxis.setStyle("-fx-tick-label-fill: #ecf0f1; -fx-font-weight: bold;");
-        yAxis.setStyle("-fx-tick-label-fill: #ecf0f1; -fx-font-weight: bold;");
-
-        // Agrupar datos por fecha y tipo de boleto (solo VIP y Normal)
-        Map<String, Map<String, Integer>> datosAgrupados = new HashMap<>();
-
-        for (ReporteVentaDTO venta : datos) {
-            String fecha = venta.fecha;
-            String tipo = venta.tipoBoleto; // Solo VIP o Normal
-
-            datosAgrupados.computeIfAbsent(fecha, k -> new HashMap<>());
-            datosAgrupados.get(fecha).merge(tipo, venta.boletosVendidos, Integer::sum);
-        }
-
-        // Crear series para VIP y Normal
-        XYChart.Series<String, Number> serieVIP = new XYChart.Series<>();
-        serieVIP.setName("VIP");
-
-        XYChart.Series<String, Number> serieNormal = new XYChart.Series<>();
-        serieNormal.setName("Normal");
-
-        // Agregar datos a las series
-        for (String fecha : datosAgrupados.keySet()) {
-            Map<String, Integer> tiposEnFecha = datosAgrupados.get(fecha);
-            serieVIP.getData().add(new XYChart.Data<>(fecha, tiposEnFecha.getOrDefault("VIP", 0)));
-            serieNormal.getData().add(new XYChart.Data<>(fecha, tiposEnFecha.getOrDefault("Normal", 0)));
-        }
-
-        // Agregar series al gráfico
-        barChartPreview.getData().addAll(serieVIP, serieNormal);
-
-        barChartPreview.applyCss();
-        if (barChartPreview.lookup(".chart-title") != null)
-            barChartPreview.lookup(".chart-title")
-                    .setStyle("-fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;");
-        barChartPreview.lookupAll(".axis-label")
-                .forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1; -fx-font-weight: bold;"));
-        barChartPreview.lookupAll(".chart-legend").forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1;"));
-
-        return barChartPreview;
-    }
-
-    private PieChart crearGraficaPastelPreview(List<ReporteVentaDTO> datos) {
-        PieChart pieChartPreview = new PieChart();
-        pieChartPreview.setTitle("Distribución de Boletos por Formato (2D vs 3D)");
-        pieChartPreview.setStyle(
-                "-fx-background-color: #2B2B2B; -fx-border-color: #ecf0f1; -fx-border-width: 1px;");
-
-        // Agrupar datos por formato (2D vs 3D)
-        Map<String, Integer> datosPorFormato = new HashMap<>();
-        for (ReporteVentaDTO dato : datos) {
-            datosPorFormato.merge(dato.formato, dato.boletosVendidos, Integer::sum);
-        }
-        for (Map.Entry<String, Integer> entry : datosPorFormato.entrySet()) {
-            pieChartPreview.getData()
-                    .add(new PieChart.Data(entry.getKey() + " (" + entry.getValue() + ")", entry.getValue()));
-        }
-
-        pieChartPreview.setLabelLineLength(10);
-        pieChartPreview.setLabelsVisible(true);
-
-        // Listener para forzar color blanco en las etiquetas cada vez que cambian
-        pieChartPreview.getData().addListener((javafx.collections.ListChangeListener<PieChart.Data>) c -> {
-            pieChartPreview.applyCss();
-            pieChartPreview.lookupAll(".chart-pie-label")
-                .forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1; -fx-font-weight: bold;"));
-        });
-
-        // También forzar el color al crear el gráfico
-        pieChartPreview.applyCss();
-        if (pieChartPreview.lookup(".chart-title") != null)
-            pieChartPreview.lookup(".chart-title")
-                .setStyle("-fx-text-fill: #ecf0f1; -fx-font-size: 16px; -fx-font-weight: bold;");
-        pieChartPreview.lookupAll(".chart-legend").forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1;"));
-        pieChartPreview.lookupAll(".chart-pie-label").forEach(node -> node.setStyle("-fx-text-fill: #ecf0f1; -fx-font-weight: bold;"));
-
-        return pieChartPreview;
-    }
-
-    private Label crearCeldaTabla(String texto, boolean esHeader) {
-        Label celda = new Label(texto);
-        celda.setPrefWidth(120);
-        celda.setMaxWidth(120);
-        celda.setStyle(esHeader ? "-fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;"
-                : "-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
-        return celda;
-    }
-
-    private void exportarReporte(ExportStrategy strategy, String tipo) {
-        try {
-            LocalDate desde = dateDesde.getValue();
-            LocalDate hasta = dateHasta.getValue();
-            String horario = choiceHorario.getValue();
-
-            if (desde == null || hasta == null) {
-                mostrarAlerta("Error", "Por favor seleccione las fechas antes de exportar");
-                return;
-            }
-
-            // Usar datos simulados para exportar
-            List<ReporteVentaDTO> datos = filtrarDatosSimulados(desde, hasta, horario);
-
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
-            fileChooser.setInitialFileName("reporte_ventas." + tipo);
-            if (tipo.equals("pdf")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
-            } else if (tipo.equals("csv")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
-            }
-            Stage stage = (Stage) btnBack.getScene().getWindow();
-            File archivo = fileChooser.showSaveDialog(stage);
-
-            if (archivo != null) {
+        if (file != null && strategy != null) {
+            try {
                 Map<String, Object> infoExtra = new HashMap<>();
-                infoExtra.put("subtitulo", "Reporte generado el "
-                        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-
-                strategy.exportar(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
-
-                // Agregar el nuevo reporte a la lista simulada
+                infoExtra.put("subtitulo", "Período: " + dateDesde.getValue() + " - " + dateHasta.getValue());
+                strategy.exportar(datos, file, "REPORTE DE VENTAS - CINEMAX", infoExtra);
+                mostrarAlerta("Éxito", "Reporte guardado exitosamente en: " + file.getAbsolutePath());
+                
+                // Guardar el reporte generado en la lista
                 ReporteGenerado nuevoReporte = new ReporteGenerado(
-                        reportesGenerados.size() + 1,
-                        "Reporte_Ventas_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")),
-                        tipo.toUpperCase(),
-                        LocalDateTime.now(),
-                        archivo.getAbsolutePath(),
-                        "Reporte de ventas del " + desde + " al " + hasta);
-                reportesGenerados.add(0, nuevoReporte); // Agregar al inicio
-
-                mostrarAlerta("Éxito", "El reporte ha sido exportado correctamente.");
+                    reportesGenerados.size() + 1,
+                    file.getName(),
+                    tipo,
+                    LocalDateTime.now(),
+                    file.getAbsolutePath(),
+                    "Reporte de ventas del " + dateDesde.getValue() + " al " + dateHasta.getValue()
+                );
+                reportesGenerados.add(nuevoReporte);
+                
+            } catch (Exception e) {
+                e.printStackTrace();
+                mostrarAlerta("Error", "Error al exportar el reporte: " + e.getMessage());
             }
-        } catch (Exception e) {
-            mostrarAlerta("Error", "No se pudo exportar el reporte: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

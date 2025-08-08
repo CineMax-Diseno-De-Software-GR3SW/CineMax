@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -13,60 +14,80 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="550" prefWidth="800" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.reportes.controladores.ControladorReportesProgramados">
-   <top>
-      <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
-         <children>
-            <Button fx:id="btnBack" onAction="#onBackAction" styleClass="icon-button" text="←" />
-            <Label styleClass="section-title" text="Gestión de Reportes">
-               <font>
-                  <Font name="Arial Black" size="22" />
-               </font>
-            </Label>
-         </children>
-      </HBox>
-   </top>
-   <center>
-      <VBox spacing="12">
-         <children>
-            <HBox alignment="CENTER">
-               <children>
-                  <Label alignment="CENTER" contentDisplay="TOP" prefHeight="38.0" prefWidth="275.0" styleClass="section-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Generacion de Reporte" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS">
-                     <font>
-                        <Font size="26.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
-            <VBox maxWidth="620" prefWidth="620" spacing="12">
-               <children>
-                  <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Seleccione las opciones para generar un reporte" />
-               </children>
-            </VBox>
-            <AnchorPane prefHeight="406.0">
-               <children>
-                  <ChoiceBox fx:id="choiceFrecuencia" accessibleRole="CHECK_MENU_ITEM" layoutX="188.0" layoutY="61.0" prefWidth="150.0" />
-                  <Label layoutX="30.0" layoutY="63.0" prefWidth="130.0" styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Programar cada" />
-                  <Button layoutX="385.0" layoutY="82.0" mnemonicParsing="false" onAction="#confirmarReporteProgramado" prefHeight="46.0" prefWidth="129.0" styleClass="primary-button" text="Confirmar" />
-                  <TableView fx:id="tablaReportesGenerados" layoutX="9.0" layoutY="170.0" prefHeight="200.0" prefWidth="575.0">
-                     <columns>
-                        <TableColumn fx:id="columnaNombre" prefWidth="150" text="Nombre del Reporte" />
-                        <TableColumn fx:id="columnaFecha" prefWidth="132.79991149902344" text="Fecha Generación" />
-                        <TableColumn fx:id="columnaEstado" prefWidth="96.79998779296875" text="Estado" />
-                        <TableColumn fx:id="columnaAcciones" prefWidth="194.4000122070313" text="Acciones" />
-                     </columns>
-                  </TableView>
-               </children>
-            </AnchorPane>
-         </children>
-      </VBox>
-   </center>
-   <left>
-      <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="235.0" spacing="10" styleClass="summary-pane">
-         <children>
-            <Button mnemonicParsing="false" onAction="#goToReportesPrincipal" styleClass="primary-button" text="ReportesPrincipal" />
-            <Region VBox.vgrow="ALWAYS" />
-            <Button onAction="#onCerrarSesion" styleClass="primary-button" text="Log Out" />
-         </children>
-      </VBox>
-   </left>
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
+            <children>
+                <Button fx:id="btnBack" onAction="#onBackAction" styleClass="icon-button" text="←" />
+                <Label styleClass="section-title" text="Gestión de Reportes">
+                    <font>
+                        <Font name="Arial Black" size="22" />
+                    </font>
+                </Label>
+            </children>
+        </HBox>
+    </top>
+    <center>
+        <VBox spacing="12">
+            <children>
+                <HBox alignment="CENTER">
+                    <children>
+                        <Label alignment="CENTER" contentDisplay="TOP" prefHeight="38.0" prefWidth="275.0" styleClass="section-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Generacion de Reporte" textAlignment="CENTER" textOverrun="CENTER_ELLIPSIS">
+                            <font>
+                                <Font size="26.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <VBox maxWidth="620" prefWidth="620" spacing="12">
+                    <children>
+                        <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Seleccione las opciones para generar un reporte" />
+                    </children>
+                </VBox>
+                <AnchorPane prefHeight="406.0">
+                    <children>
+                        <Label layoutX="30.0" layoutY="63.0" prefWidth="130.0" styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Programar cada" />
+                        <ChoiceBox fx:id="choiceFrecuencia" accessibleRole="CHECK_MENU_ITEM" layoutX="188.0" layoutY="61.0" prefWidth="150.0" />
+                        <HBox layoutX="30.0" layoutY="100.0" spacing="10">
+                            <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Horario:" />
+                            <ChoiceBox fx:id="choiceHorario" prefWidth="150" />
+                        </HBox>
+                        <HBox layoutX="30.0" layoutY="140.0" spacing="10">
+                            <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Tipo de Boleto:" />
+                            <ChoiceBox fx:id="choiceTipoBoleto" prefWidth="150" />
+                        </HBox>
+                        <HBox layoutX="30.0" layoutY="180.0" spacing="10">
+                            <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Sala:" />
+                            <ChoiceBox fx:id="choiceSala" prefWidth="150" />
+                        </HBox>
+                        <HBox layoutX="30.0" layoutY="220.0" spacing="10">
+                            <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Desde:" />
+                            <DatePicker fx:id="dateDesde" prefWidth="220" />
+                        </HBox>
+                        <HBox layoutX="30.0" layoutY="260.0" spacing="10">
+                            <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Hasta:" />
+                            <DatePicker fx:id="dateHasta" prefWidth="220" />
+                        </HBox>
+                        <Button layoutX="385.0" layoutY="82.0" mnemonicParsing="false" onAction="#confirmarReporteProgramado" prefHeight="46.0" prefWidth="129.0" styleClass="primary-button" text="Confirmar" />
+                        <TableView fx:id="tablaReportesGenerados" layoutX="9.0" layoutY="300.0" prefHeight="200.0" prefWidth="575.0">
+                            <columns>
+                                <TableColumn fx:id="columnaNombre" prefWidth="150" text="Nombre del Reporte" />
+                                <TableColumn fx:id="columnaFecha" prefWidth="132.79991149902344" text="Fecha Generación" />
+                                <TableColumn fx:id="columnaEstado" prefWidth="96.79998779296875" text="Estado" />
+                                <TableColumn fx:id="columnaAcciones" prefWidth="194.4000122070313" text="Acciones" />
+                            </columns>
+                        </TableView>
+                    </children>
+                </AnchorPane>
+            </children>
+        </VBox>
+    </center>
+    <left>
+        <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="235.0" spacing="10" styleClass="summary-pane">
+            <children>
+                <Button mnemonicParsing="false" onAction="#goToReportesPrincipal" styleClass="primary-button" text="ReportesPrincipal" />
+                <Region VBox.vgrow="ALWAYS" />
+                <Button onAction="#onCerrarSesion" styleClass="primary-button" text="Log Out" />
+            </children>
+        </VBox>
+    </left>
 </BorderPane>
