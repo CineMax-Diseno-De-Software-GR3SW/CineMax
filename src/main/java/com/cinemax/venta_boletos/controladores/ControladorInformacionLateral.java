@@ -159,8 +159,12 @@ public class ControladorInformacionLateral {
         
         // Transferir el total actual como subtotal
         subtotalLabel.setText((totalLabel.getText()));
+
+        // Reemplazar la coma por un punto antes de la conversion
+        String totalText = totalLabel.getText().replace(",", ".");
+
         // Calcular impuesto basado en el total y la tasa de IVA
-        impuestoLabel.setText(String.format("%.2f", Double.parseDouble(totalLabel.getText()) * CalculadorIVA.getIVA_TASA()));    
+        impuestoLabel.setText(String.format("%.2f", Double.parseDouble(totalText) * CalculadorIVA.getIVA_TASA()));
     }
 
 
@@ -260,8 +264,11 @@ public class ControladorInformacionLateral {
      * @param boletos Lista de productos/boletos (parámetro para compatibilidad)
      */
     public void calcularTotal(List<Producto> boletos) {
+        String subtotalText = subtotalLabel.getText().replace(",", ".");
+        String impuestoText = impuestoLabel.getText().replace(",", ".");
+
         // Sumar subtotal + impuesto para obtener el total final
-        double total = Double.parseDouble(subtotalLabel.getText()) + Double.parseDouble(impuestoLabel.getText());
+        double total = Double.parseDouble(subtotalText) + Double.parseDouble(impuestoText);
         totalLabel.setText(String.format("%.2f", total));
     }
 

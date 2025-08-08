@@ -1,13 +1,13 @@
 package com.cinemax.empleados.controladores;
 
 import java.io.IOException;
-import java.net.URL;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
+import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -67,6 +67,10 @@ public class ControladorPortalPrincipal {
         habilitarOpcionSiTienePermiso(btnGestionSalas, Permiso.GESTIONAR_SALA);
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
         habilitarOpcionSiTienePermiso(btnGestionButacas, Permiso.GESTIONAR_SALA);
+
+        if (ServicioTemporizador.getInstance().tempEnEjecucion()){
+            ServicioTemporizador.getInstance().detenerTemporizador();
+        }
     }
 
     /* Simplifica: si no tiene alguno de los permisos, oculta (sin dejar hueco) */

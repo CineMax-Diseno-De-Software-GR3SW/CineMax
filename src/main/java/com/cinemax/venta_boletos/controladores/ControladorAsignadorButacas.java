@@ -10,6 +10,7 @@ import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.controladores.ControladorDeConsultaSalas;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
 import com.cinemax.venta_boletos.servicios.ServicioGeneradorBoleto;
@@ -75,6 +76,10 @@ public class ControladorAsignadorButacas {
     /** Contenedor donde se renderiza el mapa visual de butacas */
     @FXML
     private VBox mapaButacasContainer;
+
+    @FXML
+    private Label timerLabel; // <-- AÑADIR ESTA LÍNEA
+
 
     // ===== ATRIBUTOS DE LÓGICA =====
 
@@ -148,6 +153,12 @@ public class ControladorAsignadorButacas {
 
         // 6. Guardar referencia para uso posterior en otros métodos
         this.funcionSeleccionada = funcionSeleccionada;
+
+        // Vincular el label del temporizador para que se actualice automáticamente
+        if (timerLabel != null) {
+            timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
+        }
+
 
     }
 
@@ -226,6 +237,8 @@ public class ControladorAsignadorButacas {
      */
     @FXML
     void onBackAction(ActionEvent event) {
+        // Detener el temporizador al retroceder
+        ServicioTemporizador.getInstance().detenerTemporizador();
         // Obtener referencia a la ventana actual
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
 

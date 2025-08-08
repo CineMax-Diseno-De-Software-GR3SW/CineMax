@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -166,6 +165,9 @@ public class ServicioMostrarFunciones {
 
         try {
             Stage currentStage = (Stage) tabla.getScene().getWindow();
+
+            ServicioTemporizador.getInstance().empezarTemporizador(currentStage);
+
             ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
                     "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
                     currentStage,

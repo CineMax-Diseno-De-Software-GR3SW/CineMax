@@ -2,6 +2,7 @@ package com.cinemax.venta_boletos.controladores;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import com.cinemax.venta_boletos.servicios.strategy.ContextoValidacion;
 import com.cinemax.venta_boletos.servicios.strategy.EstrategiaCedulaValidacion;
 import com.cinemax.venta_boletos.servicios.strategy.EstrategiaPasaporteValidacion;
@@ -22,10 +23,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -75,6 +73,9 @@ public class ControladorFacturacion {
     @FXML
     private ComboBox<String> tipoDocumentoBox;
 
+    @FXML
+    private Label timerLabel;
+
     // ===== ATRIBUTOS DE LÓGICA =====
 
     /** Lista de productos seleccionados, representando los boletos de cine. */
@@ -86,7 +87,7 @@ public class ControladorFacturacion {
     private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
     /** Controlador del panel lateral que muestra información de la función. */
-    private ControladorInformacionLateral controladorInformacionLateral;
+    private com.cinemax.venta_boletos.controladores.ControladorInformacionLateral controladorInformacionLateral;
 
     /**
      * Inicializa los elementos gráficos y configura eventos personalizados.
@@ -104,7 +105,12 @@ public class ControladorFacturacion {
          // 2. Seleccionar "Cédula" como valor por defecto.
         tipoDocumentoBox.setValue("Cédula");
 
-        // 3. Configurar eventos para permitir mover la ventana arrastrando el header.
+        // 3. Vincular el label del temporizador
+        if (timerLabel != null) {
+            timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
+        }
+
+        // 4.. Configurar eventos para permitir mover la ventana arrastrando el header.
         headerBar.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
@@ -113,6 +119,8 @@ public class ControladorFacturacion {
             ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset);
             ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset);
         });
+
+
     }
 
 
@@ -297,7 +305,7 @@ public class ControladorFacturacion {
      * Valida los campos de entrada, verifica si se ha confirmado la compra y si el documento es válido.
      * Si todo es correcto, genera la factura y los boletos, y muestra un mensaje de éxito.
      * Si hay algún error durante el proceso, muestra un mensaje de error.
-     * @param event Evento de acción al hacer clic en el botón de pagar.
+     *  event Evento de acción al hacer clic en el botón de pagar.
      */
 
     @FXML
@@ -371,6 +379,9 @@ public class ControladorFacturacion {
             }
         }
 
+        // Detener el temporizador después de un pago exitoso
+        ServicioTemporizador.getInstance().detenerTemporizador();
+
         // Mostrar un mensaje de éxito al usuario indicando que la factura se ha creado exitosamente.
         ManejadorMetodosComunes.mostrarVentanaExito("Factura creada exitosamente: " + facturaFinal.getCodigoFactura());
 
@@ -382,7 +393,7 @@ public class ControladorFacturacion {
      * Maneja la acción de retroceso al hacer clic en el botón de retroceso.
      * Cierra la ventana actual y redirige al usuario a la pantalla de selección de butacas.
      * Si ocurre un error durante el proceso, muestra un mensaje de error.
-     * @param event Evento de acción al hacer clic en el botón de retroceso.
+     * param event Evento de acción al hacer clic en el botón de retroceso.
      */
     @FXML
     protected void onBackAction() {
