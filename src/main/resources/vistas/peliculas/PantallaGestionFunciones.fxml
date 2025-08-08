@@ -126,8 +126,6 @@
                             <Label text="Buscar:" />
                             <TextField fx:id="txtBuscar" promptText="ID, película, sala..." prefWidth="200.0" styleClass="text-field" />
                             <Button fx:id="btnBuscar" onAction="#onBuscar" text="🔍" styleClass="icon-button" />
-                            <Region HBox.hgrow="ALWAYS" />
-                            <ComboBox fx:id="cmbFiltroSala" promptText="Filtrar por sala" prefWidth="130.0" styleClass="combo-box" />
                         </children>
                     </HBox>
                 </VBox>

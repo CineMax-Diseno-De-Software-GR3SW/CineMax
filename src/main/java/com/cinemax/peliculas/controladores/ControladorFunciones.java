@@ -60,8 +60,6 @@ public class ControladorFunciones implements Initializable {
     @FXML
     private TextField txtBuscar;
     @FXML
-    private ComboBox<Sala> cmbFiltroSala;
-    @FXML
     private TableView<Funcion> tablaFunciones;
     @FXML
     private TableColumn<Funcion, Integer> colId;
@@ -359,7 +357,6 @@ public class ControladorFunciones implements Initializable {
         configurarEventos();
         configurarFormularioFuncion();
         cargarFunciones();
-        configurarFiltros();
     }
 
     private void configurarTabla() {
@@ -434,37 +431,6 @@ public class ControladorFunciones implements Initializable {
         );
 
         tablaFunciones.setItems(funcionesFiltradas);
-    }
-
-    private void configurarFiltros() {
-        // Solo configurar filtros si el ComboBox existe
-        if (cmbFiltroSala == null) {
-            return;
-        }
-
-        try {
-            // Cargar salas
-            List<Sala> salas = salaService.listarSalas();
-
-            cmbFiltroSala.setItems(FXCollections.observableArrayList(salas));
-            cmbFiltroSala.setConverter(new StringConverter<Sala>() {
-                @Override
-                public String toString(Sala sala) {
-                    return sala != null ? sala.getNombre() + " (" + sala.getTipo() + ")" : "";
-                }
-
-                @Override
-                public Sala fromString(String string) {
-                    return null;
-                }
-            });
-
-            // Configurar evento de cambio en el filtro
-            cmbFiltroSala.setOnAction(ev -> aplicarFiltros());
-        } catch (Exception ex) {
-            System.err.println("Error al configurar filtros: " + ex.getMessage());
-            mostrarError("Error", "No se pudieron cargar las salas para el filtro: " + ex.getMessage());
-        }
     }
 
     private void configurarEventos() {
@@ -599,7 +565,6 @@ public class ControladorFunciones implements Initializable {
         funcionesFiltradas.clear();
 
         String textoBusqueda = txtBuscar.getText() != null ? txtBuscar.getText().toLowerCase().trim() : "";
-        Sala salaSeleccionada = cmbFiltroSala.getValue();
 
         for (Funcion funcion : listaFunciones) {
             boolean coincideTexto = textoBusqueda.isEmpty() ||
@@ -609,10 +574,7 @@ public class ControladorFunciones implements Initializable {
                 (funcion.getSala() != null && funcion.getSala().getNombre() != null &&
                  funcion.getSala().getNombre().toLowerCase().contains(textoBusqueda));
 
-            boolean coincideSala = salaSeleccionada == null ||
-                (funcion.getSala() != null && funcion.getSala().getId() == salaSeleccionada.getId());
-
-            if (coincideTexto && coincideSala) {
+            if (coincideTexto) {
                 funcionesFiltradas.add(funcion);
             }
         }
