@@ -4,12 +4,14 @@ import com.cinemax.reportes.modelos.AnualStrategy;
 import com.cinemax.reportes.modelos.DiarioStrategy;
 import com.cinemax.reportes.modelos.FrecuenciaStrategy;
 import com.cinemax.reportes.modelos.MensualStrategy;
+import com.cinemax.reportes.modelos.ReporteGenerado;
 import com.cinemax.reportes.modelos.ReporteVentaDTO;
 import com.cinemax.reportes.modelos.SemanalStrategy;
 import com.cinemax.reportes.modelos.TrimestralStrategy;
 import com.cinemax.reportes.modelos.Export;
 import com.cinemax.reportes.modelos.ExportarPDFStrategy;
 import com.cinemax.reportes.modelos.ExportarCSVStrategy;
+
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

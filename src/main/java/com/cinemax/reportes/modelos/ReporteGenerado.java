@@ -1,6 +1,7 @@
 package com.cinemax.reportes.modelos;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class ReporteGenerado {
     private int id;
@@ -94,6 +95,14 @@ public class ReporteGenerado {
 
     public String getDescripcion() {
         return descripcion;
+    }
+
+    public  Map<String, Object> getConfiguracion() {
+        return null;
+    }
+
+    public void setConfiguracion(Object configuracion) {
+        //
     }
 
 }
