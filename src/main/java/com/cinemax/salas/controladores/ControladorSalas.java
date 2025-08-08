@@ -30,7 +30,6 @@ public class ControladorSalas {
     @FXML private TableColumn<Sala, Integer> colCapacidad;
     @FXML private TableColumn<Sala, String> colTipo;
     @FXML private TableColumn<Sala, String> colEstado;
-    @FXML private Label lblEstado;
     @FXML private Label lblTotalSalas;
     @FXML private TextField txtBuscarId;
 
@@ -90,11 +89,8 @@ public class ControladorSalas {
     private void listarTodasSalas() {
         try {
             cargarSalas();
-            lblEstado.setText("Salas cargadas exitosamente.");
-            //ManejadorMetodosComunes.mostrarVentanaExito("Salas cargadas exitosamente.");
             lblTotalSalas.setText("Total Salas: " + salas.size());
         } catch (Exception e) {
-            lblEstado.setText("Error cargando salas.");
             lblTotalSalas.setText("Total Salas: 0");
             ManejadorMetodosComunes.mostrarVentanaError("Hubo un error inesperado cargando las salas: " + e.getMessage());
         }
@@ -130,7 +126,6 @@ public class ControladorSalas {
             salaService.crearSala(sala);
 
             listarTodasSalas();
-            //limpiarCampos();
             ManejadorMetodosComunes.mostrarVentanaExito("Sala creada exitosamente.\nButacas creadas exitosamente.");
 
         } catch (Exception e) {
@@ -145,7 +140,6 @@ public class ControladorSalas {
                     butacaService.generarButacasAutomatica(existente.getId());
 
                     listarTodasSalas();
-                    //limpiarCampos();
                     ManejadorMetodosComunes.mostrarVentanaExito("Butacas creadas exitosamente para la sala existente \"" +
                             existente.getNombre() + "\".");
 
@@ -186,7 +180,6 @@ public class ControladorSalas {
 
                 salaService.actualizarSala(seleccionada);
                 listarTodasSalas();
-                //limpiarCampos();
 
                 ManejadorMetodosComunes.mostrarVentanaExito("Sala actualizada correctamente.");
             } catch (Exception e) {
@@ -212,7 +205,7 @@ public class ControladorSalas {
             try {
                 salaService.eliminarSala(seleccionada.getId());
                 listarTodasSalas();
-               // limpiarCampos();
+                // limpiarCampos();
                 ManejadorMetodosComunes.mostrarVentanaExito("Sala eliminada correctamente.");
             } catch (Exception e) {
                 ManejadorMetodosComunes.mostrarVentanaError("Error inesperado en eliminarSala: " + e.getMessage());
@@ -234,31 +227,20 @@ public class ControladorSalas {
             Sala sala = salaService.obtenerSalaPorId(id);
             if (sala != null) {
                 salas.setAll(sala);
-                lblEstado.setText("Sala encontrada.");
+                lblTotalSalas.setText("Total Salas: 1");
                 ManejadorMetodosComunes.mostrarVentanaExito("Sala encontrada.");
             } else {
                 salas.clear();
-                lblEstado.setText("No existe sala con ID " + id);
+                lblTotalSalas.setText("Total Salas: 0");
                 ManejadorMetodosComunes.mostrarVentanaAdvertencia("No existe sala con ID " + id);
             }
         } catch (NumberFormatException e) {
             salas.clear();
-            lblEstado.setText("ID inválido.");
+            lblTotalSalas.setText("Total Salas: 0");
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("El ID debe ser un número válido.");
         } catch (Exception e) {
+            lblTotalSalas.setText("Total Salas: 0");
             ManejadorMetodosComunes.mostrarVentanaError("Error en buscarSalaPorId: " + e.getMessage());
         }
     }
-
-    /**
-     *     @FXML
-     *     private void limpiarCampos() {
-     *         txtNombre.clear();
-     *         cmbCapacidad.getSelectionModel().selectFirst();
-     *         cmbTipo.getSelectionModel().clearSelection();
-     *         cmbEstado.getSelectionModel().clearSelection();
-     *         tablaSalas.getSelectionModel().clearSelection();
-     *         lblEstado.setText("Listo");
-     *     }
-      */
 }
