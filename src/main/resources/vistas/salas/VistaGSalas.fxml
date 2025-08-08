@@ -14,82 +14,87 @@
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
-                <Button fx:id="btnBack" text="←" styleClass="stepper-button" onAction="#onBackAction" />
-                <Label text="Gestión de Salas" styleClass="section-title" />
-                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnBack" text="←" styleClass="stepper-button" onAction="#onBackAction"/>
+                <Label text="Gestión de Salas" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
             </children>
             <padding>
-                <Insets top="10" right="20" bottom="10" left="20" />
+                <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
         </HBox>
     </top>
 
-    <!-- CENTRO: Dividido en dos paneles -->
+    <!-- CENTRO -->
     <center>
         <HBox spacing="20.0">
             <padding>
-                <Insets top="15" right="20" bottom="15" left="20" />
+                <Insets top="15" right="20" bottom="15" left="20"/>
             </padding>
 
             <!-- Panel izquierdo: Formulario -->
             <VBox spacing="15.0" prefWidth="480.0" minWidth="480.0" maxWidth="480.0">
                 <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
-                    <VBox spacing="20.0" styleClass="ticket-card">
+                    <VBox spacing="20.0">
                         <padding>
                             <Insets top="20" right="20" bottom="20" left="20"/>
                         </padding>
 
-                        <Label text="Datos de la Sala" styleClass="section-title"/>
+                        <VBox spacing="20.0" styleClass="ticket-card">
+                            <Label text="Datos de la Sala" styleClass="section-title"/>
 
-                        <!-- Campo: Nombre -->
-                        <VBox spacing="8.0">
-                            <HBox alignment="CENTER_LEFT" spacing="2">
-                                <Label text="Nombre" styleClass="form-label"/>
-                                <Label text="*" styleClass="required-asterisk"/>
-                            </HBox>
-                            <TextField fx:id="txtNombre" promptText="Ingrese nombre de la sala" styleClass="text-field"/>
+                            <!-- Nombre -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Nombre" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <TextField fx:id="txtNombre" promptText="Ingrese nombre de la sala" styleClass="text-field"/>
+                            </VBox>
+
+                            <!-- Capacidad -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Capacidad" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <ComboBox fx:id="cmbCapacidad" promptText="Seleccione capacidad" styleClass="combo-box"/>
+                            </VBox>
+
+                            <!-- Tipo -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Tipo" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <ComboBox fx:id="cmbTipo" promptText="Seleccione tipo" styleClass="combo-box"/>
+                            </VBox>
+
+                            <!-- Estado -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Estado" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <ComboBox fx:id="cmbEstado" promptText="Seleccione estado" styleClass="combo-box"/>
+                            </VBox>
+
+                            <!-- Indicador -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                    <Label text="Campos Obligatorios" styleClass="help-text"/>
+                                </HBox>
+                            </VBox>
                         </VBox>
 
-                        <!-- Campo: Capacidad -->
-                        <VBox spacing="8.0">
-                            <HBox alignment="CENTER_LEFT" spacing="2">
-                                <Label text="Capacidad" styleClass="form-label"/>
-                                <Label text="*" styleClass="required-asterisk"/>
-                            </HBox>
-                            <ComboBox fx:id="cmbCapacidad" promptText="Seleccione capacidad" styleClass="combo-box"/>
-                        </VBox>
-
-                        <!-- Campo: Tipo -->
-                        <VBox spacing="8.0">
-                            <HBox alignment="CENTER_LEFT" spacing="2">
-                                <Label text="Tipo" styleClass="form-label"/>
-                                <Label text="*" styleClass="required-asterisk"/>
-                            </HBox>
-                            <ComboBox fx:id="cmbTipo" promptText="Seleccione tipo" styleClass="combo-box"/>
-                        </VBox>
-
-                        <!-- Campo: Estado -->
-                        <VBox spacing="8.0">
-                            <HBox alignment="CENTER_LEFT" spacing="2">
-                                <Label text="Estado" styleClass="form-label"/>
-                                <Label text="*" styleClass="required-asterisk"/>
-                            </HBox>
-                            <ComboBox fx:id="cmbEstado" promptText="Seleccione estado" styleClass="combo-box"/>
-                        </VBox>
-
-                        <!-- Campo: Indicador obligatorio -->
-                        <VBox spacing="8.0">
-                            <HBox alignment="CENTER_LEFT" spacing="2">
-                                <Label text="*" styleClass="required-asterisk"/>
-                                <Label text="Campos Obligatorios" styleClass="help-text"/>
-                            </HBox>
-                        </VBox>
-
-                        <!-- Botones -->
+                        <!-- Botones del formulario -->
                         <VBox spacing="10.0" alignment="CENTER">
-                            <Button fx:id="btnCrear" text="Crear" styleClass="primary-button"
-                                    disable="false" prefWidth="200.0" onAction="#crearSala"/>
-
+                            <Button fx:id="btnGuardar" text="Crear" styleClass="primary-button"
+                                    disable="true" prefWidth="200.0" onAction="#onGuardar"/>
+                            <HBox spacing="10.0" alignment="CENTER">
+                                <Button fx:id="btnNuevo" text="Nuevo" styleClass="link-button"
+                                        prefWidth="90.0" onAction="#onLimpiarFormulario"/>
+                            </HBox>
                         </VBox>
                     </VBox>
                 </ScrollPane>
@@ -102,8 +107,8 @@
                 <VBox spacing="10.0" styleClass="ticket-card">
                     <HBox spacing="10.0" alignment="CENTER_LEFT">
                         <children>
-                            <Label text="Buscar:" />
-                            <TextField fx:id="txtBuscarId" promptText="ID" prefWidth="200.0" styleClass="text-field"/>
+                            <Label text="Buscar:"/>
+                            <TextField fx:id="txtBuscarId" promptText="ID, nombre, tipo..." prefWidth="220.0" styleClass="text-field"/>
                             <Button fx:id="btnBuscar" onAction="#buscarSalaPorId" text="🔍" styleClass="icon-button"/>
                             <Region HBox.hgrow="ALWAYS"/>
                         </children>
@@ -117,7 +122,7 @@
                     </columnResizePolicy>
                     <columns>
                         <TableColumn fx:id="colId" text="ID" prefWidth="60.0" minWidth="50.0"/>
-                        <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200.0" minWidth="100.0"/>
+                        <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200.0" minWidth="120.0"/>
                         <TableColumn fx:id="colCapacidad" text="Capacidad" prefWidth="120.0" minWidth="80.0"/>
                         <TableColumn fx:id="colTipo" text="Tipo" prefWidth="120.0" minWidth="80.0"/>
                         <TableColumn fx:id="colEstado" text="Estado" prefWidth="120.0" minWidth="80.0"/>
@@ -127,16 +132,15 @@
                 <!-- Botones acción -->
                 <HBox spacing="12.0" alignment="CENTER">
                     <children>
-                        <Button fx:id="btnActualizar" text="Actualizar" onAction="#actualizarSala" styleClass="primary-button"/>
-                        <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarSala" styleClass="primary-button"/>
+                        <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarSala" styleClass="primary-button" disable="true"/>
                     </children>
                 </HBox>
 
-                <!-- Información adicional -->
+                <!-- Resumen -->
                 <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="summary-pane">
                     <children>
                         <Label fx:id="lblTotalSalas" text="Total de salas: 0" styleClass="summary-details"/>
-                        <!-- <Label fx:id="lblEstado" styleClass="summary-details" /> -->
+                        <Label fx:id="lblEstado" text="" styleClass="summary-details"/>
                     </children>
                 </HBox>
             </VBox>

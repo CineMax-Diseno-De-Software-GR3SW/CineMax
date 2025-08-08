@@ -33,9 +33,16 @@ public class ControladorSalas {
     @FXML private Label lblTotalSalas;
     @FXML private TextField txtBuscarId;
 
+    @FXML private Button btnEliminar;
+    @FXML private Button btnGuardar;
+    @FXML
+    private Button btnNuevo;
+
+
     private final SalaService salaService = new SalaService();
     private final ObservableList<Sala> salas = FXCollections.observableArrayList();
     private final ButacaService butacaService = new ButacaService();
+    private Sala salaEnEdicion = null;
 
     @FXML
     public void initialize() throws Exception {
@@ -59,15 +66,98 @@ public class ControladorSalas {
         tablaSalas.setItems(salas);
         listarTodasSalas();
 
+/***
+ *         tablaSalas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+ *             if (newSel != null) {
+ *                 txtNombre.setText(newSel.getNombre());
+ *                 cmbCapacidad.setValue(newSel.getCapacidad());
+ *                 cmbTipo.setValue(newSel.getTipo());
+ *                 cmbEstado.setValue(newSel.getEstado());
+ *             }
+ *         });
+ */
+
         tablaSalas.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             if (newSel != null) {
                 txtNombre.setText(newSel.getNombre());
                 cmbCapacidad.setValue(newSel.getCapacidad());
                 cmbTipo.setValue(newSel.getTipo());
                 cmbEstado.setValue(newSel.getEstado());
+                btnEliminar.setDisable(false);
+                salaEnEdicion = newSel;
+                actualizarModoFormulario();
+            } else {
+                limpiarFormulario();
             }
         });
+
+        // Deshabilita "Actualizar" y "Eliminar" al inicio
+        btnEliminar.setDisable(true);
+        txtNombre.textProperty().addListener((obs, oldVal, newVal) -> actualizarEstadoFormulario());
+        cmbCapacidad.valueProperty().addListener((obs, oldVal, newVal) -> actualizarEstadoFormulario());
+        cmbTipo.valueProperty().addListener((obs, oldVal, newVal) -> actualizarEstadoFormulario());
+        cmbEstado.valueProperty().addListener((obs, oldVal, newVal) -> actualizarEstadoFormulario());
+        actualizarEstadoFormulario(); // Inicializa el estado del botón
+
     }
+    // Método para limpiar el formulario y restablecer botones
+    private void limpiarFormulario() {
+        txtNombre.clear();
+        cmbCapacidad.getSelectionModel().clearSelection();
+        cmbTipo.getSelectionModel().clearSelection();
+        cmbEstado.getSelectionModel().clearSelection();
+        tablaSalas.getSelectionModel().clearSelection();
+        btnEliminar.setDisable(true);
+    }
+
+    private void actualizarModoFormulario() {
+        if (salaEnEdicion == null) {
+            btnGuardar.setText("Crear");
+            btnNuevo.setVisible(false);
+            btnNuevo.setManaged(false);
+        } else {
+            btnGuardar.setText("Actualizar");
+            btnNuevo.setVisible(true);
+            btnNuevo.setManaged(true);
+        }
+        // Asegurar que se ejecute la validación del formulario
+        actualizarEstadoFormulario();
+    }
+    @FXML
+    private void onLimpiarFormulario(ActionEvent event) {
+        limpiarFormulario();
+        salaEnEdicion = null;
+        actualizarModoFormulario();
+    }
+    private void actualizarEstadoFormulario() {
+        if (btnGuardar != null) {
+            boolean formularioValido = validarFormularioCompleto();
+            btnGuardar.setDisable(!formularioValido);
+        }
+    }
+
+    private boolean validarFormularioCompleto() {
+        return txtNombre != null && !txtNombre.getText().trim().isEmpty()
+                && cmbCapacidad != null && cmbCapacidad.getValue() != null
+                && cmbTipo != null && cmbTipo.getValue() != null
+                && cmbEstado != null && cmbEstado.getValue() != null;
+    }
+
+
+
+    @FXML
+    private void onGuardar(ActionEvent event) {
+        if (salaEnEdicion == null) {
+            // Crear nueva sala
+            crearSala();
+        } else {
+            // Actualizar sala existente
+            actualizarSala();
+            salaEnEdicion = null;
+            actualizarModoFormulario();
+        }
+    }
+
 
     public void onBackAction(ActionEvent event) {
         try {
@@ -83,6 +173,8 @@ public class ControladorSalas {
 
     private void cargarSalas() throws Exception {
         salas.setAll(salaService.listarSalas());
+        limpiarFormulario();
+
     }
 
     @FXML
@@ -152,7 +244,10 @@ public class ControladorSalas {
                 ManejadorMetodosComunes.mostrarVentanaError("" + msg);
             }
         }
+        limpiarFormulario();
+        actualizarModoFormulario();
     }
+
 
     @FXML
     private void actualizarSala() {
@@ -192,6 +287,7 @@ public class ControladorSalas {
         } else {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Selecciona una sala para actualizar.");
         }
+        limpiarFormulario();
     }
 
     @FXML
@@ -213,6 +309,7 @@ public class ControladorSalas {
         } else {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Selecciona una sala para eliminar.");
         }
+        limpiarFormulario();
     }
 
     @FXML
@@ -220,6 +317,8 @@ public class ControladorSalas {
         String idText = txtBuscarId.getText().trim();
         if (idText.isEmpty()) {
             listarTodasSalas();
+            salaEnEdicion = null;
+            actualizarModoFormulario();
             return;
         }
         try {
