@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios.strategy;
+package com.cinemax.venta_boletos.Servicios.strategy;
 
 /**
  * Interfaz que define el contrato para las estrategias de validación de documentos.

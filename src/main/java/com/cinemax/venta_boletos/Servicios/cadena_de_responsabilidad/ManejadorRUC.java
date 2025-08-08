@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios.cadena_de_responsabilidad;
+package com.cinemax.venta_boletos.Servicios.cadena_de_responsabilidad;
 
 public class ManejadorRUC extends ManejadorBaseComun {
 

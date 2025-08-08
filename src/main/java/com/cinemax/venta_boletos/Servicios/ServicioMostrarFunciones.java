@@ -1,10 +1,10 @@
-package com.cinemax.venta_boletos.servicios;
+package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.controladores.ControladorFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
-import com.cinemax.venta_boletos.controladores.ControladorCargaAsignacionButacas;
+import com.cinemax.venta_boletos.Controladores.ControladorCargaAsignacionButacas;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;

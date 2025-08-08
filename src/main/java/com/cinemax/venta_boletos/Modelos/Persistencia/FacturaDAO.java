@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.modelos.persistencia;
+package com.cinemax.venta_boletos.Modelos.Persistencia;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
@@ -11,8 +11,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import com.cinemax.comun.ConexionBaseSingleton;
-import com.cinemax.venta_boletos.modelos.entidades.Cliente;
-import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.Modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.Modelos.entidades.Factura;
 
 /** 
  * Clase FacturaDAO que maneja las operaciones de persistencia para la entidad Factura.

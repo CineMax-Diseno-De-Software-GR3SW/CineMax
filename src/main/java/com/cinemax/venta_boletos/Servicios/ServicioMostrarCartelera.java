@@ -1,9 +1,9 @@
-package com.cinemax.venta_boletos.servicios;
+package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.controladores.ControladorCartelera;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
-import com.cinemax.venta_boletos.controladores.ControladorMostrarFunciones;
+import com.cinemax.venta_boletos.Controladores.ControladorMostrarFunciones;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

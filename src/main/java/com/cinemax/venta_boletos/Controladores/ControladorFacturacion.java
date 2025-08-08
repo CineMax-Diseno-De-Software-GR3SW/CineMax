@@ -1,22 +1,22 @@
-package com.cinemax.venta_boletos.controladores;
+package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.venta_boletos.servicios.strategy.ContextoValidacion;
-import com.cinemax.venta_boletos.servicios.strategy.EstrategiaCedulaValidacion;
-import com.cinemax.venta_boletos.servicios.strategy.EstrategiaPasaporteValidacion;
-import com.cinemax.venta_boletos.servicios.strategy.EstrategiaRucValidacion;
-import com.cinemax.venta_boletos.modelos.entidades.Boleto;
-import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
-import com.cinemax.venta_boletos.modelos.entidades.Cliente;
-import com.cinemax.venta_boletos.modelos.entidades.Factura;
-import com.cinemax.venta_boletos.modelos.entidades.Producto;
-import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
-import com.cinemax.venta_boletos.modelos.persistencia.ClienteDAO;
-import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
-import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivoPDF;
-import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
-import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
+import com.cinemax.venta_boletos.Servicios.strategy.ContextoValidacion;
+import com.cinemax.venta_boletos.Servicios.strategy.EstrategiaCedulaValidacion;
+import com.cinemax.venta_boletos.Servicios.strategy.EstrategiaPasaporteValidacion;
+import com.cinemax.venta_boletos.Servicios.strategy.EstrategiaRucValidacion;
+import com.cinemax.venta_boletos.Modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.Modelos.entidades.CalculadorIVA;
+import com.cinemax.venta_boletos.Modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.Modelos.entidades.Factura;
+import com.cinemax.venta_boletos.Modelos.entidades.Producto;
+import com.cinemax.venta_boletos.Modelos.Persistencia.BoletoDAO;
+import com.cinemax.venta_boletos.Modelos.Persistencia.ClienteDAO;
+import com.cinemax.venta_boletos.Modelos.Persistencia.FacturaDAO;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorArchivoPDF;
+import com.cinemax.venta_boletos.Servicios.ServicioFacturacion;
+import com.cinemax.venta_boletos.Modelos.entidades.CalculadorImpuesto;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -33,7 +33,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivo;
+import com.cinemax.venta_boletos.Servicios.ServicioGeneradorArchivo;
 
 /**
  * Controlador principal para la facturación de boletos.

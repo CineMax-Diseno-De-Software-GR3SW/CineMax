@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.modelos.entidades;
+package com.cinemax.venta_boletos.Modelos.entidades;
 
 import java.util.List;
 

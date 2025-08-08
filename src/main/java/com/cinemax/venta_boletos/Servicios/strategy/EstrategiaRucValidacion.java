@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios.strategy;
+package com.cinemax.venta_boletos.Servicios.strategy;
 
 /**
  * Estrategia de validación específica para RUC (Registro Único de Contribuyentes) ecuatoriano.

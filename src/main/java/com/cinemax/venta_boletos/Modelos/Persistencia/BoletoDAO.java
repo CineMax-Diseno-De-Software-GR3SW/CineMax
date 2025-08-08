@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.modelos.persistencia;
+package com.cinemax.venta_boletos.Modelos.Persistencia;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -11,8 +11,8 @@ import java.util.List;
 import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.venta_boletos.modelos.entidades.Boleto;
-import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.Modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.Modelos.entidades.Factura;
 
 /** 
  * Clase BoletoDAO que maneja las operaciones de acceso a datos relacionadas con los boletos.

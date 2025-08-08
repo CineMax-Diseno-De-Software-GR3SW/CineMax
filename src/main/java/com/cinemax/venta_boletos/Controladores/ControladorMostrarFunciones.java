@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.controladores;
+package com.cinemax.venta_boletos.Controladores;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
-import com.cinemax.venta_boletos.servicios.ServicioMostrarFunciones;
+import com.cinemax.venta_boletos.Servicios.ServicioMostrarFunciones;
 
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;

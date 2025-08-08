@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios;
+package com.cinemax.venta_boletos.Servicios;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -6,10 +6,10 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-import com.cinemax.venta_boletos.modelos.entidades.Boleto;
-import com.cinemax.venta_boletos.modelos.entidades.Cliente;
-import com.cinemax.venta_boletos.modelos.entidades.Factura;
-import com.cinemax.venta_boletos.modelos.entidades.Producto;
+import com.cinemax.venta_boletos.Modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.Modelos.entidades.Cliente;
+import com.cinemax.venta_boletos.Modelos.entidades.Factura;
+import com.cinemax.venta_boletos.Modelos.entidades.Producto;
 
 import java.io.File;
 import java.io.IOException;

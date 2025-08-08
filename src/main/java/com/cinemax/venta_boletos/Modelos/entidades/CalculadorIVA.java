@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.modelos.entidades;
+package com.cinemax.venta_boletos.Modelos.entidades;
 
 /**
  * Implementación específica para el cálculo del Impuesto al Valor Agregado (IVA).
