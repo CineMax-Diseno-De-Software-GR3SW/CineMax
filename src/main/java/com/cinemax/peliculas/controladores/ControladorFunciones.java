@@ -572,14 +572,10 @@ public class ControladorFunciones implements Initializable {
         int total = funcionesFiltradas.size();
         lblTotalFunciones.setText("Total de funciones: " + total);
 
-        if (total > 0) {
-            long funcionesHoy = funcionesFiltradas.stream()
-                .filter(f -> f.getFechaHoraInicio() != null)
-                .filter(f -> f.getFechaHoraInicio().toLocalDate().equals(LocalDate.now()))
-                .count();
-            lblEstadisticas.setText("Funciones hoy: " + funcionesHoy);
-        } else {
+        if (total == 0) {
             lblEstadisticas.setText("No hay funciones que mostrar");
+        } else {
+            lblEstadisticas.setText(""); // Limpiar el label de estadísticas
         }
     }
 
