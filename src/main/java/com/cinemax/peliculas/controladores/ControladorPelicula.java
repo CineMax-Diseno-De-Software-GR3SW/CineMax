@@ -115,8 +115,6 @@ public class ControladorPelicula implements Initializable {
     private Button btnCancelar;
     @FXML
     private Button btnLimpiarFormulario;
-    @FXML
-    private Label lblEstadoFormulario;
 
     // Datos para la tabla
     private ObservableList<Pelicula> listaPeliculas;
@@ -498,7 +496,6 @@ public class ControladorPelicula implements Initializable {
         if (peliculaEnEdicion == null) {
             // Modo crear
             btnGuardar.setText("Crear");
-            lblEstadoFormulario.setText("Complete todos los campos obligatorios");
             // Ocultar el botón "Nuevo" cuando está en modo crear
             if (btnNuevo != null) {
                 btnNuevo.setVisible(false);
@@ -507,7 +504,6 @@ public class ControladorPelicula implements Initializable {
         } else {
             // Modo editar
             btnGuardar.setText("Actualizar");
-            lblEstadoFormulario.setText("Editando: " + peliculaEnEdicion.getTitulo());
             // Mostrar el botón "Nuevo" cuando está en modo editar
             if (btnNuevo != null) {
                 btnNuevo.setVisible(true);
@@ -1044,15 +1040,9 @@ public class ControladorPelicula implements Initializable {
     }
 
     private void actualizarEstadoFormulario() {
-        if (lblEstadoFormulario != null && btnGuardar != null) {
+        if (btnGuardar != null) {
             boolean formularioValido = validarFormularioCompleto();
             btnGuardar.setDisable(!formularioValido);
-
-            if (formularioValido) {
-                lblEstadoFormulario.setText("Formulario listo para guardar");
-            } else {
-                lblEstadoFormulario.setText("Complete todos los campos obligatorios");
-            }
         }
     }
 
