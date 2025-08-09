@@ -37,7 +37,7 @@ import javafx.scene.layout.VBox;
  * @author GR3SW
  * @version 1.0
  */
-public class ControladorInformacionLateral {
+public class ControladorInformacionDeVenta {
 
     // ===== ELEMENTOS DE LA INTERFAZ (FXML) =====
     
@@ -116,7 +116,7 @@ public class ControladorInformacionLateral {
     // ===== ATRIBUTOS DE LÓGICA =====
     
     /** Contador para numerar las butacas seleccionadas secuencialmente */
-    private int cantidad;
+    private int cantidadDeButacasSeleccionadas;
     
     /** Referencia a la vista raíz para acceso externo si es necesario */
     private Parent root;
@@ -128,8 +128,8 @@ public class ControladorInformacionLateral {
      * Establece el contador en 1 para comenzar la numeración
      * de butacas seleccionadas desde el número 1.
      */
-    public ControladorInformacionLateral() {
-        this.cantidad = 1;
+    public ControladorInformacionDeVenta() {
+        this.cantidadDeButacasSeleccionadas = 1;
     }
 
     /**
@@ -139,7 +139,7 @@ public class ControladorInformacionLateral {
      * mostrar una vista simplificada durante la selección de butacas.
      * Útil cuando solo se necesita ver el precio final sin detalles.
      */
-    public void mostrarSoloPrecio() {
+    public void mostrarSoloSubtotal() {
         HBoxImpuesto.setVisible(false);
         HBoxSubtotal.setVisible(false);
         labelTotalTexto.setVisible(false);
@@ -152,7 +152,7 @@ public class ControladorInformacionLateral {
      * Calcula automáticamente el subtotal e impuesto basado en el total actual.
      * Se utiliza típicamente en la pantalla de facturación.
      */
-    public void mostrarTodaLaInformacionDePago() {
+    public void mostrarTodaLaInformacionDelPago() {
         HBoxImpuesto.setVisible(true);
         HBoxSubtotal.setVisible(true);
         labelTotalTexto.setVisible(true);
@@ -201,7 +201,7 @@ public class ControladorInformacionLateral {
      * 
      * @param funcionSeleccionada La función de la cual extraer y mostrar la información
      */
-    public void colocarInformacionFuncion(Funcion funcionSeleccionada) {
+    public void mostrarInformacionDeFuncionSeleccionada(Funcion funcionSeleccionada) {
         // Información de la película
         labelNombrePelicula.setText(funcionSeleccionada.getPelicula() != null ? 
             funcionSeleccionada.getPelicula().getTitulo() : "Título no disponible");
@@ -242,7 +242,7 @@ public class ControladorInformacionLateral {
      * @param butacasSeleccionadas Lista de butacas que el usuario ha seleccionado
      * @param funcion Función que contiene los multiplicadores de precio
      */
-    public void calcularSubtotal(List<Butaca> butacasSeleccionadas, Funcion funcion) {
+    public void mostrarPosibleSubtotal(List<Butaca> butacasSeleccionadas, Funcion funcion) {
 
         // Obtener todos los multiplicadores que afectan el precio
         double multiplicadorTipoDeSala = funcion.getSala().getTipo().getMultiplicador();
@@ -263,7 +263,7 @@ public class ControladorInformacionLateral {
      * 
      * @param boletos Lista de productos/boletos (parámetro para compatibilidad)
      */
-    public void calcularTotal(List<Producto> boletos) {
+    public void mostrarTotal(List<Producto> boletos) {
         String subtotalText = subtotalLabel.getText().replace(",", ".");
         String impuestoText = impuestoLabel.getText().replace(",", ".");
 
@@ -303,7 +303,7 @@ public class ControladorInformacionLateral {
         );
         
         // Número secuencial de la butaca
-        Label labelCantidad = new Label(String.valueOf(cantidad++));
+        Label labelCantidad = new Label(String.valueOf(cantidadDeButacasSeleccionadas++));
         labelCantidad.setStyle(
             "-fx-font-weight: bold; " +
             "-fx-font-size: 16px; " +
@@ -358,7 +358,7 @@ public class ControladorInformacionLateral {
         // Buscar y eliminar el elemento visual con el ID correspondiente
         listaBoletos.getChildren().removeIf(node ->
             ("butaca-" + butaca.getId()).equals(node.getId()));
-        cantidad--;
+        cantidadDeButacasSeleccionadas--;
         
         // Renumerar elementos restantes para mantener secuencia
         renumerarButacas();

@@ -87,7 +87,7 @@ public class ControladorFacturacion {
     private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
     /** Controlador del panel lateral que muestra información de la función. */
-    private com.cinemax.venta_boletos.controladores.ControladorInformacionLateral controladorInformacionLateral;
+    private com.cinemax.venta_boletos.controladores.ControladorInformacionDeVenta controladorInformacionLateral;
 
     /**
      * Inicializa los elementos gráficos y configura eventos personalizados.
@@ -153,7 +153,7 @@ public class ControladorFacturacion {
         informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
 
         // 5. Calcular el total a pagar por los boletos seleccionados.
-        controladorInformacionLateral.calcularTotal(boletos);
+        controladorInformacionLateral.mostrarTotal(boletos);
     }
 
     /**
@@ -425,9 +425,9 @@ public class ControladorFacturacion {
      * 
      * @param controladorInformacionLateral El controlador de información lateral que maneja la vista de detalles de la función.
      */
-    public void setControladorInformacionLateral(ControladorInformacionLateral controladorInformacionLateral) {
+    public void setControladorInformacionLateral(ControladorInformacionDeVenta controladorInformacionLateral) {
         this.controladorInformacionLateral = controladorInformacionLateral;
-        controladorInformacionLateral.mostrarTodaLaInformacionDePago();
+        controladorInformacionLateral.mostrarTodaLaInformacionDelPago();
     }
 
 }

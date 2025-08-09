@@ -8,10 +8,10 @@ skinparam linetype ortho
 package controladores {
 
     class ControladorAsignadorButacas {
+        - funcionSeleccionada: Funcion
+        - ControladorInformacionDeVenta: ControladorInformacionDeVenta
         - controladorDeConsultaSalas: ControladorDeConsultaSalas
         - butacasSeleccionadas: List<Butaca>
-        - funcionSeleccionada: Funcion
-        - controladorInformacionLateral: ControladorInformacionLateral
         + inicializarDatos(funcionSeleccionada: Funcion): void
         - cargarMapaButacas(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
         + agregarButacaSeleccionada(butaca: Butaca): void
@@ -21,21 +21,18 @@ package controladores {
     class ControladorFacturacion {
         - boletos: List<Producto>
         - {final} servicioFacturacion: ServicioFacturacion
-        - controladorInformacionLateral: ControladorInformacionLateral
+        - ControladorInformacionDeVenta: ControladorInformacionDeVenta
         + cargarBoletosSeleccionados(boletos: List<Producto>): void
         - validarDocumento(): boolean
     }
 
-    class ControladorInformacionLateral {
-        - cantidad: int
-        + mostrarSoloPrecio(): void
-        + mostrarTodaLaInformacionDePago(): void
-        + colocarInformacionFuncion(funcion: Funcion): void
-        + calcularSubTotal(butacasSeleccionadas: List<Butaca>, funcion: Funcion): void
-        + calcularTotal(boletos: List<Producto>): void
+    class ControladorInformacionDeVenta {
+        - cantidadDeButacasSeleccionadas: int
+        + mostrarInformacionDeFuncionSeleccionada(funcion: Funcion): void
+        + mostrarPosibleSubtotal(butacasSeleccionadas: List<Butaca>, funcion: Funcion): void
+        + mostrarTotal(boletos: List<Producto>): void
         + mostrarButacaSeleccionada(butaca Butaca): void
-        + removerButacaDeLista(butaca Butaca): void
-        - renumerarButacas(): void
+        + removerButacaSeleccionada(butaca Butaca): void
     }
 
     class ControladorMostrarCartelera {
@@ -197,8 +194,8 @@ package modelos {
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
 ControladorFacturacion *--> ServicioFacturacion
-ControladorAsignadorButacas o--> ControladorInformacionLateral
-ControladorFacturacion o--> ControladorInformacionLateral
+ControladorAsignadorButacas o--> ControladorInformacionDeVenta
+ControladorFacturacion o--> ControladorInformacionDeVenta
 
 ' Relaciones de uso/dependencia (se crean o usan temporalmente)
 ControladorAsignadorButacas ..> ServicioGeneradorBoleto

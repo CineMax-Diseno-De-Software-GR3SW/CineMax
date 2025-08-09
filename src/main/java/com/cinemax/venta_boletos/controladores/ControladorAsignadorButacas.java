@@ -82,6 +82,11 @@ public class ControladorAsignadorButacas {
 
 
     // ===== ATRIBUTOS DE LÓGICA =====
+    /** Función cinematográfica seleccionada (película + horario + sala) */
+    private Funcion funcionSeleccionada;
+
+    /** Controlador del panel lateral que muestra información de la función */
+    private ControladorInformacionDeVenta controladorInformacionLateral;
 
     /** Controlador para la gestión del mapa de butacas y su visualización */
     private ControladorDeConsultaSalas controladorConsultaSalas;
@@ -91,12 +96,6 @@ public class ControladorAsignadorButacas {
 
     /** DAO para acceso a datos de boletos y butacas ocupadas */
     private BoletoDAO boletoDAO;
-
-    /** Función cinematográfica seleccionada (película + horario + sala) */
-    private Funcion funcionSeleccionada;
-
-    /** Controlador del panel lateral que muestra información de la función */
-    private ControladorInformacionLateral controladorInformacionLateral;
 
     /**
      * Constructor que inicializa los componentes básicos del controlador.
@@ -184,8 +183,8 @@ public class ControladorAsignadorButacas {
             // Configurar el controlador del panel lateral
             controladorInformacionLateral = loader.getController();
             controladorInformacionLateral.setRoot(vistaInformacionLateral);
-            controladorInformacionLateral.colocarInformacionFuncion(funcion);
-            controladorInformacionLateral.mostrarSoloPrecio(); // Vista inicial simplificada
+            controladorInformacionLateral.mostrarInformacionDeFuncionSeleccionada(funcion);
+            controladorInformacionLateral.mostrarSoloSubtotal(); // Vista inicial simplificada
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
@@ -322,7 +321,7 @@ public class ControladorAsignadorButacas {
 
         // Actualizar visualización en panel lateral
         controladorInformacionLateral.mostrarButacaSeleccionada(butaca);
-        controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        controladorInformacionLateral.mostrarPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
     /**
@@ -345,7 +344,7 @@ public class ControladorAsignadorButacas {
 
         // Actualizar visualización en panel lateral
         controladorInformacionLateral.removerButacaDeLista(butaca);
-        controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        controladorInformacionLateral.mostrarPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
 }
