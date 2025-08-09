@@ -49,10 +49,6 @@
                     <DatePicker fx:id="dateHasta" styleClass="date-picker" />
                     <Label text="Horario:" />
                     <ChoiceBox fx:id="choiceHorario" prefWidth="100" />
-                    <Label text="Tipo de Boleto:" />
-                    <ChoiceBox fx:id="choiceTipoBoleto" prefWidth="100" />
-                    <Label text="Sala:" />
-                    <ChoiceBox fx:id="choiceSala" prefWidth="100" />
                     <Button fx:id="btnFiltrar" styleClass="primary-button" text="Filtrar" onAction="#onFiltrar"/>
                 </HBox>
 
@@ -103,7 +99,7 @@
         <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="233.0" spacing="10" styleClass="summary-pane">
             <children>
             <Button mnemonicParsing="false" styleClass="primary-button" text="Modulo Reporte" />
-            <Button mnemonicParsing="false" onAction="#goToReportesProgramados" styleClass="primary-button" text="Reporte Programado" />
+            <Button mnemonicParsing="false" onAction="#goToReporteProgramado" styleClass="primary-button" text="Reporte Programado" />
                 <!-- Espaciador que empuja el botón Log Out al fondo -->
                 <Region VBox.vgrow="ALWAYS" />
 

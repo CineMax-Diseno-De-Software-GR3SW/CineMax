@@ -12,6 +12,7 @@ public class ReporteGenerado {
     private String rutaArchivo;
     private String frecuencia;
     private String descripcion;
+    private Map<String, Object> configuracion;
 
     public ReporteGenerado(int id, String nombre, String tipo, LocalDateTime fechaGeneracion, String rutaArchivo,
             String descripcion) {
@@ -32,9 +33,6 @@ public class ReporteGenerado {
         this.frecuencia = frecuencia;
     }
 
-    // Constructor vacío
-    public ReporteGenerado() {
-    }
 
     // Getters y Setters
     public int getId() {
@@ -98,11 +96,11 @@ public class ReporteGenerado {
     }
 
     public  Map<String, Object> getConfiguracion() {
-        return null;
+        return configuracion;
     }
 
-    public void setConfiguracion(Object configuracion) {
-        //
+    public void setConfiguracion(Map<String, Object> configuracion) {
+        this.configuracion = configuracion;
     }
 
 }

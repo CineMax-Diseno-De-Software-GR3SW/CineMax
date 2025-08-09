@@ -6,7 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VentaDAO {
@@ -115,6 +117,48 @@ public class VentaDAO {
         }
         
         return resumen;
+    }
+
+
+    public List<Map<String, Object>> obtenerEstadisticasDeBarras() {
+        String sql = "SELECT " +
+            "f.fecha::DATE AS fecha, " +
+            "COUNT(b.idboleto) AS total_boletos_vendidos, " +
+            "COALESCE(SUM(fac.total), 0) AS ingreso_total, " +
+            "STRING_AGG(DISTINCT s.tipo::text, ', ') AS tipos_sala, " +
+            "STRING_AGG(DISTINCT fun.formato::text, ', ') AS formatos " +
+            "FROM boleto b " +
+            "JOIN factura fac ON b.idfactura = fac.idfactura " +
+            "JOIN funcion fun ON b.idfuncion = fun.id_funcion " +
+            "JOIN sala s ON fun.id_sala = s.id " +
+            "JOIN factura f ON b.idfactura = f.idfactura " +
+            "GROUP BY f.fecha::DATE " +
+            "ORDER BY f.fecha::DATE " +
+            "LIMIT 7";
+
+        List<Map<String, Object>> estadisticas = new ArrayList<>();
+
+        try (Connection conn = ConexionBaseSingleton.getInstancia().getConexion();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                Map<String, Object> fila = new HashMap<>();
+                fila.put("fecha", rs.getDate("fecha"));
+                fila.put("total_boletos_vendidos", rs.getInt("total_boletos_vendidos"));
+                fila.put("ingreso_total", rs.getDouble("ingreso_total"));
+                fila.put("tipos_sala", rs.getString("tipos_sala"));
+                fila.put("formatos", rs.getString("formatos"));
+                estadisticas.add(fila);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al obtener estadísticas de barras: " + e.getMessage());
+        }
+
+        return estadisticas;
+
     }
 
     // Método para obtener estadísticas adicionales

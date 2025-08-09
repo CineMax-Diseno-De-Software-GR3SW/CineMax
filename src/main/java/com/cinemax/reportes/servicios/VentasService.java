@@ -38,6 +38,18 @@ public class VentasService {
         }
     }
 
+
+    public List<Map<String, Object>> getEstadisticasDeBarras() {
+        try{
+            return ventasDAO.obtenerEstadisticasDeBarras();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error en getEstadisticasDeBarras: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     // Método para obtener ventas por período específico
     public Map<String, Object> getVentasPorFecha(String fechaInicio, String fechaFin) {
         try {
