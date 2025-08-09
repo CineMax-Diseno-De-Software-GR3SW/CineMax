@@ -15,6 +15,7 @@ public enum EstadoButaca {
     DISPONIBLE,
 
     /** La butaca ya está ocupada por un cliente */
+
     OCUPADA,
 
     /** La butaca está fuera de servicio o no disponible */

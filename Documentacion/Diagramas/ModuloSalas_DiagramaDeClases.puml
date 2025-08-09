@@ -1,0 +1,156 @@
+@startuml
+'https://plantuml.com/class-diagram
+package salas {
+package modelos {
+package entidades{
+    class Sala {
+        -id: int
+        -nombre: String
+        -capacidad: int
+        -tipo: String
+        -estado: EstadoSala
+        +getEstado(): EstadoSala
+        +getId(): int
+        +setId(id: int): void
+        +getNombre(): String
+        +setNombre(nombre: String): void
+        +getCapacidad(): int
+        +setCapacidad(capacidad: int): void
+        +getTipo(): String
+        +setTipo(tipo: String): void
+        +toString(nombre): String
+    }
+   class Butaca {
+   -id: int
+   -idSala: int
+   -fila: String
+   -columna: String
+   -estado: EstadoButaca
+   +getId(): int
+   +setId(): int
+   +getFila(): String
+   +getColumna(): String
+   +getEstado(): String
+   }
+   enum EstadoSala{
+   DISPONIBLE,
+   MANTENIMIENTO
+   }
+   enum EstadoButaca{
+   DISPONIBLE,
+   OCUPADA,
+   INHABILITADA
+   }
+   interface SalaFactory{
+   +crearSala(int id, String nombre, int capacidad, EstadoSala estado)
+   }
+   class SalaNormalFactory implements SalaFactory{
+   +crearSala(int id, String nombre, int capacidad, EstadoSala estado) {
+   }
+   class SalaVIPFactory implements SalaFactory{
+   +crearSala(int id, String nombre, int capacidad, EstadoSala estado)
+   }
+   enum TipoSala{
+   -multiplicador: int
+   NORMAL(1.00),
+   VIP(1.50)
+   +getMultiplicador()
+   }
+   }
+    }
+    Sala -> TipoSala
+    SalaNormalFactory -> Sala
+    SalaVIPFactory -> Sala
+    Sala -> EstadoSala
+    Sala"1" o- "1..*"Butaca
+    Butaca -> EstadoButaca
+    package servicios{
+    class ButacaService{
+    -butacasDAO : ButacasDAO
+    -salasDAO: SalasDAO
+    +listarButacasPorSala() : List<Butaca>
+    +generarButacasAutomatica() : void
+    +crearButaca(Butaca butaca) : void
+    +actualizarButaca(Butaca butaca) : void
+    +validarDatosBasicos(Butaca butaca) : void
+    +listarTodasButacas() : List<Butaca>
+    +eliminarButaca(int id) : void
+    }
+    class SalaService{
+    -salasDAO : SalasDAO
+    -butacaService : ButacaService
+    -butacasDAO : ButacasDAO
+    +crearSala(Sala sala) : void
+    +obtenerSalaPorId(int id) : Sala
+    +listarSalas() : List<Sala>
+    +actualizarSala(Sala sala) : void
+    +eliminarSala(int id) : void
+    }
+    }
+    package controladores{
+    class ControladorSalas {
+        -txtNombre: TextField
+        -cmbCapacidad: ComboBox<Integer>
+        -cmbTipo: ComboBox<TipoSala>
+        -cmbEstado: ComboBox<EstadoSala>
+        -tablaSalas: TableView<Sala>
+        -colId: TableColumn<Sala, Integer>
+        -colNombre: TableColumn<Sala, String>
+        -colCapacidad: TableColumn<Sala, Integer>
+        -colTipo: TableColumn<Sala, String>
+        -colEstado: TableColumn<Sala, String>
+        -lblTotalSalas: Label
+        -txtBuscarId: TextField
+        -btnEliminar: Button
+        -btnGuardar: Button
+        -btnNuevo: Button
+        -salaService: SalaService
+        -salas: ObservableList<Sala>
+        -butacaService: ButacaService
+        -salaEnEdicion: Sala
+        +initialize(): void
+        -limpiarFormulario(): void
+        -actualizarModoFormulario(): void
+        -onLimpiarFormulario(event: ActionEvent): void
+        -actualizarEstadoFormulario(): void
+        -validarFormularioCompleto(): boolean
+        +onGuardar(event: ActionEvent): void
+        +onBackAction(event: ActionEvent): void
+        -cargarSalas(): void
+        -listarTodasSalas(): void
+        -crearSala(): void
+        -actualizarSala(): void
+        -eliminarSala(): void
+        -buscarSalaPorId(): void
+    }
+    class ControladorButacas {
+        -salaService: SalaService
+        -servicio: ButacaService
+        -txtBuscarIdSala: TextField
+        -tablaButacas: TableView<Butaca>
+        -colId: TableColumn<Butaca, Integer>
+        -colFila: TableColumn<Butaca, String>
+        -colColumna: TableColumn<Butaca, String>
+        -colEstado: TableColumn<Butaca, String>
+        -colIdSala: TableColumn<Butaca, Integer>
+        -txtFila: TextField
+        -txtColumna: TextField
+        -cmbEstado: ComboBox<EstadoButaca>
+        -cmbSala: ComboBox<Sala>
+        -lblEstado: Label
+        -lblTotalButacas: Label
+        -salas: ObservableList<Sala>
+        -butacas: ObservableList<Butaca>
+        +initialize(): void
+        -validarCampos(): boolean
+        -listarButacasPorSala(e: ActionEvent): void
+        -listarTodasButacas(e: ActionEvent): void
+        -crearButaca(e: ActionEvent): void
+        -actualizarButaca(e: ActionEvent): void
+        -eliminarButaca(e: ActionEvent): void
+        +onBackAction(event: ActionEvent): void
+        -limpiarCampos(): void
+    }
+    }
+}
+@enduml

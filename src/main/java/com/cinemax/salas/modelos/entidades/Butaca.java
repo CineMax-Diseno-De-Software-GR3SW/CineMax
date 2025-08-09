@@ -26,9 +26,10 @@ public class Butaca {
 
     /** Número o etiqueta de la columna dentro de la fila */
     private String columna;
+    /** Número o etiqueta del estado de sala */
 
-    /** Estado actual de la butaca (DISPONIBLE, OCUPADA, etc.) */
-    private String estado;
+    private EstadoButaca estado;
+
 
     // ===== GETTERS Y SETTERS =====
 
@@ -57,9 +58,8 @@ public class Butaca {
     public void setColumna(String columna) { this.columna = columna; }
 
     /** @return el estado actual de la butaca */
-    public String getEstado() { return estado; }
-
+    public String getEstado() { return String.valueOf(estado); }
     /** @param estado estado que se asigna a la butaca */
-    public void setEstado(String estado) { this.estado = estado; }
+    public void setEstado(String estado) { this.estado = EstadoButaca.valueOf(estado); }
 
 }
