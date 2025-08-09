@@ -10,6 +10,7 @@ import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.controladores.ControladorDeConsultaSalas;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
 import com.cinemax.venta_boletos.servicios.ServicioGeneradorBoleto;
@@ -76,7 +77,16 @@ public class ControladorAsignadorButacas {
     @FXML
     private VBox mapaButacasContainer;
 
+    @FXML
+    private Label timerLabel; // <-- AÑADIR ESTA LÍNEA
+
+
     // ===== ATRIBUTOS DE LÓGICA =====
+    /** Función cinematográfica seleccionada (película + horario + sala) */
+    private Funcion funcionSeleccionada;
+
+    /** Controlador del panel lateral que muestra información de la función */
+    private ControladorInformacionDeVenta ControladorInformacionDeVenta;
 
     /** Controlador para la gestión del mapa de butacas y su visualización */
     private ControladorDeConsultaSalas controladorConsultaSalas;
@@ -86,12 +96,6 @@ public class ControladorAsignadorButacas {
 
     /** DAO para acceso a datos de boletos y butacas ocupadas */
     private BoletoDAO boletoDAO;
-
-    /** Función cinematográfica seleccionada (película + horario + sala) */
-    private Funcion funcionSeleccionada;
-
-    /** Controlador del panel lateral que muestra información de la función */
-    private ControladorInformacionLateral controladorInformacionLateral;
 
     /**
      * Constructor que inicializa los componentes básicos del controlador.
@@ -149,6 +153,12 @@ public class ControladorAsignadorButacas {
         // 6. Guardar referencia para uso posterior en otros métodos
         this.funcionSeleccionada = funcionSeleccionada;
 
+        // Vincular el label del temporizador para que se actualice automáticamente
+        if (timerLabel != null) {
+            timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
+        }
+
+
     }
 
     /**
@@ -164,17 +174,17 @@ public class ControladorAsignadorButacas {
         try {
             // Cargar vista FXML del panel de información lateral
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaInformacionLateral.fxml"));
+            loader.setLocation(getClass().getResource("/vistas/venta_boletos/VistaInformacionDeVenta.fxml"));
             Parent vistaInformacionLateral = loader.load();
 
             // Inyectar la vista en el contenedor de la interfaz principal
             informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
 
             // Configurar el controlador del panel lateral
-            controladorInformacionLateral = loader.getController();
-            controladorInformacionLateral.setRoot(vistaInformacionLateral);
-            controladorInformacionLateral.colocarInformacionFuncion(funcion);
-            controladorInformacionLateral.mostrarSoloPrecio(); // Vista inicial simplificada
+            ControladorInformacionDeVenta = loader.getController();
+            ControladorInformacionDeVenta.setRoot(vistaInformacionLateral);
+            ControladorInformacionDeVenta.cargarInformacionDeFuncionSeleccionada(funcion);
+            ControladorInformacionDeVenta.mostrarSoloSubtotal(); // Vista inicial simplificada
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
@@ -226,14 +236,16 @@ public class ControladorAsignadorButacas {
      */
     @FXML
     void onBackAction(ActionEvent event) {
+        // Detener el temporizador al retroceder
+        ServicioTemporizador.getInstance().detenerTemporizador();
         // Obtener referencia a la ventana actual
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
 
         // Cambiar a la vista de funciones preservando el contexto de la película
-        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes
+        ControladorVisualizadorFunciones controladorFunciones = ManejadorMetodosComunes
                 .cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
-                        "CineMAX");
-        controladorFunciones.setPelicula(funcionSeleccionada.getPelicula());
+                        "CineMax");
+        controladorFunciones.asignarPeliculaSeleccionada(funcionSeleccionada.getPelicula());
     }
 
     /**
@@ -270,7 +282,7 @@ public class ControladorAsignadorButacas {
 
             // 4. Configurar el controlador de facturación con datos necesarios
             ControladorFacturacion controladorFacturacion = loader.getController();
-            controladorFacturacion.setControladorInformacionLateral(controladorInformacionLateral);
+            controladorFacturacion.setControladorInformacionDeVenta(ControladorInformacionDeVenta);
 
             // 5. Inicializar datos ANTES de mostrar la vista (evita problemas de
             // renderizado)
@@ -279,7 +291,7 @@ public class ControladorAsignadorButacas {
             // 6. Ahora sí cambiar la escena con todos los datos ya cargados
             Scene newScene = new Scene(root);
             currentStage.setScene(newScene);
-            currentStage.setTitle("CineMAX");
+            currentStage.setTitle("CineMax");
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
@@ -308,8 +320,8 @@ public class ControladorAsignadorButacas {
         butacasSeleccionadas.add(butaca);
 
         // Actualizar visualización en panel lateral
-        controladorInformacionLateral.mostrarButacaSeleccionada(butaca);
-        controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        ControladorInformacionDeVenta.cargarButacaSeleccionada(butaca);
+        ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
     /**
@@ -331,8 +343,8 @@ public class ControladorAsignadorButacas {
         butacasSeleccionadas.remove(butaca);
 
         // Actualizar visualización en panel lateral
-        controladorInformacionLateral.removerButacaDeLista(butaca);
-        controladorInformacionLateral.calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        ControladorInformacionDeVenta.removerButacaDeLista(butaca);
+        ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
 }

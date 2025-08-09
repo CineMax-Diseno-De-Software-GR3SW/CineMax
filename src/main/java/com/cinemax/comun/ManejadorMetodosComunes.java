@@ -68,7 +68,7 @@ public class ManejadorMetodosComunes {
      * Versión sobrecargada del método cambiarVentana sin parámetro de título.
      * 
      * Funciona de manera idéntica al método anterior pero sin especificar título,
-     * utilizando por defecto "CineMAX" como título de la ventana.
+     * utilizando por defecto "CineMax" como título de la ventana.
      * 
      * @param currentStage El Stage actual que será reemplazado
      * @param rutaFXML Ruta del archivo FXML a cargar (debe comenzar con "/")
@@ -91,7 +91,7 @@ public class ManejadorMetodosComunes {
             // Establecer la nueva escena con el contenido cargado
             currentStage.setScene(new Scene(root));
             
-            currentStage.setTitle("CineMAX");
+            currentStage.setTitle("CineMax");
 
             // Maximizar la ventana para aprovechar todo el espacio disponible
             currentStage.setMaximized(true);
@@ -140,7 +140,7 @@ public class ManejadorMetodosComunes {
             
             // Establecer la nueva escena con el contenido cargado
             currentStage.setScene(new Scene(root));
-            currentStage.setTitle("CineMAX");
+            currentStage.setTitle("CineMax");
             
             // Maximizar la ventana para aprovechar todo el espacio disponible
             currentStage.setMaximized(true);
@@ -231,31 +231,6 @@ public class ManejadorMetodosComunes {
     }
 
     /**
-     * Muestra una pantalla de carga que después navega a una vista específica.
-     * 
-     * Este método es útil para operaciones que requieren tiempo de procesamiento,
-     * mostrando al usuario una barra de progreso antes de cambiar a la vista destino.
-     * 
-     * @param stage El Stage donde mostrar la pantalla de carga
-     * @param rutaFXML Ruta de la vista FXML de destino
-     * @param saltosEnElProgreso Número de incrementos en la barra de progreso
-     * @param tiempoPorSalto Tiempo en milisegundos entre cada incremento
-     */
-    public static void mostrarPantallaDeCarga(Stage stage, String rutaFXML, int saltosEnElProgreso, int tiempoPorSalto) {
-        try {
-            // Cargar y configurar la pantalla de carga
-            ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
-            
-            // Configurar la carga para ir a la siguiente ventana
-            // Parámetros: stage, ruta FXML destino, título de ventana destino
-            controladorCarga.iniciarCarga(stage, rutaFXML, saltosEnElProgreso, tiempoPorSalto);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Carga y configura la pantalla de carga básica.
      * 
      * Este método auxiliar se encarga de cargar la vista FXML de la pantalla de carga,
@@ -276,7 +251,7 @@ public class ManejadorMetodosComunes {
         // Crear y configurar la escena de carga
         Scene escenaCarga = new Scene(root);
         stage.setScene(escenaCarga);
-        stage.setTitle("CineMAX");
+        stage.setTitle("CineMax");
 
         // Maximizar la ventana y mostrarla
         stage.setMaximized(true);
@@ -285,35 +260,10 @@ public class ManejadorMetodosComunes {
         return controladorCarga;
     }
 
-    /**
-     * Muestra una pantalla de carga con datos personalizados para procesamiento.
-     * 
-     * Este método permite pasar un controlador personalizado que implementa
-     * ControladorCargaConDatos para realizar operaciones específicas durante la carga.
-     * Es útil cuando se necesita procesar datos o realizar operaciones complejas
-     * antes de mostrar la siguiente vista.
-     * 
-     * @param stage El Stage donde mostrar la pantalla de carga
-     * @param controladorCargaConDatos Controlador que maneja el procesamiento de datos
-     * @param saltosEnElProgreso Número de incrementos en la barra de progreso
-     * @param tiempoPorSalto Tiempo en milisegundos entre cada incremento
-     */
-    public static void mostrarVistaDeCargaPasandoDatos(Stage stage, ControladorCargaConDatos controladorCargaConDatos, int saltosEnElProgreso, int tiempoPorSalto) {
-        try {
-        
-            // Cargar y configurar la pantalla de carga básica
-            ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
-        
-            // Pasar los datos y configuración al controlador de carga
-            controladorCarga.iniciarCarga(stage, controladorCargaConDatos, saltosEnElProgreso, tiempoPorSalto);
-        
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+    
 
     /**
-     * NUEVO MÉTODO: Cambia ventana usando una vista ya cargada.
+     * Cambia ventana usando una vista ya cargada.
      * 
      * Este método optimizado recibe una vista que ya fue cargada en background,
      * evitando el tiempo de carga en el hilo principal de JavaFX.
@@ -334,7 +284,7 @@ public class ManejadorMetodosComunes {
             
             // Aplicar la vista ya cargada (esto es súper rápido)
             currentStage.setScene(new Scene(vistaYaCargada));
-            currentStage.setTitle("CineMAX");
+            currentStage.setTitle("CineMax");
             currentStage.setMaximized(true);
             
         } catch (Exception e) {
@@ -343,11 +293,7 @@ public class ManejadorMetodosComunes {
         }
     }
 
-    /**
-     * NUEVO MÉTODO: Versión optimizada de mostrarPantallaDeCarga.
-     * 
-     * Esta versión usa el nuevo sistema de carga paralela.
-     */
+    /*Versión optimizada de mostrarPantallaDeCarga. */
     public static void mostrarPantallaDeCargaOptimizada(Stage stage, String rutaFXML, int saltosEnElProgreso, int tiempoPorSalto) {
         try {
             ControladorCarga controladorCarga = cargarPantallaDeCarga(stage);
@@ -362,7 +308,7 @@ public class ManejadorMetodosComunes {
     }
 
     /**
-     * NUEVO MÉTODO: Versión optimizada para carga con datos.
+     * Versión optimizada para carga con datos.
      */
     public static void mostrarVistaDeCargaPasandoDatosOptimizada(Stage stage, ControladorCargaConDatos controladorCargaConDatos, int saltosEnElProgreso, int tiempoPorSalto) {
         try {

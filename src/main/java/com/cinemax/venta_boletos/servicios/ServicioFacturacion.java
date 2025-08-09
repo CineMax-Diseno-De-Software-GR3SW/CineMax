@@ -4,24 +4,25 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.servicios.ContenidoMensaje;
+import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
+import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
 
 
 public class ServicioFacturacion {
 
-    // CalculadorImpuesto calculadorImpuesto; // TODO: No debería ser un atributo de la clase, sino un parámetro del método
-                                           // generarFactura
+    private FacturaDAO facturaDAO = new FacturaDAO();
+    private BoletoDAO boletoDAO = new BoletoDAO();
 
-    // public ServicioFacturacion() {
-    //     this.calculadorImpuesto = new CalculadorIVA();
-    // }
-
-    public Factura generarFactura(List<Producto> productos, Cliente cliente, CalculadorImpuesto calculadorImpuesto) {
+    public void generarFactura(List<Producto> productos, Cliente cliente, CalculadorImpuesto calculadorImpuesto) {
         Factura factura = new Factura(
                 generarCodigoFactura(),
                 getFechaActual(),
@@ -30,8 +31,30 @@ public class ServicioFacturacion {
         factura.calcularSubTotal();
         factura.calcularTotal(calculadorImpuesto);
 
+        try {
+            // Guardar la factura en la base de datos.
+            facturaDAO.crearFactura(factura);
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear la factura: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        // Guardar los boletos asociados a la factura en la base de datos.
+        for (Producto boleto : productos) {
+            try {
+                boletoDAO.crearBoleto((Boleto) boleto, factura);
+            } catch (Exception e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear el boleto: " + e.getMessage());
+                e.printStackTrace();
+                return; 
+            }
+        }
+
         ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
         generador.generarFactura(factura);
+
+        // Mostrar un mensaje de éxito al usuario indicando que la factura se ha creado exitosamente.
+        ManejadorMetodosComunes.mostrarVentanaExito("Factura creada exitosamente: " + factura.getCodigoFactura());
 
         // Enviar el PDF al correo del cliente usando ServicioCorreoSingleton
         try {
@@ -45,8 +68,6 @@ public class ServicioFacturacion {
             e.printStackTrace();
             // Manejo de error si falla el envío de correo
         }
-
-        return factura;
     }
 
     /**

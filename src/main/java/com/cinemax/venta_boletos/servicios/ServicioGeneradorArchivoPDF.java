@@ -36,7 +36,7 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
 
     // Información institucional del cine que aparece en los documentos
     private static final String[] CINE_INFO = {
-            "CineMax - Donde vive el cine",
+            "CineMax",
             "Dirección: Av. Principal 123, Ciudad",
             "Tel: (555) 123-456"
     };

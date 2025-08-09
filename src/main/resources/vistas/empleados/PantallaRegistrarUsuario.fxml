@@ -50,31 +50,31 @@
 
             <HBox alignment="CENTER_LEFT" spacing="2" GridPane.rowIndex="0">
                 <Label text="Nombres:"/>
-                <Label text="*Campo Obligatorio" styleClass="required-asterisk"/>
+                <Label text="*" styleClass="required-asterisk"/>
             </HBox>
             <TextField fx:id="campoNombres" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
             <HBox alignment="CENTER_LEFT" spacing="2" GridPane.rowIndex="1">
                 <Label text="Apellidos:"/>
-                <Label text="*Campo Obligatorio" styleClass="required-asterisk"/>
+                <Label text="*" styleClass="required-asterisk"/>
             </HBox>
             <TextField fx:id="campoApellidos" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
             <HBox alignment="CENTER_LEFT" spacing="2" GridPane.rowIndex="2">
                 <Label text="Cédula:"/>
-                <Label text="*Campo Obligatorio" styleClass="required-asterisk"/>
+                <Label text="*" styleClass="required-asterisk"/>
             </HBox>
             <TextField fx:id="campoCedula" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
             <HBox alignment="CENTER_LEFT" spacing="2" GridPane.rowIndex="3">
                 <Label text="Correo:"/>
-                <Label text="*Campo Obligatorio" styleClass="required-asterisk"/>
+                <Label text="*" styleClass="required-asterisk"/>
             </HBox>
             <TextField fx:id="campoCorreo" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
             <HBox alignment="CENTER_LEFT" spacing="2" GridPane.rowIndex="4">
                 <Label text="Celular:"/>
-                <Label text="*Campo Obligatorio" styleClass="required-asterisk"/>
+                <Label text="*" styleClass="required-asterisk"/>
             </HBox>
             <TextField fx:id="campoCelular" GridPane.columnIndex="1" GridPane.rowIndex="4" />
 
@@ -91,15 +91,14 @@
 
             <HBox alignment="CENTER_LEFT" spacing="2" GridPane.rowIndex="7">
                 <Label text="Nombre de usuario:"/>
-                <Label text="*Campo Obligatorio" styleClass="required-asterisk"/>
+                <Label text="*" styleClass="required-asterisk"/>
             </HBox>
             <TextField fx:id="campoNombreUsuario" GridPane.columnIndex="1" GridPane.rowIndex="7" />
 
-<!--            <Label text="Contraseña:" GridPane.rowIndex="8" />-->
-<!--            <PasswordField fx:id="campoContrasena" GridPane.columnIndex="1" GridPane.rowIndex="8" />-->
+            <HBox alignment="CENTER" GridPane.rowIndex="8" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                <Label text="* Campos obligatorios" styleClass="required-asterisk" />
+            </HBox>
 
-<!--            <Label text="Confirmar:" GridPane.rowIndex="9" />-->
-<!--            <PasswordField fx:id="campoConfirmar" GridPane.columnIndex="1" GridPane.rowIndex="9" />-->
         </GridPane>
         <padding>
             <Insets left="15.0" right="15.0" />

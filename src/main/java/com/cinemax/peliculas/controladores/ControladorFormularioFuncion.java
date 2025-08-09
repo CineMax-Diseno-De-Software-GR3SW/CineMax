@@ -33,40 +33,110 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+/**
+ * Controlador para el formulario de creación y edición de funciones cinematográficas.
+ *
+ * <p>Esta clase maneja la interfaz gráfica para crear nuevas funciones o editar
+ * funciones existentes, incluyendo validaciones en tiempo real, cálculo automático
+ * de horarios y manejo completo del ciclo de vida del formulario.
+ *
+ * <p>Funcionalidades principales:
+ * <ul>
+ *   <li>Creación de nuevas funciones con validaciones completas</li>
+ *   <li>Edición de funciones existentes</li>
+ *   <li>Validación en tiempo real de campos obligatorios</li>
+ *   <li>Cálculo automático de hora de finalización</li>
+ *   <li>Configuración dinámica de ComboBox con datos del sistema</li>
+ *   <li>Manejo de modo creación vs. edición</li>
+ * </ul>
+ *
+ * @author GR3SW
+ * @version 1.0
+ * @since 1.0
+ */
 public class ControladorFormularioFuncion implements Initializable {
 
+    /** Título de la pantalla */
     @FXML private Label lblTituloPantalla;
+    
+    /** Indicador de modo de edición */
     @FXML private Label lblModoEdicion;
+    
+    /** Estado actual del formulario */
     @FXML private Label lblEstadoFormulario;
+    
+    /** Duración calculada de la función */
     @FXML private Label lblDuracionCalculada;
+    
+    /** Capacidad de la sala seleccionada */
     @FXML private Label lblCapacidadSala;
     
+    /** ComboBox para selección de película */
     @FXML private ComboBox<Pelicula> cmbPelicula;
+    
+    /** ComboBox para selección de sala */
     @FXML private ComboBox<Sala> cmbSala;
+    
+    /** ComboBox para selección de formato */
     @FXML private ComboBox<FormatoFuncion> cmbFormato;
+    
+    /** ComboBox para selección de tipo de estreno */
     @FXML private ComboBox<TipoEstreno> cmbTipoEstreno;
+    
+    /** Selector de fecha */
     @FXML private DatePicker dateFecha;
+    
+    /** Campo de hora de inicio */
     @FXML private TextField txtHoraInicio;
+    
+    /** Campo de hora de fin (calculado automáticamente) */
     @FXML private TextField txtHoraFin;
     
+    /** Botón para guardar función */
     @FXML private Button btnGuardar;
+    
+    /** Botón para cancelar operación */
     @FXML private Button btnCancelar;
+    
+    /** Botón para limpiar formulario */
     @FXML private Button btnLimpiar;
+    
+    /** Botón para volver */
     @FXML private Button btnVolver;
+    
+    /** Botón para cerrar sesión */
     @FXML private Button btnLogOut;
 
+    /** Servicio para operaciones con funciones */
     private ServicioFuncion servicioFuncion;
+    
+    /** Servicio para operaciones con películas */
     private ServicioPelicula servicioPelicula;
+    
+    /** Servicio para operaciones con salas */
     private SalaService salaService;
+    
+    /** Función en modo edición (null para creación) */
     private Funcion funcionEditando;
+    
+    /** Indicador de modo de edición */
     private boolean modoEdicion = false;
 
+    /**
+     * Constructor que inicializa los servicios necesarios.
+     */
     public ControladorFormularioFuncion() {
         this.servicioFuncion = new ServicioFuncion();
         this.servicioPelicula = new ServicioPelicula();
         this.salaService = new SalaService();
     }
 
+    /**
+     * Inicializa el controlador después de que se ha cargado el FXML.
+     * 
+     * @param location La ubicación utilizada para resolver rutas relativas para el objeto raíz
+     * @param resources Los recursos utilizados para localizar el objeto raíz
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         configurarFormulario();
@@ -75,8 +145,21 @@ public class ControladorFormularioFuncion implements Initializable {
         actualizarEstadoFormulario();
     }
 
+    /**
+     * Configura los componentes del formulario con convertidores y validaciones.
+     */
     private void configurarFormulario() {
-        // Configurar ComboBox de películas
+        configurarComboBoxPeliculas();
+        configurarComboBoxSalas();
+        configurarComboBoxFormatos();
+        configurarComboBoxTiposEstreno();
+        configurarValidacionHora();
+    }
+
+    /**
+     * Configura el ComboBox de películas con convertidor personalizado.
+     */
+    private void configurarComboBoxPeliculas() {
         cmbPelicula.setConverter(new StringConverter<Pelicula>() {
             @Override
             public String toString(Pelicula pelicula) {
@@ -88,8 +171,12 @@ public class ControladorFormularioFuncion implements Initializable {
                 return null;
             }
         });
+    }
 
-        // Configurar ComboBox de salas
+    /**
+     * Configura el ComboBox de salas con convertidor personalizado.
+     */
+    private void configurarComboBoxSalas() {
         cmbSala.setConverter(new StringConverter<Sala>() {
             @Override
             public String toString(Sala sala) {
@@ -101,8 +188,12 @@ public class ControladorFormularioFuncion implements Initializable {
                 return null;
             }
         });
+    }
 
-        // Configurar ComboBox de formatos
+    /**
+     * Configura el ComboBox de formatos de función.
+     */
+    private void configurarComboBoxFormatos() {
         cmbFormato.setItems(FXCollections.observableArrayList(FormatoFuncion.values()));
         cmbFormato.setConverter(new StringConverter<FormatoFuncion>() {
             @Override
@@ -115,8 +206,12 @@ public class ControladorFormularioFuncion implements Initializable {
                 return null;
             }
         });
+    }
 
-        // Configurar ComboBox de tipos de estreno
+    /**
+     * Configura el ComboBox de tipos de estreno.
+     */
+    private void configurarComboBoxTiposEstreno() {
         cmbTipoEstreno.setItems(FXCollections.observableArrayList(TipoEstreno.values()));
         cmbTipoEstreno.setConverter(new StringConverter<TipoEstreno>() {
             @Override
@@ -129,8 +224,12 @@ public class ControladorFormularioFuncion implements Initializable {
                 return null;
             }
         });
+    }
 
-        // Configurar validación de hora
+    /**
+     * Configura la validación de entrada para el campo de hora.
+     */
+    private void configurarValidacionHora() {
         txtHoraInicio.textProperty().addListener((obs, oldText, newText) -> {
             if (!newText.matches("\\d{0,2}:?\\d{0,2}")) {
                 txtHoraInicio.setText(oldText);
@@ -141,8 +240,10 @@ public class ControladorFormularioFuncion implements Initializable {
         });
     }
 
+    /**
+     * Configura las validaciones en tiempo real del formulario.
+     */
     private void configurarValidaciones() {
-        // Listeners para validar formulario en tiempo real
         Runnable validarFormulario = this::actualizarEstadoFormulario;
 
         cmbPelicula.valueProperty().addListener((obs, oldValue, newValue) -> {
@@ -169,6 +270,9 @@ public class ControladorFormularioFuncion implements Initializable {
         cmbTipoEstreno.valueProperty().addListener((obs, oldValue, newValue) -> validarFormulario.run());
     }
 
+    /**
+     * Carga los datos necesarios para los ComboBox desde los servicios.
+     */
     private void cargarDatos() {
         try {
             // Cargar películas
@@ -183,11 +287,16 @@ public class ControladorFormularioFuncion implements Initializable {
         }
     }
 
+    /**
+     * Calcula automáticamente la hora de fin basándose en la duración de la película.
+     * 
+     * <p>Agrega 15 minutos adicionales para tiempo de limpieza entre funciones.
+     */
     private void calcularHoraFin() {
         if (cmbPelicula.getValue() != null && !txtHoraInicio.getText().trim().isEmpty()) {
             try {
                 LocalTime horaInicio = LocalTime.parse(txtHoraInicio.getText().trim(), DateTimeFormatter.ofPattern("H:mm"));
-                LocalTime horaFin = horaInicio.plusMinutes(cmbPelicula.getValue().getDuracionMinutos() + 15); // +15 min para limpieza
+                LocalTime horaFin = horaInicio.plusMinutes(cmbPelicula.getValue().getDuracionMinutos() + 15);
                 txtHoraFin.setText(horaFin.format(DateTimeFormatter.ofPattern("HH:mm")));
             } catch (DateTimeParseException e) {
                 txtHoraFin.clear();
@@ -197,6 +306,9 @@ public class ControladorFormularioFuncion implements Initializable {
         }
     }
 
+    /**
+     * Actualiza el estado visual del formulario basándose en la validación.
+     */
     private void actualizarEstadoFormulario() {
         boolean valido = esFormularioValido();
         btnGuardar.setDisable(!valido);
@@ -210,6 +322,11 @@ public class ControladorFormularioFuncion implements Initializable {
         }
     }
 
+    /**
+     * Valida que todos los campos obligatorios estén completos y sean válidos.
+     * 
+     * @return true si el formulario es válido, false en caso contrario
+     */
     private boolean esFormularioValido() {
         return cmbPelicula.getValue() != null &&
                cmbSala.getValue() != null &&
@@ -220,6 +337,12 @@ public class ControladorFormularioFuncion implements Initializable {
                esHoraValida(txtHoraInicio.getText().trim());
     }
 
+    /**
+     * Valida que una cadena represente una hora válida.
+     * 
+     * @param hora Cadena a validar
+     * @return true si es una hora válida, false en caso contrario
+     */
     private boolean esHoraValida(String hora) {
         try {
             LocalTime.parse(hora, DateTimeFormatter.ofPattern("H:mm"));
@@ -229,6 +352,11 @@ public class ControladorFormularioFuncion implements Initializable {
         }
     }
 
+    /**
+     * Configura el formulario para editar una función existente.
+     * 
+     * @param funcion La función a editar
+     */
     public void configurarParaEdicion(Funcion funcion) {
         this.funcionEditando = funcion;
         this.modoEdicion = true;
@@ -249,55 +377,27 @@ public class ControladorFormularioFuncion implements Initializable {
         actualizarEstadoFormulario();
     }
 
+    /**
+     * Maneja el evento de guardar función (crear o actualizar).
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onGuardar(ActionEvent event) {
         try {
-            // Validar fecha no sea en el pasado
-            LocalDate fechaSeleccionada = dateFecha.getValue();
-            if (fechaSeleccionada.isBefore(LocalDate.now())) {
-                mostrarError("Error de validación", "La fecha no puede ser anterior a hoy");
+            if (!validarDatosFormulario()) {
                 return;
             }
 
-            // Construir fecha y hora de inicio
             LocalTime horaInicio = LocalTime.parse(txtHoraInicio.getText().trim(), DateTimeFormatter.ofPattern("H:mm"));
-            LocalDateTime fechaHoraInicio = LocalDateTime.of(fechaSeleccionada, horaInicio);
-
-            // Validar que no sea en el pasado
-            if (fechaHoraInicio.isBefore(LocalDateTime.now())) {
-                mostrarError("Error de validación", "La función no puede ser programada en el pasado");
-                return;
-            }
-
-            // Calcular fecha y hora de fin
-            LocalDateTime fechaHoraFin = fechaHoraInicio.plusMinutes(cmbPelicula.getValue().getDuracionMinutos() + 15);
+            LocalDateTime fechaHoraInicio = LocalDateTime.of(dateFecha.getValue(), horaInicio);
 
             if (modoEdicion) {
-                // Actualizar función existente
-                servicioFuncion.actualizarFuncion(
-                    funcionEditando.getId(),
-                    cmbPelicula.getValue(),
-                    cmbSala.getValue(),
-                    fechaHoraInicio,
-                    cmbFormato.getValue(),
-                    cmbTipoEstreno.getValue()
-                );
-
-                mostrarInformacion("Éxito", "Función actualizada exitosamente");
+                actualizarFuncionExistente(fechaHoraInicio);
             } else {
-                // Crear nueva función
-                servicioFuncion.crearFuncion(
-                    cmbPelicula.getValue(),
-                    cmbSala.getValue(),
-                    fechaHoraInicio,
-                    cmbFormato.getValue(),
-                    cmbTipoEstreno.getValue()
-                );
-
-                mostrarInformacion("Éxito", "Función creada exitosamente");
+                crearNuevaFuncion(fechaHoraInicio);
             }
 
-            // Volver a la pantalla principal
             volverAGestionFunciones();
 
         } catch (Exception e) {
@@ -306,11 +406,81 @@ public class ControladorFormularioFuncion implements Initializable {
         }
     }
 
+    /**
+     * Valida los datos del formulario antes de guardar.
+     * 
+     * @return true si los datos son válidos, false en caso contrario
+     */
+    private boolean validarDatosFormulario() {
+        LocalDate fechaSeleccionada = dateFecha.getValue();
+        if (fechaSeleccionada.isBefore(LocalDate.now())) {
+            mostrarError("Error de validación", "La fecha no puede ser anterior a hoy");
+            return false;
+        }
+
+        LocalTime horaInicio = LocalTime.parse(txtHoraInicio.getText().trim(), DateTimeFormatter.ofPattern("H:mm"));
+        LocalDateTime fechaHoraInicio = LocalDateTime.of(fechaSeleccionada, horaInicio);
+
+        if (fechaHoraInicio.isBefore(LocalDateTime.now())) {
+            mostrarError("Error de validación", "La función no puede ser programada en el pasado");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Actualiza una función existente.
+     * 
+     * @param fechaHoraInicio Nueva fecha y hora de inicio
+     * @throws Exception Si ocurre un error durante la actualización
+     */
+    private void actualizarFuncionExistente(LocalDateTime fechaHoraInicio) throws Exception {
+        servicioFuncion.actualizarFuncion(
+            funcionEditando.getId(),
+            cmbPelicula.getValue(),
+            cmbSala.getValue(),
+            fechaHoraInicio,
+            cmbFormato.getValue(),
+            cmbTipoEstreno.getValue()
+        );
+
+        mostrarInformacion("Éxito", "Función actualizada exitosamente");
+    }
+
+    /**
+     * Crea una nueva función.
+     * 
+     * @param fechaHoraInicio Fecha y hora de inicio
+     * @throws Exception Si ocurre un error durante la creación
+     */
+    private void crearNuevaFuncion(LocalDateTime fechaHoraInicio) throws Exception {
+        servicioFuncion.crearFuncion(
+            cmbPelicula.getValue(),
+            cmbSala.getValue(),
+            fechaHoraInicio,
+            cmbFormato.getValue(),
+            cmbTipoEstreno.getValue()
+        );
+
+        mostrarInformacion("Éxito", "Función creada exitosamente");
+    }
+
+    /**
+     * Maneja el evento de cancelar operación.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onCancelar(ActionEvent event) {
         volverAGestionFunciones();
     }
 
+    /**
+     * Maneja el evento de limpiar formulario.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onLimpiar(ActionEvent event) {
         if (!modoEdicion) {
@@ -318,17 +488,30 @@ public class ControladorFormularioFuncion implements Initializable {
         }
     }
 
+    /**
+     * Maneja el evento de volver.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onVolver(ActionEvent event) {
         volverAGestionFunciones();
     }
 
+    /**
+     * Maneja el evento de cerrar sesión.
+     * 
+     * @param event Evento de acción del botón
+     */
     @FXML
     private void onLogOut(ActionEvent event) {
         ManejadorMetodosComunes.mostrarVentanaAdvertencia("Sesión cerrada");
         javafx.application.Platform.exit();
     }
 
+    /**
+     * Limpia todos los campos del formulario.
+     */
     private void limpiarFormulario() {
         cmbPelicula.setValue(null);
         cmbSala.setValue(null);
@@ -342,6 +525,9 @@ public class ControladorFormularioFuncion implements Initializable {
         actualizarEstadoFormulario();
     }
 
+    /**
+     * Navega de vuelta a la pantalla de gestión de funciones.
+     */
     private void volverAGestionFunciones() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaGestionFunciones.fxml"));
@@ -353,10 +539,22 @@ public class ControladorFormularioFuncion implements Initializable {
         }
     }
 
+    /**
+     * Muestra un mensaje de error al usuario.
+     * 
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje de error
+     */
     private void mostrarError(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaError(mensaje != null ? mensaje : "Error desconocido");
     }
 
+    /**
+     * Muestra un mensaje informativo al usuario.
+     * 
+     * @param titulo Título del mensaje
+     * @param mensaje Contenido del mensaje informativo
+     */
     private void mostrarInformacion(String titulo, String mensaje) {
         ManejadorMetodosComunes.mostrarVentanaExito(mensaje != null ? mensaje : "Operación completada");
     }

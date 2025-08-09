@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios.strategy;
+package com.cinemax.comun.EstrategiaValidacionDocumentos;
 
 /**
  * Estrategia de validación específica para RUC (Registro Único de Contribuyentes) ecuatoriano.
@@ -21,8 +21,11 @@ public class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
      * 
      * Realiza validación en dos etapas:
      * 1. Valida los primeros 10 dígitos como cédula (hereda algoritmo de la clase padre)
-     * 2. Valida los últimos 3 dígitos como código de establecimiento
-     * 
+     * 2. Valida los últimos 3 dígitos como código de establecimiento  
+     * El código de establecimiento debe ser un número de exactamente 3 dígitos
+     * que representa la sucursal o establecimiento del contribuyente.
+     * Rango válido: 000-999
+     *
      * @param documento Número de RUC completo de 13 dígitos
      * @return true si tanto la cédula como el código de establecimiento son válidos
      */
@@ -40,32 +43,15 @@ public class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
         boolean cedulaValida = super.ejecutarEstrategia(cedula);
         
         // VALIDACIÓN 3: Validar código de establecimiento (últimos 3 dígitos)
-        boolean rucValido = validarRUC(documento);
-        
-        // El RUC es válido solo si ambas partes son válidas
-        return cedulaValida && rucValido;
-    }
-
-    /**
-     * Valida el código de establecimiento del RUC (últimos 3 dígitos).
-     * 
-     * El código de establecimiento debe ser un número de exactamente 3 dígitos
-     * que representa la sucursal o establecimiento del contribuyente.
-     * Rango válido: 000-999
-     * 
-     * @param documento RUC completo de 13 dígitos
-     * @return true si los últimos 3 dígitos son numéricos válidos
-     */
-    private boolean validarRUC(String documento) {
-
         // Extraer últimos 3 dígitos y verificar que sean numéricos
-        if(!documento.substring(10).matches("\\d{3}")) {
+        boolean rucValido = documento.substring(10).matches("\\d{3}");
+        if(!rucValido) {
             System.out.println("El RUC " + documento + " no es un número válido de 3 dígitos");
             return false;
         }
-
-        // Si pasa la validación de formato, el código de establecimiento es válido
-        return true;
+        
+        // El RUC es válido solo si ambas partes son válidas
+        return cedulaValida && rucValido;
     }
 
 }

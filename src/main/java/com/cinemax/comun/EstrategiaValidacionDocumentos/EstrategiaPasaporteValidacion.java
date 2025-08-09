@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios.strategy;
+package com.cinemax.comun.EstrategiaValidacionDocumentos;
 
 /**
  * Estrategia de validación específica para números de pasaporte.
@@ -18,20 +18,6 @@ public class EstrategiaPasaporteValidacion implements EstrategiaValidacion{
     /**
      * Ejecuta la validación de formato para pasaportes.
      * 
-     * Punto de entrada principal que delega la validación
-     * al método interno validarPasaporte().
-     * 
-     * @param documento Número de pasaporte a validar
-     * @return true si el formato es válido, false en caso contrario
-     */
-    @Override
-    public boolean ejecutarEstrategia(String documento) {
-        return validarPasaporte(documento);
-    }
-
-    /**
-     * Valida el formato de un número de pasaporte usando expresión regular.
-     * 
      * Patrón de validación: ^[A-Z]{1}[0-9]{6,9}$
      * - ^ : Inicio de cadena
      * - [A-Z]{1} : Exactamente una letra mayúscula
@@ -39,11 +25,11 @@ public class EstrategiaPasaporteValidacion implements EstrategiaValidacion{
      * - $ : Final de cadena
      * 
      * @param documento Número de pasaporte a validar
-     * @return true si coincide con el patrón, false en caso contrario
+     * @return true si el formato es válido, false en caso contrario
      */
-    private boolean validarPasaporte(String documento) {
+    @Override
+    public boolean ejecutarEstrategia(String documento) {
         // Validar formato: 1 letra mayúscula + 6-9 dígitos
         return documento.matches("^[A-Z]{1}[0-9]{6,9}$");
     }
-
 }

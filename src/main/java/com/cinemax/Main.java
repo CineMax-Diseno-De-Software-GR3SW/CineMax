@@ -1,14 +1,15 @@
 package com.cinemax;
 
-import com.cinemax.comun.ConexionBaseSingleton;
+import java.io.IOException;
+
+import com.cinemax.comun.conexiones.ConexionBaseSingleton;
+import com.cinemax.comun.conexiones.ConexionFirebaseStorage;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 
 public class Main extends Application {
@@ -18,14 +19,14 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/empleados/PantallaLogin.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 500);
+        Scene scene = new Scene(fxmlLoader.load());
 
         Image icon = new Image(Main.class.getResourceAsStream("/imagenes/logo.png"));
         stage.getIcons().add(icon);
 
         // https://cdn-icons-png.flaticon.com/512/44/44460.png
 
-        stage.setTitle("CineMAX");
+        stage.setTitle("CineMax");
         stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
@@ -35,6 +36,7 @@ public class Main extends Application {
         // Aquí cierras la conexión
         System.out.println("Cerrando conexion");
         ConexionBaseSingleton.getInstancia().cerrar();
+        //ConexionFirebaseStorage.getInstancia().cerrar();
     }
 
 
@@ -49,11 +51,17 @@ public class Main extends Application {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("¡Conexión exitosa!");
-        } catch (Exception e) {
-            System.err.println("No se encontró el driver PostgreSQL: " + e.getMessage());
-        }
-        // You can add any pre-launch logic here if needed
+            System.out.println("¡Conexión exitosa Postgresql!");
+            } catch (Exception e) {
+                System.err.println("No se encontró el driver PostgreSQL: " + e.getMessage());
+            }
+
+            try {
+                ConexionFirebaseStorage.getInstancia();
+            } catch (Exception e) {
+                throw new RuntimeException("Error al inicializar Firebase Storage: " + e.getMessage(), e);
+            }
+            System.out.println("¡Conexión exitosa Firebase Storage!");
         launch();
     }
 }

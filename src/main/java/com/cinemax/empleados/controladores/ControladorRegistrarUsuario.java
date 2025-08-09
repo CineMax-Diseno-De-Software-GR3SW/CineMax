@@ -64,7 +64,6 @@ public class ControladorRegistrarUsuario implements Initializable {
             ObservableList<Rol> roles = FXCollections.observableArrayList(servicioRoles.listarRoles());
             comboBoxRol.setItems(roles);
 
-            // Agregar un StringConverter para mostrar solo el nombre del rol
             comboBoxRol.setConverter(new StringConverter<Rol>() {
                 @Override
                 public String toString(Rol rol) {
@@ -86,8 +85,29 @@ public class ControladorRegistrarUsuario implements Initializable {
         } catch (Exception e) {
             e.printStackTrace();
             ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al cargar Roles");
-            //mostrarAlerta(AlertType.ERROR, "Error al Cargar", "Error al cargar Roles", "No se pudieron cargar los roles de usuario.");
         }
+
+        // Listener para restringir el campoNombres a solo letras y espacios
+        campoNombres.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]", "");
+            if (!campoNombres.getText().equals(filteredValue)) {
+                campoNombres.setText(filteredValue);
+            }
+        });
+
+        // Listener para restringir el campoApellidos a solo letras y espacios
+        campoApellidos.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]", "");
+            if (!campoApellidos.getText().equals(filteredValue)) {
+                campoApellidos.setText(filteredValue);
+            }
+        });
 
         campoCelular.textProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
@@ -139,41 +159,30 @@ public class ControladorRegistrarUsuario implements Initializable {
                 celular.isEmpty() || nombreUsuario.isEmpty() ||
                 cargoSeleccionado == null) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Campos incompletos");
-          //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Campos Incompletos", "Por favor, complete todos los campos obligatorios.");
             return;
         }
 
         //Validación adicional para el celular
         if (!celular.matches("\\d{10}")) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de Celular Inválido \n Debe contener exactamente 10 dígitos");
-            //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Celular Inválido", "Debe contener exactamente 10 dígitos");
             return;
         }
 
         if (!cedula.matches("\\d{10}")) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de Cédula Inválido \n Debe contener exactamente 10 dígitos");
-
-          //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
             return;
         }
         if (!validadorUsuario.validarCorreo(correo)) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de correo inválido");
-            //mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Formato de Cédula Inválido", "La cédula debe contener exactamente 10 dígitos numéricos.");
             return;
         }
 
-//        if (!contrasena.equals(confirmarContrasena)) {
-//            mostrarAlerta(AlertType.ERROR, "Contraseñas no Coinciden", "Error de Contraseña", "Las contraseñas ingresadas no coinciden. Por favor, verifique.");
-//            return;
-//        }
 
         //TODO: NO, Hacerlo desde el servicio
         String nombreCompleto = nombres + " " + apellidos;
         try {
             servicioUsuarios.crearUsuario(nombreCompleto, cedula, correo, celular, estadoActivo, nombreUsuario, cargoSeleccionado);
             ManejadorMetodosComunes.mostrarVentanaExito("Empleado creado exitosamente");
-
-//            mostrarAlerta(AlertType.INFORMATION, "¡ÉXITO!", "Empleado registrado exitosamente", "El empleado " + nombreCompleto + " ha sido registrado correctamente.");
             limpiarCampos();
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
@@ -187,12 +196,9 @@ public class ControladorRegistrarUsuario implements Initializable {
         } catch (IllegalArgumentException e) {
             ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al validar los datos");
 
-//            mostrarAlerta(AlertType.WARNING, "¡ERROR!", "Sucedió algo inesperado al validar los datos. Datos Incorrectos", e.getMessage());
         } catch (Exception e) {
             e.printStackTrace();
             ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al registrar Empleado");
-
-//            mostrarAlerta(AlertType.ERROR, "¡ERROR!", "Error al Registrar Empleado", "Sucedió algo inesperado al intentar registrar el empleado: " + e.getMessage());
         }
     }
 
@@ -216,17 +222,8 @@ public class ControladorRegistrarUsuario implements Initializable {
         campoCorreo.clear();
         campoCelular.clear();
         campoNombreUsuario.clear();
-//        campoContrasena.clear();
-//        campoConfirmar.clear();
         comboBoxRol.getSelectionModel().clearSelection();
         radioActivo.setSelected(true);
     }
 
-//    private void mostrarAlerta(AlertType type, String title, String header, String content) {
-//        Alert alert = new Alert(type);
-//        alert.setTitle(title);
-//        alert.setHeaderText(header);
-//        alert.setContentText(content);
-//        alert.showAndWait();
-//    }
 }
