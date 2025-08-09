@@ -4,6 +4,7 @@ import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.controladores.ControladorFunciones;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.venta_boletos.controladores.ControladorCargaAsignacionButacas;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -86,29 +87,24 @@ public class ServicioVisualizadorFunciones {
                 columnaTipoSala);
 
         try {
+            // Ya vienen filtradas las funciones a partir de ahora
             List<Funcion> funcionesObtenidas = controladorFunciones.obtenerFuncionesPorNombrePelicula(nombrePelicula);
 
-            // Filtrar funciones que no han pasado descomentar para que valga
-            // funcionesObtenidas = funcionesObtenidas.stream()
-            // .filter(funcion -> funcion.getFechaHoraInicio() != null &&
-            // !funcion.getFechaHoraInicio().isBefore(LocalDateTime.now()))
-            // .collect(Collectors.toList());
-
-            // Aplicar filtros adicionales
+            // Aquí solo aplicamos filtros adicionales (fecha exacta, formato, tipoSala)
             if (fechaFiltro != null) {
                 funcionesObtenidas = funcionesObtenidas.stream()
                         .filter(funcion -> funcion.getFechaHoraInicio().toLocalDate().isEqual(fechaFiltro))
                         .collect(Collectors.toList());
             }
 
-            if (!"Todos".equals(formatoFiltro)) {
+            if (formatoFiltro != null && !"Todos".equals(formatoFiltro)) {
                 funcionesObtenidas = funcionesObtenidas.stream()
                         .filter(funcion -> funcion.getFormato() != null &&
                                 formatoFiltro.equals(funcion.getFormato().toString()))
                         .collect(Collectors.toList());
             }
 
-            if (!"Todos".equals(tipoSalaFiltro)) {
+            if (tipoSalaFiltro != null && !"Todos".equals(tipoSalaFiltro)) {
                 funcionesObtenidas = funcionesObtenidas.stream()
                         .filter(funcion -> funcion.getSala() != null &&
                                 funcion.getSala().getTipo() != null &&
@@ -121,8 +117,7 @@ public class ServicioVisualizadorFunciones {
             Platform.runLater(() -> {
                 tabla.setItems(listaFunciones);
                 if (listaFunciones.isEmpty()) {
-                    String mensaje = "No hay funciones disponibles con los filtros seleccionados.";
-                    tabla.setPlaceholder(new Label(mensaje));
+                    tabla.setPlaceholder(new Label("No hay funciones disponibles con los filtros seleccionados."));
                 }
             });
 
@@ -160,12 +155,12 @@ public class ServicioVisualizadorFunciones {
      *
      * @param tabla Tabla que contiene las funciones disponibles.
      */
-    public void confirmarFuncion(TableView<Funcion> tabla) {
+    public void seleccionarFuncion(TableView<Funcion> tabla) {
         Funcion funcionSeleccionada = tabla.getSelectionModel().getSelectedItem();
+        validarSeleccionPelicula(funcionSeleccionada);
 
         try {
             Stage currentStage = (Stage) tabla.getScene().getWindow();
-
             ServicioTemporizador.getInstance().empezarTemporizador(currentStage);
 
             ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
@@ -235,4 +230,17 @@ public class ServicioVisualizadorFunciones {
                         ? cellData.getValue().getFechaHoraInicio().format(FORMATO_FECHA)
                         : ""));
     }
+
+    /**
+     * Valida que se haya seleccionado una funcion válida
+     * 
+     * @param pelicula Película a validar
+     */
+    private void validarSeleccionPelicula(Funcion funcionSeleccionada) {
+        if (funcionSeleccionada == null) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, selecciona una función.");
+            return;
+        }
+    }
+
 }

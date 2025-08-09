@@ -68,7 +68,7 @@ public class ServicioVisualizadorCartelera {
     /**
      * Carga inicialmente la lista de películas disponibles
      */
-    public void cargarListaPeliculas() {
+    public void cargarPeliculasDeCartelera() {
         try {
             List<Pelicula> peliculasCargadas = controladorCartelera.obtenerCartelera();
             listaPeliculas.setAll(peliculasCargadas);
@@ -86,10 +86,9 @@ public class ServicioVisualizadorCartelera {
      * @param currentStage         Escenario actual de la aplicación
      */
     public void seleccionarPelicula(Pelicula peliculaSeleccionada, Stage currentStage) {
-        validarSeleccionPelicula(peliculaSeleccionada);
+        validarSeleccionPelicula(peliculaSeleccionada); // aquí se hace la validación
 
         try {
-
             ControladorVisualizadorFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
                     currentStage,
                     "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
@@ -98,7 +97,6 @@ public class ServicioVisualizadorCartelera {
             if (controller != null) {
                 controller.asignarPeliculaSeleccionada(peliculaSeleccionada);
             }
-
         } catch (Exception e) {
             manejarErrorNavegacion(e);
         }
