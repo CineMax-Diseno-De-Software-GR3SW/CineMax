@@ -213,4 +213,5 @@ public class ControladorVisualizadorCartelera {
     public void onRegresar(ActionEvent event) {
         servicioMostrarCartelera.regresarPantallaPrincipal(event);
     }
+
 }
