@@ -11,6 +11,14 @@ module com.cinemax {
     exports com.cinemax.comun;
     opens com.cinemax.comun to javafx.fxml;
 
+    //funcionamiento firebase
+    requires firebase.admin;
+    requires com.google.auth.oauth2;
+    requires com.google.auth;
+    requires google.cloud.storage;
+    requires google.cloud.core;
+    requires org.slf4j;
+
     // Paquetes del módulo empleados
     opens com.cinemax.empleados.modelos.entidades to javafx.base;
     opens com.cinemax.empleados.controladores to javafx.fxml;

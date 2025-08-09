@@ -3,8 +3,9 @@ package com.cinemax.salas.modelos.persistencia;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import com.cinemax.comun.ConexionBaseSingleton;
+
 import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import com.cinemax.salas.modelos.entidades.EstadoSala;
 import com.cinemax.salas.modelos.entidades.TipoSala;
 

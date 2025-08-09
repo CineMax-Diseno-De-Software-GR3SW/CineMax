@@ -1,5 +1,6 @@
 package com.cinemax.peliculas.controladores;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,10 +10,10 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.comun.conexiones.ConexionFirebaseStorage;
 import com.cinemax.peliculas.modelos.entidades.Genero;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
-import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
 
 import javafx.collections.FXCollections;
@@ -34,6 +35,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 
 /**
  * Controlador para la gestión integral de películas cinematográficas.
@@ -62,8 +66,9 @@ public class ControladorPelicula implements Initializable {
 
     /** Servicio para operaciones de negocio con películas */
     private ServicioPelicula servicioPelicula;
-    private ServicioFuncion servicioFuncion;
-
+    private ConexionFirebaseStorage conexionStorage;
+    private File archivoImagenSeleccionada;
+    
     // Componentes de la interfaz FXML para búsqueda y tabla
     /** Campo de texto para búsqueda general */
     @FXML private TextField txtBuscar;
@@ -139,7 +144,7 @@ public class ControladorPelicula implements Initializable {
     @FXML private ListView<String> listGeneros;
 
     /** Campo de texto para URL de imagen */
-    @FXML private TextField txtImagenUrl;
+    //@FXML private TextField txtImagenUrl;
 
     /** Botón para guardar película */
     @FXML private Button btnGuardar;
@@ -152,6 +157,9 @@ public class ControladorPelicula implements Initializable {
 
     /** Botón para limpiar formulario */
     @FXML private Button btnLimpiarFormulario;
+
+    @FXML private Button btnSeleccionarImagen;
+    @FXML private ImageView imgVistaPreviaPelicula;
 
     // Datos para la gestión de películas
     /** Lista observable de todas las películas */
@@ -168,6 +176,7 @@ public class ControladorPelicula implements Initializable {
      */
     public ControladorPelicula() {
         this.servicioPelicula = new ServicioPelicula();
+        this.conexionStorage = ConexionFirebaseStorage.getInstancia();
     }
 
     /**
@@ -215,20 +224,38 @@ public class ControladorPelicula implements Initializable {
                 return;
             }
 
+            
             int duracion = Integer.parseInt(txtDuracion.getText().trim());
             int anio = Integer.parseInt(txtAnio.getText().trim());
-
+            
             if (!validarRangosNumericos(duracion, anio)) {
                 return;
             }
 
+           // String imagenUrlParaGuardar = txtImagenUrl.getText().trim(); 
+           String imagenUrlParaGuardar = "";
+           
+            if (peliculaEnEdicion != null) {
+             imagenUrlParaGuardar = peliculaEnEdicion.getImagenUrl();
+}
+            if (archivoImagenSeleccionada != null) {
+                try {
+                    // Aquí podrías poner un label de "Subiendo..."
+                    imagenUrlParaGuardar = conexionStorage.subirImagenYObtenerUrl(archivoImagenSeleccionada);
+                } catch (Exception e) {
+                    mostrarError("Error de Carga", "No se pudo subir la imagen a Firebase: " + e.getMessage());
+                    e.printStackTrace();
+                    return; // Detiene el guardado si la imagen falla
+                }
+            }
+
             String generosString = construirStringGeneros();
-            String imagenUrl = txtImagenUrl.getText().trim().isEmpty() ? null : txtImagenUrl.getText().trim();
+            //String imagenUrl = txtImagenUrl.getText().trim().isEmpty() ? null : txtImagenUrl.getText().trim();
 
             if (peliculaEnEdicion == null) {
-                crearNuevaPelicula(duracion, anio, generosString, imagenUrl);
+                crearNuevaPelicula(duracion, anio, generosString, imagenUrlParaGuardar);
             } else {
-                actualizarPeliculaExistente(duracion, anio, generosString, imagenUrl);
+                actualizarPeliculaExistente(duracion, anio, generosString, imagenUrlParaGuardar);
             }
 
         } catch (NumberFormatException e) {
@@ -236,6 +263,29 @@ public class ControladorPelicula implements Initializable {
         } catch (Exception e) {
             String operacion = peliculaEnEdicion != null ? "actualizar" : "crear";
             mostrarError("Error al " + operacion + " película", "Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Maneja el evento de selección de imagen para la película.
+     */
+    @FXML
+    private void onSeleccionarImagen(ActionEvent event) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Seleccionar Imagen de la Película");
+        fileChooser.getExtensionFilters().addAll(
+            new FileChooser.ExtensionFilter("Archivos de Imagen", "*.png", "*.jpg", "*.jpeg", "*.gif"),
+            new FileChooser.ExtensionFilter("Todos los Archivos", "*.*")
+        );
+        
+        Stage stage = (Stage) btnSeleccionarImagen.getScene().getWindow();
+        File archivo = fileChooser.showOpenDialog(stage);
+        
+        if (archivo != null) {
+            this.archivoImagenSeleccionada = archivo;
+            Image imagen = new Image(archivo.toURI().toString());
+            imgVistaPreviaPelicula.setImage(imagen);
+            //txtImagenUrl.clear();
         }
     }
 
@@ -422,11 +472,15 @@ public class ControladorPelicula implements Initializable {
         if (txtAnio != null) txtAnio.clear();
         if (txtDuracion != null) txtDuracion.clear();
         if (txtSinopsis != null) txtSinopsis.clear();
-        if (txtImagenUrl != null) txtImagenUrl.clear();
+       // if (txtImagenUrl != null) txtImagenUrl.clear();
         if (cmbIdioma != null) cmbIdioma.setValue(null);
         if (cmbGenero != null) cmbGenero.setValue(null);
         if (listGeneros != null) listGeneros.getSelectionModel().clearSelection();
 
+        if (imgVistaPreviaPelicula != null) {
+        imgVistaPreviaPelicula.setImage(null);
+        }
+        this.archivoImagenSeleccionada = null;
         peliculaEnEdicion = null;
         actualizarModoFormulario();
         tablaPeliculas.getSelectionModel().clearSelection();
@@ -454,21 +508,39 @@ public class ControladorPelicula implements Initializable {
 
     /**
      * Carga los datos de una película en el formulario para edición.
+     * (Versión con Debugging)
      *
      * @param pelicula Película a cargar en el formulario
      */
     private void cargarDatosEnFormulario(Pelicula pelicula) {
-        if (pelicula == null) return;
+
+        if (pelicula == null) {
+            System.out.println("-> [DEBUG] ERROR: La película recibida es nula. Saliendo del método.");
+            System.out.println("=======================================================");
+            return;
+        }
 
         txtTitulo.setText(pelicula.getTitulo());
         txtAnio.setText(String.valueOf(pelicula.getAnio()));
         txtDuracion.setText(String.valueOf(pelicula.getDuracionMinutos()));
         txtSinopsis.setText(pelicula.getSinopsis() != null ? pelicula.getSinopsis() : "");
-        txtImagenUrl.setText(pelicula.getImagenUrl() != null ? pelicula.getImagenUrl() : "");
+        
+        // txtImagenUrl.setText(pelicula.getImagenUrl() != null ? pelicula.getImagenUrl() : "");
 
         cmbIdioma.setValue(pelicula.getIdioma());
-        cargarGenerosPelicula(pelicula);
+        this.archivoImagenSeleccionada = null; 
+        imgVistaPreviaPelicula.setImage(null);   
 
+        if (pelicula.getImagenUrl() != null && !pelicula.getImagenUrl().isEmpty()) {
+            String urlParaCargar = pelicula.getImagenUrl();
+            try {
+                Image imagen = new Image(urlParaCargar, true); 
+                imgVistaPreviaPelicula.setImage(imagen);
+            } catch (Exception e) {
+                e.printStackTrace(); // Imprime el error completo en la consola
+            }
+        } 
+        cargarGenerosPelicula(pelicula);
         peliculaEnEdicion = pelicula;
         actualizarModoFormulario();
     }
@@ -595,6 +667,15 @@ public class ControladorPelicula implements Initializable {
         txtBuscar.clear();
         cmbFiltroGenero.setValue("Todos");
         aplicarFiltros();
+
+        if (imgVistaPreviaPelicula != null) {
+        imgVistaPreviaPelicula.setImage(null);
+        }
+        this.archivoImagenSeleccionada = null;
+
+        peliculaEnEdicion = null;
+        actualizarModoFormulario();
+        tablaPeliculas.getSelectionModel().clearSelection();
     }
 
     /**
