@@ -63,7 +63,7 @@ public class ControladorVisualizadorCartelera {
      */
     @FXML
     public void initialize() {
-        servicioMostrarCartelera.cargarListaPeliculas();
+        servicioMostrarCartelera.cargarPeliculasDeCartelera();
 
         servicioMostrarCartelera.getListaPeliculas().addListener((ListChangeListener<Pelicula>) c -> {
             while (c.next()) {
@@ -199,11 +199,9 @@ public class ControladorVisualizadorCartelera {
      */
     @FXML
     private void onSeleccionar() {
+        Stage currentStage = (Stage) flowPanePeliculas.getScene().getWindow();
         Pelicula peliculaSeleccionada = servicioMostrarCartelera.getPeliculaSeleccionada();
-        if (peliculaSeleccionada != null) {
-            Stage currentStage = (Stage) flowPanePeliculas.getScene().getWindow();
-            servicioMostrarCartelera.seleccionarPelicula(peliculaSeleccionada, currentStage);
-        }
+        servicioMostrarCartelera.seleccionarPelicula(peliculaSeleccionada, currentStage);
     }
 
     /**

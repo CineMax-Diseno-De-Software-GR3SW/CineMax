@@ -195,20 +195,7 @@ public class ControladorVisualizadorFunciones {
      */
     @FXML
     private void onConfirmacion() {
-        Funcion seleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
-
-        if (seleccionada == null) {
-            ManejadorMetodosComunes.mostrarVentanaError("Ninguna Funcion Seleccionada");
-            return;
-        }
-
-        // Verificar si la función ya ha pasado (descomentar si se desea validar)
-        // if (seleccionada.getFechaHoraInicio().isBefore(LocalDateTime.now())) {
-        // ManejadorMetodosComunes.mostrarVentanaError("Funcion no disponible");
-        // return;
-        // }
-
-        servicioVisualizadorFunciones.confirmarFuncion(tablaFunciones);
+        servicioVisualizadorFunciones.seleccionarFuncion(tablaFunciones);
     }
 
     /**
