@@ -16,6 +16,7 @@ import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
 import com.cinemax.venta_boletos.modelos.persistencia.ClienteDAO;
 import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
 import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivoPDF;
+import com.cinemax.venta_boletos.servicios.ServicioCliente;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
@@ -95,8 +96,10 @@ public class ControladorFacturacion {
     /** Servicio que gestiona la lógica de facturación (generación de factura, validaciones). */
     private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
+    private final ServicioCliente servicioCliente = new ServicioCliente();
+
     /** Controlador del panel lateral que muestra información de la función. */
-    private com.cinemax.venta_boletos.controladores.ControladorInformacionDeVenta controladorInformacionDeVenta;
+    private ControladorInformacionDeVenta controladorInformacionDeVenta;
 
     private Cliente clienteEnEdicion = null;
 
@@ -183,37 +186,29 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de búsqueda.
      */
     @FXML
-    void onBuscarCliente(ActionEvent event) {
-        String texto = identificacionField.getText();
-
+    void buscarCliente(ActionEvent event) {
         // Validar que el campo de identificación no esté vacío.
-        if (texto.isEmpty()) {
+        if (identificacionField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
             return;
         }
 
         try {
-            String idcliente = texto;
-            ClienteDAO clienteDAO = new ClienteDAO();
-            try {
-                // Buscar al cliente por su número de identificación.
-                clienteEnEdicion = clienteDAO.buscarPorId(idcliente);
+            // Buscar al cliente por su número de identificación.
+            clienteEnEdicion = servicioCliente.buscarCliente(identificacionField.getText());
 
-                // Si el cliente es encontrado, se llenan los campos con su información.
-                if (clienteEnEdicion != null) {
-                    nombreField.setText(clienteEnEdicion.getNombre());
-                    apellidoField.setText(clienteEnEdicion.getApellido());
-                    documentoField.setText(String.valueOf(clienteEnEdicion.getIdCliente()));
-                    tipoDocumentoBox.setValue(clienteEnEdicion.getTipoDocumento());
-                    correoField.setText(clienteEnEdicion.getCorreoElectronico());
-                    actualizarModoFormulario();
-                    ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
-                } else { 
-                    // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
-                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            // Si el cliente es encontrado, se llenan los campos con su información.
+            if (clienteEnEdicion != null) {
+                nombreField.setText(clienteEnEdicion.getNombre());
+                apellidoField.setText(clienteEnEdicion.getApellido());
+                documentoField.setText(String.valueOf(clienteEnEdicion.getIdCliente()));
+                tipoDocumentoBox.setValue(clienteEnEdicion.getTipoDocumento());
+                correoField.setText(clienteEnEdicion.getCorreoElectronico());
+                actualizarModoFormulario();
+                ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
+            } else { 
+                // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
             }
         } catch (NumberFormatException e) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("El número de identificación debe ser un número válido.");
@@ -226,7 +221,7 @@ public class ControladorFacturacion {
      * Si el documento es inválido, muestra un mensaje de error y retorna false.
      * @return true si el documento es válido, false en caso contrario.
      */
-    private boolean validarDocumento() {
+    private boolean validarNumeroDocumentoCliente() {
 
         // Limpieza PROFUNDA del input (incluye espacios Unicode y múltiples espacios).
         String documento = documentoField.getText()
@@ -264,7 +259,6 @@ public class ControladorFacturacion {
         }
 
         return true;
-
     }
 
     /**
@@ -275,10 +269,10 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de actualizar cliente.
      */
     @FXML
-    void onCrearOActualizarCliente(ActionEvent event) {
+    void crearOActualizarCliente(ActionEvent event) {
 
         // Validar que el documento sea válido antes de continuar con la actualización.
-        if (!validarDocumento()) {
+        if (!validarNumeroDocumentoCliente()) {
             return; 
         }
 
@@ -290,42 +284,36 @@ public class ControladorFacturacion {
 
         if (clienteEnEdicion == null) {
             try {
+                if (servicioCliente.existeCliente(documentoField.getText())) {
+                    ManejadorMetodosComunes.mostrarVentanaError("El cliente que intenta crear ya existe.");
+                    return;
+                }
                 Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
                         correoField.getText(), tipoDocumentoBox.getValue());
-                ClienteDAO clienteDAO = new ClienteDAO();
-                clienteDAO.crearCliente(cliente);
+                servicioCliente.crearCliente(cliente);
                 ManejadorMetodosComunes.mostrarVentanaExito("Cliente creado exitosamente.");
             } catch (NumberFormatException e) {
                 ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
-            } catch (Exception e) {
-                e.printStackTrace();
-                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear al cliente.");
             }
         }
         else {
             try {
                 Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
                         correoField.getText(), tipoDocumentoBox.getValue());
-                ClienteDAO clienteDAO = new ClienteDAO();
-
-                Cliente clienteExiste = clienteDAO.buscarPorId(identificacionField.getText());
 
                 // Verificar si el cliente existe en la base de datos.
-                if (clienteExiste == null) {
+                if (!servicioCliente.existeCliente(documentoField.getText())) {
                     // Si el cliente no existe, mostrar un mensaje de advertencia.
                     ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
                 } else {
                     // Si el cliente existe, actualizar su información en la base de datos.
-                    clienteDAO.actualizarCliente(cliente);
+                    servicioCliente.actualizarCliente(cliente);
                     actualizarModoFormulario();
                     ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
                 }
 
             } catch (NumberFormatException e) {
                 ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
-            } catch (Exception e) {
-                e.printStackTrace();
-                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar al cliente.");
             }
         }
         
@@ -340,7 +328,7 @@ public class ControladorFacturacion {
      */
 
     @FXML
-    protected void onPagarAction() {
+    protected void pagarBoletos() {
         // Validar que todos los campos estén llenos antes de proceder con la compra.
         if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -354,66 +342,39 @@ public class ControladorFacturacion {
         }
 
         // Validar el documento ingresado por el usuario.
-        if(!validarDocumento()) {
+        if(!validarNumeroDocumentoCliente()) {
             return;
         }
 
-        ClienteDAO clienteDAO = new ClienteDAO();
         Cliente cliente = null;
+        
         try {
-            // Buscar al cliente por su número de identificación.
-            cliente = clienteDAO.buscarPorId(documentoField.getText());
-
+            cliente = new Cliente(
+            nombreField.getText(),
+            apellidoField.getText(),
+            documentoField.getText(),
+            correoField.getText(),
+            tipoDocumentoBox.getValue());
             // Si el cliente no existe, crear uno nuevo con los datos ingresados.
-            if (cliente == null) {
-                cliente = new Cliente(
-                        nombreField.getText(),
-                        apellidoField.getText(),
-                        documentoField.getText(),
-                        correoField.getText(),
-                        tipoDocumentoBox.getValue());
-                clienteDAO.crearCliente(cliente);
+            if (!servicioCliente.existeCliente(documentoField.getText())) {
+                servicioCliente.crearCliente(cliente);
             }
         } catch (NumberFormatException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
         }
 
         // Generar los boletos en formato PDF.
         ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
         generador.generarBoletos(boletos);
 
-        FacturaDAO facturaDAO = new FacturaDAO();
         CalculadorImpuesto calculadorImpuesto = new CalculadorIVA();
         // Generar la factura con los boletos y el cliente.
-        Factura facturaFinal = servicioFacturacion.generarFactura(this.boletos, cliente,calculadorImpuesto);
-        try {
-            // Guardar la factura en la base de datos.
-            facturaDAO.crearFactura(facturaFinal);
-        } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear la factura: " + e.getMessage());
-            e.printStackTrace();
-        }
+        servicioFacturacion.generarFactura(this.boletos, cliente,calculadorImpuesto);
 
-        BoletoDAO boletoDAO = new BoletoDAO();
-
-        // Guardar los boletos asociados a la factura en la base de datos.
-        for (Producto boleto : boletos) {
-            try {
-                boletoDAO.crearBoleto((Boleto) boleto, facturaFinal);
-            } catch (Exception e) {
-                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear el boleto: " + e.getMessage());
-                e.printStackTrace();
-                return; 
-            }
-        }
 
         // Detener el temporizador después de un pago exitoso
         ServicioTemporizador.getInstance().detenerTemporizador();
-
-        // Mostrar un mensaje de éxito al usuario indicando que la factura se ha creado exitosamente.
-        ManejadorMetodosComunes.mostrarVentanaExito("Factura creada exitosamente: " + facturaFinal.getCodigoFactura());
 
         // Redirigir al usuario a la pantalla principal del portal de empleados.
         ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
@@ -426,7 +387,7 @@ public class ControladorFacturacion {
      * param event Evento de acción al hacer clic en el botón de retroceso.
      */
     @FXML
-    protected void onBackAction() {
+    protected void regresarAMapaButacas() {
 
         try {
 
@@ -481,6 +442,8 @@ public class ControladorFacturacion {
         if (clienteEnEdicion == null) {
             // Modo crear
             buttonCrearOActualizar.setText("Crear");
+            tipoDocumentoBox.setDisable(false);
+            documentoField.setDisable(false);
             // Ocultar el botón "Nuevo" cuando está en modo crear
             if (buttonNuevoCliente != null) {
                 buttonNuevoCliente.setVisible(false);
@@ -489,6 +452,8 @@ public class ControladorFacturacion {
         } else {
             // Modo editar
             buttonCrearOActualizar.setText("Actualizar");
+            tipoDocumentoBox.setDisable(true);
+            documentoField.setDisable(true);
             // Mostrar el botón "Nuevo" cuando está en modo editar
             if (buttonNuevoCliente != null) {
                 buttonNuevoCliente.setVisible(true);

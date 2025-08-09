@@ -21,7 +21,7 @@
     <top>
         <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
             <children>
-                <Button onAction="#onBackAction" styleClass="stepper-button" text="←" />
+                <Button onAction="#regresarAMapaButacas" styleClass="stepper-button" text="←" />
                 <Label styleClass="section-title" text="Información de Facturación" />
                 <Region HBox.hgrow="ALWAYS" />
                 <Label fx:id="timerLabel" style="-fx-font-size: 18px; -fx-text-fill: #FF8F40; -fx-font-weight: bold;" text="15:00" />
@@ -49,7 +49,7 @@
                             <children>
                                 <Label styleClass="form-label" text="Buscar Cliente:" />
                                 <TextField fx:id="identificacionField" promptText="Ingrese el número de identificación" HBox.hgrow="ALWAYS" />
-                                <Button onAction="#onBuscarCliente" styleClass="icon-button" text="🔍" />
+                                <Button onAction="#buscarCliente" styleClass="icon-button" text="🔍" />
                             </children>
                         </HBox>
 
@@ -106,7 +106,7 @@
                         </HBox>
                     </children>
                 </VBox>
-                    <Button fx:id="buttonCrearOActualizar" disable="true" onAction="#onCrearOActualizarCliente" prefHeight="30.0" prefWidth="169.0" styleClass="primary-button" text="Crear" />
+                    <Button fx:id="buttonCrearOActualizar" disable="true" onAction="#crearOActualizarCliente" prefHeight="30.0" prefWidth="169.0" styleClass="primary-button" text="Crear" />
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
                   <Button fx:id="buttonNuevoCliente" mnemonicParsing="false" onAction="#onLimpiarFormulario" styleClass="link-button" text="Nuevo" />
@@ -131,7 +131,7 @@
         <VBox prefWidth="320.0" spacing="10.0" styleClass="financial-summary-pane" BorderPane.alignment="CENTER">
             <children>
                 <VBox fx:id="informacionFuncionContainer" VBox.vgrow="ALWAYS" />
-                <Button fx:id="buttonPagar" maxWidth="Infinity" onAction="#onPagarAction" prefHeight="50.0" styleClass="primary-button" text="Pagar" />
+                <Button fx:id="buttonPagar" maxWidth="Infinity" onAction="#pagarBoletos" prefHeight="50.0" styleClass="primary-button" text="Pagar" />
             </children>
         </VBox>
     </right>
