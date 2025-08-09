@@ -108,7 +108,7 @@
                     <HBox spacing="10.0" alignment="CENTER_LEFT">
                         <children>
                             <Label text="Buscar:"/>
-                            <TextField fx:id="txtBuscarId" promptText="ID, nombre, tipo..." prefWidth="220.0" styleClass="text-field"/>
+                            <TextField fx:id="txtBuscarId" promptText="ID" prefWidth="220.0" styleClass="text-field"/>
                             <Button fx:id="btnBuscar" onAction="#buscarSalaPorId" text="🔍" styleClass="icon-button"/>
                             <Region HBox.hgrow="ALWAYS"/>
                         </children>
