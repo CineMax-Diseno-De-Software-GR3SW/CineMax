@@ -10,6 +10,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
@@ -43,20 +44,23 @@ import javafx.util.StringConverter;
 /**
  * Controlador para la gestión integral de funciones cinematográficas.
  *
- * <p>Esta clase maneja la interfaz gráfica que combina la gestión de funciones
- * con un formulario integrado para creación y edición. Proporciona una experiencia
+ * <p>
+ * Esta clase maneja la interfaz gráfica que combina la gestión de funciones
+ * con un formulario integrado para creación y edición. Proporciona una
+ * experiencia
  * unificada donde los usuarios pueden ver, buscar, crear, editar y eliminar
  * funciones desde una sola pantalla.
  *
- * <p>Funcionalidades principales:
+ * <p>
+ * Funcionalidades principales:
  * <ul>
- *   <li>Gestión completa de funciones (CRUD) con formulario integrado</li>
- *   <li>Visualización en tabla con filtrado y búsqueda en tiempo real</li>
- *   <li>Formulario de creación/edición embebido en la misma vista</li>
- *   <li>Validaciones en tiempo real y cálculo automático de horarios</li>
- *   <li>Modo dual: creación de nuevas funciones y edición de existentes</li>
- *   <li>Navegación a detalles completos de funciones</li>
- *   <li>Estadísticas y resúmenes informativos</li>
+ * <li>Gestión completa de funciones (CRUD) con formulario integrado</li>
+ * <li>Visualización en tabla con filtrado y búsqueda en tiempo real</li>
+ * <li>Formulario de creación/edición embebido en la misma vista</li>
+ * <li>Validaciones en tiempo real y cálculo automático de horarios</li>
+ * <li>Modo dual: creación de nuevas funciones y edición de existentes</li>
+ * <li>Navegación a detalles completos de funciones</li>
+ * <li>Estadísticas y resúmenes informativos</li>
  * </ul>
  *
  * @author GR3SW
@@ -67,94 +71,118 @@ public class ControladorFunciones implements Initializable {
 
     /** Servicio para operaciones de negocio con funciones */
     private ServicioFuncion servicioFuncion;
-    
+
     /** DAO para acceso directo a datos de funciones */
     private FuncionDAO funcionDAO;
-    
+
     /** DAO para acceso a datos de películas */
     private PeliculaDAO peliculaDAO;
-    
+
     /** Servicio para operaciones con salas */
     private SalaService salaService;
 
     // Componentes de la interfaz FXML para búsqueda y tabla
     /** Campo de texto para búsqueda general */
-    @FXML private TextField txtBuscar;
-    
+    @FXML
+    private TextField txtBuscar;
+
     /** Tabla principal de funciones */
-    @FXML private TableView<Funcion> tablaFunciones;
-    
+    @FXML
+    private TableView<Funcion> tablaFunciones;
+
     /** Columna de ID de función */
-    @FXML private TableColumn<Funcion, Integer> colId;
-    
+    @FXML
+    private TableColumn<Funcion, Integer> colId;
+
     /** Columna de película */
-    @FXML private TableColumn<Funcion, String> colPelicula;
-    
+    @FXML
+    private TableColumn<Funcion, String> colPelicula;
+
     /** Columna de sala */
-    @FXML private TableColumn<Funcion, String> colSala;
-    
+    @FXML
+    private TableColumn<Funcion, String> colSala;
+
     /** Columna de fecha y hora de inicio */
-    @FXML private TableColumn<Funcion, String> colFechaHoraInicio;
-    
+    @FXML
+    private TableColumn<Funcion, String> colFechaHoraInicio;
+
     /** Columna de fecha y hora de fin */
-    @FXML private TableColumn<Funcion, String> colFechaHoraFin;
-    
+    @FXML
+    private TableColumn<Funcion, String> colFechaHoraFin;
+
     /** Columna de formato de proyección */
-    @FXML private TableColumn<Funcion, String> colFormato;
-    
+    @FXML
+    private TableColumn<Funcion, String> colFormato;
+
     /** Columna de tipo de estreno */
-    @FXML private TableColumn<Funcion, String> colTipoEstreno;
+    @FXML
+    private TableColumn<Funcion, String> colTipoEstreno;
 
     /** Botón para realizar búsqueda */
-    @FXML private Button btnBuscar;
-    
+    @FXML
+    private Button btnBuscar;
+
     /** Botón para eliminar función seleccionada */
-    @FXML private Button btnEliminar;
-    
+    @FXML
+    private Button btnEliminar;
+
     /** Botón para ver detalles de función */
-    @FXML private Button btnVerDetalles;
-    
+    @FXML
+    private Button btnVerDetalles;
+
     /** Botón para volver al menú principal */
-    @FXML private Button btnVolver;
+    @FXML
+    private Button btnVolver;
 
     /** Label que muestra el total de funciones */
-    @FXML private Label lblTotalFunciones;
-    
+    @FXML
+    private Label lblTotalFunciones;
+
     /** Label que muestra estadísticas adicionales */
-    @FXML private Label lblEstadisticas;
+    @FXML
+    private Label lblEstadisticas;
 
     // Campos del formulario de función integrado
     /** ComboBox para selección de película */
-    @FXML private ComboBox<Pelicula> cmbPelicula;
-    
+    @FXML
+    private ComboBox<Pelicula> cmbPelicula;
+
     /** ComboBox para selección de sala */
-    @FXML private ComboBox<Sala> cmbSala;
-    
+    @FXML
+    private ComboBox<Sala> cmbSala;
+
     /** Selector de fecha */
-    @FXML private DatePicker dateFecha;
-    
+    @FXML
+    private DatePicker dateFecha;
+
     /** Campo de texto para hora */
-    @FXML private TextField txtHora;
-    
+    @FXML
+    private TextField txtHora;
+
     /** ComboBox para formato de función */
-    @FXML private ComboBox<FormatoFuncion> cmbFormato;
-    
+    @FXML
+    private ComboBox<FormatoFuncion> cmbFormato;
+
     /** ComboBox para tipo de estreno */
-    @FXML private ComboBox<TipoEstreno> cmbTipoEstreno;
-    
+    @FXML
+    private ComboBox<TipoEstreno> cmbTipoEstreno;
+
     /** Botón para guardar función */
-    @FXML private Button btnGuardar;
-    
+    @FXML
+    private Button btnGuardar;
+
     /** Botón para crear nueva función */
-    @FXML private Button btnNuevo;
-    
+    @FXML
+    private Button btnNuevo;
+
     /** Botón para limpiar formulario */
-    @FXML private Button btnLimpiarFormulario;
+    @FXML
+    private Button btnLimpiarFormulario;
 
     // Datos para la gestión de funciones
     /** Lista observable de todas las funciones */
     private ObservableList<Funcion> listaFunciones;
-    
+
     /** Lista observable de funciones filtradas */
     private ObservableList<Funcion> funcionesFiltradas;
 
@@ -174,7 +202,8 @@ public class ControladorFunciones implements Initializable {
     /**
      * Inicializa el controlador después de que se ha cargado el FXML.
      * 
-     * @param location La ubicación utilizada para resolver rutas relativas para el objeto raíz
+     * @param location  La ubicación utilizada para resolver rutas relativas para el
+     *                  objeto raíz
      * @param resources Los recursos utilizados para localizar el objeto raíz
      */
     @Override
@@ -227,8 +256,7 @@ public class ControladorFunciones implements Initializable {
                             cmbSala.getValue(),
                             fechaHoraInicio,
                             cmbFormato.getValue(),
-                            cmbTipoEstreno.getValue()
-                    );
+                            cmbTipoEstreno.getValue());
 
                     // Recargar la tabla
                     cargarFunciones();
@@ -249,7 +277,7 @@ public class ControladorFunciones implements Initializable {
                     String mensaje = e.getMessage();
                     if (mensaje != null && mensaje.contains("conflicto")) {
                         mostrarError("Conflicto de horarios",
-                                   "Ya existe una función en esa sala en el horario especificado");
+                                "Ya existe una función en esa sala en el horario especificado");
                     } else {
                         mostrarError("Error al crear función", "Error: " + mensaje);
                     }
@@ -267,8 +295,7 @@ public class ControladorFunciones implements Initializable {
                             cmbSala.getValue(),
                             fechaHoraInicio,
                             cmbFormato.getValue(),
-                            cmbTipoEstreno.getValue()
-                    );
+                            cmbTipoEstreno.getValue());
 
                     // Salir del modo edición ANTES de recargar
                     funcionEnEdicion = null;
@@ -291,7 +318,7 @@ public class ControladorFunciones implements Initializable {
                     String mensaje = e.getMessage();
                     if (mensaje != null && mensaje.contains("conflicto")) {
                         mostrarError("Conflicto de horarios",
-                                   "Ya existe una función en esa sala en el horario especificado");
+                                "Ya existe una función en esa sala en el horario especificado");
                     } else {
                         mostrarError("Error al actualizar función", "Error: " + mensaje);
                     }
@@ -317,12 +344,18 @@ public class ControladorFunciones implements Initializable {
      * Limpia todos los campos del formulario y resetea el estado.
      */
     private void limpiarFormulario() {
-        if (cmbPelicula != null) cmbPelicula.setValue(null);
-        if (cmbSala != null) cmbSala.setValue(null);
-        if (dateFecha != null) dateFecha.setValue(null);
-        if (txtHora != null) txtHora.clear();
-        if (cmbFormato != null) cmbFormato.setValue(null);
-        if (cmbTipoEstreno != null) cmbTipoEstreno.setValue(null);
+        if (cmbPelicula != null)
+            cmbPelicula.setValue(null);
+        if (cmbSala != null)
+            cmbSala.setValue(null);
+        if (dateFecha != null)
+            dateFecha.setValue(null);
+        if (txtHora != null)
+            txtHora.clear();
+        if (cmbFormato != null)
+            cmbFormato.setValue(null);
+        if (cmbTipoEstreno != null)
+            cmbTipoEstreno.setValue(null);
 
         // Resetear modo de edición
         funcionEnEdicion = null;
@@ -363,7 +396,8 @@ public class ControladorFunciones implements Initializable {
      * @param funcion Función a cargar en el formulario
      */
     private void cargarDatosEnFormulario(Funcion funcion) {
-        if (funcion == null) return;
+        if (funcion == null)
+            return;
 
         // Cargar datos básicos
         cmbPelicula.setValue(funcion.getPelicula());
@@ -399,9 +433,9 @@ public class ControladorFunciones implements Initializable {
      */
     private void confirmarYEliminarFuncion(Funcion funcion) {
         String mensaje = "¿Está seguro de eliminar esta función?\n\n" +
-                       "Función ID: " + funcion.getId() +
-                       "\nPelícula: " + funcion.getPelicula().getTitulo() +
-                       "\n\nATENCIÓN: Esta acción no se puede deshacer.";
+                "Función ID: " + funcion.getId() +
+                "\nPelícula: " + funcion.getPelicula().getTitulo() +
+                "\n\nATENCIÓN: Esta acción no se puede deshacer.";
         ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
 
         try {
@@ -416,12 +450,13 @@ public class ControladorFunciones implements Initializable {
     /**
      * Maneja errores específicos de eliminación de funciones.
      * 
-     * @param e Excepción ocurrida
+     * @param e       Excepción ocurrida
      * @param funcion Función que se intentó eliminar
      */
     private void manejarErrorEliminacion(Exception e, Funcion funcion) {
         String mensajeError = e.getMessage();
-        if (mensajeError != null && (mensajeError.contains("foreign key constraint") || mensajeError.contains("violates"))) {
+        if (mensajeError != null
+                && (mensajeError.contains("foreign key constraint") || mensajeError.contains("violates"))) {
             mostrarErrorRestriccion(funcion);
         } else {
             mostrarError("Error", "No se pudo eliminar la función: " + mensajeError);
@@ -435,14 +470,14 @@ public class ControladorFunciones implements Initializable {
      */
     private void mostrarErrorRestriccion(Funcion funcion) {
         String mensaje = "No se puede eliminar la función ID " + funcion.getId() +
-                        " porque está asociada con:\n\n" +
-                        "• Boletos vendidos\n" +
-                        "• Reservas existentes\n" +
-                        "• Asientos ocupados\n\n" +
-                        "OPCIONES:\n" +
-                        "1. Cancelar todas las reservas primero\n" +
-                        "2. Esperar a que termine la función\n" +
-                        "3. Contactar al administrador del sistema";
+                " porque está asociada con:\n\n" +
+                "• Boletos vendidos\n" +
+                "• Reservas existentes\n" +
+                "• Asientos ocupados\n\n" +
+                "OPCIONES:\n" +
+                "1. Cancelar todas las reservas primero\n" +
+                "2. Esperar a que termine la función\n" +
+                "3. Contactar al administrador del sistema";
 
         ManejadorMetodosComunes.mostrarVentanaError(mensaje);
     }
@@ -488,15 +523,13 @@ public class ControladorFunciones implements Initializable {
         colPelicula.setCellValueFactory(cellData -> {
             Pelicula pelicula = cellData.getValue().getPelicula();
             return new javafx.beans.property.SimpleStringProperty(
-                pelicula != null ? pelicula.getTitulo() : "N/A"
-            );
+                    pelicula != null ? pelicula.getTitulo() : "N/A");
         });
 
         colSala.setCellValueFactory(cellData -> {
             Sala sala = cellData.getValue().getSala();
             return new javafx.beans.property.SimpleStringProperty(
-                sala != null ? sala.getNombre() : "N/A"
-            );
+                    sala != null ? sala.getNombre() : "N/A");
         });
 
         configurarColumnasFechaHora();
@@ -512,15 +545,13 @@ public class ControladorFunciones implements Initializable {
         colFechaHoraInicio.setCellValueFactory(cellData -> {
             LocalDateTime fechaHora = cellData.getValue().getFechaHoraInicio();
             return new javafx.beans.property.SimpleStringProperty(
-                fechaHora != null ? fechaHora.format(formatter) : "N/A"
-            );
+                    fechaHora != null ? fechaHora.format(formatter) : "N/A");
         });
 
         colFechaHoraFin.setCellValueFactory(cellData -> {
             LocalDateTime fechaHora = cellData.getValue().getFechaHoraFin();
             return new javafx.beans.property.SimpleStringProperty(
-                fechaHora != null ? fechaHora.format(formatter) : "N/A"
-            );
+                    fechaHora != null ? fechaHora.format(formatter) : "N/A");
         });
     }
 
@@ -531,15 +562,13 @@ public class ControladorFunciones implements Initializable {
         colFormato.setCellValueFactory(cellData -> {
             FormatoFuncion formato = cellData.getValue().getFormato();
             return new javafx.beans.property.SimpleStringProperty(
-                formato != null ? formato.toString() : "N/A"
-            );
+                    formato != null ? formato.toString() : "N/A");
         });
 
         colTipoEstreno.setCellValueFactory(cellData -> {
             TipoEstreno tipo = cellData.getValue().getTipoEstreno();
             return new javafx.beans.property.SimpleStringProperty(
-                tipo != null ? tipo.name() : "N/A"
-            );
+                    tipo != null ? tipo.name() : "N/A");
         });
     }
 
@@ -560,8 +589,7 @@ public class ControladorFunciones implements Initializable {
                         funcionEnEdicion = null;
                         actualizarModoFormulario();
                     }
-                }
-        );
+                });
     }
 
     /**
@@ -709,11 +737,11 @@ public class ControladorFunciones implements Initializable {
      */
     private boolean validarFormularioCompleto() {
         return cmbPelicula != null && cmbPelicula.getValue() != null &&
-               cmbSala != null && cmbSala.getValue() != null &&
-               dateFecha != null && dateFecha.getValue() != null &&
-               txtHora != null && !txtHora.getText().trim().isEmpty() &&
-               cmbFormato != null && cmbFormato.getValue() != null &&
-               cmbTipoEstreno != null && cmbTipoEstreno.getValue() != null;
+                cmbSala != null && cmbSala.getValue() != null &&
+                dateFecha != null && dateFecha.getValue() != null &&
+                txtHora != null && !txtHora.getText().trim().isEmpty() &&
+                cmbFormato != null && cmbFormato.getValue() != null &&
+                cmbTipoEstreno != null && cmbTipoEstreno.getValue() != null;
     }
 
     /**
@@ -749,7 +777,7 @@ public class ControladorFunciones implements Initializable {
     /**
      * Verifica si una función cumple con los criterios de búsqueda.
      * 
-     * @param funcion Función a evaluar
+     * @param funcion       Función a evaluar
      * @param textoBusqueda Texto de búsqueda
      * @return true si cumple los criterios, false en caso contrario
      */
@@ -759,10 +787,11 @@ public class ControladorFunciones implements Initializable {
         }
 
         return String.valueOf(funcion.getId()).contains(textoBusqueda) ||
-               (funcion.getPelicula() != null && funcion.getPelicula().getTitulo() != null &&
-                funcion.getPelicula().getTitulo().toLowerCase().contains(textoBusqueda)) ||
-               (funcion.getSala() != null && funcion.getSala().getNombre() != null &&
-                funcion.getSala().getNombre().toLowerCase().contains(textoBusqueda));
+                (funcion.getPelicula() != null && funcion.getPelicula().getTitulo() != null &&
+                        funcion.getPelicula().getTitulo().toLowerCase().contains(textoBusqueda))
+                ||
+                (funcion.getSala() != null && funcion.getSala().getNombre() != null &&
+                        funcion.getSala().getNombre().toLowerCase().contains(textoBusqueda));
     }
 
     /**
@@ -782,7 +811,8 @@ public class ControladorFunciones implements Initializable {
     /**
      * Obtiene las funciones de una película específica por su nombre.
      * 
-     * <p>Método público que delega la lógica al servicio correspondiente
+     * <p>
+     * Método público que delega la lógica al servicio correspondiente
      * para búsquedas especializadas por película.
      *
      * @param nombrePelicula El título de la película
@@ -790,7 +820,16 @@ public class ControladorFunciones implements Initializable {
      */
     public List<Funcion> obtenerFuncionesPorNombrePelicula(String nombrePelicula) {
         try {
-            return servicioFuncion.obtenerFuncionesPorNombrePelicula(nombrePelicula);
+            List<Funcion> todasFunciones = servicioFuncion.obtenerFuncionesPorNombrePelicula(nombrePelicula);
+            LocalDateTime ahora = LocalDateTime.now();
+
+            // Filtrar funciones para que solo incluyan las que empiezan a partir de ahora
+            List<Funcion> funcionesFiltradas = todasFunciones.stream()
+                    .filter(funcion -> funcion.getFechaHoraInicio() != null)
+                    .filter(funcion -> !funcion.getFechaHoraInicio().isBefore(ahora))
+                    .collect(Collectors.toList());
+
+            return funcionesFiltradas;
         } catch (Exception e) {
             return new ArrayList<>();
         }
@@ -803,7 +842,8 @@ public class ControladorFunciones implements Initializable {
      */
     private void navegarADetallesFuncion(Funcion funcion) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/peliculas/PantallaDetallesFuncion.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/peliculas/PantallaDetallesFuncion.fxml"));
             Parent root = loader.load();
 
             ControladorDetallesFuncion controlador = loader.getController();
@@ -824,9 +864,10 @@ public class ControladorFunciones implements Initializable {
     @FXML
     private void onVolver(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
-            
+
             Stage stage = (Stage) btnVolver.getScene().getWindow();
             stage.getScene().setRoot(root);
         } catch (Exception e) {
@@ -837,7 +878,7 @@ public class ControladorFunciones implements Initializable {
     /**
      * Muestra un mensaje de error al usuario.
      * 
-     * @param titulo Título del mensaje
+     * @param titulo  Título del mensaje
      * @param mensaje Contenido del mensaje de error
      */
     private void mostrarError(String titulo, String mensaje) {
@@ -847,7 +888,7 @@ public class ControladorFunciones implements Initializable {
     /**
      * Muestra un mensaje informativo al usuario.
      * 
-     * @param titulo Título del mensaje
+     * @param titulo  Título del mensaje
      * @param mensaje Contenido del mensaje informativo
      */
     private void mostrarInformacion(String titulo, String mensaje) {
