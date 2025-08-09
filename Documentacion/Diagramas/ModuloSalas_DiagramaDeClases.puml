@@ -2,6 +2,24 @@
 'https://plantuml.com/class-diagram
 package salas {
 package modelos {
+package persistencia {
+    class SalasDAO {
+        +crearSala(sala: Sala): void
+        +obtenerSalaPorId(id: int): Sala
+        +listarSalas(): List<Sala>
+        +actualizarSala(sala: Sala): void
+        +eliminarSala(id: int): void
+    }
+    class ButacasDAO {
+        +crearButaca(butaca: Butaca): void
+        +generarButacas(salaId: int, filas: int, columnas: int): void
+        +obtenerButacaPorId(id: int): Butaca
+        +listarTodasButacas(): List<Butaca>
+        +listarButacasPorSala(salaId: int): List<Butaca>
+        +actualizarButaca(butaca: Butaca): void
+        +eliminarButaca(id: int): void
+    }
+}
 package entidades{
     class Sala {
         -id: int
@@ -19,6 +37,7 @@ package entidades{
         +getTipo(): String
         +setTipo(tipo: String): void
         +toString(nombre): String
+
     }
    class Butaca {
    -id: int
@@ -55,15 +74,21 @@ package entidades{
    NORMAL(1.00),
    VIP(1.50)
    +getMultiplicador()
+
    }
+
    }
+}
+
+
     }
-    Sala -> TipoSala
-    SalaNormalFactory -> Sala
-    SalaVIPFactory -> Sala
-    Sala -> EstadoSala
-    Sala"1" o- "1..*"Butaca
-    Butaca -> EstadoButaca
+
+    Sala -u> TipoSala
+    SalaNormalFactory -u> Sala
+    SalaVIPFactory -u> Sala
+    Sala -u> EstadoSala
+    Sala o- Butaca
+    Butaca -u> EstadoButaca
     package servicios{
     class ButacaService{
     -butacasDAO : ButacasDAO
@@ -151,6 +176,34 @@ package entidades{
         +onBackAction(event: ActionEvent): void
         -limpiarCampos(): void
     }
+    class ControladorDeConsultaSalas {
+        -gridButacas: GridPane
+        -vbox: VBox
+        -butacaService: ButacaService
+        -butacasSeleccionadas: List<Butaca>
+        -controladorAsignadorButacas: ControladorAsignadorButacas
+        +initialize(location: URL, resources: ResourceBundle): void
+        +mostrarButacasDeSala(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
+        -seleccionarButaca(butaca: Butaca, btn: Button): void
+        -deseleccionarButaca(butaca: Butaca, btn: Button): void
+        +getButacasSeleccionadas(): List<Butaca>
+        +setControladorAsignadorButacas(controladorAsignadorButacas: ControladorAsignadorButacas): void
     }
+    }
+ButacaService -u-> ButacasDAO
+ButacaService -u-> SalasDAO
+SalaService -u-> SalasDAO
+SalaService -u-> ButacaService
+SalaService -u-> ButacasDAO
+ControladorButacas -u-> SalaService
+ControladorButacas -u-> ButacaService
+Sala -u-o ControladorButacas
+Butaca -u-o ControladorButacas
+ControladorSalas -u-> SalaService
+ControladorSalas o-u- Sala
+ControladorSalas -u-> ButacaService
+ControladorDeConsultaSalas -u-> ButacaService
+ControladorDeConsultaSalas o-u- Butaca
+ControladorSalas -u-> SalaFactory
 }
 @enduml
