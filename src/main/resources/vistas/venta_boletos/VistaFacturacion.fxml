@@ -39,7 +39,7 @@
             </padding>
             <children>
                 <!-- SECCIÓN DE BÚSQUEDA Y DATOS DEL CLIENTE -->
-                <VBox styleClass="ticket-card" spacing="15.0">
+                <VBox spacing="15.0" styleClass="ticket-card">
                     <children>
                         <Label styleClass="section-title" text="Datos del Cliente" />
                         <Separator />
@@ -47,8 +47,8 @@
                         <!-- Búsqueda de Cliente -->
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
-                                <Label text="Buscar Cliente:" styleClass="form-label" />
-                                <TextField fx:id="identificacionField" promptText="Ingrese identificación" HBox.hgrow="ALWAYS" />
+                                <Label styleClass="form-label" text="Buscar Cliente:" />
+                                <TextField fx:id="identificacionField" promptText="Ingrese el número de identificación" HBox.hgrow="ALWAYS" />
                                 <Button onAction="#onBuscarCliente" styleClass="icon-button" text="🔍" />
                             </children>
                         </HBox>
@@ -68,32 +68,32 @@
                             </rowConstraints>
                             <children>
                                 <TextFlow>
-                                    <Text text="Nombre " fill="white" style="-fx-font-weight: bold;"/>
-                                    <Text text="*" fill="red" style="-fx-font-weight: bold;"/>
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Nombre " />
+                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="nombreField" promptText="Nombre del cliente" styleClass="text-field" GridPane.columnIndex="1" />
 
                                 <TextFlow GridPane.rowIndex="1">
-                                    <Text text="Apellido " fill="white" style="-fx-font-weight: bold;"/>
-                                    <Text text="*" fill="red" style="-fx-font-weight: bold;"/>
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Apellido " />
+                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="apellidoField" promptText="Apellido del cliente" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
                                 <TextFlow GridPane.rowIndex="2">
-                                    <Text text="Tipo de Documento " fill="white" style="-fx-font-weight: bold;"/>
-                                    <Text text="*" fill="red" style="-fx-font-weight: bold;"/>
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Tipo de Documento " />
+                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <ComboBox fx:id="tipoDocumentoBox" prefWidth="Infinity" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                                 <TextFlow GridPane.rowIndex="3">
-                                    <Text text="Documento " fill="white" style="-fx-font-weight: bold;"/>
-                                    <Text text="*" fill="red" style="-fx-font-weight: bold;"/>
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Documento " />
+                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="documentoField" promptText="Número de documento" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
                                 <TextFlow GridPane.rowIndex="4">
-                                    <Text text="Correo Electrónico " fill="white" style="-fx-font-weight: bold;"/>
-                                    <Text text="*" fill="red" style="-fx-font-weight: bold;"/>
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Correo Electrónico " />
+                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="correoField" promptText="ejemplo@email.com" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                             </children>
@@ -101,17 +101,23 @@
 
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
-                                <Button onAction="#onActualizarCliente" styleClass="primary-button" text="Actualizar Datos" />
-                                <Label text="* campos obligatorios" styleClass="help-text" style="-fx-text-fill: red;" />
+                                <Label style="-fx-text-fill: red;" styleClass="help-text" text="* Campos Obligatorios" />
                             </children>
                         </HBox>
                     </children>
                 </VBox>
+                    <Button fx:id="buttonCrearOActualizar" disable="true" onAction="#onCrearOActualizarCliente" prefHeight="30.0" prefWidth="169.0" styleClass="primary-button" text="Crear" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="buttonNuevoCliente" mnemonicParsing="false" onAction="#onLimpiarFormulario" styleClass="link-button" text="Nuevo" />
+                  <Button fx:id="buttonLimpiarFormulario" mnemonicParsing="false" onAction="#onLimpiarFormulario" styleClass="link-button" text="Limpiar" />
+               </children>
+            </HBox>
 
                 <Region VBox.vgrow="ALWAYS" />
 
                 <!-- SECCIÓN DE CONFIRMACIÓN FINAL -->
-                <VBox styleClass="ticket-card" spacing="15.0" alignment="CENTER_LEFT">
+                <VBox alignment="CENTER_LEFT" spacing="15.0" styleClass="ticket-card">
                     <children>
                         <CheckBox fx:id="confirmCheckBox" styleClass="confirmation-checkbox" text="Confirmar la compra y los datos ingresados" />
                         <Label styleClass="help-text" text="Una vez realizada la compra, no se aceptan cambios ni devoluciones." />
@@ -125,7 +131,7 @@
         <VBox prefWidth="320.0" spacing="10.0" styleClass="financial-summary-pane" BorderPane.alignment="CENTER">
             <children>
                 <VBox fx:id="informacionFuncionContainer" VBox.vgrow="ALWAYS" />
-                <Button fx:id="buttonPagar" onAction="#onPagarAction" prefHeight="50.0" maxWidth="Infinity" styleClass="primary-button" text="Pagar" />
+                <Button fx:id="buttonPagar" maxWidth="Infinity" onAction="#onPagarAction" prefHeight="50.0" styleClass="primary-button" text="Pagar" />
             </children>
         </VBox>
     </right>
