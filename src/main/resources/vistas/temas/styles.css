@@ -183,6 +183,7 @@
   -fx-border-color: #0079cf;
 }
 
+/*  Define la apariencia del ComboBox cuando está cerrado */
 .combo-box {
   -fx-background-color: #02487b;
   -fx-border-color: #02487b;
@@ -191,26 +192,31 @@
   -fx-mark-color: white;
 }
 
+/* Controla el texto del elemento seleccionado que se muestra en el ComboBox cerrado */
 .combo-box .list-cell {
   -fx-text-fill: white;
   -fx-background-color: #02487b;
 }
 
+/* Define la apariencia del contenedor que aparece cuando se despliega el ComboBox */
 .combo-box-popup .list-view {
   -fx-background-color: #02487b;
   -fx-border-color: #1f2430;
 }
 
+/* Estilo de cada opción individual en la lista desplegable */
 .combo-box-popup .list-view .list-cell {
   -fx-background-color: #02487b;
   -fx-text-fill: white;
 }
 
+/* Cambia la apariencia cuando el mouse pasa sobre una opción */
 .combo-box-popup .list-view .list-cell:hover {
-  -fx-background-color: #02487b;
+  -fx-background-color: #0079cf;
   -fx-text-fill: #ffffff;
 }
 
+/* Define el estilo del elemento actualmente seleccionado en la lista */
 .combo-box-popup .list-view .list-cell:filled:selected {
   -fx-background-color: #02487b;
 }
@@ -286,7 +292,7 @@
 
 .table-row-cell:filled:selected,
 .table-row-cell:focused:selected {
-  -fx-background-color: #749ed1;
+  -fx-background-color: #0079cf;
   -fx-text-fill: white;
 }
 
@@ -311,62 +317,15 @@
   -fx-font-weight: bold;
 }
 
-/* Estilo general del ComboBox cuando está colapsado */
-
-.combo-box {
-  -fx-background-color: #02487b;
-  /* Azul oscuro */
-  -fx-border-color: #02487b;
-  -fx-border-radius: 8px;
-  -fx-background-radius: 8px;
-  -fx-mark-color: white;
-  /* Flechita blanca */
-}
-
-/* Estilo del texto seleccionado (parte visible) */
-
-.combo-box .list-cell {
-  -fx-text-fill: white;
-  /* Texto blanco */
-  -fx-background-color: #02487b;
-}
-
-/* Estilo del panel desplegable */
-
-.combo-box-popup .list-view {
-  -fx-background-color: #02487b;
-  /* Naranja base */
-  -fx-border-color: #1f2430;
-}
-
 /* Ítems normales */
-
-.combo-box-popup .list-view .list-cell {
-  -fx-background-color: #02487b;
-  -fx-text-fill: white;
-  /* Texto negro */
-}
 
 .titled-pane .text {
   -fx-font-size: 16px; /* Ajusta este valor según lo necesites */
 }
 /* Ítem resaltado con el mouse */
 
-.combo-box-popup .list-view .list-cell:hover {
-  -fx-background-color: #02487b;
-  /* Naranja claro al pasar el mouse */
-  -fx-text-fill: #ffffff;
-  /* Texto negro */
-}
-
 /* Ítem seleccionado en el desplegable */
 
-.combo-box-popup .list-view .list-cell:filled:selected {
-  -fx-background-color: #02487b;
-  /* Fondo naranja selección */
-  -fx-text-fill: #ffffff;
-  /* Texto negro */
-}
 
 /* Estilo del checkbox (no modificado, pero lo dejo si lo estás usando) */
 
@@ -452,7 +411,7 @@
 }
 
 .text-area:focused {
-  -fx-border-color: #f25f00;
+  -fx-border-color: #0079cf;
   -fx-border-width: 2px;
 }
 
@@ -465,7 +424,7 @@
 .movie-title {
   -fx-font-size: 24px;
   -fx-font-weight: bold;
-  -fx-text-fill: #f25f00;
+  -fx-text-fill: #0079cf;
 }
 
 .detail-label {
@@ -577,7 +536,7 @@
 }
 
 .choice-box .arrow-button:hover {
-  -fx-background-color: #f25f00;
+  -fx-background-color: #0079cf;
 }
 
 /* Estilos para el popup del ChoiceBox */

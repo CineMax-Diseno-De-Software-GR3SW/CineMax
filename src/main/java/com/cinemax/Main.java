@@ -19,14 +19,14 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
 
         FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("/vistas/empleados/PantallaLogin.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), 800, 500);
+        Scene scene = new Scene(fxmlLoader.load());
 
         Image icon = new Image(Main.class.getResourceAsStream("/imagenes/logo.png"));
         stage.getIcons().add(icon);
 
         // https://cdn-icons-png.flaticon.com/512/44/44460.png
 
-        stage.setTitle("CineMAX");
+        stage.setTitle("CineMax");
         stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();

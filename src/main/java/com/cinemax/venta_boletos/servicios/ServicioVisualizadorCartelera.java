@@ -93,7 +93,7 @@ public class ServicioVisualizadorCartelera {
             ControladorVisualizadorFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
                     currentStage,
                     "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
-                    "CineMAX");
+                    "CineMax");
 
             if (controller != null) {
                 controller.asignarPeliculaSeleccionada(peliculaSeleccionada);

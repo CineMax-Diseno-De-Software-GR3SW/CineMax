@@ -73,10 +73,12 @@ public class ControladorCargaAsignacionButacas extends ControladorCargaConDatos 
             // Si hubiera más procesamiento pesado, se haría aquí: carga de datos de base de datos, procesar listas grandes, inicializar componentes complejos, etc.
 
             // 4. Retornar resultado encapsulado
-            return new ResultadoCarga(root, controller, "CineMAX");
+            return new ResultadoCarga(root, controller, "CineMax");
             
         } catch (Exception e) {
             // Error durante la carga - será manejado por el sistema de carga
+            System.err.println("Error al cargar la vista de asignación de butacas: " + e.getMessage());
+            e.printStackTrace();
             return new ResultadoCarga("Error cargando vista de butacas: " + e.getMessage());
         }
     }
