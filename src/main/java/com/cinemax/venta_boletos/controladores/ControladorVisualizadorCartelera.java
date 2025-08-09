@@ -1,7 +1,7 @@
 package com.cinemax.venta_boletos.controladores;
 
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
-import com.cinemax.venta_boletos.servicios.ServicioMostrarCartelera;
+import com.cinemax.venta_boletos.servicios.ServicioVisualizadorCartelera;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -32,10 +32,10 @@ import java.util.List;
  * 3. Permite selección/deselección interactiva.
  * 4. Navega a funciones al confirmar selección.
  * 
- * @author [Tu nombre o equipo]
+ * @author GR3SW
  * @version 1.0
  */
-public class ControladorMostrarCartelera {
+public class ControladorVisualizadorCartelera {
 
     // ===== ELEMENTOS DE LA INTERFAZ (FXML) =====
 
@@ -46,7 +46,7 @@ public class ControladorMostrarCartelera {
     // ===== ATRIBUTOS DE LÓGICA =====
 
     /** Servicio para gestión de datos de la cartelera */
-    private final ServicioMostrarCartelera servicioMostrarCartelera = new ServicioMostrarCartelera();
+    private final ServicioVisualizadorCartelera servicioMostrarCartelera = new ServicioVisualizadorCartelera();
 
     /** Referencia a la tarjeta de película actualmente seleccionada */
     private VBox selectedMovieCard = null;
@@ -63,25 +63,25 @@ public class ControladorMostrarCartelera {
      */
     @FXML
     public void initialize() {
-        servicioMostrarCartelera.inicializarListaPeliculas();
+        servicioMostrarCartelera.cargarListaPeliculas();
 
-        servicioMostrarCartelera.getPeliculas().addListener((ListChangeListener<Pelicula>) c -> {
+        servicioMostrarCartelera.getListaPeliculas().addListener((ListChangeListener<Pelicula>) c -> {
             while (c.next()) {
                 if (c.wasAdded() || c.wasRemoved() || c.wasUpdated()) {
-                    actualizarDisplayPeliculas(servicioMostrarCartelera.getPeliculas());
+                    cargarCartelera(servicioMostrarCartelera.getListaPeliculas());
                 }
             }
         });
 
-        actualizarDisplayPeliculas(servicioMostrarCartelera.getPeliculas());
+        cargarCartelera(servicioMostrarCartelera.getListaPeliculas());
     }
 
     /**
-     * Actualiza el display de películas en el FlowPane.
+     * Carga el display de películas en el FlowPane.
      * 
      * @param peliculas Lista de películas a mostrar
      */
-    private void actualizarDisplayPeliculas(List<Pelicula> peliculas) {
+    private void cargarCartelera(List<Pelicula> peliculas) {
         flowPanePeliculas.getChildren().clear();
         if (selectedMovieCard != null) {
             selectedMovieCard.setStyle("-fx-border-color: transparent; -fx-border-width: 0px;");
@@ -186,7 +186,7 @@ public class ControladorMostrarCartelera {
             selectedMovieCard = card;
 
             System.out.println("Tarjeta de película seleccionada: " + pelicula.getTitulo());
-            servicioMostrarCartelera.setSelectedPelicula(pelicula);
+            servicioMostrarCartelera.setPeliculaSeleccionada(pelicula);
         });
     }
 
@@ -198,8 +198,8 @@ public class ControladorMostrarCartelera {
      * Navega a la pantalla de funciones para la película seleccionada.
      */
     @FXML
-    private void handleSeleccionar() {
-        Pelicula peliculaSeleccionada = servicioMostrarCartelera.getSelectedPelicula();
+    private void onSeleccionar() {
+        Pelicula peliculaSeleccionada = servicioMostrarCartelera.getPeliculaSeleccionada();
         if (peliculaSeleccionada != null) {
             Stage currentStage = (Stage) flowPanePeliculas.getScene().getWindow();
             servicioMostrarCartelera.seleccionarPelicula(peliculaSeleccionada, currentStage);
@@ -212,7 +212,7 @@ public class ControladorMostrarCartelera {
      * @param event Evento de acción del botón
      */
     @FXML
-    public void handleRegresar(ActionEvent event) {
+    public void onRegresar(ActionEvent event) {
         servicioMostrarCartelera.regresarPantallaPrincipal(event);
     }
 }
