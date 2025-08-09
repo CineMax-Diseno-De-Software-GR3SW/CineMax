@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefWidth="800" prefHeight="550" stylesheets="@../temas/ayu-theme.css"
+<BorderPane prefWidth="800" prefHeight="500" stylesheets="@../temas/styles.css"
             xmlns="http://javafx.com/javafx/17"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.cinemax.empleados.controladores.ControladorGestionUsuarios">
@@ -18,7 +18,7 @@
                 <Button fx:id="btnBack"
                         text="←"
                         onAction="#onBackAction"
-                        styleClass="icon-button"/>
+                        styleClass="stepper-button"/>
 
                 <!-- Título -->
                 <Label text="Gestión de Usuarios" styleClass="section-title">
@@ -30,52 +30,99 @@
 
     <!-- ░░░ PANEL CENTRAL ░░░ -->
     <center>
-        <VBox spacing="12">
-            <!-- Botón Nuevo Usuario alineado a la derecha -->
-            <HBox alignment="CENTER_RIGHT">
-                <Button fx:id="btnAgregarUsuario"
-                        text="Nuevo Usuario"
-                        onAction="#onAgregarUsuario"
-                        styleClass="primary-btn"/>
-            </HBox>
+        <VBox spacing="10">
+            <!-- Sección de Búsqueda -->
+            <VBox spacing="10" styleClass="search-section">
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Buscar:"/>
+                    <TextField fx:id="txtBuscar" promptText="Cédula, rol..." prefWidth="200"/>
+                    <Button fx:id="btnBuscar" text="Buscar" onAction="#onBuscar" styleClass="primary-button"/>
+                    <Button fx:id="btnLimpiar" onAction="#onLimpiar" text="Limpiar" styleClass="primary-button" />
+                </HBox>
+            </VBox>
 
-            <VBox spacing="12" prefWidth="620" maxWidth="620">
+            <VBox spacing="10" minWidth="750" maxWidth="850">
 
             <!--             Tabla de usuarios -->
-            <TableView fx:id="tableUsuarios" prefHeight="400" prefWidth="400">
+            <TableView fx:id="tableUsuarios"  VBox.vgrow="ALWAYS" styleClass="tabla">
                 <columns>
-                    <TableColumn fx:id="colUsuario"  text="Usuario"        prefWidth="85"/>
-                    <TableColumn fx:id="colNombre" text="Nombre"    prefWidth="130"/>
-                    <TableColumn fx:id="colEmail"  text="Correo"    prefWidth="170"/>
-                    <TableColumn fx:id="colRol"    text="Rol"       prefWidth="150"/>
-                    <TableColumn fx:id="colActivo"     text="Activo"        prefWidth="85"/>
+                    <TableColumn fx:id="colUsuario"  text="Usuario"/>
+                    <TableColumn fx:id="colCedula"   text="Cédula" />
+                    <TableColumn fx:id="colNombre"   text="Nombre" />
+                    <TableColumn fx:id="colEmail"    text="Correo" />
+                    <TableColumn fx:id="colCelular"  text="Celular"/>
+                    <TableColumn fx:id="colRol"      text="Rol"    />
+                    <TableColumn fx:id="colActivo"   text="Activo" />
+
+
+<!--                    <TableColumn fx:id="colUsuario"  text="Usuario"        prefWidth="75"/>-->
+<!--                    <TableColumn fx:id="colCedula"   text="Cédula"         prefWidth="85"/>-->
+<!--                    <TableColumn fx:id="colNombre"   text="Nombre"         prefWidth="120"/>-->
+<!--                    <TableColumn fx:id="colEmail"    text="Correo"         prefWidth="140"/>-->
+<!--                    <TableColumn fx:id="colCelular"  text="Celular"        prefWidth="90"/>-->
+<!--                    <TableColumn fx:id="colRol"      text="Rol"            prefWidth="120"/>-->
+<!--                    <TableColumn fx:id="colActivo"   text="Activo"         prefWidth="70"/>-->
 
                     <!-- Columna de acciones -->
 <!--                    <TableColumn fx:id="colEditar" text="Acciones"  prefWidth="90"/>-->
                 </columns>
             </TableView>
+
+            <!-- Botones de acción -->
+            <HBox spacing="10" alignment="CENTER">
+                <Button fx:id="btnAgregarUsuario"
+                        text="Crear"
+                        onAction="#onAgregarUsuario"
+                        styleClass="primary-button"/>
+                <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="primary-button"/>
+            </HBox>
+
+
+
         </VBox>
 
     </VBox>
     </center>
 
+    <bottom>
+
+        <!-- Pie de página con contador -->
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="summary-pane" BorderPane.alignment="CENTER">
+            <children>
+                <Label fx:id="lblTotalUsuarios" styleClass="summary-details" text="Total de usuarios: 0" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+
+<!--            <Label fx:id="lblTotalUsuarios" text="Total de usuarios: 0" styleClass="summary-details"/>-->
+<!--            <Region HBox.hgrow="ALWAYS"/>-->
+<!--            <Label text="Cargando..." styleClass="summary-details"/>-->
+        </HBox>
+
+<!--        &lt;!&ndash; Información adicional &ndash;&gt;-->
+<!--        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="summary-pane" BorderPane.alignment="CENTER">-->
+<!--            <children>-->
+<!--                <Label fx:id="lblTotalPeliculas" styleClass="summary-details" text="Total de películas: 0" />-->
+<!--                <Region HBox.hgrow="ALWAYS" />-->
+<!--            </children>-->
+<!--        </HBox>-->
+    </bottom>
+
     <!-- ░░░ FRANJA IZQUIERDA CON DATOS DE SESIÓN ░░░ -->
     <left>
-        <VBox spacing="10" prefWidth="170" styleClass="summary-pane" alignment="TOP_CENTER">
+        <VBox spacing="8" prefWidth="160" styleClass="info-admin-pane" alignment="TOP_CENTER">
             <children>
                 <!-- Etiquetas de usuario activo -->
-                <Label fx:id="lblNombreUsuario" prefHeight="26.0" prefWidth="172.0" text="-----" textAlignment="CENTER">
+                <Label fx:id="lblNombreUsuario" prefHeight="24.0" prefWidth="160.0" text="-----" textAlignment="CENTER" styleClass="section-title">
                     <font>
-                        <Font size="20.0" />
+                        <Font size="18.0" />
                     </font></Label>
-                <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="150.0" text="-------" textAlignment="CENTER">
+                <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="40.0" prefWidth="140.0" text="-------" textAlignment="CENTER" styleClass="summary-details">
                     <font>
-                        <Font name="System Bold Italic" size="15.0" />
+                        <Font name="System Bold Italic" size="14.0" />
                     </font></Label>
-                <!-- Espaciador que empuja el botón Log Out al fondo -->
-                <Region VBox.vgrow="ALWAYS"/>
+<!--                &lt;!&ndash; Espaciador que empuja el botón Log Out al fondo &ndash;&gt;-->
+<!--                <Region VBox.vgrow="ALWAYS"/>-->
 
-                <Button text="Log Out" onAction="#onCerrarSesion" styleClass="logout-btn"/>
             </children>
         </VBox>
     </left>

@@ -10,10 +10,12 @@
 # Carpetas de compilación de Maven
 # Ignora la carpeta target principal, pero no las subcarpetas con el mismo nombre
 /target/
+!**/src/main/**/target/
+!**/src/test/**/target/
 
 # ¡Importante! No ignorar el Maven Wrapper
 # Esto permite que otros construyan el proyecto con la misma versión de Maven
-!.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.jar
 
 # Carpetas y archivos de configuración del IDE (IntelliJ IDEA)
 # Ignorar la carpeta completa es más simple y seguro
@@ -38,6 +40,8 @@
 /nbdist/
 /.nb-gradle/
 build/
+!**/src/main/**/build/
+!**/src/test/**/build/
 
 # Archivos de configuración del IDE (VS Code)
 .vscode/
@@ -48,3 +52,6 @@ Thumbs.db
 
 # Archivos de volcado de memoria de la JVM
 hs_err_pid*
+
+# Diagrama de clases
+C_DiagramaDeClases.plantuml

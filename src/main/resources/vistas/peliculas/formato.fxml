@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="500.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula">
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button fx:id="btnVolver" onAction="#onVolver" styleClass="stepper-button" text="←" />
+                <Label styleClass="section-title" text="Gestión de Películas" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+            </padding>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox prefWidth="554.0" spacing="12.0">
+            <padding>
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+            </padding>
+
+            <!-- Sección de búsqueda y filtros -->
+            <VBox spacing="10.0" styleClass="ticket-card">
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label styleClass="form-label" text="Buscar:" />
+                        <TextField fx:id="txtBuscar" prefWidth="200.0" promptText="Título, género..." styleClass="text-field" />
+                  <Button onAction="#listarButacasPorSala" style="-fx-font-family: 'Segoe UI Emoji','Segoe UI Symbol','Segoe UI', Arial, sans-serif;" styleClass="icon-button" text="🔍" textFill="WHITE" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </children>
+                </HBox>
+            </VBox>
+
+            <!-- Tabla de películas -->
+            <TableView fx:id="tablaPeliculas" prefHeight="280.0" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colId" prefWidth="40.0" text="ID" />
+                    <TableColumn fx:id="colTitulo" prefWidth="170.39996337890625" text="Título" />
+                    <TableColumn fx:id="colAnio" prefWidth="82.40005493164062" text="Año" />
+                    <TableColumn fx:id="colGenero" prefWidth="118.39996337890625" text="Género" />
+                    <TableColumn fx:id="colDuracion" prefWidth="80.0" text="Duración" />
+                    <TableColumn fx:id="colIdioma" prefWidth="65.5999755859375" text="Idioma" />
+                </columns>
+            </TableView>
+
+            <!-- Botones de acción -->
+            <HBox alignment="CENTER" spacing="12.0">
+                <children>
+                   <Button fx:id="btnNuevaPelicula" onAction="#onNuevaPelicula" styleClass="primary-button" text="Crear" />
+                    <Button fx:id="btnEditar" onAction="#onEditarPelicula" styleClass="primary-button" text="Actualizar" />
+                    <Button fx:id="btnEliminar" onAction="#onEliminarPelicula" text="Eliminar">
+                  <styleClass>
+                     <String fx:value="stepper-button" />
+                     <String fx:value="primary-button" />
+                  </styleClass></Button>
+                </children>
+            </HBox>
+        </VBox>
+    </center>
+   <left>
+      <ScrollPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox prefHeight="511.0" prefWidth="176.0" spacing="25.0" styleClass="ticket-card">
+               <children>
+                  <Label prefHeight="0.0" prefWidth="146.0" styleClass="section-title" text="Datos de Película" />
+                  <HBox alignment="CENTER_LEFT" spacing="20.0">
+                     <children>
+                        <VBox spacing="8.0" HBox.hgrow="ALWAYS">
+                           <children>
+                              <Label prefHeight="18.0" prefWidth="76.0" styleClass="form-label" text="Película *" />
+                              <ComboBox fx:id="cmbPelicula" promptText="Seleccione una película" styleClass="combo-box" />
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="200.0" spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label" text="Sala *" />
+                              <ComboBox fx:id="cmbSala" promptText="Seleccione sala" styleClass="combo-box" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="20.0">
+                     <children>
+                        <VBox prefWidth="180.0" spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label" text="Fecha *" />
+                              <DatePicker fx:id="dateFecha" promptText="dd/mm/aaaa" styleClass="date-picker" />
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="120.0" spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label" text="Hora Inicio *" />
+                              <TextField fx:id="txtHoraInicio" promptText="HH:MM" styleClass="text-field" />
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="120.0" spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label" text="Hora Fin" />
+                              <TextField fx:id="txtHoraFin" editable="false" promptText="HH:MM" styleClass="text-field" />
+                           </children>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="CENTER_LEFT" spacing="20.0">
+                     <children>
+                        <VBox prefWidth="200.0" spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label" text="Formato *" />
+                              <ComboBox fx:id="cmbFormato" promptText="Seleccione formato" styleClass="combo-box" />
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="200.0" spacing="8.0">
+                           <children>
+                              <Label styleClass="form-label" text="Tipo de Estreno *" />
+                              <ComboBox fx:id="cmbTipoEstreno" promptText="Seleccione tipo" styleClass="combo-box" />
+                           </children>
+                        </VBox>
+                        <Region HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <VBox spacing="8.0">
+                     <children>
+                        <Label styleClass="form-label" text="Información Calculada" />
+                        <GridPane hgap="15.0" vgap="8.0">
+                           <columnConstraints>
+                              <ColumnConstraints minWidth="120.0" prefWidth="120.0" />
+                              <ColumnConstraints hgrow="ALWAYS" />
+                           </columnConstraints>
+                           <children>
+                              <Label styleClass="help-text" text="Duración:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                              <Label fx:id="lblDuracionCalculada" styleClass="help-text" text="Se calculará automáticamente" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                              <Label styleClass="help-text" text="Capacidad Sala:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                              <Label fx:id="lblCapacidadSala" styleClass="help-text" text="Seleccione una sala" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                           </children>
+                           <rowConstraints>
+                              <RowConstraints />
+                              <RowConstraints />
+                           </rowConstraints>
+                        </GridPane>
+                     </children>
+                  </VBox>
+                  <Label styleClass="help-text" text="* Campos obligatorios" />
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </left>
+   <bottom>
+
+         <!-- Información adicional -->
+         <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="summary-pane" BorderPane.alignment="CENTER">
+             <children>
+                 <Label fx:id="lblTotalPeliculas" styleClass="summary-details" text="Total de películas: 0" />
+                 <Region HBox.hgrow="ALWAYS" />
+             </children>
+         </HBox>
+   </bottom>
+</BorderPane>

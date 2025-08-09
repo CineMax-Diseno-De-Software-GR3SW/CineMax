@@ -1,0 +1,233 @@
+@startuml
+title Diagrama de Clases - Gestión de Venta de Boletos
+
+skinparam linetype ortho
+
+' ------------------ CONTROLADORES ------------------
+
+package controladores {
+
+    class ControladorAsignadorButacas {
+        - controladorDeConsultaSalas: ControladorDeConsultaSalas
+        - butacasSeleccionadas: List<Butaca>
+        - funcionSeleccionada: Funcion
+        - controladorInformacionLateral: ControladorInformacionLateral
+        + inicializarDatos(funcionSeleccionada: Funcion): void
+        - cargarMapaButacas(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
+        + agregarButacaSeleccionada(butaca: Butaca): void
+        + quitarButacaDeseleccionada(butaca: Butaca): void
+    }
+
+    class ControladorFacturacion {
+        - boletos: List<Producto>
+        - {final} servicioFacturacion: ServicioFacturacion
+        - controladorInformacionLateral: ControladorInformacionLateral
+        + cargarBoletosSeleccionados(boletos: List<Producto>): void
+        - validarDocumento(): boolean
+    }
+
+    class ControladorInformacionLateral {
+        - cantidad: int
+        + mostrarSoloPrecio(): void
+        + mostrarTodaLaInformacionDePago(): void
+        + colocarInformacionFuncion(funcion: Funcion): void
+        + calcularSubTotal(butacasSeleccionadas: List<Butaca>, funcion: Funcion): void
+        + calcularTotal(boletos: List<Producto>): void
+        + mostrarButacaSeleccionada(butaca Butaca): void
+        + removerButacaDeLista(butaca Butaca): void
+        - renumerarButacas(): void
+    }
+
+    class ControladorMostrarCartelera {
+        - servicioMostrarCartelera: ServicioMostrarCartelera
+        + actualizarDisplayPeliculas(peliculas: List<Pelicula>): void
+    }
+
+    class ControladorMostrarFunciones {
+        - servicio: ServicioMostrarFunciones
+        - peliculaActual: Pelicula
+        + configurarTabla(): void
+        + setPelicula(pelicula: Pelicula): void
+        - actualizarInformacionPelicula(pelicula: Pelicula): void
+        - cargarFunciones(): void
+        
+    }
+}
+
+' ------------------ SERVICIOS ------------------
+package servicios{
+
+    class ServicioContenidoMensajeFactura {
+        + {static}crearMensajeFactura(factura: Factura): ContenidoMensaje
+    }
+
+    class ServicioFacturacion {
+        + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): Factura
+        - generarCodigoFactura(): long
+        - getFechaActual(): String
+    }
+
+    interface ServicioGeneradorArchivo {
+        + generarFactura(factura: Factura): void
+        + generarBoletos(boletos: List<Producto>): void
+    }
+
+    class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
+        + generar(factura: Factura): void
+        + generar(boletos: List<Producto>): void
+        - crearCarpetaSiNoExiste(carpeta: String): void
+
+    }
+
+    class ServicioGeneradorBoleto{
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    class ServicioMostrarCartelera {
+        - controladorCartelera: ControladorCartelera
+        + inicializarListaPeliculas(): void
+        - validarSeleccionPelicula(pelicula: Pelicula): void
+    }
+
+    class ServicioMostrarFunciones {
+        - controladorFunciones: ControladorFunciones
+        + cargarFunciones(pelicula: Pelicula): List<Funcion>
+    }
+
+    class ContextoValidacion{
+        - estrategia: EstrategiaValidacion
+        + setEstrategia(estrategia: EstrategiaValidacion): void
+        + ejecutarEstrategia(documento: String): boolean
+    }
+
+    class EstrategiaCedulaValidacion implements EstrategiaValidacion {
+        + ejecutarEstrategia(documento: String): boolean
+        - validarCedula(cedula: String): boolean
+
+    }
+
+    class EstrategiaPasaporteValidacion implements EstrategiaValidacion {
+        + ejecutarEstrategia(documento: String): boolean
+        - validarPasaporte(documento: String): boolean
+    }
+
+    class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
+        + ejecutarEstrategia(documento: String): boolean
+        - validarRUC(documento: String): boolean
+    }
+
+    interface EstrategiaValidacion {
+        + ejecutarEstrategia(documento: String): boolean
+    }
+}
+
+' ------------------ MODELOS ------------------
+package modelos {
+
+    package entidades{
+
+        class Boleto {
+            - funcion: Funcion
+            - butaca: Butaca
+            + setFuncion(funcion: Funcion): void
+            + setButaca(butaca: Butaca): void
+            + getFuncion(): Funcion
+            + getButaca(): Butaca
+            + calcularPrecio(): void
+        }
+
+        interface CalculadorImpuesto {
+            + calcularImpuesto(subtotal: double): double
+        }
+
+        class CalculadorIVA {
+            - {static} IVA_TASA: double
+            + calcularImpuesto(subtotal: double): double
+            + {static} getIVA_TASA(): double
+        }
+
+        class Cliente {
+            - idCliente: String
+            - tipoDocumento: String
+            - nombre: String
+            - apellido: String
+            - correoElectronico: String
+            + setIdCliente(idCliente: String): void
+            + setTipoDocumento(tipoDocumento: String): void
+            + setNombre(nombre: String): void
+            + setApellido(apellido: String): void
+            + setCorreoElectronico(correoElectronico: String): void
+            + getIdCliente(): String
+            + getTipoDocumento(): String
+            + getNombre(): String
+            + getApellido(): String
+            + getCorreoElectronico(): String
+        }
+
+        class Factura {
+            - codigoFactura: long
+            - fecha: String
+            - cliente: Cliente
+            - productos: List<Producto>
+            - subtotal: double
+            - total: double
+            + calcularSubTotal(): void
+            + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
+            + setProductos(productos: List<Producto>): void
+            + getCodigoFactura(): long
+            + getFecha(): String
+            + getCliente(): Cliente
+            + getTotal(): double
+            + getSubTotal(): double
+            + getProductos(): List<Producto>
+        }
+
+        abstract class Producto {
+            - precio: double
+            + {abstract} calcularPrecio(): void
+            + setPrecio(precio: double): void
+            + getPrecio(): double
+        }
+
+    }
+}
+
+
+' ------------------ RELACIONES ------------------
+
+' Relaciones de composición y agregación (tienen instancias como atributos)
+ControladorFacturacion *--> ServicioFacturacion
+ControladorAsignadorButacas o--> ControladorInformacionLateral
+ControladorFacturacion o--> ControladorInformacionLateral
+
+' Relaciones de uso/dependencia (se crean o usan temporalmente)
+ControladorAsignadorButacas ..> ServicioGeneradorBoleto
+ControladorFacturacion ..> ContextoValidacion
+ControladorFacturacion ..> CalculadorIVA
+ControladorMostrarCartelera ..> ServicioMostrarCartelera
+ControladorMostrarFunciones ..> ServicioMostrarFunciones
+
+' Servicios que crean o usan entidades
+ServicioGeneradorBoleto ..> Boleto
+ServicioFacturacion ..> Factura
+ServicioFacturacion ..> ServicioGeneradorArchivoPDF
+ServicioFacturacion ..> ServicioContenidoMensajeFactura
+ServicioFacturacion ..left> Cliente
+
+' Relaciones de herencia e implementación
+Boleto --|> Producto
+CalculadorIVA ..up|> CalculadorImpuesto
+
+' Asociaciones entre entidades
+Factura "1" *-- "1..*" Producto
+Factura "1" *-- "1" Cliente
+Boleto "1" *-- "1" Funcion
+Boleto "1" *-- "1" Butaca
+
+' Patrón Strategy
+ContextoValidacion o--> EstrategiaValidacion
+
+' Uso de interfaces/clases abstractas
+Factura ..> CalculadorImpuesto
+
+@enduml
