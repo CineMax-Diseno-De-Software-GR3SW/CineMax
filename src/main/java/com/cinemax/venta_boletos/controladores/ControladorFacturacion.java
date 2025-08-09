@@ -76,6 +76,15 @@ public class ControladorFacturacion {
     @FXML
     private Label timerLabel;
 
+    @FXML
+    private Button buttonCrearOActualizar;
+
+    @FXML
+    private Button buttonNuevoCliente;
+
+    @FXML
+    private Button buttonLimpiarFormulario;
+
     // ===== ATRIBUTOS DE LÓGICA =====
 
     /** Lista de productos seleccionados, representando los boletos de cine. */
@@ -88,6 +97,8 @@ public class ControladorFacturacion {
 
     /** Controlador del panel lateral que muestra información de la función. */
     private com.cinemax.venta_boletos.controladores.ControladorInformacionDeVenta controladorInformacionDeVenta;
+
+    private Cliente clienteEnEdicion = null;
 
     /**
      * Inicializa los elementos gráficos y configura eventos personalizados.
@@ -103,7 +114,7 @@ public class ControladorFacturacion {
         tipoDocumentoBox.setItems(FXCollections.observableArrayList("Cédula", "Pasaporte", "RUC"));
 
          // 2. Seleccionar "Cédula" como valor por defecto.
-        tipoDocumentoBox.setValue("Cédula");
+        tipoDocumentoBox.setValue("Seleccione un tipo de documento");
 
         // 3. Vincular el label del temporizador
         if (timerLabel != null) {
@@ -120,7 +131,15 @@ public class ControladorFacturacion {
             ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset);
         });
 
+        // Listeners para validar y actualizar el texto del botón
+        nombreField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
+        apellidoField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
+        documentoField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
+        correoField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
+        tipoDocumentoBox.valueProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
 
+        // Primera validación al iniciar
+        actualizarEstadoFormulario();
     }
 
 
@@ -165,12 +184,6 @@ public class ControladorFacturacion {
      */
     @FXML
     void onBuscarCliente(ActionEvent event) {
-        // Limpia los campos de texto antes de buscar.
-        nombreField.clear();
-        apellidoField.clear();
-        documentoField.clear();
-        correoField.clear();
-
         String texto = identificacionField.getText();
 
         // Validar que el campo de identificación no esté vacío.
@@ -184,15 +197,16 @@ public class ControladorFacturacion {
             ClienteDAO clienteDAO = new ClienteDAO();
             try {
                 // Buscar al cliente por su número de identificación.
-                Cliente cliente = clienteDAO.buscarPorId(idcliente);
+                clienteEnEdicion = clienteDAO.buscarPorId(idcliente);
 
                 // Si el cliente es encontrado, se llenan los campos con su información.
-                if (cliente != null) {
-                    nombreField.setText(cliente.getNombre());
-                    apellidoField.setText(cliente.getApellido());
-                    documentoField.setText(String.valueOf(cliente.getIdCliente()));
-                    tipoDocumentoBox.setValue(cliente.getTipoDocumento());
-                    correoField.setText(cliente.getCorreoElectronico());
+                if (clienteEnEdicion != null) {
+                    nombreField.setText(clienteEnEdicion.getNombre());
+                    apellidoField.setText(clienteEnEdicion.getApellido());
+                    documentoField.setText(String.valueOf(clienteEnEdicion.getIdCliente()));
+                    tipoDocumentoBox.setValue(clienteEnEdicion.getTipoDocumento());
+                    correoField.setText(clienteEnEdicion.getCorreoElectronico());
+                    actualizarModoFormulario();
                     ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
                 } else { 
                     // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
@@ -261,7 +275,7 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de actualizar cliente.
      */
     @FXML
-    void onActualizarCliente(ActionEvent event) {
+    void onCrearOActualizarCliente(ActionEvent event) {
 
         // Validar que el documento sea válido antes de continuar con la actualización.
         if (!validarDocumento()) {
@@ -269,35 +283,52 @@ public class ControladorFacturacion {
         }
 
         // Validar que todos los campos estén llenos antes de proceder con la actualización.
-        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
-                || correoField.getText().isEmpty()) {
+        if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
             return;
         }
-        
-        try {
-            Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
-                    correoField.getText(), tipoDocumentoBox.getValue());
-            ClienteDAO clienteDAO = new ClienteDAO();
 
-            Cliente clienteExiste = clienteDAO.buscarPorId(identificacionField.getText());
-
-            // Verificar si el cliente existe en la base de datos.
-            if (clienteExiste == null) {
-                // Si el cliente no existe, mostrar un mensaje de advertencia.
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
-            } else {
-                // Si el cliente existe, actualizar su información en la base de datos.
-                clienteDAO.actualizarCliente(cliente);
-                ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
+        if (clienteEnEdicion == null) {
+            try {
+                Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
+                        correoField.getText(), tipoDocumentoBox.getValue());
+                ClienteDAO clienteDAO = new ClienteDAO();
+                clienteDAO.crearCliente(cliente);
+                ManejadorMetodosComunes.mostrarVentanaExito("Cliente creado exitosamente.");
+            } catch (NumberFormatException e) {
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear al cliente.");
             }
-
-        } catch (NumberFormatException e) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar al cliente.");
         }
+        else {
+            try {
+                Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
+                        correoField.getText(), tipoDocumentoBox.getValue());
+                ClienteDAO clienteDAO = new ClienteDAO();
+
+                Cliente clienteExiste = clienteDAO.buscarPorId(identificacionField.getText());
+
+                // Verificar si el cliente existe en la base de datos.
+                if (clienteExiste == null) {
+                    // Si el cliente no existe, mostrar un mensaje de advertencia.
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
+                } else {
+                    // Si el cliente existe, actualizar su información en la base de datos.
+                    clienteDAO.actualizarCliente(cliente);
+                    actualizarModoFormulario();
+                    ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
+                }
+
+            } catch (NumberFormatException e) {
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar al cliente.");
+            }
+        }
+        
     }
 
     /**
@@ -311,8 +342,7 @@ public class ControladorFacturacion {
     @FXML
     protected void onPagarAction() {
         // Validar que todos los campos estén llenos antes de proceder con la compra.
-        if (nombreField.getText().isEmpty() || apellidoField.getText().isEmpty() || documentoField.getText().isEmpty()
-                || correoField.getText().isEmpty()) {
+        if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
             return;
         }
@@ -429,5 +459,60 @@ public class ControladorFacturacion {
         this.controladorInformacionDeVenta = controladorInformacionLateral;
         controladorInformacionLateral.mostrarTodaLaInformacionDelPago();
     }
+    
+    @FXML
+    void onLimpiarFormulario(ActionEvent event) {
+        limpiarFormulario();
+    }
 
+    private void limpiarFormulario() {
+        nombreField.clear();
+        apellidoField.clear();
+        tipoDocumentoBox.setValue("Seleccione un tipo de documento");
+        documentoField.clear();
+        correoField.clear();
+        identificacionField.clear();
+
+        clienteEnEdicion = null;
+        actualizarModoFormulario();
+    }
+
+    private void actualizarModoFormulario() {
+        if (clienteEnEdicion == null) {
+            // Modo crear
+            buttonCrearOActualizar.setText("Crear");
+            // Ocultar el botón "Nuevo" cuando está en modo crear
+            if (buttonNuevoCliente != null) {
+                buttonNuevoCliente.setVisible(false);
+                buttonNuevoCliente.setManaged(false);
+            }
+        } else {
+            // Modo editar
+            buttonCrearOActualizar.setText("Actualizar");
+            // Mostrar el botón "Nuevo" cuando está en modo editar
+            if (buttonNuevoCliente != null) {
+                buttonNuevoCliente.setVisible(true);
+                buttonNuevoCliente.setManaged(true);
+            }
+        }
+        // Asegurar que se ejecute la validación del formulario
+        actualizarEstadoFormulario();
+    }
+
+    private void actualizarEstadoFormulario() {
+        if (buttonCrearOActualizar != null) {
+            boolean formularioValido = validarFormularioCompleto();
+            buttonCrearOActualizar.setDisable(!formularioValido);
+        }
+    }
+
+    private boolean validarFormularioCompleto() {
+        return !nombreField.getText().isEmpty() &&
+               !apellidoField.getText().isEmpty() &&
+               !tipoDocumentoBox.getValue().equals("Seleccione un tipo de documento") &&
+               !documentoField.getText().isEmpty() &&
+               !correoField.getText().isEmpty();
+    }
+
+    
 }

@@ -92,10 +92,7 @@
 
                             <!-- Estado del formulario -->
                             <VBox spacing="8.0">
-                                <HBox alignment="CENTER_LEFT" spacing="2">
-                                    <Label text="*" styleClass="required-asterisk" />
-                                    <Label text="Campos Obligatorios" styleClass="help-text" />
-                                </HBox>
+                                <Label text="* campos obligatorios" styleClass="required-asterisk" />
                             </VBox>
 
                         </VBox>
