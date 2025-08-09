@@ -1,8 +1,8 @@
 package com.cinemax.peliculas.modelos.persistencia;
 
-import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.TipoEstreno;
 import com.cinemax.salas.modelos.entidades.Sala;
