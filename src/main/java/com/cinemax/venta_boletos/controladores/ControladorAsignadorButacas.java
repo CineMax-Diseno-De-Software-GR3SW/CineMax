@@ -242,10 +242,10 @@ public class ControladorAsignadorButacas {
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
 
         // Cambiar a la vista de funciones preservando el contexto de la película
-        ControladorMostrarFunciones controladorFunciones = ManejadorMetodosComunes
+        ControladorVisualizadorFunciones controladorFunciones = ManejadorMetodosComunes
                 .cambiarVentanaConControlador(currentStage, "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
                         "CineMAX");
-        controladorFunciones.setPelicula(funcionSeleccionada.getPelicula());
+        controladorFunciones.asignarPeliculaSeleccionada(funcionSeleccionada.getPelicula());
     }
 
     /**

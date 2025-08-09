@@ -35,17 +35,16 @@ package controladores {
         + removerButacaSeleccionada(butaca Butaca): void
     }
 
-    class ControladorMostrarCartelera {
-        - servicioMostrarCartelera: ServicioMostrarCartelera
-        + actualizarDisplayPeliculas(peliculas: List<Pelicula>): void
+    class ControladorVisualizadorCartelera {
+        - servicioVisualizarCartelera: ServicioVisualizarCartelera
+        + cargarCartelera(peliculas: List<Pelicula>): void
     }
 
-    class ControladorMostrarFunciones {
-        - servicio: ServicioMostrarFunciones
+    class ControladorVisualizadorFunciones {
+        - servicioVisualizadorFunciones: ServicioVisualizarFunciones
         - peliculaActual: Pelicula
-        + configurarTabla(): void
-        + setPelicula(pelicula: Pelicula): void
-        - actualizarInformacionPelicula(pelicula: Pelicula): void
+        + asignarPeliculaSeleccionada(pelicula: Pelicula): void
+        - cargarInformacionPelicula(pelicula: Pelicula): void
         - cargarFunciones(): void
         
     }
@@ -80,13 +79,13 @@ package servicios{
         + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
     }
 
-    class ServicioMostrarCartelera {
+    class ServicioVisualizadorCartelera {
         - controladorCartelera: ControladorCartelera
         + inicializarListaPeliculas(): void
         - validarSeleccionPelicula(pelicula: Pelicula): void
     }
 
-    class ServicioMostrarFunciones {
+    class ServicioVisualizadorFunciones {
         - controladorFunciones: ControladorFunciones
         + cargarFunciones(pelicula: Pelicula): List<Funcion>
     }
@@ -194,15 +193,21 @@ package modelos {
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
 ControladorFacturacion *--> ServicioFacturacion
+<<<<<<< HEAD
 ControladorAsignadorButacas o--> ControladorInformacionDeVenta
 ControladorFacturacion o--> ControladorInformacionDeVenta
+=======
+ControladorVisualizarCartelera *..> ServicioVisualizarCartelera
+ControladorVisualizarFunciones *..> ServicioVisualizarFunciones
+ControladorAsignadorButacas o--> ControladorInformacionLateral
+ControladorFacturacion o--> ControladorInformacionLateral
+>>>>>>> 903e7c0e4be354c56051ec92bf41ad0fa3079321
 
 ' Relaciones de uso/dependencia (se crean o usan temporalmente)
 ControladorAsignadorButacas ..> ServicioGeneradorBoleto
 ControladorFacturacion ..> ContextoValidacion
 ControladorFacturacion ..> CalculadorIVA
-ControladorMostrarCartelera ..> ServicioMostrarCartelera
-ControladorMostrarFunciones ..> ServicioMostrarFunciones
+
 
 ' Servicios que crean o usan entidades
 ServicioGeneradorBoleto ..> Boleto

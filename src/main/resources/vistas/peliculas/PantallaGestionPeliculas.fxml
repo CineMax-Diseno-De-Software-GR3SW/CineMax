@@ -3,6 +3,8 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
 
 <BorderPane prefHeight="800.0" prefWidth="1400.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.peliculas.controladores.ControladorPelicula" styleClass="root">
     <top>
@@ -99,9 +101,26 @@
                             </VBox>
 
                             <!-- Fila 7: URL de Imagen -->
-                            <VBox spacing="8.0">
-                                <Label text="URL de Imagen" styleClass="form-label" />
-                                <TextField fx:id="txtImagenUrl" promptText="https://ejemplo.com/imagen.jpg (opcional)" styleClass="text-field" />
+                            <VBox spacing="10.0" alignment="CENTER">
+                                <children>
+                                    <HBox alignment="CENTER_LEFT" spacing="2">
+                                        <children>
+                                            <Label text="Imagen de la Película" styleClass="form-label" />
+                                            <Label text="*" styleClass="required-asterisk" />
+                                        </children>
+                                    </HBox>
+
+                                    <ImageView fx:id="imgVistaPreviaPelicula" fitHeight="250.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
+                                        <style>
+                                            -fx-background-color: #2b2b2b;
+                                            -fx-border-color: #555555;
+                                            -fx-border-width: 1;
+                                        </style>
+                                    </ImageView>
+                                    
+                                    <Button fx:id="btnSeleccionarImagen" text="Seleccionar Imagen" onAction="#onSeleccionarImagen" />
+
+                                </children>
                             </VBox>
 
                             <VBox spacing="8.0">
