@@ -295,6 +295,8 @@ public class ControladorReportesPrincipal {
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
+        //Configuracion relleno columnas 
+        tablaReportes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         // Configurar formato de fecha
         colFecha.setCellFactory(column -> new TableCell<ReporteGenerado, LocalDateTime>() {
             @Override

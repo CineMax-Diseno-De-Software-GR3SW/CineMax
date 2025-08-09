@@ -80,13 +80,23 @@
                 <!-- Tabla de Reportes Generados -->
                 <VBox spacing="10">
                     <Label text="Reportes Generados" style="-fx-font-weight: bold; -fx-font-size: 16px;" />
-                    <TableView fx:id="tablaReportes" prefHeight="200" styleClass="report-table">
+                    <TableView fx:id="tablaReportes" layoutX="9.0" layoutY="170.0">
+                                
+                                
+          <!--  prefHeight="200.0" prefWidth="575.0" styleClass="report-table">-->
                         <columns>
+                            <TableColumn fx:id="colNombre" text="Nombre" />
+                            <TableColumn fx:id="colTipo" text="Tipo"  />
+                            <TableColumn fx:id="colFecha" text="Fecha Generación" />
+                            <TableColumn fx:id="colDescripcion" text="Descripción" />
+                            <TableColumn fx:id="colAcciones" text="Acciones" />
+                            <!--
                             <TableColumn fx:id="colNombre" text="Nombre" prefWidth="200" />
                             <TableColumn fx:id="colTipo" text="Tipo" prefWidth="80" />
                             <TableColumn fx:id="colFecha" text="Fecha Generación" prefWidth="150" />
                             <TableColumn fx:id="colDescripcion" text="Descripción" prefWidth="300" />
                             <TableColumn fx:id="colAcciones" text="Acciones" prefWidth="100" />
+                            -->
                         </columns>
                     </TableView>
                 </VBox>
