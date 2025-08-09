@@ -3,7 +3,7 @@ package com.cinemax.venta_boletos.servicios;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.controladores.ControladorCartelera;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
-import com.cinemax.venta_boletos.controladores.ControladorMostrarFunciones;
+import com.cinemax.venta_boletos.controladores.ControladorVisualizadorFunciones;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,16 +25,16 @@ import java.util.List;
  * @author CineMax Development Team
  * @version 1.2
  */
-public class ServicioMostrarCartelera {
+public class ServicioVisualizadorCartelera {
 
     // Controlador para obtener datos de películas
     private final ControladorCartelera controladorCartelera = new ControladorCartelera();
 
     // Lista observable de películas para enlace con la vista
-    private ObservableList<Pelicula> peliculas = FXCollections.observableArrayList();
+    private ObservableList<Pelicula> listaPeliculas = FXCollections.observableArrayList();
 
     // Película actualmente seleccionada
-    private Pelicula selectedPelicula;
+    private Pelicula PeliculaSeleccionada;
 
     // ========== MÉTODOS PÚBLICOS ==========
 
@@ -43,8 +43,8 @@ public class ServicioMostrarCartelera {
      * 
      * @return Lista observable de objetos Pelicula
      */
-    public ObservableList<Pelicula> getPeliculas() {
-        return peliculas;
+    public ObservableList<Pelicula> getListaPeliculas() {
+        return listaPeliculas;
     }
 
     /**
@@ -52,30 +52,30 @@ public class ServicioMostrarCartelera {
      * 
      * @return Pelicula seleccionada o null si no hay selección
      */
-    public Pelicula getSelectedPelicula() {
-        return selectedPelicula;
+    public Pelicula getPeliculaSeleccionada() {
+        return PeliculaSeleccionada;
     }
 
     /**
      * Establece la película seleccionada
      * 
-     * @param selectedPelicula Película a marcar como seleccionada
+     * @param peliculaSeleccionada Película a marcar como seleccionada
      */
-    public void setSelectedPelicula(Pelicula selectedPelicula) {
-        this.selectedPelicula = selectedPelicula;
+    public void setPeliculaSeleccionada(Pelicula peliculaSeleccionada) {
+        this.PeliculaSeleccionada = peliculaSeleccionada;
     }
 
     /**
      * Carga inicialmente la lista de películas disponibles
      */
-    public void inicializarListaPeliculas() {
+    public void cargarListaPeliculas() {
         try {
             List<Pelicula> peliculasCargadas = controladorCartelera.obtenerCartelera();
-            peliculas.setAll(peliculasCargadas);
+            listaPeliculas.setAll(peliculasCargadas);
         } catch (Exception e) {
             System.err.println("Error al obtener cartelera: " + e.getMessage());
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar películas: " + e.getMessage());
-            peliculas.clear();
+            listaPeliculas.clear();
         }
     }
 
@@ -90,13 +90,13 @@ public class ServicioMostrarCartelera {
 
         try {
 
-            ControladorMostrarFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
+            ControladorVisualizadorFunciones controller = ManejadorMetodosComunes.cambiarVentanaConControlador(
                     currentStage,
                     "/vistas/venta_boletos/VistaMostrarFunciones.fxml",
                     "CineMAX");
 
             if (controller != null) {
-                controller.setPelicula(peliculaSeleccionada);
+                controller.asignarPeliculaSeleccionada(peliculaSeleccionada);
             }
 
         } catch (Exception e) {
