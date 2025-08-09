@@ -201,7 +201,7 @@ public class ControladorInformacionDeVenta {
      * 
      * @param funcionSeleccionada La función de la cual extraer y mostrar la información
      */
-    public void mostrarInformacionDeFuncionSeleccionada(Funcion funcionSeleccionada) {
+    public void cargarInformacionDeFuncionSeleccionada(Funcion funcionSeleccionada) {
         // Información de la película
         labelNombrePelicula.setText(funcionSeleccionada.getPelicula() != null ? 
             funcionSeleccionada.getPelicula().getTitulo() : "Título no disponible");
@@ -242,7 +242,7 @@ public class ControladorInformacionDeVenta {
      * @param butacasSeleccionadas Lista de butacas que el usuario ha seleccionado
      * @param funcion Función que contiene los multiplicadores de precio
      */
-    public void mostrarPosibleSubtotal(List<Butaca> butacasSeleccionadas, Funcion funcion) {
+    public void calcularPosibleSubtotal(List<Butaca> butacasSeleccionadas, Funcion funcion) {
 
         // Obtener todos los multiplicadores que afectan el precio
         double multiplicadorTipoDeSala = funcion.getSala().getTipo().getMultiplicador();
@@ -263,7 +263,7 @@ public class ControladorInformacionDeVenta {
      * 
      * @param boletos Lista de productos/boletos (parámetro para compatibilidad)
      */
-    public void mostrarTotal(List<Producto> boletos) {
+    public void calcularTotal(List<Producto> boletos) {
         String subtotalText = subtotalLabel.getText().replace(",", ".");
         String impuestoText = impuestoLabel.getText().replace(",", ".");
 
@@ -285,7 +285,7 @@ public class ControladorInformacionDeVenta {
      * 
      * @param butaca La butaca a agregar visualmente a la lista
      */
-    public void mostrarButacaSeleccionada(Butaca butaca) {
+    public void cargarButacaSeleccionada(Butaca butaca) {
         
 
         // Crear contenedor principal con estilo de tarjeta

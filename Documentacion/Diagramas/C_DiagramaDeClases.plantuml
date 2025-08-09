@@ -28,10 +28,10 @@ package controladores {
 
     class ControladorInformacionDeVenta {
         - cantidadDeButacasSeleccionadas: int
-        + mostrarInformacionDeFuncionSeleccionada(funcion: Funcion): void
-        + mostrarPosibleSubtotal(butacasSeleccionadas: List<Butaca>, funcion: Funcion): void
-        + mostrarTotal(boletos: List<Producto>): void
-        + mostrarButacaSeleccionada(butaca Butaca): void
+        + cargarInformacionDeFuncionSeleccionada(funcion: Funcion): void
+        + calcularPosibleSubtotal(butacasSeleccionadas: List<Butaca>, funcion: Funcion): void
+        + calcularTotal(boletos: List<Producto>): void
+        + cargarButacaSeleccionada(butaca Butaca): void
         + removerButacaSeleccionada(butaca Butaca): void
     }
 
@@ -41,10 +41,10 @@ package controladores {
     }
 
     class ControladorVisualizadorFunciones {
-        - servicioVisualizadorFunciones: ServicioVisualizarFunciones
-        - peliculaActual: Pelicula
+        - servicioVisualizadorFunciones: ServicioVisualizadorFunciones
+        - peliculaSeleccionada: Pelicula
         + asignarPeliculaSeleccionada(pelicula: Pelicula): void
-        - cargarInformacionPelicula(pelicula: Pelicula): void
+        - cargarInformacionPeliculaSeleccionada(pelicula: Pelicula): void
         - cargarFunciones(): void
         
     }
@@ -88,32 +88,30 @@ package servicios{
     class ServicioVisualizadorFunciones {
         - controladorFunciones: ControladorFunciones
         + cargarFunciones(pelicula: Pelicula): List<Funcion>
-    }
+    }    
+}
 
-    class ContextoValidacion{
-        - estrategia: EstrategiaValidacion
-        + setEstrategia(estrategia: EstrategiaValidacion): void
-        + ejecutarEstrategia(documento: String): boolean
-    }
+package Utilidades {
 
-    class EstrategiaCedulaValidacion implements EstrategiaValidacion {
-        + ejecutarEstrategia(documento: String): boolean
-        - validarCedula(cedula: String): boolean
+    package EstrategiaValidacionDocumentos {
 
-    }
+        class ContextoValidacion{
+            - estrategia: EstrategiaValidacion
+            + setEstrategia(estrategia: EstrategiaValidacion): void
+            + ejecutarEstrategia(documento: String): boolean
+        }
+        
+        class EstrategiaCedulaValidacion implements EstrategiaValidacion {
+        }
+        interface EstrategiaValidacion {
+            + validar(documento: String): boolean
+        }
 
-    class EstrategiaPasaporteValidacion implements EstrategiaValidacion {
-        + ejecutarEstrategia(documento: String): boolean
-        - validarPasaporte(documento: String): boolean
-    }
+        class EstrategiaPasaporteValidacion implements EstrategiaValidacion {
+        }
 
-    class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
-        + ejecutarEstrategia(documento: String): boolean
-        - validarRUC(documento: String): boolean
-    }
-
-    interface EstrategiaValidacion {
-        + ejecutarEstrategia(documento: String): boolean
+        class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
+        }
     }
 }
 
@@ -125,11 +123,6 @@ package modelos {
         class Boleto {
             - funcion: Funcion
             - butaca: Butaca
-            + setFuncion(funcion: Funcion): void
-            + setButaca(butaca: Butaca): void
-            + getFuncion(): Funcion
-            + getButaca(): Butaca
-            + calcularPrecio(): void
         }
 
         interface CalculadorImpuesto {
@@ -138,8 +131,6 @@ package modelos {
 
         class CalculadorIVA {
             - {static} IVA_TASA: double
-            + calcularImpuesto(subtotal: double): double
-            + {static} getIVA_TASA(): double
         }
 
         class Cliente {
@@ -148,16 +139,6 @@ package modelos {
             - nombre: String
             - apellido: String
             - correoElectronico: String
-            + setIdCliente(idCliente: String): void
-            + setTipoDocumento(tipoDocumento: String): void
-            + setNombre(nombre: String): void
-            + setApellido(apellido: String): void
-            + setCorreoElectronico(correoElectronico: String): void
-            + getIdCliente(): String
-            + getTipoDocumento(): String
-            + getNombre(): String
-            + getApellido(): String
-            + getCorreoElectronico(): String
         }
 
         class Factura {
@@ -169,20 +150,11 @@ package modelos {
             - total: double
             + calcularSubTotal(): void
             + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
-            + setProductos(productos: List<Producto>): void
-            + getCodigoFactura(): long
-            + getFecha(): String
-            + getCliente(): Cliente
-            + getTotal(): double
-            + getSubTotal(): double
-            + getProductos(): List<Producto>
         }
 
         abstract class Producto {
             - precio: double
             + {abstract} calcularPrecio(): void
-            + setPrecio(precio: double): void
-            + getPrecio(): double
         }
 
     }
@@ -193,20 +165,15 @@ package modelos {
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
 ControladorFacturacion *--> ServicioFacturacion
-<<<<<<< HEAD
+ControladorVisualizadorCartelera *--> ServicioVisualizadorCartelera
+ControladorVisualizadorFunciones *--> ServicioVisualizadorFunciones
 ControladorAsignadorButacas o--> ControladorInformacionDeVenta
 ControladorFacturacion o--> ControladorInformacionDeVenta
-=======
-ControladorVisualizarCartelera *..> ServicioVisualizarCartelera
-ControladorVisualizarFunciones *..> ServicioVisualizarFunciones
-ControladorAsignadorButacas o--> ControladorInformacionLateral
-ControladorFacturacion o--> ControladorInformacionLateral
->>>>>>> 903e7c0e4be354c56051ec92bf41ad0fa3079321
 
 ' Relaciones de uso/dependencia (se crean o usan temporalmente)
 ControladorAsignadorButacas ..> ServicioGeneradorBoleto
 ControladorFacturacion ..> ContextoValidacion
-ControladorFacturacion ..> CalculadorIVA
+ControladorFacturacion ..> CalculadorImpuesto
 
 
 ' Servicios que crean o usan entidades
@@ -217,12 +184,12 @@ ServicioFacturacion ..> ServicioContenidoMensajeFactura
 ServicioFacturacion ..left> Cliente
 
 ' Relaciones de herencia e implementación
-Boleto --|> Producto
+Producto <|-- Boleto
 CalculadorIVA ..up|> CalculadorImpuesto
 
 ' Asociaciones entre entidades
 Factura "1" *-- "1..*" Producto
-Factura "1" *-- "1" Cliente
+Factura "1" *-- "1..*" Cliente
 Boleto "1" *-- "1" Funcion
 Boleto "1" *-- "1" Butaca
 

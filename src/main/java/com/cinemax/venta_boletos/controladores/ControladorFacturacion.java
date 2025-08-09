@@ -2,11 +2,11 @@ package com.cinemax.venta_boletos.controladores;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.comun.EstrategiaValidacionDocumentos.ContextoValidacion;
+import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
+import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaPasaporteValidacion;
+import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
-import com.cinemax.venta_boletos.servicios.strategy.ContextoValidacion;
-import com.cinemax.venta_boletos.servicios.strategy.EstrategiaCedulaValidacion;
-import com.cinemax.venta_boletos.servicios.strategy.EstrategiaPasaporteValidacion;
-import com.cinemax.venta_boletos.servicios.strategy.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
@@ -87,7 +87,7 @@ public class ControladorFacturacion {
     private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
     /** Controlador del panel lateral que muestra información de la función. */
-    private com.cinemax.venta_boletos.controladores.ControladorInformacionDeVenta controladorInformacionLateral;
+    private com.cinemax.venta_boletos.controladores.ControladorInformacionDeVenta controladorInformacionDeVenta;
 
     /**
      * Inicializa los elementos gráficos y configura eventos personalizados.
@@ -140,20 +140,20 @@ public class ControladorFacturacion {
         this.boletos = boletos;
 
         // 2. Validar si el controlador lateral está inicializado correctamente.
-        if(controladorInformacionLateral == null) {
+        if(controladorInformacionDeVenta == null) {
             ManejadorMetodosComunes.mostrarVentanaError("Controlador de información lateral no inicializado.");
             return;
         }
 
         // 3. Obtener la vista asociada al controlador lateral.
-        Parent vistaInformacionLateral = controladorInformacionLateral.getRoot(); 
+        Parent vistaInformacionLateral = controladorInformacionDeVenta.getRoot(); 
         
         // 4. Limpiar el contenedor y cargar la vista de información lateral.
         informacionFuncionContainer.getChildren().clear(); 
         informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
 
         // 5. Calcular el total a pagar por los boletos seleccionados.
-        controladorInformacionLateral.mostrarTotal(boletos);
+        controladorInformacionDeVenta.calcularTotal(boletos);
     }
 
     /**
@@ -243,7 +243,7 @@ public class ControladorFacturacion {
 
         documentoField.setText(documentoField.getText());
         // Ejecuta la estrategia de validación y verifica si el documento es válido.
-        // Si no es válido, muestra un mensaje de error y retorna false.
+        // Si no es válido, muestra un m90ensaje de error y retorna false.
         if(!contextoValidacion.ejecutarEstrategia(documentoField.getText())) {
             ManejadorMetodosComunes.mostrarVentanaError("Documento inválido: " + documentoField.getText());
             return false;
@@ -425,8 +425,8 @@ public class ControladorFacturacion {
      * 
      * @param controladorInformacionLateral El controlador de información lateral que maneja la vista de detalles de la función.
      */
-    public void setControladorInformacionLateral(ControladorInformacionDeVenta controladorInformacionLateral) {
-        this.controladorInformacionLateral = controladorInformacionLateral;
+    public void setControladorInformacionDeVenta(ControladorInformacionDeVenta controladorInformacionLateral) {
+        this.controladorInformacionDeVenta = controladorInformacionLateral;
         controladorInformacionLateral.mostrarTodaLaInformacionDelPago();
     }
 

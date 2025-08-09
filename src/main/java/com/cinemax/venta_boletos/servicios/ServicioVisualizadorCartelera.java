@@ -34,7 +34,7 @@ public class ServicioVisualizadorCartelera {
     private ObservableList<Pelicula> listaPeliculas = FXCollections.observableArrayList();
 
     // Película actualmente seleccionada
-    private Pelicula PeliculaSeleccionada;
+    private Pelicula peliculaSeleccionada;
 
     // ========== MÉTODOS PÚBLICOS ==========
 
@@ -53,7 +53,7 @@ public class ServicioVisualizadorCartelera {
      * @return Pelicula seleccionada o null si no hay selección
      */
     public Pelicula getPeliculaSeleccionada() {
-        return PeliculaSeleccionada;
+        return peliculaSeleccionada;
     }
 
     /**
@@ -62,7 +62,7 @@ public class ServicioVisualizadorCartelera {
      * @param peliculaSeleccionada Película a marcar como seleccionada
      */
     public void setPeliculaSeleccionada(Pelicula peliculaSeleccionada) {
-        this.PeliculaSeleccionada = peliculaSeleccionada;
+        this.peliculaSeleccionada = peliculaSeleccionada;
     }
 
     /**

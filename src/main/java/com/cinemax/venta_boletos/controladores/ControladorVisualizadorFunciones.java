@@ -68,7 +68,7 @@ public class ControladorVisualizadorFunciones {
 
     // ========== DEPENDENCIAS ==========
     private final ServicioVisualizadorFunciones servicioVisualizadorFunciones = new ServicioVisualizadorFunciones();
-    private Pelicula peliculaActual;
+    private Pelicula peliculaSeleccionada;
 
     // ========== INICIALIZACIÓN ==========
 
@@ -115,7 +115,7 @@ public class ControladorVisualizadorFunciones {
      * @param pelicula Película seleccionada
      */
     public void asignarPeliculaSeleccionada(Pelicula pelicula) {
-        this.peliculaActual = pelicula;
+        this.peliculaSeleccionada = pelicula;
         Platform.runLater(() -> {
             cargarInformacionPelicula(pelicula);
             cargarFunciones();
@@ -161,7 +161,7 @@ public class ControladorVisualizadorFunciones {
         String formato = cmbFiltroFormato.getValue();
         String tipoSala = cmbFiltroTipoSala.getValue();
 
-        if (peliculaActual != null) {
+        if (peliculaSeleccionada != null) {
             servicioVisualizadorFunciones.cargarFunciones(
                     tablaFunciones,
                     columnaHora,
@@ -171,7 +171,7 @@ public class ControladorVisualizadorFunciones {
                     columnaPrecio,
                     columnaFecha,
                     columnaTipoSala,
-                    peliculaActual.getTitulo(),
+                    peliculaSeleccionada.getTitulo(),
                     fecha,
                     formato,
                     tipoSala);

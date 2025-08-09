@@ -183,7 +183,7 @@ public class ControladorAsignadorButacas {
             // Configurar el controlador del panel lateral
             controladorInformacionLateral = loader.getController();
             controladorInformacionLateral.setRoot(vistaInformacionLateral);
-            controladorInformacionLateral.mostrarInformacionDeFuncionSeleccionada(funcion);
+            controladorInformacionLateral.cargarInformacionDeFuncionSeleccionada(funcion);
             controladorInformacionLateral.mostrarSoloSubtotal(); // Vista inicial simplificada
 
         } catch (IOException e) {
@@ -282,7 +282,7 @@ public class ControladorAsignadorButacas {
 
             // 4. Configurar el controlador de facturación con datos necesarios
             ControladorFacturacion controladorFacturacion = loader.getController();
-            controladorFacturacion.setControladorInformacionLateral(controladorInformacionLateral);
+            controladorFacturacion.setControladorInformacionDeVenta(controladorInformacionLateral);
 
             // 5. Inicializar datos ANTES de mostrar la vista (evita problemas de
             // renderizado)
@@ -320,8 +320,8 @@ public class ControladorAsignadorButacas {
         butacasSeleccionadas.add(butaca);
 
         // Actualizar visualización en panel lateral
-        controladorInformacionLateral.mostrarButacaSeleccionada(butaca);
-        controladorInformacionLateral.mostrarPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        controladorInformacionLateral.cargarButacaSeleccionada(butaca);
+        controladorInformacionLateral.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
     /**
@@ -344,7 +344,7 @@ public class ControladorAsignadorButacas {
 
         // Actualizar visualización en panel lateral
         controladorInformacionLateral.removerButacaDeLista(butaca);
-        controladorInformacionLateral.mostrarPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        controladorInformacionLateral.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
 }
