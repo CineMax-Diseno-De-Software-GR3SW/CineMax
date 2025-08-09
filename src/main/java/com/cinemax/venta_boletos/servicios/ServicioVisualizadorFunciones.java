@@ -38,7 +38,7 @@ import java.util.ArrayList;
  * @author GR3SW
  * @version 1.2
  */
-public class ServicioMostrarFunciones {
+public class ServicioVisualizadorFunciones {
 
     // ==================== CONSTANTES ====================
     private static final DateTimeFormatter FORMATO_HORA = DateTimeFormatter.ofPattern("HH:mm");

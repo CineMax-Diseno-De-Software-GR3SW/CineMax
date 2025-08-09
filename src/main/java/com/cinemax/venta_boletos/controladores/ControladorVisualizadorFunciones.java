@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
-import com.cinemax.venta_boletos.servicios.ServicioMostrarFunciones;
+import com.cinemax.venta_boletos.servicios.ServicioVisualizadorFunciones;
 
 import javafx.fxml.FXML;
 import javafx.scene.image.Image;
@@ -31,7 +31,7 @@ import javafx.application.Platform;
  * @author CineMax Development Team
  * @version 1.3
  */
-public class ControladorMostrarFunciones {
+public class ControladorVisualizadorFunciones {
 
     // ========== COMPONENTES UI ==========
 
@@ -67,7 +67,7 @@ public class ControladorMostrarFunciones {
     private Label etiquetaDuracion;
 
     // ========== DEPENDENCIAS ==========
-    private final ServicioMostrarFunciones servicio = new ServicioMostrarFunciones();
+    private final ServicioVisualizadorFunciones servicioVisualizadorFunciones = new ServicioVisualizadorFunciones();
     private Pelicula peliculaActual;
 
     // ========== INICIALIZACIÓN ==========
@@ -77,21 +77,21 @@ public class ControladorMostrarFunciones {
      */
     @FXML
     public void initialize() {
-        configurarTabla();
-        configurarFiltros();
+        configurarCamposTabla();
+        configurarFiltrosTabla();
     }
 
     /**
      * Configura propiedades iniciales de la tabla
      */
-    private void configurarTabla() {
+    private void configurarCamposTabla() {
         tablaFunciones.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
     /**
      * Configura los componentes de filtrado
      */
-    private void configurarFiltros() {
+    private void configurarFiltrosTabla() {
         if (selectorFecha != null) {
             selectorFecha.setOnAction(event -> aplicarFiltros());
         }
@@ -114,10 +114,10 @@ public class ControladorMostrarFunciones {
      * 
      * @param pelicula Película seleccionada
      */
-    public void setPelicula(Pelicula pelicula) {
+    public void asignarPeliculaSeleccionada(Pelicula pelicula) {
         this.peliculaActual = pelicula;
         Platform.runLater(() -> {
-            actualizarInformacionPelicula(pelicula);
+            cargarInformacionPelicula(pelicula);
             cargarFunciones();
         });
     }
@@ -127,7 +127,7 @@ public class ControladorMostrarFunciones {
      * 
      * @param pelicula Película a mostrar
      */
-    private void actualizarInformacionPelicula(Pelicula pelicula) {
+    private void cargarInformacionPelicula(Pelicula pelicula) {
         etiquetaTituloPelicula.setText("Funciones de: " + pelicula.getTitulo());
         etiquetaGenero.setText(pelicula.getGenerosComoString());
         etiquetaDuracion.setText(pelicula.getDuracionMinutos() + " min");
@@ -162,7 +162,7 @@ public class ControladorMostrarFunciones {
         String tipoSala = cmbFiltroTipoSala.getValue();
 
         if (peliculaActual != null) {
-            servicio.cargarFunciones(
+            servicioVisualizadorFunciones.cargarFunciones(
                     tablaFunciones,
                     columnaHora,
                     columnaSala,
@@ -186,15 +186,15 @@ public class ControladorMostrarFunciones {
      * @param evento Evento de acción
      */
     @FXML
-    public void manejarRegreso(ActionEvent evento) {
-        servicio.regresarPantallaCartelera(evento);
+    public void onRegresar(ActionEvent evento) {
+        servicioVisualizadorFunciones.regresarPantallaCartelera(evento);
     }
 
     /**
      * Maneja la confirmación de función seleccionada
      */
     @FXML
-    private void manejarConfirmacion() {
+    private void onConfirmacion() {
         Funcion seleccionada = tablaFunciones.getSelectionModel().getSelectedItem();
 
         if (seleccionada == null) {
@@ -208,7 +208,7 @@ public class ControladorMostrarFunciones {
         // return;
         // }
 
-        servicio.confirmarFuncion(tablaFunciones);
+        servicioVisualizadorFunciones.confirmarFuncion(tablaFunciones);
     }
 
     /**
