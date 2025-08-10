@@ -10,13 +10,10 @@ import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
-import com.cinemax.venta_boletos.modelos.entidades.Factura;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
-import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
-import com.cinemax.venta_boletos.modelos.persistencia.ClienteDAO;
-import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
-import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivoPDF;
+import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
+import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
@@ -31,8 +28,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivo;
+import java.util.regex.Pattern;
 
 /**
  * Controlador principal para la facturación de boletos.
@@ -282,6 +278,13 @@ public class ControladorFacturacion {
             return;
         }
 
+        if (!Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+                    .matcher(correoField.getText().trim())
+                    .matches()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de correo inválido");
+            return;
+        }
+
         if (clienteEnEdicion == null) {
             crearCliente();
         }
@@ -337,7 +340,7 @@ public class ControladorFacturacion {
         }
 
         // Generar los boletos en formato PDF.
-        ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
+        ServicioContenidoFactura generador = new ServicioContenidoFactura();
         generador.generarBoletos(boletos);
 
         CalculadorImpuesto calculadorImpuesto = new CalculadorIVA();
@@ -405,7 +408,7 @@ public class ControladorFacturacion {
         correoField.clear();
         identificacionField.clear();
         tipoDocumentoBox.setValue("Seleccione un tipo de documento");
-        
+
         clienteEnEdicion = null;
         actualizarModoFormulario();
     }

@@ -89,9 +89,9 @@ public class ControladorPortalPrincipal {
     }
 
     @FXML
-    private void onVerReportes() {
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnVerReportes .getScene().getWindow(),
-                "/vistas/reportes/PantallaModuloReportesPrincipal.fxml");
+    private void onVerReportes(ActionEvent event) {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnVerReportes.getScene().getWindow(),
+                "/vistas/reportes/VistaReportesPrincipal.fxml");
     }
 
     @FXML
@@ -107,8 +107,14 @@ public class ControladorPortalPrincipal {
     }
     @FXML
     private void onVenderBoleto() {
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
-                "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
+
+        ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(
+            (Stage) btnVentaBoleto.getScene().getWindow(), 
+            "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 
+            33, 
+            500);
+        //ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
+        //        "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
     }
 
     @FXML
