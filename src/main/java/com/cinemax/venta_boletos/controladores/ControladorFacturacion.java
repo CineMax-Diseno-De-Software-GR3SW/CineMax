@@ -30,8 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivo;
-
 /**
  * Controlador principal para la facturación de boletos.
  * Maneja la interacción del usuario con la interfaz de facturación.
