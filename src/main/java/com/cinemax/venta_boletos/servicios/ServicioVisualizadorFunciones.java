@@ -165,6 +165,7 @@ public class ServicioVisualizadorFunciones {
                     currentStage,
                     new ArrayList<>(List.of(funcionSeleccionada)));
 
+
             ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 12, 350);
 
         } catch (Exception e) {
