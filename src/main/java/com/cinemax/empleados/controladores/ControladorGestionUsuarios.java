@@ -1,29 +1,31 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.empleados.servicios.ServicioRoles;
-import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-import com.cinemax.empleados.modelos.entidades.Usuario;
-import com.cinemax.empleados.modelos.entidades.*;
-
-
-import com.cinemax.empleados.servicios.ServicioUsuarios;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.List;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.empleados.modelos.entidades.Rol;
+import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.servicios.ServicioRoles;
+import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+import com.cinemax.empleados.servicios.ServicioUsuarios;
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
 public class ControladorGestionUsuarios {
@@ -32,32 +34,44 @@ public class ControladorGestionUsuarios {
     public Button btnBack;
     public Label lblNombreUsuario;
     public Label lblRolUsuario;
-    
-    @FXML private TextField txtBuscar;
-    @FXML private Button btnBuscar;
-    @FXML private Button btnLimpiar;
-    @FXML private Button btnEliminar;
-    @FXML private Label lblTotalUsuarios;
-    
-    // Tabla y columnas
-    @FXML private TableView<Usuario> tableUsuarios;
-    @FXML private TableColumn<Usuario, Boolean> colActivo;
-    @FXML private TableColumn<Usuario, Long> colUsuario;
-    @FXML private TableColumn<Usuario, String> colNombre;
-    @FXML private TableColumn<Usuario, String> colEmail;
-    @FXML private TableColumn<Usuario, Rol> colRol;
-    @FXML private TableColumn<Usuario, String> colCedula;      // Nueva columna
-    @FXML private TableColumn<Usuario, String> colCelular;    // Nueva columna
-//    @FXML private TableColumn<Usuario, Void> colEditar;
 
-    private ObservableList<Rol> rolesObservable;      // lista para el combo
+    @FXML
+    private TextField txtBuscar;
+    @FXML
+    private Button btnBuscar;
+    @FXML
+    private Button btnLimpiar;
+    @FXML
+    private Button btnEliminar;
+    @FXML
+    private Label lblTotalUsuarios;
+
+    // Tabla y columnas
+    @FXML
+    private TableView<Usuario> tableUsuarios;
+    @FXML
+    private TableColumn<Usuario, Boolean> colActivo;
+    @FXML
+    private TableColumn<Usuario, Long> colUsuario;
+    @FXML
+    private TableColumn<Usuario, String> colNombre;
+    @FXML
+    private TableColumn<Usuario, String> colEmail;
+    @FXML
+    private TableColumn<Usuario, Rol> colRol;
+    @FXML
+    private TableColumn<Usuario, String> colCedula; // Nueva columna
+    @FXML
+    private TableColumn<Usuario, String> colCelular; // Nueva columna
+    // @FXML private TableColumn<Usuario, Void> colEditar;
+
+    private ObservableList<Rol> rolesObservable; // lista para el combo
     private ObservableList<Usuario> listaUsuariosCompleta; // lista completa para búsqueda
 
     private ServicioUsuarios servicioUsuarios;
 
     private ServicioRoles servicioRoles;
     private ServicioSesionSingleton gestorSesion;
-
 
     @FXML
     public void initialize() {
@@ -66,6 +80,12 @@ public class ControladorGestionUsuarios {
         servicioRoles = new ServicioRoles();
         tableUsuarios.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
+        // Deshabilitar el botón Eliminar por defecto
+        btnEliminar.setDisable(true);
+        // Habilitar solo cuando hay selección
+        tableUsuarios.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            btnEliminar.setDisable(newSel == null);
+        });
 
         gestorSesion = ServicioSesionSingleton.getInstancia();
         Usuario use = gestorSesion.getUsuarioActivo();
@@ -73,41 +93,41 @@ public class ControladorGestionUsuarios {
         lblRolUsuario.setText(use.getDescripcionRol());
         colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
         colUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
-        colCedula.setCellValueFactory(new PropertyValueFactory<>("cedula"));     // Nueva columna
+        colCedula.setCellValueFactory(new PropertyValueFactory<>("cedula")); // Nueva columna
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("correo"));
         colCelular.setCellValueFactory(new PropertyValueFactory<>("celular")); // Nueva columna
         colRol.setCellValueFactory(new PropertyValueFactory<>("nombreRol"));
 
-
         // Columna de botones de edición
-//        colEditar.setCellFactory(tc -> new TableCell<>() {
-//            private final Button btn = new Button("✎");
-//            {
-//                btn.getStyleClass().add("icon-button");
-//                btn.setOnAction(e -> editarUsuario(getTableView().getItems().get(getIndex())));
-//            }
-//            @Override protected void updateItem(Void itm, boolean empty) {
-//                super.updateItem(itm, empty);
-//                setGraphic(empty ? null : btn);
-//            }
-//        });
+        // colEditar.setCellFactory(tc -> new TableCell<>() {
+        // private final Button btn = new Button("✎");
+        // {
+        // btn.getStyleClass().add("icon-button");
+        // btn.setOnAction(e ->
+        // editarUsuario(getTableView().getItems().get(getIndex())));
+        // }
+        // @Override protected void updateItem(Void itm, boolean empty) {
+        // super.updateItem(itm, empty);
+        // setGraphic(empty ? null : btn);
+        // }
+        // });
 
         // Cargar datos…
         try {
-            // 1.  Usuario logeado (lo obtienes de tu singleton de sesión)
+            // 1. Usuario logeado (lo obtienes de tu singleton de sesión)
             Usuario usuarioActual = gestorSesion.getUsuarioActivo();
 
-            // 2.  Filtras la lista que viene de la BD
+            // 2. Filtras la lista que viene de la BD
             List<Usuario> soloOtros = servicioUsuarios.listarUsuarios()
                     .stream()
                     .filter(u -> !u.getId().equals(usuarioActual.getId())) // ≠ usuario conectado
-                    .toList();                                             // Java 16+; o collect(Collectors.toList())
+                    .toList(); // Java 16+; o collect(Collectors.toList())
 
-            // 3.  Cargas la tabla con la lista filtrada
+            // 3. Cargas la tabla con la lista filtrada
             listaUsuariosCompleta = FXCollections.observableArrayList(soloOtros);
             tableUsuarios.setItems(listaUsuariosCompleta);
-            
+
             // 4. Actualizar contador de usuarios
             actualizarContadorUsuarios();
         } catch (Exception e) {
@@ -120,16 +140,16 @@ public class ControladorGestionUsuarios {
 
             {
                 // ‑‑‑ estilos opcionales
-                toggle.getStyleClass().add("switch");   // pon tu estilo en CSS
+                toggle.getStyleClass().add("switch"); // pon tu estilo en CSS
                 toggle.setMinWidth(70);
 
                 // Cuando el usuario haga clic, actualiza el modelo y persiste
                 toggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
                     Usuario u = getTableRow().getItem();
                     if (u != null) {
-                        u.setActivo(newVal);            // actualiza el POJO
+                        u.setActivo(newVal); // actualiza el POJO
 
-                        // ⇣  Si manejas BD o servicio, persiste aquí
+                        // ⇣ Si manejas BD o servicio, persiste aquí
                         try {
                             servicioUsuarios.actualizarEstado(u.getId(), newVal);
                         } catch (Exception e) {
@@ -168,32 +188,37 @@ public class ControladorGestionUsuarios {
 
         /* ----- 3. cell factory: ComboBox editable ----- */
         colRol.setCellFactory(col -> {
-            ComboBoxTableCell<Usuario, Rol> cell =
-                    new ComboBoxTableCell<>(new StringConverter<>() {
-                        @Override public String toString(Rol r)   { return r == null ? "" : r.getNombre(); }
-                        @Override public Rol fromString(String s) { return rolesObservable.stream()
-                                .filter(r -> r.getNombre().equals(s))
-                                .findFirst().orElse(null); }
-                    }, rolesObservable);
+            ComboBoxTableCell<Usuario, Rol> cell = new ComboBoxTableCell<>(new StringConverter<>() {
+                @Override
+                public String toString(Rol r) {
+                    return r == null ? "" : r.getNombre();
+                }
 
+                @Override
+                public Rol fromString(String s) {
+                    return rolesObservable.stream()
+                            .filter(r -> r.getNombre().equals(s))
+                            .findFirst().orElse(null);
+                }
+            }, rolesObservable);
 
-//            /* al confirmar la edición */
+            // /* al confirmar la edición */
             colRol.setOnEditCommit(evt -> {
                 Usuario u = evt.getRowValue();
-                Rol nuevo   = evt.getNewValue();
+                Rol nuevo = evt.getNewValue();
                 if (nuevo != null && !nuevo.equals(u.getRol())) {
-                    u.setRol(nuevo);                         // 1) actualiza modelo
+                    u.setRol(nuevo); // 1) actualiza modelo
                     try {
                         servicioUsuarios.actualizarRolUsuario(u.getId(), nuevo); // 2) guarda en BD
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
-                    tableUsuarios.refresh();                 // refresca por si hay renderizado
+                    tableUsuarios.refresh(); // refresca por si hay renderizado
                 }
             });
             return cell;
         });
-        tableUsuarios.setEditable(true);  // imprescindible para ComboBoxTableCell
+        tableUsuarios.setEditable(true); // imprescindible para ComboBoxTableCell
     }
 
     // Método para actualizar el contador de usuarios
@@ -210,22 +235,22 @@ public class ControladorGestionUsuarios {
     @FXML
     private void onBuscar() {
         String textoBusqueda = txtBuscar.getText().trim().toLowerCase();
-        
+
         if (textoBusqueda.isEmpty()) {
             // Si no hay texto, mostrar todos
             tableUsuarios.setItems(listaUsuariosCompleta);
         } else {
             // Filtrar por cédula o rol
             ObservableList<Usuario> usuariosFiltrados = listaUsuariosCompleta.stream()
-                .filter(usuario -> 
-                    (usuario.getCedula() != null && usuario.getCedula().toLowerCase().contains(textoBusqueda)) ||
-                    (usuario.getNombreRol() != null && usuario.getNombreRol().toLowerCase().contains(textoBusqueda))
-                )
-                .collect(FXCollections::observableArrayList, ObservableList::add, ObservableList::addAll);
-                
+                    .filter(usuario -> (usuario.getCedula() != null
+                            && usuario.getCedula().toLowerCase().contains(textoBusqueda)) ||
+                            (usuario.getNombreRol() != null
+                                    && usuario.getNombreRol().toLowerCase().contains(textoBusqueda)))
+                    .collect(FXCollections::observableArrayList, ObservableList::add, ObservableList::addAll);
+
             tableUsuarios.setItems(usuariosFiltrados);
         }
-        
+
         // Actualizar contador después de filtrar
         actualizarContadorUsuarios();
     }
@@ -242,92 +267,107 @@ public class ControladorGestionUsuarios {
     @FXML
     private void onEliminar() {
         Usuario usuarioSeleccionado = tableUsuarios.getSelectionModel().getSelectedItem();
-        
         if (usuarioSeleccionado == null) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, selecciona un usuario para eliminar.");
             return;
         }
-        
-        // Confirmación de eliminación
-        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmacion.setTitle("Confirmar Eliminación");
-        confirmacion.setHeaderText("¿Estás seguro de que deseas eliminar este usuario?");
-        confirmacion.setContentText("Usuario: " + usuarioSeleccionado.getNombreCompleto() +
-                                   "\n\nEsta acción no se puede deshacer.");
-        
-        if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            try {
+
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/comun/VistaConfirmacion.fxml"));
+            Parent root = loader.load();
+            com.cinemax.comun.ControladorConfirmacion controlador = loader.getController();
+            controlador.setTitulo("Confirmar Eliminación");
+            controlador.setMensaje("¿Estás seguro de que deseas eliminar este usuario?\n\nUsuario: "
+                    + usuarioSeleccionado.getNombreCompleto() + "\n\nEsta acción no se puede deshacer.");
+
+            Stage stage = new Stage();
+            stage.initStyle(javafx.stage.StageStyle.UNDECORATED);
+            stage.setScene(new Scene(root));
+            stage.setTitle("Confirmar Eliminación");
+            stage.initOwner(tableUsuarios.getScene().getWindow());
+            stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+
+            if (controlador.isConfirmado()) {
                 // Eliminar de la base de datos
                 servicioUsuarios.eliminarUsuario(usuarioSeleccionado.getId());
-                
                 // Remover de las listas locales
                 listaUsuariosCompleta.remove(usuarioSeleccionado);
                 tableUsuarios.getItems().remove(usuarioSeleccionado);
-                
                 // Actualizar contador
                 actualizarContadorUsuarios();
-                
                 ManejadorMetodosComunes.mostrarVentanaExito("Usuario eliminado correctamente.");
-                
-            } catch (Exception e) {
-                ManejadorMetodosComunes.mostrarVentanaError("Error al eliminar el usuario: " + e.getMessage());
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            ManejadorMetodosComunes
+                    .mostrarVentanaError("Error al mostrar la ventana de confirmación: " + e.getMessage());
+            e.printStackTrace();
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al eliminar el usuario: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
     public void onBackAction() {
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml");
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(),
+                "/vistas/empleados/PantallaPortalPrincipal.fxml");
 
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-//            Parent root = loader.load();
-//            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-//            stage.setScene(new Scene(root));
-//            stage.show();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        // try {
+        // FXMLLoader loader = new
+        // FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+        // Parent root = loader.load();
+        // Stage stage = (Stage) ((javafx.scene.Node)
+        // event.getSource()).getScene().getWindow();
+        // stage.setScene(new Scene(root));
+        // stage.show();
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        // }
     }
 
     public void onAgregarUsuario() {
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnAgregarUsuario.getScene().getWindow(), "/vistas/empleados/PantallaRegistrarUsuario.fxml");
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnAgregarUsuario.getScene().getWindow(),
+                "/vistas/empleados/PantallaRegistrarUsuario.fxml");
 
-//
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRegistrarUsuario.fxml"));
-//        try {
-//            Parent root = loader.load();
-//
-//            // Obtener el Stage actual desde el botón o cualquier nodo
-//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            stage.setTitle("Registrar nuevo empleado");
-//            stage.setScene(new Scene(root));
-//            stage.show();
-//        try {
-//            URL fxmlLocation = getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml");
-//
-//            if (fxmlLocation == null) {
-//                throw new IOException("No se pudo encontrar el archivo FXML: /Vista/empleados/PantallaRegistrarUsuario.fxml");
-//            }
-//
-//            FXMLLoader loader = new FXMLLoader(fxmlLocation);
-//            Parent root = loader.load();
-//
-//            Stage stage = new Stage();
-//            stage.setTitle("Registrar Nuevo Empleado");
-//            stage.setScene(new Scene(root));
-//            stage.initModality(Modality.APPLICATION_MODAL);
-//            stage.showAndWait();
+        //
+        // FXMLLoader loader = new
+        // FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRegistrarUsuario.fxml"));
+        // try {
+        // Parent root = loader.load();
+        //
+        // // Obtener el Stage actual desde el botón o cualquier nodo
+        // Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        // stage.setTitle("Registrar nuevo empleado");
+        // stage.setScene(new Scene(root));
+        // stage.show();
+        // try {
+        // URL fxmlLocation =
+        // getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml");
+        //
+        // if (fxmlLocation == null) {
+        // throw new IOException("No se pudo encontrar el archivo FXML:
+        // /Vista/empleados/PantallaRegistrarUsuario.fxml");
+        // }
+        //
+        // FXMLLoader loader = new FXMLLoader(fxmlLocation);
+        // Parent root = loader.load();
+        //
+        // Stage stage = new Stage();
+        // stage.setTitle("Registrar Nuevo Empleado");
+        // stage.setScene(new Scene(root));
+        // stage.initModality(Modality.APPLICATION_MODAL);
+        // stage.showAndWait();
 
-//        } catch (IOException e) {
-//            e.printStackTrace();
-////            Alert alert = new Alert(Alert.AlertType.ERROR);
+        // } catch (IOException e) {
+        // e.printStackTrace();
+        ////            Alert alert = new Alert(Alert.AlertType.ERROR);
 ////            alert.setTitle("Error de Carga");
 ////            alert.setHeaderText("No se pudo abrir la ventana de registro.");
 ////            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
 ////            alert.showAndWait();
-//            ManejadorMetodosComunes.mostrarVentanaError("No se pudo abrir la ventana de registro.");
-//        }
+        // ManejadorMetodosComunes.mostrarVentanaError("No se pudo abrir la ventana de
+        // registro.");
+        // }
     }
 
 }

@@ -31,7 +31,11 @@
     <!-- ░░░ PANEL CENTRAL ░░░ -->
     <center>
         <VBox spacing="12">
-            <HBox spacing="10" alignment="CENTER_LEFT">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <HBox spacing="10" alignment="CENTER_LEFT" styleClass="summary-pane">
                 <Label text="Buscar:"/>
                 <TextField fx:id="txtBuscar" promptText="Cédula, rol..." prefWidth="200"/>
                 <Button fx:id="btnBuscar" text="🔍" onAction="#onBuscar" styleClass="icon-button"/>
@@ -58,10 +62,10 @@
                         text="Crear"
                         onAction="#onAgregarUsuario"
                         styleClass="primary-button"/>
-                <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="primary-button"/>
+                <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="primary-button" disable="true"/>
             </HBox>
 
-            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="summary-pane">
+            <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="summary-pane" maxWidth="Infinity">
                 <children>
                     <Label fx:id="lblTotalUsuarios" styleClass="summary-details" text="Total de usuarios: 0" />
                     <Region HBox.hgrow="ALWAYS" />
