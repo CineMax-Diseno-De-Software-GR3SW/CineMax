@@ -230,25 +230,21 @@ public class ControladorFacturacion {
             return;
         }
 
-        try {
-            // Buscar al cliente por su número de identificación.
-            clienteEnEdicion = servicioCliente.buscarCliente(identificacionField.getText());
+        // Buscar al cliente por su número de identificación.
+        clienteEnEdicion = servicioCliente.buscarCliente(identificacionField.getText());
 
-            // Si el cliente es encontrado, se llenan los campos con su información.
-            if (clienteEnEdicion != null) {
-                nombreField.setText(clienteEnEdicion.getNombre());
-                apellidoField.setText(clienteEnEdicion.getApellido());
-                documentoField.setText(String.valueOf(clienteEnEdicion.getIdCliente()));
-                tipoDocumentoBox.setValue(clienteEnEdicion.getTipoDocumento());
-                correoField.setText(clienteEnEdicion.getCorreoElectronico());
-                actualizarModoFormulario();
-                ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
-            } else { 
-                // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
-            }
-        } catch (NumberFormatException e) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El número de identificación debe ser un número válido.");
+        // Si el cliente es encontrado, se llenan los campos con su información.
+        if (clienteEnEdicion != null) {
+            nombreField.setText(clienteEnEdicion.getNombre());
+            apellidoField.setText(clienteEnEdicion.getApellido());
+            documentoField.setText(String.valueOf(clienteEnEdicion.getIdCliente()));
+            tipoDocumentoBox.setValue(clienteEnEdicion.getTipoDocumento());
+            correoField.setText(clienteEnEdicion.getCorreoElectronico());
+            actualizarModoFormulario();
+            ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
+        } else { 
+            // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
         }
     }
 
@@ -364,7 +360,6 @@ public class ControladorFacturacion {
 
         Cliente cliente = null;
         
-        try {
             cliente = new Cliente(
             nombreField.getText(),
             apellidoField.getText(),
@@ -375,10 +370,6 @@ public class ControladorFacturacion {
             if (!servicioCliente.existeCliente(documentoField.getText())) {
                 servicioCliente.crearCliente(cliente);
             }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
-        }
 
         // Generar los boletos en formato PDF.
         ServicioContenidoFactura generador = new ServicioContenidoFactura();
@@ -404,7 +395,6 @@ public class ControladorFacturacion {
      */
     @FXML
     protected void regresarAMapaButacas() {
-
         try {
 
             // Obtener la ventana actual desde el headerBar.
@@ -496,37 +486,28 @@ public class ControladorFacturacion {
     }
 
     private void crearCliente(){
-        try {
-            if (servicioCliente.existeCliente(documentoField.getText())) {
-                ManejadorMetodosComunes.mostrarVentanaError("El cliente que intenta crear ya existe.");
-                return;
-            }
-            Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
-                    correoField.getText(), tipoDocumentoBox.getValue());
-            servicioCliente.crearCliente(cliente);
-            ManejadorMetodosComunes.mostrarVentanaExito("Cliente creado exitosamente.");
-        } catch (NumberFormatException e) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
+        if (servicioCliente.existeCliente(documentoField.getText())) {
+            ManejadorMetodosComunes.mostrarVentanaError("El cliente que intenta crear ya existe.");
+            return;
         }
+        Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
+                correoField.getText(), tipoDocumentoBox.getValue());
+        servicioCliente.crearCliente(cliente);
+        ManejadorMetodosComunes.mostrarVentanaExito("Cliente creado exitosamente.");
     }
 
     private void actualizarCliente(){
-        try {
-            clienteEnEdicion = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
-                    correoField.getText(), tipoDocumentoBox.getValue());
-            // Verificar si el cliente existe en la base de datos.
-            if (!servicioCliente.existeCliente(clienteEnEdicion.getIdCliente())) {
-                // Si el cliente no existe, mostrar un mensaje de advertencia.
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
-            } else {
-                // Si el cliente existe, actualizar su información en la base de datos.
-                servicioCliente.actualizarCliente(clienteEnEdicion);
-                actualizarModoFormulario();
-                ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
-            }
-
-        } catch (NumberFormatException e) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
+        clienteEnEdicion = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
+                correoField.getText(), tipoDocumentoBox.getValue());
+        // Verificar si el cliente existe en la base de datos.
+        if (!servicioCliente.existeCliente(clienteEnEdicion.getIdCliente())) {
+            // Si el cliente no existe, mostrar un mensaje de advertencia.
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
+        } else {
+            // Si el cliente existe, actualizar su información en la base de datos.
+            servicioCliente.actualizarCliente(clienteEnEdicion);
+            actualizarModoFormulario();
+            ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
         }
     }
     
