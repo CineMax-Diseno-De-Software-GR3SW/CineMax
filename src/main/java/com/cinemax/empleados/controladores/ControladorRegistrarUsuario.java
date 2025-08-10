@@ -1,5 +1,7 @@
 package com.cinemax.empleados.controladores;
 
+import com.cinemax.comun.EstrategiaValidacionDocumentos.ContextoValidacion;
+import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Usuario;
@@ -178,8 +180,14 @@ public class ControladorRegistrarUsuario implements Initializable {
         }
 
 
-        //TODO: NO, Hacerlo desde el servicio
         String nombreCompleto = nombres + " " + apellidos;
+        //Validar la cédula
+        ContextoValidacion contextoValidacion = new ContextoValidacion();
+        contextoValidacion.setEstrategia(new EstrategiaCedulaValidacion());
+        if(!contextoValidacion.ejecutarEstrategia(campoCedula.getText())) {
+            ManejadorMetodosComunes.mostrarVentanaError("Documento inválido: " + campoCedula.getText());
+            return;
+        }
         try {
             servicioUsuarios.crearUsuario(nombreCompleto, cedula, correo, celular, estadoActivo, nombreUsuario, cargoSeleccionado);
             ManejadorMetodosComunes.mostrarVentanaExito("Empleado creado exitosamente");
