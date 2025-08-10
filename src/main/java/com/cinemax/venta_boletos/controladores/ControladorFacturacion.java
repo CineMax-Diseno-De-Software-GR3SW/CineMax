@@ -11,8 +11,9 @@ import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
-import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivoPDF;
+import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
+import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
@@ -341,7 +342,7 @@ public class ControladorFacturacion {
         }
 
         // Generar los boletos en formato PDF.
-        ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
+        ServicioContenidoFactura generador = new ServicioContenidoFactura();
         generador.generarBoletos(boletos);
 
         CalculadorImpuesto calculadorImpuesto = new CalculadorIVA();
