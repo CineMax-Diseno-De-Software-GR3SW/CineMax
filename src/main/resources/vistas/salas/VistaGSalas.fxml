@@ -102,13 +102,16 @@
 
             <!-- Panel derecho: Búsqueda y tabla -->
             <VBox spacing="12.0" HBox.hgrow="ALWAYS">
-
-                <HBox spacing="10.0" alignment="CENTER_LEFT">
-                    <Label text="Buscar:"/>
-                    <TextField fx:id="txtBuscar" promptText="ID o nombre" prefWidth="220.0"/>
-                    <Button text="🔍" onAction="#buscarSala"/>
-                    <Region HBox.hgrow="ALWAYS"/>
-                </HBox>
+                <VBox spacing="10.0" styleClass="ticket-card">
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <children>
+                            <Label text="Buscar:"/>
+                            <TextField fx:id="txtBuscar" promptText="Nombre o ID Sala" prefWidth="220.0" styleClass="text-field"/>
+                            <Button fx:id="btnBuscarSala" onAction="#buscarSala" text="🔍" styleClass="icon-button"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                        </children>
+                    </HBox>
+                </VBox>
 
                 <!-- Tabla -->
                 <TableView fx:id="tablaSalas" styleClass="table-view" VBox.vgrow="ALWAYS">
