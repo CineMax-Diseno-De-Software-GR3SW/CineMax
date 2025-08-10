@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 
 public class ControladorRegistrarUsuario implements Initializable {
 
+    public Button btnBack;
     @FXML
     private TextField campoNombres;
     @FXML
@@ -203,16 +204,18 @@ public class ControladorRegistrarUsuario implements Initializable {
     }
 
     @FXML
-    private void handleCancelar(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void handleCancelar() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(),
+                "/vistas/empleados/PantallaGestionUsuarios.fxml");
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+//            Parent root = loader.load();
+//            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+//            stage.setScene(new Scene(root));
+//            stage.show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void limpiarCampos() {

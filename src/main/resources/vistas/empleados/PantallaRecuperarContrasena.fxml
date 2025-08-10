@@ -24,7 +24,7 @@
         </font>
     </Button>
 
-    <Hyperlink onAction="#onBackToLoginClick" text="Volver al Login">
+    <Hyperlink fx:id="vinculoVolver" onAction="#onBackToLoginClick" text="Volver al Login">
         <font>
             <Font size="14.0" />
         </font>

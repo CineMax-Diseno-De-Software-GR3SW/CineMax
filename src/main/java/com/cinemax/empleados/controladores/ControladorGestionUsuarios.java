@@ -252,8 +252,7 @@ public class ControladorGestionUsuarios {
         Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
         confirmacion.setTitle("Confirmar Eliminación");
         confirmacion.setHeaderText("¿Estás seguro de que deseas eliminar este usuario?");
-        confirmacion.setContentText("Usuario: " + usuarioSeleccionado.getNombreCompleto() + 
-                                   "\nCédula: " + usuarioSeleccionado.getCedula() +
+        confirmacion.setContentText("Usuario: " + usuarioSeleccionado.getNombreCompleto() +
                                    "\n\nEsta acción no se puede deshacer.");
         
         if (confirmacion.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {

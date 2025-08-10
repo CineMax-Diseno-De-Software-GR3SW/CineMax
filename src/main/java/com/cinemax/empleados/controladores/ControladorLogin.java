@@ -5,19 +5,17 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
 public class ControladorLogin {
 
+    public Hyperlink vinculoRecuperarContrasena;
     @FXML
     private TextField txtUsuario;
 
@@ -56,25 +54,26 @@ public class ControladorLogin {
     }
 
     @FXML
-    // metodo para manejar el clic en "Olvidaste tu contraseña"
-    private void onForgotPasswordClick(ActionEvent event) {
-        try {
-            // Carga la nueva pantalla de recuperación de contraseña
-            // Asegúrate de que esta ruta sea correcta:
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRecuperarContrasena.fxml"));
-            Parent root = loader.load();
-
-            // Obtiene el Stage actual y cambia la escena
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Recuperar Contraseña");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (Exception e) {
-            lblError.setText("Error al cargar la pantalla de recuperación de contraseña.");
-            lblError.setVisible(true);
-            e.printStackTrace();
-        }
+    private void onForgotPasswordClick() {
+//        try {
+            ManejadorMetodosComunes.cambiarVentana((Stage)vinculoRecuperarContrasena.getScene().getWindow(),"/vistas/empleados/PantallaRecuperarContrasena.fxml");
+//
+//            // Carga la nueva pantalla de recuperación de contraseña
+//            // Asegúrate de que esta ruta sea correcta:
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRecuperarContrasena.fxml"));
+//            Parent root = loader.load();
+//
+//            // Obtiene el Stage actual y cambia la escena
+//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//            stage.setTitle("Recuperar Contraseña");
+//            stage.setScene(new Scene(root));
+//            stage.show();
+//
+//        } catch (Exception e) {
+//            lblError.setText("Error al cargar la pantalla de recuperación de contraseña.");
+//            lblError.setVisible(true);
+//            e.printStackTrace();
+//        }
     }
 
     private boolean iniciarSesion() {
