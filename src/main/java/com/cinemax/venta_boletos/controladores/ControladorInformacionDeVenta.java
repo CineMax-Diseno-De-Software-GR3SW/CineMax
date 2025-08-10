@@ -1,12 +1,12 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores;
 
 import javafx.scene.control.Label;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
-import com.cinemax.venta_boletos.Modelos.entidades.CalculadorIVA;
-import com.cinemax.venta_boletos.Modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
+import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.ScrollPane;

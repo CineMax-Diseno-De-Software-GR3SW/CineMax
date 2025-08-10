@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Modelos.entidades;
+package com.cinemax.venta_boletos.modelos.entidades;
 
 /**
  * Esta interfaz permite implementar diferentes estrategias de cálculo de impuestos

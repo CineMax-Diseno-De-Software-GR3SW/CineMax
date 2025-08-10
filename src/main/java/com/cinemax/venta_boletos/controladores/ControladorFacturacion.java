@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Controladores;
+package com.cinemax.venta_boletos.controladores;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;
@@ -28,7 +28,7 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.venta_boletos.Servicios.ServicioGeneradorArchivo;
+import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivo;
 
 /**
  * Controlador principal para la facturación de boletos.

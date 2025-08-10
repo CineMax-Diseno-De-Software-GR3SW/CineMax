@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.Modelos.Persistencia;
+package com.cinemax.venta_boletos.modelos.persistencia;
 
 import java.math.BigDecimal;
 import java.sql.Connection;

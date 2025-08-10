@@ -46,12 +46,11 @@ module com.cinemax {
     opens com.cinemax to javafx.fxml;
 
     // Paquetes del módulo venta-boletos
-    exports com.cinemax.venta_boletos.Controladores;
-    opens com.cinemax.venta_boletos.Controladores to javafx.fxml;
+    exports com.cinemax.venta_boletos.controladores;
+    opens com.cinemax.venta_boletos.controladores to javafx.fxml;
 
 
-    exports com.cinemax.venta_boletos.Modelos.entidades;
-
+    exports com.cinemax.venta_boletos.modelos.entidades;
     opens com.cinemax.venta_boletos.Modelos.entidades to javafx.base;
     opens com.cinemax.venta_boletos.Servicios to javafx.base, javafx.fxml;
 
