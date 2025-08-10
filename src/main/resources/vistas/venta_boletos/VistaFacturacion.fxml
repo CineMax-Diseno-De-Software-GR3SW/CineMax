@@ -118,16 +118,13 @@
     </center>
 
     <right>
-        <!-- CAMBIO: Estructura del panel lateral corregida para que el botón Pagar siempre sea visible -->
         <VBox prefWidth="320.0" spacing="10.0" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </padding>
             <children>
-                <!-- Este VBox es el contenedor para el contenido dinámico. VBox.vgrow="ALWAYS" hace que ocupe todo el espacio disponible. -->
                 <VBox fx:id="informacionFuncionContainer" VBox.vgrow="ALWAYS" />
 
-                <!-- El botón Pagar es un hijo directo del VBox principal, por lo que no será eliminado y se mantendrá al fondo. -->
                 <Button fx:id="buttonPagar" maxWidth="Infinity" onAction="#pagarBoletos" prefHeight="50.0" styleClass="primary-button" text="Pagar" />
             </children>
         </VBox>
