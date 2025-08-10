@@ -1,6 +1,6 @@
 package com.cinemax.reportes.modelos.persistencia;
 
-import com.cinemax.comun.ConexionBaseSingleton;
+import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
