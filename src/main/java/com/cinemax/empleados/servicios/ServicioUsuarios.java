@@ -41,7 +41,7 @@ public class ServicioUsuarios {
         usuarioDAO.crearUsuario(usuario);
 
         // Servicio de correo
-        ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
+        ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), clave));
 
     }
 
