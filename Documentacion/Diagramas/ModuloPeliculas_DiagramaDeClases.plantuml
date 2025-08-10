@@ -431,34 +431,38 @@ package peliculas {
     }
 
     ' ==================== RELACIONES ====================
-    Cartelera "1" *-- "0..*" Pelicula
-    Pelicula "1" -- "1" Idioma
-    Pelicula "1" *-- "1..*" Genero
-    Funcion "1" -- "1" Pelicula
-    Funcion "1" -- "1" Sala
-    Funcion "1" -- "1" FormatoFuncion
-    Funcion "1" -- "1" TipoEstreno
-    Funcion .up.> DiaSemana : usa
-    ServicioPelicula ..> Pelicula : gestiona
-    ServicioFuncion ..> Funcion : gestiona
-    ServicioPelicula <.left. ControladorPelicula
-    ServicioPelicula <.left. ControladorFormularioPelicula
-    ServicioPelicula <.left. ControladorDetallesPelicula
-    ServicioPelicula <.left. ControladorCartelera
-    ServicioPelicula <.left. ControladorSeleccionFuncion
-    ServicioFuncion <.left. ControladorFunciones
-    ServicioFuncion <.left. ControladorFormularioFuncion
-    ServicioFuncion <.left. ControladorDetallesCartelera
-    ServicioFuncion <.left. ControladorSeleccionFuncion
-    SalaService <.left. ControladorFunciones
-    SalaService <.left. ControladorFormularioFuncion
-    SalaService <.left. ControladorSeleccionFuncion
-    ControladorFormularioPelicula "1" o-- "0..1" Pelicula : edita
-    ControladorDetallesPelicula "1" o-- "1" Pelicula : muestra
-    ControladorFormularioFuncion "1" o-- "0..1" Funcion : edita
-    ControladorDetallesFuncion "1" o-- "1" Funcion : muestra
-    ControladorDetallesCartelera "1" o-- "1" Pelicula : muestra
-    ControladorCartelera "1" o-- "1" Cartelera : gestiona
-    ControladorSeleccionFuncion "1" o-- "1" Cartelera : usa
+    modelos.entidades.Cartelera "1" -- "0..*" modelos.entidades.Pelicula
+    modelos.entidades.Funcion "0..*" -- "1" modelos.entidades.Pelicula
+    modelos.entidades.Funcion "0..*" -- "1" salas.Sala
+    modelos.entidades.Funcion "1" -- "1" modelos.entidades.FormatoFuncion
+    modelos.entidades.Funcion "1" -- "1" modelos.entidades.TipoEstreno
+    modelos.entidades.Funcion "1" -- "1" modelos.entidades.DiaSemana
+    modelos.entidades.Pelicula "1" -- "1" modelos.entidades.Idioma
+    modelos.entidades.Pelicula "1" -- "1..*" modelos.entidades.Genero
+
+    controladores.ControladorCartelera ..> servicios.ServicioPelicula
+    controladores.ControladorDetallesCartelera ..> servicios.ServicioFuncion
+    controladores.ControladorDetallesPelicula ..> servicios.ServicioPelicula
+    controladores.ControladorFormularioFuncion ..> servicios.ServicioFuncion
+    controladores.ControladorFormularioFuncion ..> servicios.ServicioPelicula
+    controladores.ControladorFormularioPelicula ..> servicios.ServicioPelicula
+    controladores.ControladorFunciones ..> servicios.ServicioFuncion
+    controladores.ControladorPelicula ..> servicios.ServicioPelicula
+    controladores.ControladorSeleccionFuncion ..> servicios.ServicioPelicula
+    controladores.ControladorSeleccionFuncion ..> servicios.ServicioFuncion
+
+    controladores.ControladorFormularioFuncion ..> salas.servicios.SalaService
+    controladores.ControladorFunciones ..> salas.servicios.SalaService
+    controladores.ControladorSeleccionFuncion ..> salas.servicios.SalaService
+
+    controladores.ControladorCartelera ..> modelos.entidades.Cartelera
+    controladores.ControladorCartelera ..> modelos.entidades.Pelicula
+    controladores.ControladorDetallesCartelera ..> modelos.entidades.Pelicula
+    controladores.ControladorDetallesFuncion ..> modelos.entidades.Funcion
+    controladores.ControladorDetallesPelicula ..> modelos.entidades.Pelicula
+    controladores.ControladorFormularioFuncion ..> modelos.entidades.Funcion
+    controladores.ControladorFormularioPelicula ..> modelos.entidades.Pelicula
+    controladores.ControladorSeleccionFuncion ..> modelos.entidades.Cartelera
+    controladores.ControladorSeleccionFuncion ..> modelos.entidades.Pelicula
 }
 @enduml
