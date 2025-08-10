@@ -27,9 +27,9 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.reportes.modelos.entidades.EstrategiaExportarCSV;
-import com.cinemax.reportes.modelos.entidades.EstrategiaExportarPDF;
-import com.cinemax.reportes.modelos.entidades.Exportable;
+import com.cinemax.comun.EstrategiaParaDocumentos.EstrategiaExportarCSV;
+import com.cinemax.comun.EstrategiaParaDocumentos.EstrategiaExportarPDF;
+import com.cinemax.comun.EstrategiaParaDocumentos.Exportable;
 import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 import com.cinemax.reportes.modelos.entidades.VentasService;
 

@@ -50,20 +50,46 @@ public class ServicioFacturacion {
             }
         }
 
-        ServicioGeneradorArchivo generador = new ServicioGeneradorArchivoPDF();
+        ServicioContenidoFactura generador = new ServicioContenidoFactura();
         generador.generarFactura(factura);
+        generador.generarBoletos(productos);
+
+        // Buscar los archivos PDF de los boletos generados para esta factura
+        // Se asume que los nombres de los boletos contienen el código de la factura o se generan todos los boletos en la carpeta correspondiente
+        List<File> archivosBoletos = new java.util.ArrayList<>();
+        String carpetaBoletos = "PDFsGenerados_BoletoFactura/BoletosGenerados/";
+        for (Producto producto : productos) {
+            if (producto instanceof Boleto) {
+                Boleto boleto = (Boleto) producto;
+                String nombreArchivo = generador.generarNombreArchivoBoleto(boleto);
+                File archivoBoleto = new File(carpetaBoletos + nombreArchivo);
+                if (archivoBoleto.exists()) {
+                    archivosBoletos.add(archivoBoleto);
+                }
+            }
+        }
+
+        // Unir la factura y los boletos en un solo PDF
+        String rutaFactura = "PDFsGenerados_BoletoFactura/FacturasGeneradas/Factura_" + factura.getCodigoFactura() + ".pdf";
+        File archivoFactura = new File(rutaFactura);
+        String nombreCombinado = "FacturaYBoletos_" + factura.getCodigoFactura() + ".pdf";
+        String rutaCombinada = "PDFsGenerados_BoletoFactura/FacturasGeneradas/" + nombreCombinado;
+        File archivoCombinado = new File(rutaCombinada);
+        try {
+            generador.unirPDFsFacturaYBoletos(archivoFactura, archivosBoletos, archivoCombinado);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Si falla la unión, se puede seguir enviando solo la factura
+        }
 
         // Mostrar un mensaje de éxito al usuario indicando que la factura se ha creado exitosamente.
         ManejadorMetodosComunes.mostrarVentanaExito("Factura creada exitosamente: " + factura.getCodigoFactura());
 
-        // Enviar el PDF al correo del cliente usando ServicioCorreoSingleton
+        // Enviar el PDF combinado al correo del cliente usando ServicioCorreoSingleton
         try {
             ServicioCorreoSingleton correo = ServicioCorreoSingleton.getInstancia();
             ContenidoMensaje contenido = ServicioContenidoMensajeFactura.crearMensajeFactura(factura);
-            // Construir la ruta del archivo PDF generado
-            String rutaPDF = "PDFsGenerados_BoletoFactura/FacturasGeneradas/Factura_" + factura.getCodigoFactura() + ".pdf";
-            File archivoPDF = new File(rutaPDF);
-            correo.enviarCorreo(cliente.getCorreoElectronico(), contenido, archivoPDF);
+            correo.enviarCorreo(cliente.getCorreoElectronico(), contenido, archivoCombinado);
         } catch (Exception e) {
             e.printStackTrace();
             // Manejo de error si falla el envío de correo

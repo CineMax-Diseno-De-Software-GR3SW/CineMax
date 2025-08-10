@@ -222,4 +222,26 @@ public class ControladorVisualizadorFunciones {
         cargarFunciones();
     }
 
+    /**
+     * Limpia los filtros de selección (fecha, formato y tipo de sala) y recarga
+     * la tabla de funciones sin aplicar ningún filtro.
+     * <p>
+     * Este método restablece el selector de fecha a nulo, y los ComboBoxes de
+     * formato y tipo de sala a la opción "Todos". Luego invoca la recarga de
+     * funciones para mostrar todas las funciones disponibles para la película
+     * seleccionada.
+     * </p>
+     * <p>
+     * Debe ser invocado desde la interfaz de usuario, típicamente asociado a un
+     * botón de "Limpiar filtros".
+     * </p>
+     */
+    @FXML
+    private void onLimpiarFiltros() {
+        selectorFecha.setValue(null);
+        cmbFiltroFormato.getSelectionModel().selectFirst(); // Selecciona "Todos"
+        cmbFiltroTipoSala.getSelectionModel().selectFirst(); // Selecciona "Todos"
+        cargarFunciones();
+    }
+
 }

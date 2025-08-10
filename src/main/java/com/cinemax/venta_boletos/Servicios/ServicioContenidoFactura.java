@@ -6,6 +6,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import com.cinemax.comun.EstrategiaParaDocumentos.EstrategiaExportarPDF;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
@@ -14,13 +15,33 @@ import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 
 /**
  * Implementación concreta del servicio para generar archivos PDF de facturas y
  * boletos
  * Utiliza la biblioteca Apache PDFBox para la creación de documentos PDF
  */
-public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
+public class ServicioContenidoFactura {
+    /**
+     * Une la factura y los boletos en un solo PDF usando PDFBox.
+     * @param facturaFile Archivo PDF de la factura
+     * @param boletosFiles Lista de archivos PDF de los boletos
+     * @param archivoSalida Archivo de salida combinado
+     * @throws IOException Si ocurre un error de IO
+     */
+    public void unirPDFsFacturaYBoletos(File facturaFile, List<File> boletosFiles, File archivoSalida) throws IOException {
+        List<File> archivos = new java.util.ArrayList<>();
+        archivos.add(facturaFile);
+        if (boletosFiles != null) archivos.addAll(boletosFiles);
+
+        PDFMergerUtility merger = new PDFMergerUtility();
+        for (File f : archivos) {
+            merger.addSource(f);
+        }
+        merger.setDestinationFileName(archivoSalida.getAbsolutePath());
+        merger.mergeDocuments(null);
+    }
 
     // Margen utilizado en los documentos PDF (en puntos)
     private static final float MARGIN = 50;
@@ -46,15 +67,16 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
      * 
      * @param factura La factura con los datos a imprimir en el PDF
      */
-    @Override
     public void generarFactura(Factura factura) {
         // Asegura que exista la carpeta de destino
         crearCarpetaSiNoExiste(CARPETA_FACTURAS);
 
-        try (PDDocument document = new PDDocument()) {
-            // Crea una página en tamaño A4
-            PDPage page = new PDPage(PDRectangle.A4);
-            document.addPage(page);
+        try (PDDocument document = EstrategiaExportarPDF.crearDocumentoPDF()) {
+            // Asegurarse de que solo haya una página y sea la usada
+            while (document.getNumberOfPages() > 1) {
+                document.removePage(1);
+            }
+            PDPage page = document.getPage(0);
 
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
                 // Obtiene dimensiones de la página
@@ -168,9 +190,9 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
 
             // Guarda el documento generado
             String fileName = CARPETA_FACTURAS + File.separator + "Factura_" + factura.getCodigoFactura() + ".pdf";
-            document.save(fileName);
+            EstrategiaExportarPDF.guardarPDF(document, new File(fileName));
             System.out.println("Factura generada: " + fileName);
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -180,7 +202,6 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
      * 
      * @param boletos Lista de boletos a imprimir
      */
-    @Override
     public void generarBoletos(List<Producto> boletos) {
         // Asegura que exista la carpeta de destino
         crearCarpetaSiNoExiste(CARPETA_BOLETOS);
@@ -190,7 +211,11 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
             if (producto instanceof Boleto) {
                 Boleto boleto = (Boleto) producto;
 
-                try (PDDocument document = new PDDocument()) {
+                try (PDDocument document = EstrategiaExportarPDF.crearDocumentoPDF()) {
+                    // Eliminar la página por defecto (A4) creada por EstrategiaExportarPDF
+                    if (document.getNumberOfPages() > 0) {
+                        document.removePage(0);
+                    }
                     // Crea una página en tamaño ticket (298x420 puntos)
                     PDPage page = new PDPage(new PDRectangle(298, 420));
                     document.addPage(page);
@@ -325,9 +350,9 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
                     // Guarda el documento generado con un nombre más descriptivo
                     String nombreArchivo = generarNombreArchivoBoleto(boleto);
                     String fileName = CARPETA_BOLETOS + File.separator + nombreArchivo;
-                    document.save(fileName);
+                    EstrategiaExportarPDF.guardarPDF(document, new File(fileName));
                     System.out.println("Boleto generado: " + fileName);
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -346,9 +371,10 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
     private float generarTablaDetalleBoletosFactura(PDPageContentStream contentStream, List<Producto> productos, float yInicial, float pageWidth) throws IOException {
         float y = yInicial;
         
-        // Configurar encabezados de la tabla
-        String[] encabezados = {"Película", "Género", "Formato", "Tipo", "Sala", "Fecha", "Hora", "Precio"};
-        float[] anchosColumna = {85, 85, 40, 45, 85, 50, 35, 40}; // Más espacio para película y género
+    // Configurar encabezados de la tabla (separados y con anchos mejorados)
+    String[] encabezados = {"Película", "Género", "Formato", "Tipo", "Sala", "Butaca", "Fecha", "Hora", "Precio"};
+    // Suma total: 80+60+50+50+70+35+50+35+40 = 470 (A4 útil ~500-520)
+    float[] anchosColumna = {80, 60, 50, 50, 70, 35, 50, 35, 40};
         
         // Escribir encabezados
         contentStream.setFont(FONT_BOLD, 9);
@@ -489,7 +515,7 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
      * @return Array con los datos formateados para la tabla
      */
     private String[] extraerDatosBoletosParaTabla(Boleto boleto) {
-        String[] datos = new String[8];
+    String[] datos = new String[9];
         
         // 0. Película
         if (boleto.getFuncion() != null && boleto.getFuncion().getPelicula() != null) {
@@ -578,27 +604,30 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
             datos[4] = "N/A";
         }
         
-        // 5. Fecha
-        if (boleto.getFuncion() != null && boleto.getFuncion().getFechaHoraInicio() != null) {
-            java.time.format.DateTimeFormatter formatterFecha = 
-                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            datos[5] = boleto.getFuncion().getFechaHoraInicio().format(formatterFecha);
+        // 5. Butaca
+        if (boleto.getButaca() != null && boleto.getButaca().getFila() != null && boleto.getButaca().getColumna() != null) {
+            datos[5] = boleto.getButaca().getFila() + boleto.getButaca().getColumna();
         } else {
             datos[5] = "N/A";
         }
-        
-        // 6. Hora
+        // 6. Fecha
         if (boleto.getFuncion() != null && boleto.getFuncion().getFechaHoraInicio() != null) {
-            java.time.format.DateTimeFormatter formatterHora = 
-                java.time.format.DateTimeFormatter.ofPattern("HH:mm");
-            datos[6] = boleto.getFuncion().getFechaHoraInicio().format(formatterHora);
+            java.time.format.DateTimeFormatter formatterFecha = 
+                java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            datos[6] = boleto.getFuncion().getFechaHoraInicio().format(formatterFecha);
         } else {
             datos[6] = "N/A";
         }
-        
-        // 7. Precio
-        datos[7] = "$" + String.format("%.2f", boleto.getPrecio());
-        
+        // 7. Hora
+        if (boleto.getFuncion() != null && boleto.getFuncion().getFechaHoraInicio() != null) {
+            java.time.format.DateTimeFormatter formatterHora = 
+                java.time.format.DateTimeFormatter.ofPattern("HH:mm");
+            datos[7] = boleto.getFuncion().getFechaHoraInicio().format(formatterHora);
+        } else {
+            datos[7] = "N/A";
+        }
+        // 8. Precio
+        datos[8] = "$" + String.format("%.2f", boleto.getPrecio());
         return datos;
     }
 
@@ -866,7 +895,7 @@ public class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
      * @param boleto El boleto para generar el nombre
      * @return String con el nombre del archivo
      */
-    private String generarNombreArchivoBoleto(Boleto boleto) {
+    public String generarNombreArchivoBoleto(Boleto boleto) {
         if (boleto == null) {
             return "Boleto_Desconocido.pdf";
         }
