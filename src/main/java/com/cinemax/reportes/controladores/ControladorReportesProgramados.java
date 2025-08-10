@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.cinemax.reportes.modelos.Exportable;
-import com.cinemax.reportes.modelos.ExportarCSVStrategy;
-import com.cinemax.reportes.modelos.ExportarPDFStrategy;
+import com.cinemax.reportes.modelos.EstrategiaExportarCSV;
+import com.cinemax.reportes.modelos.EstrategiaExportarPDF;
 import com.cinemax.reportes.modelos.ReporteGenerado;
 import com.cinemax.reportes.servicios.ServicioReportesProgramados;
 import com.cinemax.reportes.servicios.VentasService;
@@ -633,9 +633,9 @@ public class ControladorReportesProgramados {
             if (archivo != null) {
                 Exportable exportStrategy;
                 if (formato.equalsIgnoreCase("pdf")) {
-                    exportStrategy = new ExportarPDFStrategy();
+                    exportStrategy = new EstrategiaExportarPDF();
                 } else if (formato.equalsIgnoreCase("csv")) {
-                    exportStrategy = new ExportarCSVStrategy();
+                    exportStrategy = new EstrategiaExportarCSV();
                 } else {
                     ManejadorMetodosComunes.mostrarVentanaError("Formato de exportación no soportado.");
                     return;
@@ -671,7 +671,7 @@ public class ControladorReportesProgramados {
     }
 
     @FXML
-    void onBackAction(ActionEvent event) {
+    void volverEscena(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));

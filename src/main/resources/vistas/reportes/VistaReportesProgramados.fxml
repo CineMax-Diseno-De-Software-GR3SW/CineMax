@@ -16,7 +16,7 @@
    <top>
       <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
          <children>
-            <Button fx:id="btnBack" onAction="#onBackAction" styleClass="stepper-button" text="←" />
+            <Button fx:id="btnBack" onAction="#volverEscena" styleClass="stepper-button" text="←" />
             <Label styleClass="section-title" text="Gestión de Reportes">
                <font>
                   <Font name="Arial Black" size="22" />

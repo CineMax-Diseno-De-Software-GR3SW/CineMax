@@ -32,6 +32,9 @@ import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import com.cinemax.reportes.servicios.VentasService;
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.reportes.modelos.EstrategiaExportarCSV;
+import com.cinemax.reportes.modelos.EstrategiaExportarPDF;
+import com.cinemax.reportes.modelos.Exportable;
 import com.cinemax.reportes.modelos.ReporteGenerado;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
@@ -47,160 +50,6 @@ import javafx.stage.Modality;
 import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-
-// Interfaz Strategy
-interface ExportStrategy {
-    void exportar(List<Map<String, Object>> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
-            throws Exception;
-}
-
-// Implementación PDF
-class ExportPDFStrategy implements ExportStrategy {
-    @Override
-    public void exportar(List<Map<String, Object>> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
-            throws Exception {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.A4);
-            document.addPage(page);
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                PDType1Font fontBold = PDType1Font.HELVETICA_BOLD;
-                PDType1Font fontNormal = PDType1Font.HELVETICA;
-                float margin = 50;
-                float yPosition = page.getMediaBox().getHeight() - margin;
-                float fontSize = 12;
-
-                // Título principal
-                contentStream.setFont(fontBold, 18);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText(tituloReporte);
-                contentStream.endText();
-                yPosition -= 40;
-
-                // Información extra
-                if (infoExtra != null && infoExtra.containsKey("subtitulo")) {
-                    contentStream.setFont(fontNormal, fontSize);
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(margin, yPosition);
-                    contentStream.showText((String) infoExtra.get("subtitulo"));
-                    contentStream.endText();
-                    yPosition -= 20;
-                }
-
-                // Subtítulo de la sección
-                contentStream.setFont(fontBold, 14);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, yPosition);
-                contentStream.showText("RESUMEN DE VENTAS");
-                contentStream.endText();
-                yPosition -= 30;
-
-                // Tabla
-                float tableWidth = 400;
-                float rowHeight = 25;
-                float col1X = margin;
-                float col2X = margin + 100;
-                float col3X = margin + 200;
-                float col4X = margin + 300;
-
-                // Headers
-                contentStream.setFont(fontBold, 10);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(col1X + 5, yPosition - 15);
-                contentStream.showText("Fecha");
-                contentStream.newLineAtOffset(col2X - col1X - 5, 0);
-                contentStream.showText("Tipo");
-                contentStream.newLineAtOffset(col3X - col2X, 0);
-                contentStream.showText("Boletos");
-                contentStream.newLineAtOffset(col4X - col3X, 0);
-                contentStream.showText("Ingresos");
-                contentStream.endText();
-
-                // Datos
-                contentStream.setFont(fontNormal, 10);
-                int totalBoletos = 0;
-                double totalIngresos = 0;
-                
-                for (int i = 0; i < datos.size(); i++) {
-                    Map<String, Object> d = datos.get(i);
-                    
-                    // Obtener valores del mapa
-                    String fecha = d.get("fecha").toString();
-                    int boletosVendidos = (int) d.get("total_boletos_vendidos");
-                    double ingreso = (double) d.get("ingreso_total");
-                    String tipoSala = (String) d.get("tipos_sala");
-                    String formato = (String) d.get("formatos");
-                    
-                    // Combinar tipo de sala y formato para mostrar como "tipo"
-                    String tipoCompleto = (tipoSala != null ? tipoSala : "Normal") + " " + 
-                                         (formato != null ? formato : "2D");
-                    
-                    contentStream.beginText();
-                    contentStream.newLineAtOffset(col1X + 5, yPosition - 40 - (i * rowHeight));
-                    contentStream.showText(fecha);
-                    contentStream.newLineAtOffset(col2X - col1X - 5, 0);
-                    contentStream.showText(tipoCompleto);
-                    contentStream.newLineAtOffset(col3X - col2X, 0);
-                    contentStream.showText(String.valueOf(boletosVendidos));
-                    contentStream.newLineAtOffset(col4X - col3X, 0);
-                    contentStream.showText(String.format("$%.2f", ingreso));
-                    contentStream.endText();
-                    
-                    totalBoletos += boletosVendidos;
-                    totalIngresos += ingreso;
-                }
-
-                // Fila de total
-                contentStream.setFont(fontBold, 10);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(col1X + 5, yPosition - 40 - (datos.size() * rowHeight));
-                contentStream.showText("TOTAL:");
-                contentStream.newLineAtOffset(col2X - col1X - 5, 0);
-                contentStream.showText("");
-                contentStream.newLineAtOffset(col3X - col2X, 0);
-                contentStream.showText(String.valueOf(totalBoletos));
-                contentStream.newLineAtOffset(col4X - col3X, 0);
-                contentStream.showText(String.format("$%.2f", totalIngresos));
-                contentStream.endText();
-
-                // Pie de página
-                contentStream.setFont(fontNormal, 8);
-                contentStream.beginText();
-                contentStream.newLineAtOffset(margin, 50);
-                contentStream.showText("© 2025 CineMax - Sistema de Gestion de Reportes");
-                contentStream.endText();
-            }
-            document.save(destino);
-        }
-    }
-}
-
-// Implementación CSV
-class ExportCSVStrategy implements ExportStrategy {
-    @Override
-    public void exportar(List<Map<String, Object>> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
-            throws Exception {
-        StringBuilder csv = new StringBuilder();
-        csv.append("Fecha,Tipo Sala,Formato,Boletos Vendidos,Ingresos\n");
-
-        for (Map<String, Object> d : datos) {
-            String fecha = d.get("fecha").toString();
-            int boletosVendidos = (int) d.get("total_boletos_vendidos");
-            double ingreso = (double) d.get("ingreso_total");
-            String tipoSala = (String) d.get("tipos_sala");
-            String formato = (String) d.get("formatos");
-            
-            // Usar valores por defecto si son null
-            if (tipoSala == null) tipoSala = "Normal";
-            if (formato == null) formato = "2D";
-            
-            csv.append(String.format("%s,%s,%s,%d,%.2f\n",
-                    fecha, tipoSala, formato, boletosVendidos, ingreso));
-        }
-
-        java.nio.file.Files.write(destino.toPath(), csv.toString().getBytes());
-    }
-}
 
 public class ControladorReportesPrincipal {
 
@@ -267,12 +116,6 @@ public class ControladorReportesPrincipal {
         // Inicializar gráficas vacías
         inicializarGraficasVacias();
 
-        System.out.println("Total boletos: " + datos.get("total_boletos_vendidos"));
-        System.out.println("Total facturas: " + datos.get("total_facturas"));
-        System.out.println("Ingreso total: " + datos.get("ingreso_total"));
-        System.out.println("Total funciones: " + datos.get("total_funciones"));
-        System.out.println("Fecha inicio: " + datos.get("fecha_inicio"));
-        System.out.println("Fecha fin: " + datos.get("fecha_fin"));
     }
 
     private void configurarTablaReportes() {
@@ -544,7 +387,7 @@ public class ControladorReportesPrincipal {
 
     
     @FXML
-    void onBackAction(ActionEvent event) {
+    void volverEscena(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
@@ -623,7 +466,7 @@ public class ControladorReportesPrincipal {
                         "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
                 btnDescargarPDF.setOnAction(e -> {
                     ventanaPrevia.close();
-                    exportarReporte(new ExportPDFStrategy(), "pdf");
+                    exportarReporte(new EstrategiaExportarPDF(), "pdf");
                 });
 
                 Button btnDescargarCSV = new Button("📊 Descargar como CSV");
@@ -631,7 +474,7 @@ public class ControladorReportesPrincipal {
                         "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
                 btnDescargarCSV.setOnAction(e -> {
                     ventanaPrevia.close();
-                    exportarReporte(new ExportCSVStrategy(), "csv");
+                    exportarReporte(new EstrategiaExportarCSV(), "csv");
                 });
 
                 botonesBox.getChildren().addAll(btnDescargarPDF, btnDescargarCSV);
@@ -959,7 +802,7 @@ public class ControladorReportesPrincipal {
         return celda;
     }
 
-    private void exportarReporte(ExportStrategy strategy, String tipo) {
+    private void exportarReporte(Exportable strategy, String tipo) {
         try {
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
@@ -989,7 +832,7 @@ public class ControladorReportesPrincipal {
                 infoExtra.put("subtitulo", "Reporte generado el "
                         + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
-                strategy.exportar(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
+                strategy.exportarFormatoPrincipal(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
 
                 // Agregar el nuevo reporte a la lista simulada
                 ReporteGenerado nuevoReporte = new ReporteGenerado(

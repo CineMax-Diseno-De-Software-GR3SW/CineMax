@@ -23,7 +23,7 @@
         <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
             <children>
                 <!-- Botón Regresar -->
-                <Button fx:id="btnBack" onAction="#onBackAction" styleClass="stepper-button" text="←" />
+                <Button fx:id="btnBack" onAction="#volverEscena" styleClass="stepper-button" text="←" />
 
                 <!-- Título -->
                 <Label styleClass="section-title" text="Gestión de Reportes">
