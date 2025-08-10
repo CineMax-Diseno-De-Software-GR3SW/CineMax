@@ -1,4 +1,4 @@
-@startuml
+@startuml Gestión_de_Venta_de_Boletos
 title Diagrama de Clases - Gestión de Venta de Boletos
 
 skinparam linetype ortho
@@ -38,8 +38,6 @@ package controladores {
     class ControladorVisualizadorCartelera {
         - servicioVisualizarCartelera: ServicioVisualizarCartelera
         - cargarCartelera(peliculas: List<Pelicula>): void
-        - crearTarjetaPelicula(pelicula: Pelicula): VBox
-        - cargarImagenPelicula(pelicula: Pelicula, imagenPelicula: ImageView): void
     }   
 
     class ControladorVisualizadorFunciones {
@@ -48,8 +46,6 @@ package controladores {
         + asignarPeliculaSeleccionada(pelicula: Pelicula): void
         - cargarInformacionPeliculaSeleccionada(pelicula: Pelicula): void
         - cargarFunciones(): void
-        - cargarImagenPelicula(urlImagen: String): void
-
     }
 }
 
@@ -84,6 +80,7 @@ package servicios{
 
     class ServicioVisualizadorCartelera {
         - controladorCartelera: ControladorCartelera
+        - peliculaSeleccionada: Pelicula
         + cargarPeliculasDeCartelera(): void
         + seleccionarPelicula(pelicula: Pelicula, currentStage: Stage): void
         - validarSeleccionPelicula(pelicula: Pelicula): void
@@ -92,7 +89,6 @@ package servicios{
     class ServicioVisualizadorFunciones {
         - controladorFunciones: ControladorFunciones
         + cargarFunciones(pelicula: Pelicula): List<Funcion>
-        + regresarPantallaCartelera(event: ActionEvent): void
         + seleccionarFuncion(tabla: TableView<Funcion>): void
         - validarSeleccionFuncion(funcion: Funcion): void
     }    

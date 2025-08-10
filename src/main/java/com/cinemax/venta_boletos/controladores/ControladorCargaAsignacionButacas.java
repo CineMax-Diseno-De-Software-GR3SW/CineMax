@@ -21,38 +21,23 @@ import javafx.stage.Stage;
  * - Inicializa el mapa de butacas con los datos correctos
  * - Maneja la transición de ventana de forma fluida
  * 
- * Uso típico: Se utiliza cuando se navega desde la selección de funciones
- * hacia la selección de butacas con una pantalla de carga intermedia.
- * 
  * @author GR3SW
  * @version 1.0
  */
 public class ControladorCargaAsignacionButacas extends ControladorCargaConDatos {
 
-    /**
-     * Constructor que inicializa el controlador con los datos necesarios para la carga.
-     * 
-     * Delega la inicialización básica a la clase padre ControladorCargaConDatos,
-     * estableciendo la ruta FXML, ventana actual y datos a transferir.
-     * 
-     * @param rutaFXML Ruta del archivo FXML de la vista de asignación de butacas
-     * @param currentStage Ventana actual que será reemplazada
-     * @param datosTransferencia Lista que debe contener la Función seleccionada en posición 0
-     */
     public ControladorCargaAsignacionButacas(String rutaFXML, Stage currentStage, List<Object> datosTransferencia) {
         super(rutaFXML, currentStage, datosTransferencia);
     }
 
     /**
-     * NUEVO MÉTODO OPTIMIZADO - Implementación asíncrona real.
-     * 
      * Este método se ejecuta en un hilo de background y hace toda la carga pesada:
      * 1. Carga el archivo FXML
      * 2. Obtiene el controlador
      * 3. Inicializa los datos (incluyendo cualquier procesamiento complejo)
      * 4. Retorna todo encapsulado en un ResultadoCarga
      * 
-     * ¡IMPORTANTE! Este método NO debe tocar la UI directamente.
+     * Este método NO debe tocar la UI directamente.
      */
     @Override
     public ResultadoCarga cargarVistaPasandoDatos() throws IOException {

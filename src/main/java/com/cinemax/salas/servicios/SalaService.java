@@ -4,7 +4,7 @@ import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.modelos.persistencia.ButacasDAO;
 import com.cinemax.salas.modelos.persistencia.SalasDAO;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,7 +65,18 @@ public class SalaService {
     public Sala obtenerSalaPorId(int id) throws Exception {
         return salasDAO.obtenerSalaPorId(id);
     }
-
+    public List<Sala> buscarSalasPorNombre(String nombre) throws Exception {
+        if (nombre == null || nombre.trim().isEmpty())
+            throw new Exception("El nombre de la sala no puede estar vacío.");
+        List<Sala> todas = salasDAO.listarSalas();
+        List<Sala> resultado = new ArrayList<>();
+        for (Sala s : todas) {
+            if (s.getNombre().toLowerCase().contains(nombre.trim().toLowerCase())) {
+                resultado.add(s);
+            }
+        }
+        return resultado;
+    }
     /**
      * Lista todas las salas registradas.
      */

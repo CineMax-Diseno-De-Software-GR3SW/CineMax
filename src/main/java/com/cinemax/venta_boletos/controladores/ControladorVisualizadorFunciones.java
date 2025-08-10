@@ -4,8 +4,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.salas.modelos.entidades.TipoSala;
 import com.cinemax.venta_boletos.servicios.ServicioVisualizadorFunciones;
 
 import javafx.fxml.FXML;
@@ -65,6 +67,8 @@ public class ControladorVisualizadorFunciones {
     private Label etiquetaGenero;
     @FXML
     private Label etiquetaDuracion;
+    @FXML
+    private Label labelNombrePelicula;
 
     // ========== DEPENDENCIAS ==========
     private final ServicioVisualizadorFunciones servicioVisualizadorFunciones = new ServicioVisualizadorFunciones();
@@ -92,19 +96,31 @@ public class ControladorVisualizadorFunciones {
      * Configura los componentes de filtrado
      */
     private void configurarFiltrosTabla() {
+        // Configura el selector de fecha para que aplique filtros al cambiar la fecha
         if (selectorFecha != null) {
             selectorFecha.setOnAction(event -> aplicarFiltros());
         }
 
-        // Configurar opciones de formato
-        cmbFiltroFormato.getItems().addAll("Todos", "2D", "3D", "4DX", "IMAX");
-        cmbFiltroFormato.getSelectionModel().selectFirst();
+        // Configura el ComboBox de formato con opciones dinámicas desde el enum
+        // FormatoFuncion
+        cmbFiltroFormato.getItems().clear();
+        cmbFiltroFormato.getItems().add("Todos"); // Opción para no filtrar por formato
+        for (FormatoFuncion formato : FormatoFuncion.values()) {
+            cmbFiltroFormato.getItems().add(formato.toString());
+        }
+        cmbFiltroFormato.getSelectionModel().selectFirst(); // Seleccionar "Todos" por defecto
         cmbFiltroFormato.setOnAction(event -> aplicarFiltros());
 
-        // Configurar opciones de tipo de sala
-        cmbFiltroTipoSala.getItems().addAll("Todos", "NORMAL", "VIP", "PREMIUM", "D-Box");
-        cmbFiltroTipoSala.getSelectionModel().selectFirst();
+        // Configura el ComboBox de tipo de sala con opciones dinámicas desde el enum
+        // TipoSala
+        cmbFiltroTipoSala.getItems().clear();
+        cmbFiltroTipoSala.getItems().add("Todos"); // Opción para no filtrar por tipo de sala
+        for (TipoSala tipoSala : TipoSala.values()) {
+            cmbFiltroTipoSala.getItems().add(tipoSala.name());
+        }
+        cmbFiltroTipoSala.getSelectionModel().selectFirst(); // Seleccionar "Todos" por defecto
         cmbFiltroTipoSala.setOnAction(event -> aplicarFiltros());
+
     }
 
     // ========== MÉTODOS PRINCIPALES ==========
@@ -129,6 +145,7 @@ public class ControladorVisualizadorFunciones {
      */
     private void cargarInformacionPelicula(Pelicula pelicula) {
         etiquetaTituloPelicula.setText("Funciones de: " + pelicula.getTitulo());
+        labelNombrePelicula.setText(pelicula.getTitulo());
         etiquetaGenero.setText(pelicula.getGenerosComoString());
         etiquetaDuracion.setText(pelicula.getDuracionMinutos() + " min");
         cargarImagenPelicula(pelicula.getImagenUrl());

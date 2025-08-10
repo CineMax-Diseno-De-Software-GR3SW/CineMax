@@ -17,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Controlador de administración de Salas.
@@ -64,7 +65,7 @@ public class ControladorSalas {
     /** Etiqueta con el total de salas mostradas */
     @FXML private Label lblTotalSalas;
     /** Campo: búsqueda por ID exacto */
-    @FXML private TextField txtBuscarId;
+    @FXML private TextField txtBuscar;
 
     /** Botón: eliminar sala seleccionada */
     @FXML private Button btnEliminar;
@@ -424,34 +425,53 @@ public class ControladorSalas {
      * - Si hay un ID válido, muestra solo esa sala (o 0 resultados si no existe)
      * - Maneja errores de formato/consulta con mensajes claros
      */
+
     @FXML
-    private void buscarSalaPorId() {
-        String idText = txtBuscarId.getText().trim();
-        if (idText.isEmpty()) {
+    private void buscarSala() {
+        String criterio = txtBuscar.getText().trim();
+        if (criterio.isEmpty()) {
             listarTodasSalas();
             salaEnEdicion = null;
             actualizarModoFormulario();
             return;
         }
         try {
-            int id = Integer.parseInt(idText);
-            Sala sala = salaService.obtenerSalaPorId(id);
-            if (sala != null) {
-                salas.setAll(sala);
-                lblTotalSalas.setText("Total Salas: 1");
-                ManejadorMetodosComunes.mostrarVentanaExito("Sala encontrada.");
-            } else {
+            // Si es número, busca por ID
+            int id = Integer.parseInt(criterio);
+            try {
+                Sala sala = salaService.obtenerSalaPorId(id);
+                if (sala != null) {
+                    salas.setAll(sala);
+                    lblTotalSalas.setText("Total Salas: 1");
+                    ManejadorMetodosComunes.mostrarVentanaExito("Sala encontrada.");
+                } else {
+                    salas.clear();
+                    lblTotalSalas.setText("Total Salas: 0");
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("No existe sala con ID " + id);
+                }
+            } catch (Exception ex) {
                 salas.clear();
                 lblTotalSalas.setText("Total Salas: 0");
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("No existe sala con ID " + id);
+                ManejadorMetodosComunes.mostrarVentanaError("Error en la búsqueda por ID: " + ex.getMessage());
             }
         } catch (NumberFormatException e) {
-            salas.clear();
-            lblTotalSalas.setText("Total Salas: 0");
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El ID debe ser un número válido.");
-        } catch (Exception e) {
-            lblTotalSalas.setText("Total Salas: 0");
-            ManejadorMetodosComunes.mostrarVentanaError("Error en buscarSalaPorId: " + e.getMessage());
+            // Si no es número, busca por nombre
+            try {
+                List<Sala> resultado = salaService.buscarSalasPorNombre(criterio);
+                if (resultado.isEmpty()) {
+                    salas.clear();
+                    lblTotalSalas.setText("Total Salas: 0");
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("No se encontraron salas con el nombre \"" + criterio + "\".");
+                } else {
+                    salas.setAll(resultado);
+                    lblTotalSalas.setText("Total Salas: " + resultado.size());
+                    ManejadorMetodosComunes.mostrarVentanaExito("Salas encontradas.");
+                }
+            } catch (Exception ex) {
+                salas.clear();
+                lblTotalSalas.setText("Total Salas: 0");
+                ManejadorMetodosComunes.mostrarVentanaError("Error en la búsqueda: " + ex.getMessage());
+            }
         }
     }
 }
