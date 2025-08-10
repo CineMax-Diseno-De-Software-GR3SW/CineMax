@@ -112,7 +112,7 @@ public class ControladorPortalPrincipal {
             (Stage) btnVentaBoleto.getScene().getWindow(), 
             "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 
             33, 
-            500);
+            225);
         //ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
         //        "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
     }
