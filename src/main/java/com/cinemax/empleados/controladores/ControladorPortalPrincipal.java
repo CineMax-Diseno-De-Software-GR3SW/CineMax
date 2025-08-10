@@ -21,6 +21,8 @@ import javafx.stage.Stage;
 
 public class ControladorPortalPrincipal {
 
+    public Button btnMiPerfil;
+    public Button btnCerrarSesion;
     // Botones de navegación principal
     @FXML
     private Button btnGestionPeliculas;
@@ -82,101 +84,80 @@ public class ControladorPortalPrincipal {
 
     @FXML
     private void onGestionUsuarios(ActionEvent event) {
-        System.out.println("Navegar a Gestión de Usuarios");
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaGestionUsuarios.fxml"));
-        try {
-            Parent root = loader.load();
-
-            // Obtener el Stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Portal del Administrador");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionUsuarios.getScene().getWindow(),
+                "/vistas/empleados/PantallaGestionUsuarios.fxml");
     }
 
     @FXML
-    private void onVerReportes(ActionEvent event) {
-        System.out.println("Navegar a Ver Reportes");
-        navegarA("/vistas/reportes/PantallaModuloReportesPrincipal.fxml", "Módulo de Reportes", event);
+    private void onVerReportes() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnVerReportes .getScene().getWindow(),
+                "/vistas/reportes/PantallaModuloReportesPrincipal.fxml");
     }
 
     @FXML
-    private void onConfiguracionFunciones(ActionEvent event) {
-        System.out.println("Navegar a Configuración");
-        // TODO: Implementar navegación a la pantalla de configuración
-    }
-
-    @FXML
-    public void onGestionSalas(ActionEvent event) {
-       // navegarA("/vistas/salas/VistaGSalas.fxml", "Configuración de Salas", event);
+    public void onGestionSalas() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionSalas.getScene().getWindow(),
                 "/vistas/salas/VistaGSalas.fxml");
     }
 
     @FXML
-    public void onGestionButacas(ActionEvent event) {
-        //navegarA("/vistas/salas/VistaGButacas.fxml", "Configuración de Butacas", event);
+    public void onGestionButacas() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
                 "/vistas/salas/VistaGButacas.fxml");
     }
     @FXML
-    private void onVenderBoleto(ActionEvent event) {
-        // navegarA("/vistas/venta_boletos/VistaMostrarCartelera.fxml", "Venta de
-        // Boletos", event);
+    private void onVenderBoleto() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
                 "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
     }
 
     @FXML
-    private void onCerrarSesion(ActionEvent event) {
-        navegarA("/vistas/empleados/PantallaLogin.fxml", "Login", event);
+    private void onCerrarSesion() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnCerrarSesion.getScene().getWindow(),
+                "/vistas/empleados/PantallaLogin.fxml");
     }
 
     @FXML
-    private void onMiPerfil(ActionEvent event) {
-        navegarA("/vistas/empleados/PantallaPerfil.fxml", "Mi Perfil", event);
+    private void onMiPerfil() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnMiPerfil.getScene().getWindow(),
+                "/vistas/empleados/PantallaPerfil.fxml");
     }
 
     @FXML
-    private void onGestionPeliculas(ActionEvent event) {
+    private void onGestionPeliculas() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
                 "/vistas/peliculas/PantallaGestionPeliculas.fxml");
     }
 
     @FXML
-    private void onGestionCartelera(ActionEvent event) {
+    private void onGestionCartelera() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
                 "/vistas/peliculas/PantallaGestionCartelera.fxml");
     }
 
     @FXML
-    private void onGestionFunciones(ActionEvent event) {
+    private void onGestionFunciones() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
                 "/vistas/peliculas/PantallaGestionFunciones.fxml");
     }
 
     @FXML
-    private void onSeleccionFuncion(ActionEvent event) {
+    private void onSeleccionFuncion() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
                 "/vistas/peliculas/PantallaSeleccionFuncion.fxml");
     }
 
-    // Metodo genérico para navegación
-    private void navegarA(String rutaFXML, String titulo, ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle(titulo);
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    // Metodo genérico para navegación
+//    private void navegarA(String rutaFXML, String titulo, ActionEvent event) {
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
+//            Parent root = loader.load();
+//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//            stage.setTitle(titulo);
+//            stage.setScene(new Scene(root));
+//            stage.show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 }

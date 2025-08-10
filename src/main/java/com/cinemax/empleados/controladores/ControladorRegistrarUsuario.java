@@ -1,5 +1,7 @@
 package com.cinemax.empleados.controladores;
 
+import com.cinemax.comun.EstrategiaValidacionDocumentos.ContextoValidacion;
+import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Usuario;
@@ -32,6 +34,7 @@ import java.util.ResourceBundle;
 
 public class ControladorRegistrarUsuario implements Initializable {
 
+    public Button btnBack;
     @FXML
     private TextField campoNombres;
     @FXML
@@ -178,8 +181,14 @@ public class ControladorRegistrarUsuario implements Initializable {
         }
 
 
-        //TODO: NO, Hacerlo desde el servicio
         String nombreCompleto = nombres + " " + apellidos;
+        //Validación de la cédula
+        ContextoValidacion contextoValidacion = new ContextoValidacion();
+        contextoValidacion.setEstrategia(new EstrategiaCedulaValidacion());
+        if(!contextoValidacion.ejecutarEstrategia(campoCedula.getText())) {
+            ManejadorMetodosComunes.mostrarVentanaError("Documento inválido: " + campoCedula.getText());
+            return;
+        }
         try {
             servicioUsuarios.crearUsuario(nombreCompleto, cedula, correo, celular, estadoActivo, nombreUsuario, cargoSeleccionado);
             ManejadorMetodosComunes.mostrarVentanaExito("Empleado creado exitosamente");
@@ -203,16 +212,18 @@ public class ControladorRegistrarUsuario implements Initializable {
     }
 
     @FXML
-    private void handleCancelar(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void handleCancelar() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(),
+                "/vistas/empleados/PantallaGestionUsuarios.fxml");
+//        try {
+//            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+//            Parent root = loader.load();
+//            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+//            stage.setScene(new Scene(root));
+//            stage.show();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void limpiarCampos() {

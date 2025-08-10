@@ -110,6 +110,7 @@ package entidades{
     +listarSalas() : List<Sala>
     +actualizarSala(Sala sala) : void
     +eliminarSala(int id) : void
+    +buscarSalaPorNombre(String nombre) : List<Sala>
     }
     }
     package controladores{
@@ -125,7 +126,7 @@ package entidades{
         -colTipo: TableColumn<Sala, String>
         -colEstado: TableColumn<Sala, String>
         -lblTotalSalas: Label
-        -txtBuscarId: TextField
+        -txtBuscar: TextField
         -btnEliminar: Button
         -btnGuardar: Button
         -btnNuevo: Button
@@ -146,7 +147,7 @@ package entidades{
         -crearSala(): void
         -actualizarSala(): void
         -eliminarSala(): void
-        -buscarSalaPorId(): void
+        -buscarSala(): void
     }
     class ControladorButacas {
         -salaService: SalaService
