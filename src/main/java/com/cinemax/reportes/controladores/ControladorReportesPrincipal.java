@@ -832,20 +832,6 @@ public class ControladorReportesPrincipal {
         return contenido;
     }
 
-    private HBox crearFilaTablaCompleta(ReporteVentaDTO dato) {
-        HBox fila = new HBox();
-        fila.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 0 0 1 0;");
-
-        Label celdaFecha = crearCeldaTabla(dato.fecha, false);
-        Label celdaTipo = crearCeldaTabla(dato.tipoBoleto, false);
-        Label celdaFormato = crearCeldaTabla(dato.formato, false);
-        Label celdaBoletos = crearCeldaTabla(String.valueOf(dato.boletosVendidos), false);
-        Label celdaIngresos = crearCeldaTabla(String.format("$%.2f", dato.ingresos), false);
-
-        fila.getChildren().addAll(celdaFecha, celdaTipo, celdaFormato, celdaBoletos, celdaIngresos);
-        return fila;
-    }
-
     private HBox crearEstadistica(String titulo, String valor) {
         HBox estadistica = new HBox(10);
         estadistica.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 8; -fx-border-radius: 3px;");
