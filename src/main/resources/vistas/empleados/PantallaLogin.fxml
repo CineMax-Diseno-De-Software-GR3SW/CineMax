@@ -24,7 +24,7 @@
       </font></Button>
 
     <Label fx:id="lblError" maxWidth="300" visible="false" wrapText="true" />
-    <Hyperlink onAction="#onForgotPasswordClick" text="¿Olvidaste tu contraseña?">
+    <Hyperlink  fx:id="vinculoRecuperarContrasena" onAction="#onForgotPasswordClick" text="¿Olvidaste tu contraseña?">
         <font>
             <Font size="14.0" />
         </font>

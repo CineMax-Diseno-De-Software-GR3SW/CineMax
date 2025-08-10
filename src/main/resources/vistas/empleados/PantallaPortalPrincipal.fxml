@@ -90,11 +90,11 @@
                             <Font name="System Bold Italic" size="14.0"/>
                         </font>
                     </Label>
-                    <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onAction="#onMiPerfil"
+                    <Button fx:id="btnMiPerfil" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onAction="#onMiPerfil"
                             prefHeight="6.0" prefWidth="85.0" text="Mi Perfil" styleClass="primary-button"/>
                 </VBox>
             </HBox>
-            <Button onAction="#onCerrarSesion" text="Cerrar Sesión" styleClass="primary-button"/>
+            <Button fx:id="btnCerrarSesion" onAction="#onCerrarSesion" text="Cerrar Sesión" styleClass="primary-button"/>
         </VBox>
     </left>
 </BorderPane>
