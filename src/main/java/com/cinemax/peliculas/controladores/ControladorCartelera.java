@@ -692,11 +692,20 @@ public class ControladorCartelera implements Initializable {
      */
     public List<Pelicula> obtenerCartelera() {
         try {
-            return servicioPelicula.listarTodasLasPeliculas();
+            // Ahora devuelve SOLO las películas con funciones futuras
+            List<Integer> idsPeliculas = funcionDAO.listarIdsPeliculasDeFuncionesFuturas();
+            List<Pelicula> peliculasEnCartelera = new ArrayList<>();
+
+            for (Integer id : idsPeliculas) {
+                Pelicula pelicula = peliculaDAO.buscarPorId(id);
+                if (pelicula != null && !peliculasEnCartelera.contains(pelicula)) {
+                    peliculasEnCartelera.add(pelicula);
+                }
+            }
+            return peliculasEnCartelera;
         } catch (Exception e) {
-            // Log del error pero no mostrar UI desde aquí
             System.err.println("Error al obtener cartelera: " + e.getMessage());
-            return new ArrayList<>(); // Retornar lista vacía en caso de error
+            return new ArrayList<>();
         }
     }
 
