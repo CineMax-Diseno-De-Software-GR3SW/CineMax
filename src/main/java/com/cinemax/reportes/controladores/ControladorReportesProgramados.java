@@ -35,7 +35,6 @@ import com.cinemax.reportes.modelos.Exportable;
 import com.cinemax.reportes.modelos.ExportarCSVStrategy;
 import com.cinemax.reportes.modelos.ExportarPDFStrategy;
 import com.cinemax.reportes.modelos.ReporteGenerado;
-import com.cinemax.reportes.modelos.persistencia.VentaDAO;
 import com.cinemax.reportes.servicios.ServicioReportesProgramados;
 import com.cinemax.reportes.servicios.VentasService;
 
@@ -45,9 +44,6 @@ public class ControladorReportesProgramados {
 
     @FXML
     private Button btnBack;
-
-    @FXML
-    private ChoiceBox<String> choiceFrecuencia;
 
     @FXML
     private TableView<ReporteGenerado> tablaReportesGenerados;
@@ -64,6 +60,9 @@ public class ControladorReportesProgramados {
     @FXML
     private TableColumn<ReporteGenerado, Void> columnaAcciones;
 
+    @FXML
+    private ComboBox<String> elegirFrecuencia;
+
     final ServicioReportesProgramados schedulerService = ServicioReportesProgramados.getInstance();
 
     private VentasService ventasService = new VentasService();
@@ -72,8 +71,8 @@ public class ControladorReportesProgramados {
     @FXML
     private void initialize() {
         // Configurar la tabla de reportes generados
-        //tablaReportesGenerados.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-        
+        tablaReportesGenerados.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+
         // Inicializar la tabla de reportes generados
         if (tablaReportesGenerados != null) {
             inicializarTablaReportes();
@@ -87,14 +86,12 @@ public class ControladorReportesProgramados {
                 "Trimestral",
                 "Anual");
 
-        // Asignar las opciones al ChoiceBox
-        choiceFrecuencia.setItems(opcionesFrecuencia);
+        // Asignar las opciones al ComboBox
+        elegirFrecuencia.setItems(opcionesFrecuencia);
 
-        // Establecer un valor por defecto
-        choiceFrecuencia.setValue("Seleccione la Ejecucion");
 
-        // Opcional: agregar listener para detectar cambios
-        choiceFrecuencia.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+
+        elegirFrecuencia.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("Frecuencia seleccionada: " + newValue);
         });
 
@@ -157,17 +154,17 @@ public class ControladorReportesProgramados {
         schedulerService.getReportesEjecutados()
                 .addListener((javafx.collections.ListChangeListener<ReporteGenerado>) change -> {
                     if (!schedulerService.getReportesPendientes().isEmpty()) {
-                        choiceFrecuencia.setDisable(true);
+                        elegirFrecuencia.setDisable(true);
                     } else {
-                        choiceFrecuencia.setDisable(false);
+                        elegirFrecuencia.setDisable(false);
                     }
                 });
 
         // Verificación inicial (por si ya hay ejecutados al entrar)
         if (!schedulerService.getReportesPendientes().isEmpty()) {
-            choiceFrecuencia.setDisable(true);
+            elegirFrecuencia.setDisable(true);
         } else {
-            choiceFrecuencia.setDisable(false);
+            elegirFrecuencia.setDisable(false);
         }
 
         // Inicializar la tabla con una lista vacía (sin datos de ejemplo)
@@ -178,13 +175,13 @@ public class ControladorReportesProgramados {
     @FXML
     void confirmarReporteProgramado(ActionEvent event) {
         // Validar que se haya seleccionado una frecuencia
-        if (choiceFrecuencia.getValue() == null || choiceFrecuencia.getValue().equals("Seleccione la Ejecucion")) {
+        if (elegirFrecuencia.getValue() == null || elegirFrecuencia.getValue().equals("Seleccione la Ejecucion")) {
             ManejadorMetodosComunes.mostrarVentanaError("Debe seleccionar una frecuencia de ejecución.");
             return;
         }
 
         // Verificar si ya existe un reporte con la misma frecuencia
-        String frecuenciaSeleccionada = choiceFrecuencia.getValue();
+        String frecuenciaSeleccionada = elegirFrecuencia.getValue();
         if (existeReporteConFrecuencia(frecuenciaSeleccionada)) {
             ManejadorMetodosComunes.mostrarVentanaError(
                     "Ya existe un reporte programado con frecuencia " + frecuenciaSeleccionada + ".\n" +
@@ -239,7 +236,7 @@ public class ControladorReportesProgramados {
             Label lblFechaGeneracion = new Label("Se ha agendado fecha de creacion");
             lblFechaGeneracion.setStyle("-fx-font-size: 12px; -fx-text-fill: #b2bec3;");
 
-            Label lblFrecuencia = new Label("Frecuencia: " + choiceFrecuencia.getValue());
+            Label lblFrecuencia = new Label("Frecuencia: " + elegirFrecuencia.getValue());
             lblFrecuencia.setStyle("-fx-font-size: 12px; -fx-text-fill: #b2bec3;");
 
             headerBox.getChildren().addAll(tituloReporte, lblFechaGeneracion, lblFrecuencia);
@@ -263,7 +260,7 @@ public class ControladorReportesProgramados {
 
             VBox filasDatos = new VBox(2);
 
-            String frecuenciaSeleccionada = choiceFrecuencia.getValue();
+            String frecuenciaSeleccionada = elegirFrecuencia.getValue();
             String fechaEjecucion = schedulerService.calcularProximaEjecucion(LocalDateTime.now().toString(),
                     frecuenciaSeleccionada);
 
@@ -406,7 +403,7 @@ public class ControladorReportesProgramados {
      * Agrega un nuevo reporte a la tabla con la frecuencia seleccionada
      */
     private void agregarReporteATabla(String fechaEjecucion) {
-        String frecuencia = choiceFrecuencia.getValue();
+        String frecuencia = elegirFrecuencia.getValue();
         LocalDateTime fecha = LocalDateTime.parse(fechaEjecucion);
 
         ReporteGenerado nuevoReporte = new ReporteGenerado(
@@ -418,8 +415,8 @@ public class ControladorReportesProgramados {
 
         schedulerService.getReportesPendientes().add(nuevoReporte);
 
-        choiceFrecuencia.setValue("Seleccione la Ejecucion");
-        choiceFrecuencia.setDisable(true); // <-- Deshabilita el ChoiceBox
+        elegirFrecuencia.setValue("Seleccione la Ejecucion");
+        elegirFrecuencia.setDisable(true); // <-- Deshabilita el ChoiceBox
     }
 
     /**
@@ -489,15 +486,15 @@ public class ControladorReportesProgramados {
 
             Button btnDescargarPDF = new Button("📄 Descargar como PDF");
             btnDescargarPDF.setStyle(
-                    "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
+                    "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
             btnDescargarPDF.setOnAction(e -> {
                 ventanaPrevia.close();
                 descargarReporte(reporte, "pdf");
             });
 
-            Button btnDescargarCSV = new Button("🗎 Descargar como CSV");
+            Button btnDescargarCSV = new Button("📊 Descargar como CSV");
             btnDescargarCSV.setStyle(
-                    "-fx-background-color: #2980b9; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
+                    "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
             btnDescargarCSV.setOnAction(e -> {
                 ventanaPrevia.close();
                 descargarReporte(reporte, "csv");
@@ -663,7 +660,7 @@ public class ControladorReportesProgramados {
     void goToReportesPrincipal(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/reportes/PantallaModuloReportesPrincipal.fxml"));
+                    getClass().getResource("/vistas/reportes/VistaReportesPrincipal.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -684,23 +681,6 @@ public class ControladorReportesProgramados {
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-
-    @FXML
-    void onCerrarSesion(ActionEvent event) {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
-        try {
-            Parent root = loader.load();
-
-            // Obtener el Stage actual desde el botón o cualquier nodo
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Portal del Administrador");
-            stage.setScene(new Scene(root));
-            stage.show();
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
         }
     }
 

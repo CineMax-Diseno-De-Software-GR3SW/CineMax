@@ -604,7 +604,7 @@
 
 /* Botón Confirmar específico */
 #btnConfirmar {
-  -fx-background-color: #27ae60;
+  -fx-background-color: #02487b;
   -fx-text-fill: white;
   -fx-font-weight: bold;
   -fx-padding: 10 20;
@@ -614,5 +614,5 @@
 }
 
 #btnConfirmar:hover {
-  -fx-background-color: #229954;
+  -fx-background-color: #02487b;
 }

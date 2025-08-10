@@ -21,16 +21,15 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+
 import java.time.LocalDate;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.XYChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
-import com.cinemax.reportes.modelos.ReporteVentaDTO;
 import com.cinemax.reportes.servicios.VentasService;
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.reportes.modelos.ReporteGenerado;
@@ -43,7 +42,6 @@ import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Tooltip;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.geometry.Pos;
@@ -217,8 +215,10 @@ public class ControladorReportesPrincipal {
     private DatePicker dateDesde;
     @FXML
     private DatePicker dateHasta;
+    
     @FXML
-    private ChoiceBox<String> choiceHorario;
+    private ComboBox<String> choiceHorario;
+    
     @FXML
     private BarChart<String, Number> barChart;
     @FXML
@@ -257,7 +257,6 @@ public class ControladorReportesPrincipal {
     @FXML
     private void initialize() {
         choiceHorario.getItems().addAll("Todos", "Matutino", "Nocturno");
-        choiceHorario.setValue("Todos");
 
         // Configurar tabla de reportes
         configurarTablaReportes();
@@ -368,23 +367,10 @@ public class ControladorReportesPrincipal {
     }
 
     @FXML
-    private void onCerrarSesion(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setTitle("Login");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
     private void onFiltrar(ActionEvent event) {
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
+        //String horario = choiceHorario.getValue();
         String horario = choiceHorario.getValue();
 
         if (desde == null || hasta == null) {
@@ -537,6 +523,7 @@ public class ControladorReportesPrincipal {
     private void onConfirmarReporte(ActionEvent event) {
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
+        //String horario = choiceHorario.getValue();
         String horario = choiceHorario.getValue();
 
         if (desde == null || hasta == null) {
@@ -633,7 +620,7 @@ public class ControladorReportesPrincipal {
             if (permitirDescarga) {
                 Button btnDescargarPDF = new Button("📄 Descargar como PDF");
                 btnDescargarPDF.setStyle(
-                        "-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
+                        "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
                 btnDescargarPDF.setOnAction(e -> {
                     ventanaPrevia.close();
                     exportarReporte(new ExportPDFStrategy(), "pdf");
@@ -641,7 +628,7 @@ public class ControladorReportesPrincipal {
 
                 Button btnDescargarCSV = new Button("📊 Descargar como CSV");
                 btnDescargarCSV.setStyle(
-                        "-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
+                        "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
                 btnDescargarCSV.setOnAction(e -> {
                     ventanaPrevia.close();
                     exportarReporte(new ExportCSVStrategy(), "csv");

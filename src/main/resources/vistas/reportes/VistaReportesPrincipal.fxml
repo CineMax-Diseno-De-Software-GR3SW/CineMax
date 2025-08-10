@@ -5,7 +5,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -13,7 +13,6 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -45,7 +44,7 @@
                     <Label text="Hasta:" />
                     <DatePicker fx:id="dateHasta" styleClass="date-picker" />
                     <Label text="Horario:" />
-                    <ChoiceBox fx:id="choiceHorario" prefWidth="100" />
+               <ComboBox fx:id="choiceHorario" prefWidth="150.0" promptText="Seleccione el Horario" />
                     <Button fx:id="btnFiltrar" onAction="#onFiltrar" styleClass="primary-button" text="Filtrar" />
                 </HBox>
 
@@ -71,7 +70,7 @@
 
                 <!-- Botón de confirmación -->
                 <HBox alignment="CENTER_RIGHT" spacing="10">
-                    <Button fx:id="btnConfirmar" onAction="#onConfirmarReporte" styleClass="primary-button" text="Confirmar" />
+                    <Button fx:id="btnConfirmar" onAction="#onConfirmarReporte" styleClass="primary-button" stylesheets="@../temas/styles.css" text="Confirmar" />
                 </HBox>
 
                 <!-- Tabla de Reportes Generados -->
@@ -80,10 +79,10 @@
                     <TableView fx:id="tablaReportes" prefHeight="200" styleClass="report-table">
                         <columns>
                             <TableColumn fx:id="colNombre" prefWidth="200" text="Nombre" />
-                            <TableColumn fx:id="colTipo" prefWidth="80" text="Tipo" />
-                            <TableColumn fx:id="colFecha" prefWidth="150" text="Fecha Generación" />
-                            <TableColumn fx:id="colDescripcion" prefWidth="300" text="Descripción" />
-                            <TableColumn fx:id="colAcciones" prefWidth="100" text="Acciones" />
+                            <TableColumn fx:id="colTipo" prefWidth="148.7999725341797" text="Tipo" />
+                            <TableColumn fx:id="colFecha" prefWidth="170.39999389648438" text="Fecha Generación" />
+                            <TableColumn fx:id="colDescripcion" prefWidth="212.0" text="Descripción" />
+                            <TableColumn fx:id="colAcciones" prefWidth="189.60009765625" text="Acciones" />
                         </columns>
                     </TableView>
                 </VBox>
@@ -93,14 +92,9 @@
 
     <!-- ░░░ FRANJA IZQUIERDA CON DATOS DE SESIÓN ░░░ -->
     <left>
-        <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="233.0" spacing="10" styleClass="summary-pane">
+        <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="234.0" spacing="10" styleClass="ticket-card">
             <children>
-            <Button mnemonicParsing="false" styleClass="primary-button" text="Modulo Reporte" />
             <Button mnemonicParsing="false" onAction="#goToReporteProgramado" styleClass="primary-button" text="Reporte Programado" />
-                <!-- Espaciador que empuja el botón Log Out al fondo -->
-                <Region VBox.vgrow="ALWAYS" />
-
-                <Button onAction="#onCerrarSesion" styleClass="primary-button" text="Log Out" />
             </children>
         </VBox>
     </left>
