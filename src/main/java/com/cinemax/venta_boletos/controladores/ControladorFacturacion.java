@@ -125,6 +125,7 @@ public class ControladorFacturacion {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
+
         headerBar.setOnMouseDragged(event -> {
             ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset);
             ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset);
@@ -139,6 +140,46 @@ public class ControladorFacturacion {
 
         // Primera validación al iniciar
         actualizarEstadoFormulario();
+
+        nombreField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]", "");
+            if (!nombreField.getText().equals(filteredValue)) {
+                nombreField.setText(filteredValue);
+            }
+        });
+
+        apellidoField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]", "");
+            if (!apellidoField.getText().equals(filteredValue)) {
+                apellidoField.setText(filteredValue);
+            }
+        });
+
+        documentoField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^0-9]", "");
+            if (!documentoField.getText().equals(filteredValue)) {
+                documentoField.setText(filteredValue);
+            }
+        });
+
+        identificacionField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^0-9]", "");
+            if (!identificacionField.getText().equals(filteredValue)) {
+                identificacionField.setText(filteredValue);
+            }
+        });
     }
 
 
