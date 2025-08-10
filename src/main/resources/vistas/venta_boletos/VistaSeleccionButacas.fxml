@@ -8,43 +8,52 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas">
+<BorderPane prefHeight="700.0" prefWidth="1000.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas">
    <top>
       <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
          <children>
             <Button fx:id="buttonVolver" onAction="#onBackAction" styleClass="stepper-button" text="←" />
             <Label styleClass="section-title" text="Selecciona tus butacas" />
             <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="timerLabel" style="-fx-font-size: 18px; -fx-text-fill: #FF8F40; -fx-font-weight: bold;" text="15:00" />
+            <Label fx:id="timerLabel" text="15:00" />
          </children>
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
       </HBox>
    </top>
-   
+
    <right>
-      <VBox prefHeight="500.0" prefWidth="278.0" spacing="10.0" styleClass="tickets-section" BorderPane.alignment="CENTER">
+      <!-- CAMBIO: Estructura del panel lateral corregida para ser consistente con la vista de facturación -->
+      <VBox prefWidth="320.0" spacing="10.0" styleClass="tickets-section" BorderPane.alignment="CENTER">
          <children>
-            <VBox fx:id="informacionFuncionContainer" prefHeight="650.0" prefWidth="278.0" spacing="10.0" styleClass="tickets-section" />
-            <Region VBox.vgrow="NEVER" />
-            <Button fx:id="buttonContinuar" onAction="#onContinuarAction" prefHeight="268.0" prefWidth="390.0" styleClass="primary-button" text="Continuar" VBox.vgrow="NEVER" />
-            <Region prefHeight="0.0" prefWidth="278.0" />
+            <!-- Este VBox es el contenedor transparente para el contenido dinámico. VBox.vgrow="ALWAYS" hace que ocupe todo el espacio disponible. -->
+            <VBox fx:id="informacionFuncionContainer" VBox.vgrow="ALWAYS" />
+
+            <!-- El botón Continuar es un hijo directo del VBox principal, por lo que no será eliminado y se mantendrá al fondo. -->
+            <Button fx:id="buttonContinuar" maxWidth="Infinity" onAction="#onContinuarAction" prefHeight="50.0" styleClass="primary-button" text="Continuar" />
          </children>
+         <padding>
+            <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+         </padding>
       </VBox>
    </right>
+
    <center>
-      <VBox prefHeight="500.0" prefWidth="604.0" spacing="20.0" BorderPane.alignment="CENTER">
+      <VBox spacing="20.0" BorderPane.alignment="CENTER">
          <padding>
-            <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+            <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
          </padding>
          <children>
             <HBox alignment="CENTER_LEFT">
                <children>
                   <Label styleClass="section-title" text="Sala " />
-                  <Label fx:id="labelTipoSala" styleClass="movie-title" text="Tipo Sala" textFill="#f25f00" />
+                  <Label fx:id="labelTipoSala" styleClass="movie-title" text="Tipo Sala" />
                   <Region HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
             <!-- Contenedor donde se cargará programáticamente el mapa de butacas -->
-            <VBox fx:id="mapaButacasContainer" spacing="0.0" styleClass="tickets-section" VBox.vgrow="ALWAYS" HBox.hgrow="ALWAYS" maxHeight="Infinity" maxWidth="Infinity" />
+            <VBox fx:id="mapaButacasContainer" VBox.vgrow="ALWAYS" />
          </children>
       </VBox>
    </center>

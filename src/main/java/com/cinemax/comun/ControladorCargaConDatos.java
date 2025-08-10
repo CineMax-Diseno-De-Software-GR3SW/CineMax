@@ -22,10 +22,6 @@ import javafx.stage.Stage;
  */
 public abstract class ControladorCargaConDatos {
 
-    /**
-     * Ruta del archivo FXML que contiene la definición de la vista a cargar.
-     * Esta ruta es relativa al directorio de recursos de la aplicación.
-     */
     private String rutaFXML;
     
     /**
@@ -41,16 +37,6 @@ public abstract class ControladorCargaConDatos {
      */
     private List<Object> datosTransferencia;
 
-    /**
-     * Constructor que inicializa todos los componentes necesarios para la carga con datos.
-     * 
-     * Este constructor debe ser llamado por todas las clases hijas para establecer
-     * los parámetros básicos necesarios para la navegación y transferencia de datos.
-     * 
-     * @param rutaFXML Ruta relativa al archivo FXML de la vista de destino
-     * @param currentStage Ventana actual que será reemplazada o cerrada
-     * @param datosTransferencia Lista de objetos con los datos a pasar a la nueva vista
-     */
     public ControladorCargaConDatos(String rutaFXML, Stage currentStage, List<Object> datosTransferencia) {
         // Asignar la ruta del archivo FXML de destino
         this.rutaFXML = rutaFXML;
@@ -60,23 +46,10 @@ public abstract class ControladorCargaConDatos {
         this.datosTransferencia = datosTransferencia;
     }
 
-    /**
-     * Obtiene la ruta del archivo FXML configurado para esta instancia.
-     * 
-     * @return String con la ruta relativa del archivo FXML de la vista de destino
-     */
     public String getRutaFXML() {
         return rutaFXML;
     }
 
-    /**
-     * Obtiene la referencia a la ventana actual.
-     * 
-     * Útil para las clases hijas que necesiten manipular la ventana actual,
-     * como cerrarla, obtener su posición, o transferir propiedades a la nueva ventana.
-     * 
-     * @return Stage que representa la ventana actual de JavaFX
-     */
     public Stage getCurrentStage() {
         return currentStage;
     }
@@ -100,7 +73,7 @@ public abstract class ControladorCargaConDatos {
      * Este método debe realizar toda la carga pesada (FXML, datos, inicializaciones)
      * y retornar un ResultadoCarga que contiene todo lo necesario para cambiar la ventana.
      * 
-     * IMPORTANTE: Este método se ejecuta en un hilo de background, NO en el hilo de JavaFX.
+     * Este método se ejecuta en un hilo de background, NO en el hilo de JavaFX.
      * No debe hacer cambios directos a la UI.
      * 
      * @return ResultadoCarga con toda la información necesaria para cambiar la ventana

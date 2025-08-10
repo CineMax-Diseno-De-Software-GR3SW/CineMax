@@ -1,6 +1,7 @@
-package com.cinemax.reportes.modelos;
+package com.cinemax.reportes.modelos.entidades;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 public class ReporteGenerado {
     private int id;
@@ -11,6 +12,7 @@ public class ReporteGenerado {
     private String rutaArchivo;
     private String frecuencia;
     private String descripcion;
+    private Map<String, Object> configuracion;
 
     public ReporteGenerado(int id, String nombre, String tipo, LocalDateTime fechaGeneracion, String rutaArchivo,
             String descripcion) {
@@ -31,9 +33,6 @@ public class ReporteGenerado {
         this.frecuencia = frecuencia;
     }
 
-    // Constructor vacío
-    public ReporteGenerado() {
-    }
 
     // Getters y Setters
     public int getId() {
@@ -94,6 +93,14 @@ public class ReporteGenerado {
 
     public String getDescripcion() {
         return descripcion;
+    }
+
+    public  Map<String, Object> getConfiguracion() {
+        return configuracion;
+    }
+
+    public void setConfiguracion(Map<String, Object> configuracion) {
+        this.configuracion = configuracion;
     }
 
 }

@@ -89,9 +89,9 @@ public class ControladorPortalPrincipal {
     }
 
     @FXML
-    private void onVerReportes() {
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnVerReportes .getScene().getWindow(),
-                "/vistas/reportes/PantallaModuloReportesPrincipal.fxml");
+    private void onVerReportes(ActionEvent event) {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnVerReportes.getScene().getWindow(),
+                "/vistas/reportes/VistaReportesPrincipal.fxml");
     }
 
     @FXML

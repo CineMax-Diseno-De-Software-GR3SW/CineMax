@@ -206,7 +206,7 @@ public class ControladorInformacionDeVenta {
         labelNombrePelicula.setText(funcionSeleccionada.getPelicula() != null ? 
             funcionSeleccionada.getPelicula().getTitulo() : "Título no disponible");
         labelGeneroPelicula.setText(funcionSeleccionada.getPelicula() != null && funcionSeleccionada.getPelicula().getGenero() != null ? 
-            funcionSeleccionada.getPelicula().getGenero() : "Género no disponible");
+            funcionSeleccionada.getPelicula().getGenerosComoString() : "Género no disponible");
         
         // Detalles técnicos de la función
         labelFormato.setText(funcionSeleccionada.getFormato() != null ? 
@@ -216,7 +216,7 @@ public class ControladorInformacionDeVenta {
         
         // Información de ubicación y horario
         labelLugarSala.setText(funcionSeleccionada.getSala() != null ? 
-            funcionSeleccionada.getSala().getNombre() + " - " + funcionSeleccionada.getSala().getTipo().toString() : "Sala no disponible");
+            funcionSeleccionada.getSala().getNombre().toString() + " - " + (funcionSeleccionada.getSala().getTipo().toString().equals("NORMAL") ? "Normal" : "VIP") : "Sala no disponible");
         labelFechaFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? 
             funcionSeleccionada.getFechaHoraInicio().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) : "Fecha no disponible");
         labelHoraFuncion.setText(funcionSeleccionada.getFechaHoraInicio() != null ? 

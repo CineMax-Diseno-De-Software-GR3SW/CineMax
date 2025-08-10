@@ -53,36 +53,29 @@ public class ControladorAsignadorButacas {
 
     // ===== ELEMENTOS DE LA INTERFAZ (FXML) =====
 
-    /** Botón para continuar al proceso de facturación */
     @FXML
     private Button buttonContinuar;
 
-    /** Botón para regresar a la pantalla de selección de funciones */
     @FXML
     private Button buttonVolver;
 
-    /** Contenedor de la barra superior de la interfaz */
     @FXML
     private HBox headerBar;
 
-    /** Contenedor donde se carga la información lateral de la función */
     @FXML
     private VBox informacionFuncionContainer;
 
-    /** Etiqueta que muestra el tipo de sala (VIP, Normal, etc.) */
     @FXML
     private Label labelTipoSala;
 
-    /** Contenedor donde se renderiza el mapa visual de butacas */
     @FXML
     private VBox mapaButacasContainer;
 
     @FXML
-    private Label timerLabel; // <-- AÑADIR ESTA LÍNEA
+    private Label timerLabel;
 
 
     // ===== ATRIBUTOS DE LÓGICA =====
-    /** Función cinematográfica seleccionada (película + horario + sala) */
     private Funcion funcionSeleccionada;
 
     /** Controlador del panel lateral que muestra información de la función */
@@ -91,18 +84,10 @@ public class ControladorAsignadorButacas {
     /** Controlador para la gestión del mapa de butacas y su visualización */
     private ControladorDeConsultaSalas controladorConsultaSalas;
 
-    /** Lista de butacas que el usuario ha seleccionado para comprar */
     private List<Butaca> butacasSeleccionadas;
 
-    /** DAO para acceso a datos de boletos y butacas ocupadas */
     private BoletoDAO boletoDAO;
 
-    /**
-     * Constructor que inicializa los componentes básicos del controlador.
-     * 
-     * Configura el DAO para acceso a datos y la lista para butacas seleccionadas.
-     * Se ejecuta automáticamente al crear una instancia del controlador.
-     */
     public ControladorAsignadorButacas() {
         boletoDAO = new BoletoDAO();
         butacasSeleccionadas = new ArrayList<>();
@@ -164,10 +149,6 @@ public class ControladorAsignadorButacas {
     /**
      * Carga el panel lateral con información detallada de la función.
      * 
-     * Renderiza dinámicamente la vista VistaInformacionLateral.fxml que muestra
-     * detalles como película, horario, precio, etc. Configura el controlador
-     * asociado para mostrar solo el precio inicialmente.
-     * 
      * @param funcion La función de la cual mostrar información
      */
     private void cargarInformacionFuncion(Funcion funcion) {
@@ -194,8 +175,6 @@ public class ControladorAsignadorButacas {
     }
 
     /**
-     * Carga y renderiza el mapa visual interactivo de butacas de la sala.
-     * 
      * Integra el componente MapaButacas.fxml que maneja la visualización
      * gráfica de todas las butacas, distinguiendo entre ocupadas y disponibles.
      * Establece la comunicación bidireccional con este controlador.
@@ -227,8 +206,6 @@ public class ControladorAsignadorButacas {
     }
 
     /**
-     * Maneja el evento de clic en el botón "Volver".
-     * 
      * Regresa a la pantalla anterior (selección de funciones) manteniendo
      * el contexto de la película seleccionada para facilitar la navegación.
      * 
@@ -249,8 +226,6 @@ public class ControladorAsignadorButacas {
     }
 
     /**
-     * Maneja el evento de clic en el botón "Continuar".
-     * 
      * Valida que se hayan seleccionado butacas, genera los boletos correspondientes
      * y navega a la pantalla de facturación. Implementa un patrón de carga previa
      * de datos antes de mostrar la nueva vista para evitar problemas de
@@ -302,8 +277,6 @@ public class ControladorAsignadorButacas {
     }
 
     /**
-     * Añade una butaca a la lista de seleccionadas.
-     * 
      * Método llamado por el controlador del mapa de butacas cuando el usuario
      * hace clic en una butaca disponible. Actualiza tanto la lista interna
      * como la visualización en el panel lateral.
@@ -325,8 +298,6 @@ public class ControladorAsignadorButacas {
     }
 
     /**
-     * Remueve una butaca de la lista de seleccionadas.
-     * 
      * Método llamado cuando el usuario hace clic nuevamente en una butaca
      * ya seleccionada para deseleccionarla. Actualiza tanto la lista como
      * la visualización del panel lateral.

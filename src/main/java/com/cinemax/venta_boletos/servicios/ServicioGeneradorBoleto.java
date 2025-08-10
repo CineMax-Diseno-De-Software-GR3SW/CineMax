@@ -9,13 +9,8 @@ import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 
 /**
- * Servicio encargado de la generación de boletos en el sistema CineMax.
- * 
  * Esta clase implementa la lógica de negocio para crear boletos
  * asociando una función específica de película con las butacas seleccionadas.
- * 
- * Forma parte de la capa de servicios del módulo de venta de boletos,
- * encapsulando la creación de productos tipo boleto.
  * 
  * @author GR3SW
  * @version 1.0
@@ -23,15 +18,8 @@ import com.cinemax.venta_boletos.modelos.entidades.Producto;
 public class ServicioGeneradorBoleto {
 
     /**
-     * Genera una lista de boletos basada en una función y las butacas seleccionadas.
-     * 
      * Este método crea un boleto individual para cada butaca proporcionada,
-     * asociándola con la función especificada. Cada boleto resultante contiene
-     * la información completa de la función (película, horario, sala) y
-     * la butaca específica asignada.
-     * 
-     * El método retorna una lista de productos (boletos) que puede ser
-     * utilizada posteriormente para cálculos de precio y generación de facturas.
+     * asociándola con la función especificada. 
      * 
      * @param funcion La función de película para la cual se generan los boletos
      * @param butacas Lista de butacas seleccionadas por el cliente
