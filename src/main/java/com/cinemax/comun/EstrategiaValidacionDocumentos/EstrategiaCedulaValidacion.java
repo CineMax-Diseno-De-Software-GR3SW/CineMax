@@ -5,16 +5,6 @@ import com.cinemax.comun.ManejadorMetodosComunes;
 /**
  * Estrategia de validación específica para cédulas ecuatorianas.
  * 
- * Implementa el algoritmo oficial de validación de cédulas de identidad del Ecuador,
- * que incluye verificación de formato, código de provincia y dígito verificador.
- * 
- * Reglas de validación implementadas:
- * - Longitud exacta de 10 dígitos
- * - Solo caracteres numéricos
- * - Código de provincia válido (01-24)
- * - Tercer dígito entre 0-5
- * - Algoritmo de módulo 10 para el dígito verificador
- * 
  * @author GR3SW
  * @version 1.0
  */
@@ -22,14 +12,7 @@ public class EstrategiaCedulaValidacion implements EstrategiaValidacion{
 
     /**
      * Ejecuta la validación de cédula ecuatoriana.
-     * 
-     * Implementa todas las reglas de validación requeridas:
-     * 1. Verificación de longitud (10 dígitos)
-     * 2. Validación de caracteres numéricos
-     * 3. Verificación del código de provincia (01-24)
-     * 4. Validación del tercer dígito (0-5)
-     * 5. Cálculo y verificación del dígito verificador
-     * 
+     *
      * @param documento Número de cédula a validar
      * @return true si la cédula es válida, false en caso contrario
      */

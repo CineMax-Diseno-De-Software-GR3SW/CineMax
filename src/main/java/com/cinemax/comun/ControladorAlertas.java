@@ -6,9 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-/**
- * Controlador para ventanas de alerta personalizadas
- * 
+/** 
  * Esta clase maneja la lógica de ventanas emergentes de alerta que pueden mostrar
  * mensajes informativos, de error o de confirmación. Las ventanas son arrastrables
  * por el usuario y contienen un título, mensaje y botón de cierre.
@@ -24,22 +22,10 @@ public class ControladorAlertas {
      */
     @FXML private VBox alertPane;
     
-    /**
-     * Etiqueta que muestra el título de la alerta.
-     * Se configura dinámicamente mediante el método setData().
-     */
     @FXML private Label titleLabel;
     
-    /**
-     * Etiqueta que muestra el mensaje principal de la alerta.
-     * Se configura dinámicamente mediante el método setData().
-     */
     @FXML private Label messageLabel;
     
-    /**
-     * Botón para cerrar la ventana de alerta.
-     * Al hacer clic, ejecuta el método onOkAction().
-     */
     @FXML private Button okButton;
 
     /**
@@ -87,10 +73,6 @@ public class ControladorAlertas {
     /**
      * Configura el contenido de la ventana de alerta.
      * 
-     * Este método permite establecer dinámicamente el título y mensaje
-     * que se mostrarán en la ventana de alerta. Debe ser llamado después
-     * de crear la instancia del controlador y antes de mostrar la ventana.
-     * 
      * @param title El título que aparecerá en la parte superior de la alerta
      * @param message El mensaje principal que se mostrará al usuario
      */
@@ -101,16 +83,6 @@ public class ControladorAlertas {
         messageLabel.setText(message);
     }
 
-    /**
-     * Maneja el evento de clic en el botón OK.
-     * 
-     * Este método se ejecuta automáticamente cuando el usuario hace clic
-     * en el botón OK de la ventana de alerta. Su función es cerrar la
-     * ventana actual de forma limpia.
-     * 
-     * La anotación @FXML indica que este método está vinculado a un
-     * evento en el archivo FXML correspondiente.
-     */
     @FXML
     private void onOkAction() {
         // Obtener referencia a la ventana actual a través del botón

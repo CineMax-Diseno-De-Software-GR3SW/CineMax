@@ -155,30 +155,14 @@ public class ManejadorMetodosComunes {
         }
     }
 
-
-    /**
-     * Muestra una ventana emergente de éxito con el mensaje especificado.
-     * 
-     * @param mensaje Texto a mostrar en la ventana de éxito
-     */
     public static void mostrarVentanaExito(String mensaje) {
         mostrarVentanaEmergente("Éxito", mensaje, "/vistas/comun/VistaExito.fxml");
     }
 
-    /**
-     * Muestra una ventana emergente de error con el mensaje especificado.
-     * 
-     * @param mensaje Texto a mostrar en la ventana de error
-     */
     public static void mostrarVentanaError(String mensaje) {
         mostrarVentanaEmergente("Error", mensaje, "/vistas/comun/VistaError.fxml");
     }
 
-    /**
-     * Muestra una ventana emergente de advertencia con el mensaje especificado.
-     * 
-     * @param mensaje Texto a mostrar en la ventana de advertencia
-     */
     public static void mostrarVentanaAdvertencia(String mensaje) {
         mostrarVentanaEmergente("Advertencia", mensaje, "/vistas/comun/VistaAdvertencia.fxml");
     }
@@ -259,8 +243,6 @@ public class ManejadorMetodosComunes {
 
         return controladorCarga;
     }
-
-    
 
     /**
      * Cambia ventana usando una vista ya cargada.

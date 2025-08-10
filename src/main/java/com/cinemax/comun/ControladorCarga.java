@@ -26,21 +26,12 @@ import java.util.concurrent.ExecutionException;
  * @version 2.0
  */
 public class ControladorCarga implements Initializable {
-    private static final long TIEMPO_MINIMO_CARGA = 500; // Tiempo mínimo en milisegundos para mostrar la pantalla de carga
-    /**
-     * Elemento de la interfaz que representa la barra de progreso de carga.
-     * Se inyecta automáticamente desde el archivo FXML correspondiente.
-     */
+    private static final long TIEMPO_MINIMO_CARGA = 500;
+    
     @FXML
     private ProgressBar progressBar;
 
-    /**
-     * Constructor público sin argumentos requerido por JavaFX.
-     * Este constructor es necesario para que JavaFX pueda instanciar el controlador
-     * automáticamente cuando se carga el archivo FXML.
-     */
     public ControladorCarga() {
-        // Constructor público sin argumentos
     }
 
     /**

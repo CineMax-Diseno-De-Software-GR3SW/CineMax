@@ -54,7 +54,7 @@ public class ResultadoCarga {
     /**
      * Aplica el cambio de ventana usando el resultado de la carga.
      * 
-     * IMPORTANTE: Este método debe ser llamado desde el hilo de JavaFX.
+     * Este método debe ser llamado desde el hilo de JavaFX.
      * 
      * @param stage La ventana donde aplicar los cambios
      */

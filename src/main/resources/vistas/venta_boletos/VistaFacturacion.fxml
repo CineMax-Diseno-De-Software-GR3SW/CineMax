@@ -24,7 +24,7 @@
                 <Button onAction="#regresarAMapaButacas" styleClass="stepper-button" text="←" />
                 <Label styleClass="section-title" text="Información de Facturación" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Label fx:id="timerLabel" style="-fx-font-size: 18px; -fx-text-fill: #FF8F40; -fx-font-weight: bold;" text="15:00" />
+                <Label fx:id="timerLabel" style="-fx-font-size: 18px; -fx-text-fill: #0079cf; -fx-font-weight: bold;" text="15:00" />
             </children>
             <padding>
                 <Insets bottom="10" left="20" right="20" top="10" />

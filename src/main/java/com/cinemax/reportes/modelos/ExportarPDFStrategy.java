@@ -15,17 +15,15 @@ public class ExportarPDFStrategy implements Export {
     // para generar el PDF
     @Override
     public void exportar(ReporteGenerado reporte, File archivo, Map<String, Object> datos) {
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage(PDRectangle.A4);
-            document.addPage(page);
+        try (PDDocument document = crearDocumentoPDF()) {
 
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, document.getPage(0))) {
                 // Configurar fuente
                 PDType1Font fontBold = PDType1Font.HELVETICA_BOLD;
                 PDType1Font fontNormal = PDType1Font.HELVETICA;
 
                 float margin = 50;
-                float yPosition = page.getMediaBox().getHeight() - margin;
+                float yPosition = document.getPage(0).getMediaBox().getHeight() - margin;
                 float fontSize = 12;
 
                 // Título principal
@@ -246,11 +244,35 @@ public class ExportarPDFStrategy implements Export {
             }
 
             // Guardar el documento
-            document.save(archivo);
+            guardarPDF(document, archivo);
             System.out.println("PDF generado exitosamente con PDFBox: " + archivo.getAbsolutePath());
         } catch (Exception e) {
             System.err.println("Error al generar el PDF: " + e.getMessage());
             e.printStackTrace();
         }
     }
+
+    /**
+     * Crea un nuevo documento PDF básico con una página A4
+     * @return PDDocument nuevo documento PDF inicializado
+     * @throws Exception si ocurre un error al crear el documento
+     */
+    public static PDDocument crearDocumentoPDF() throws Exception {
+        PDDocument document = new PDDocument();
+        PDPage page = new PDPage(PDRectangle.A4);
+        document.addPage(page);
+        return document;
+    }
+    
+    /**
+     * Guarda un documento PDF en la ruta especificada
+     * @param document El documento PDF a guardar
+     * @param archivo El archivo donde guardar el PDF
+     * @throws Exception si ocurre un error al guardar el documento
+     */
+    public static void guardarPDF(PDDocument document, File archivo) throws Exception {
+        document.save(archivo);
+        System.out.println("PDF generado exitosamente: " + archivo.getAbsolutePath());
+    }
+    
 }
