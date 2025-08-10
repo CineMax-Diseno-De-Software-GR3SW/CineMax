@@ -1,5 +1,6 @@
 package com.cinemax.empleados.servicios;
 
+import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
 
@@ -33,24 +34,7 @@ public class ServicioPerfilUsuario {
         usuarioDAO.actualizarUsuario(usuario);
     }
     
-    public boolean cambiarClave(Usuario usuario, String claveActual, String nuevaClave) throws Exception {
-        if (usuario == null) {
-            throw new IllegalArgumentException("El usuario no puede ser null");
-        }
-        
-        if (!usuario.verificarClave(claveActual)) {
-            return false; // Clave actual incorrecta
-        }
-        
-        if (!ValidadorUsuario.validarClave(nuevaClave)) {
-            throw new IllegalArgumentException("La nueva clave no cumple con los requisitos de seguridad");
-        }
-        
-        usuario.setClave(nuevaClave);
-        usuarioDAO.actualizarUsuario(usuario);
-        return true;
-    }
-    
+
     /**
      * Obtiene el perfil completo de un usuario por su ID
      */
@@ -81,12 +65,18 @@ public class ServicioPerfilUsuario {
     }
 
     public void actualizarClave(Usuario usuarioActivo, String claveActual,String nuevaClave) throws SQLException {
-        if (!usuarioActivo.getClave().equals(claveActual)) {
-            throw new SQLException("La contraseña actual es incorrecta.");
+        if (!usuarioActivo.verificarClave(claveActual)) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La contraseña actual es incorrecta.");
+            throw new IllegalArgumentException("La contraseña actual es incorrecta.");
         }
 
-        usuarioActivo.actualizarClave(nuevaClave);
-        usuarioDAO.actualizarClave(usuarioActivo.getId(), nuevaClave);
+        if (!ValidadorUsuario.validarClave(nuevaClave)) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad");
+            throw new IllegalArgumentException("Nueva clave inválida");
+        }
+        String claveHasheada = UtilidadClave.hashClave(nuevaClave);
+        usuarioActivo.setClave(claveHasheada);
+        usuarioDAO.actualizarClave(usuarioActivo.getId(), usuarioActivo.getClave());
     }
 
 }
