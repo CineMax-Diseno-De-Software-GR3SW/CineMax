@@ -1,8 +1,8 @@
-package com.cinemax.reportes.modelos;
+package com.cinemax.reportes.modelos.entidades;
 
 import java.time.LocalDateTime;
 
-public class DiarioStrategy implements FrecuenciaStrategy {
+public class EstrategiaDiaria implements EstrategiaDeFrecuencia {
 
     @Override
     public LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion) {
