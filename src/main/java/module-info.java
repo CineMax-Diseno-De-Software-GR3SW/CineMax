@@ -19,6 +19,9 @@ module com.cinemax {
     requires google.cloud.core;
     requires org.slf4j;
 
+    //hashing clave usuario
+    requires spring.security.crypto;
+
     // Paquetes del módulo empleados
     opens com.cinemax.empleados.modelos.entidades to javafx.base;
     opens com.cinemax.empleados.controladores to javafx.fxml;

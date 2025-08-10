@@ -25,10 +25,10 @@ public class ServicioUsuarios {
     public void crearUsuario(String nombreCompleto, String cedula, String correo, String celular, boolean estadoActivo, String nombreUsuario, Rol cargoSeleccionado) throws Exception {
 
         validarDatos(correo, nombreUsuario);
-
         String clave = generarClaveAleatoria();
+        String claveHasheada = UtilidadClave.hashClave(clave);
 
-        Usuario usuario = new Usuario(nombreUsuario,correo,clave,nombreCompleto,
+        Usuario usuario = new Usuario(nombreUsuario,correo,claveHasheada,nombreCompleto,
                 cedula,celular,cargoSeleccionado, estadoActivo, true);
         // Asignar ID si no tiene
         if (usuario.getId() == null) {
@@ -176,18 +176,22 @@ public class ServicioUsuarios {
     public void recuperarClave(String correo) throws Exception{
 
             Usuario usuario = usuarioDAO.buscarPorCorreo(correo);
-            usuario.setClave(generarClaveAleatoria());
+
+            String nuevaClave = generarClaveAleatoria();
+            String claveHasheada = UtilidadClave.hashClave(nuevaClave);
+            usuario.setClave(claveHasheada);
             usuarioDAO.actualizarClave(usuario.getId(), usuario.getClave());
             usuario.setRequiereCambioClave(true);
             usuarioDAO.setRequiereCambioClave(usuario.getId(), usuario.isRequiereCambioClave());
-            ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeRecuperacionContrasena(usuario.getNombreCompleto(), usuario.getNombreUsuario(), usuario.getClave()));
+            ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeRecuperacionContrasena(usuario.getNombreCompleto(), usuario.getNombreUsuario(), nuevaClave));
             ManejadorMetodosComunes.mostrarVentanaExito("Accion realizada exitosamente");
 
     }
 
     public void actualizarClaveTemporal(Usuario usuarioActivo, String nuevaClave) throws SQLException {
-        usuarioActivo.actualizarClave(nuevaClave);
-        usuarioDAO.actualizarClaveTemporal(usuarioActivo.getId(), nuevaClave);
+        String claveHasheada = UtilidadClave.hashClave(nuevaClave);
+        usuarioActivo.actualizarClave(claveHasheada);
+        usuarioDAO.actualizarClaveTemporal(usuarioActivo.getId(), claveHasheada);
     }
 
 }

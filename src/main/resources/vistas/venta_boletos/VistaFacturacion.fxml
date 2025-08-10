@@ -24,7 +24,7 @@
                 <Button onAction="#regresarAMapaButacas" styleClass="stepper-button" text="←" />
                 <Label styleClass="section-title" text="Información de Facturación" />
                 <Region HBox.hgrow="ALWAYS" />
-                <Label fx:id="timerLabel" style="-fx-font-size: 18px; -fx-text-fill: #0079cf; -fx-font-weight: bold;" text="15:00" />
+                <Label fx:id="timerLabel" style="-fx-font-size: 18px; -fx-text-fill: #FF8F40; -fx-font-weight: bold;" text="15:00" />
             </children>
             <padding>
                 <Insets bottom="10" left="20" right="20" top="10" />
@@ -43,8 +43,6 @@
                     <children>
                         <Label styleClass="section-title" text="Datos del Cliente" />
                         <Separator />
-
-                        <!-- Búsqueda de Cliente -->
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                             <children>
                                 <Label styleClass="form-label" text="Buscar Cliente:" />
@@ -52,71 +50,63 @@
                                 <Button onAction="#buscarCliente" styleClass="icon-button" text="🔍" />
                             </children>
                         </HBox>
-
-                        <!-- Formulario de Datos -->
                         <GridPane hgap="15.0" vgap="12.0">
                             <columnConstraints>
                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="150.0" />
                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
                             </columnConstraints>
-                            <rowConstraints>
-                                <RowConstraints />
-                                <RowConstraints />
-                                <RowConstraints />
-                                <RowConstraints />
-                                <RowConstraints />
-                            </rowConstraints>
                             <children>
                                 <TextFlow>
-                                    <Text fill="white" style="-fx-font-weight: bold;" text="Nombre " />
-                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Nombre " /><Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="nombreField" promptText="Nombre del cliente" styleClass="text-field" GridPane.columnIndex="1" />
-
                                 <TextFlow GridPane.rowIndex="1">
-                                    <Text fill="white" style="-fx-font-weight: bold;" text="Apellido " />
-                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Apellido " /><Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="apellidoField" promptText="Apellido del cliente" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-
                                 <TextFlow GridPane.rowIndex="2">
-                                    <Text fill="white" style="-fx-font-weight: bold;" text="Tipo de Documento " />
-                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Tipo de Documento " /><Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <ComboBox fx:id="tipoDocumentoBox" prefWidth="Infinity" styleClass="combo-box" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-
                                 <TextFlow GridPane.rowIndex="3">
-                                    <Text fill="white" style="-fx-font-weight: bold;" text="Documento " />
-                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Documento " /><Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="documentoField" promptText="Número de documento" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-
                                 <TextFlow GridPane.rowIndex="4">
-                                    <Text fill="white" style="-fx-font-weight: bold;" text="Correo Electrónico " />
-                                    <Text fill="red" style="-fx-font-weight: bold;" text="*" />
+                                    <Text fill="white" style="-fx-font-weight: bold;" text="Correo Electrónico " /><Text fill="red" style="-fx-font-weight: bold;" text="*" />
                                 </TextFlow>
                                 <TextField fx:id="correoField" promptText="ejemplo@email.com" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                             </children>
                         </GridPane>
-
-                        <HBox alignment="CENTER_LEFT" spacing="10.0">
+                        <HBox alignment="CENTER_LEFT" spacing="5.0">
                             <children>
-                                <Label style="-fx-text-fill: red;" styleClass="help-text" text="* Campos Obligatorios" />
+                                <!-- CAMBIO: Usar TextFlow para colorear solo el asterisco y poner el resto en cursiva -->
+                                <TextFlow>
+                                    <children>
+                                        <Text fill="red" style="-fx-font-weight: bold;" text="*" />
+                                        <Text fill="#b0b0b0" style="-fx-font-style: italic;" text=" Campos obligatorios" />
+                                    </children>
+                                </TextFlow>
                             </children>
                         </HBox>
                     </children>
                 </VBox>
-                    <Button fx:id="buttonCrearOActualizar" disable="true" onAction="#crearOActualizarCliente" prefHeight="30.0" prefWidth="169.0" styleClass="primary-button" text="Crear" />
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button fx:id="buttonNuevoCliente" mnemonicParsing="false" onAction="#onLimpiarFormulario" styleClass="link-button" text="Nuevo" />
-                  <Button fx:id="buttonLimpiarFormulario" mnemonicParsing="false" onAction="#onLimpiarFormulario" styleClass="link-button" text="Limpiar" />
-               </children>
-            </HBox>
+
+                <!-- CAMBIO: Botones reorganizados para mejor flujo y espaciado -->
+                <VBox alignment="CENTER" spacing="5.0">
+                    <children>
+                        <Button fx:id="buttonCrearOActualizar" disable="true" onAction="#crearOActualizarCliente" prefHeight="30.0" prefWidth="169.0" styleClass="primary-button" text="Crear" />
+                        <HBox alignment="CENTER" spacing="25.0">
+                            <children>
+                                <Button fx:id="buttonNuevoCliente" mnemonicParsing="false" onAction="#onLimpiarFormulario" styleClass="link-button" text="Nuevo" />
+                                <Button fx:id="buttonLimpiarFormulario" mnemonicParsing="false" onAction="#onLimpiarFormulario" styleClass="link-button" text="Limpiar" />
+                            </children>
+                        </HBox>
+                    </children>
+                </VBox>
 
                 <Region VBox.vgrow="ALWAYS" />
 
-                <!-- SECCIÓN DE CONFIRMACIÓN FINAL -->
                 <VBox alignment="CENTER_LEFT" spacing="15.0" styleClass="ticket-card">
                     <children>
                         <CheckBox fx:id="confirmCheckBox" styleClass="confirmation-checkbox" text="Confirmar la compra y los datos ingresados" />
@@ -128,9 +118,13 @@
     </center>
 
     <right>
-        <VBox prefWidth="320.0" spacing="10.0" styleClass="financial-summary-pane" BorderPane.alignment="CENTER">
+        <VBox prefWidth="320.0" spacing="10.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
             <children>
                 <VBox fx:id="informacionFuncionContainer" VBox.vgrow="ALWAYS" />
+
                 <Button fx:id="buttonPagar" maxWidth="Infinity" onAction="#pagarBoletos" prefHeight="50.0" styleClass="primary-button" text="Pagar" />
             </children>
         </VBox>
