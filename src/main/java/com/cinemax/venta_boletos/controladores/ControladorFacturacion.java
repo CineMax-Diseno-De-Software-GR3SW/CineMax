@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivo;
 
@@ -275,6 +276,13 @@ public class ControladorFacturacion {
         // Validar que todos los campos estén llenos antes de proceder con la actualización.
         if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
+            return;
+        }
+
+        if (!Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
+                    .matcher(correoField.getText().trim())
+                    .matches()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Formato de correo inválido");
             return;
         }
 
