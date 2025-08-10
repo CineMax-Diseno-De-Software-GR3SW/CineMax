@@ -1,13 +1,10 @@
-package com.cinemax.reportes.servicios;
+package com.cinemax.reportes.modelos.entidades;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import com.cinemax.reportes.modelos.persistencia.VentaDAO;
-
-import com.cinemax.reportes.modelos.ReporteVentaDTO;
 
 public class VentasService {
     private VentaDAO ventasDAO;

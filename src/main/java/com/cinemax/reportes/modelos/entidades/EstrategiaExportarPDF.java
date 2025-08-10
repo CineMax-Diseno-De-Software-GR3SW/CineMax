@@ -1,4 +1,4 @@
-package com.cinemax.reportes.modelos;
+package com.cinemax.reportes.modelos.entidades;
 
 import java.io.File;
 import java.io.IOException;

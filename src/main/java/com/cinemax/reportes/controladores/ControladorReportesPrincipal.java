@@ -25,12 +25,14 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
-import com.cinemax.reportes.servicios.VentasService;
+
 import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.reportes.modelos.EstrategiaExportarCSV;
-import com.cinemax.reportes.modelos.EstrategiaExportarPDF;
-import com.cinemax.reportes.modelos.Exportable;
-import com.cinemax.reportes.modelos.ReporteGenerado;
+import com.cinemax.reportes.modelos.entidades.EstrategiaExportarCSV;
+import com.cinemax.reportes.modelos.entidades.EstrategiaExportarPDF;
+import com.cinemax.reportes.modelos.entidades.Exportable;
+import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
+import com.cinemax.reportes.modelos.entidades.VentasService;
+
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -140,7 +142,7 @@ public class ControladorReportesPrincipal {
             private final Button btnAbrir = new Button("Abrir");
 
             {
-                btnAbrir.getStyleClass().add("table-button");
+                btnAbrir.getStyleClass().add("primary-button");
                 btnAbrir.setOnAction(event -> {
                     ReporteGenerado reporte = getTableView().getItems().get(getIndex());
                     abrirReporte(reporte);

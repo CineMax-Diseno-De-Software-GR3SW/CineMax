@@ -1,12 +1,4 @@
-package com.cinemax.reportes.servicios;
-
-import com.cinemax.reportes.modelos.EstrategiaAnual;
-import com.cinemax.reportes.modelos.EstrategiaDiaria;
-import com.cinemax.reportes.modelos.EstrategiaDeFrecuencia;
-import com.cinemax.reportes.modelos.EstrategiaMensual;
-import com.cinemax.reportes.modelos.ReporteGenerado;
-import com.cinemax.reportes.modelos.EstrategiaSemanal;
-import com.cinemax.reportes.modelos.EstrategiaTrimestal;
+package com.cinemax.reportes.modelos.entidades;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;

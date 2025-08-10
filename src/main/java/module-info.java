@@ -48,7 +48,7 @@ module com.cinemax {
     opens com.cinemax.venta_boletos.Servicios to javafx.base, javafx.fxml;
 
     // Paquetes del módulo reportes
-    opens com.cinemax.reportes.modelos to javafx.base;
+    opens com.cinemax.reportes.modelos.entidades to javafx.base;
 
     exports com.cinemax.reportes.controladores to javafx.fxml;
 

@@ -31,12 +31,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
-import com.cinemax.reportes.modelos.Exportable;
-import com.cinemax.reportes.modelos.EstrategiaExportarCSV;
-import com.cinemax.reportes.modelos.EstrategiaExportarPDF;
-import com.cinemax.reportes.modelos.ReporteGenerado;
-import com.cinemax.reportes.servicios.ServicioReportesProgramados;
-import com.cinemax.reportes.servicios.VentasService;
+import com.cinemax.reportes.modelos.entidades.EstrategiaExportarCSV;
+import com.cinemax.reportes.modelos.entidades.EstrategiaExportarPDF;
+import com.cinemax.reportes.modelos.entidades.Exportable;
+import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
+import com.cinemax.reportes.modelos.entidades.ServicioReportesProgramados;
+import com.cinemax.reportes.modelos.entidades.VentasService;
 
 // Para la dependencia de programado task
 
