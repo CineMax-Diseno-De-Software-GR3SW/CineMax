@@ -10,11 +10,7 @@ import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
-import com.cinemax.venta_boletos.modelos.entidades.Factura;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
-import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
-import com.cinemax.venta_boletos.modelos.persistencia.ClienteDAO;
-import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
 import com.cinemax.venta_boletos.servicios.ServicioGeneradorArchivoPDF;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
@@ -405,7 +401,7 @@ public class ControladorFacturacion {
         correoField.clear();
         identificacionField.clear();
         tipoDocumentoBox.setValue("Seleccione un tipo de documento");
-        
+
         clienteEnEdicion = null;
         actualizarModoFormulario();
     }
