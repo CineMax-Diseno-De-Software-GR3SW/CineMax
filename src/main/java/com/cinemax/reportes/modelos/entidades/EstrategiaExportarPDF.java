@@ -12,25 +12,47 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+/**
+ * Implementación de la interfaz Exportable para generar reportes en formato PDF.
+ * Utiliza la librería Apache PDFBox para crear documentos PDF con formato
+ * profesional que incluye tablas, encabezados y datos de ventas estructurados.
+ * Sigue el patrón Strategy para permitir intercambiar diferentes formatos de exportación.
+ */
 public class EstrategiaExportarPDF implements Exportable {
 
+    /**
+     * Genera un reporte PDF completo para un ReporteGenerado específico.
+     * Crea un documento con formato profesional que incluye:
+     * - Encabezado con información del reporte
+     * - Resumen de ventas generales en tabla
+     * - Tabla de ventas por película (datos de ejemplo)
+     * - Observaciones y pie de página
+     * 
+     * @param reporte Objeto ReporteGenerado con metadatos del reporte
+     * @param archivo Archivo destino donde se guardará el PDF
+     * @param datos Mapa con los datos de ventas a incluir en el reporte
+     */
     // para generar el PDF
     @Override
     public void exportar(ReporteGenerado reporte, File archivo, Map<String, Object> datos) {
+        // Usar try-with-resources para asegurar que el documento se cierre correctamente
         try (PDDocument document = new PDDocument()) {
+            // Crear una nueva página en formato A4
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
 
+            // Crear el stream de contenido para escribir en la página
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                // Configurar fuente
+                // Configurar las fuentes que se usarán en el documento
                 PDType1Font fontBold = PDType1Font.HELVETICA_BOLD;
                 PDType1Font fontNormal = PDType1Font.HELVETICA;
 
+                // Configurar márgenes y posicionamiento
                 float margin = 50;
                 float yPosition = page.getMediaBox().getHeight() - margin;
                 float fontSize = 12;
 
-                // Título principal
+                // ==================== TÍTULO PRINCIPAL ====================
                 contentStream.setFont(fontBold, 18);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -39,7 +61,7 @@ public class EstrategiaExportarPDF implements Exportable {
 
                 yPosition -= 40;
 
-                // Información del reporte
+                // ==================== INFORMACIÓN DEL REPORTE ====================
                 contentStream.setFont(fontNormal, fontSize);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -56,7 +78,7 @@ public class EstrategiaExportarPDF implements Exportable {
 
                 yPosition -= 100;
 
-                // Subtítulo de la sección
+                // ==================== SECCIÓN RESUMEN DE VENTAS ====================
                 contentStream.setFont(fontBold, 14);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -65,7 +87,7 @@ public class EstrategiaExportarPDF implements Exportable {
 
                 yPosition -= 30;
 
-                // Título de sección: Ventas Generales
+                // Título de la subsección
                 contentStream.setFont(fontBold, 13);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -74,21 +96,20 @@ public class EstrategiaExportarPDF implements Exportable {
 
                 yPosition -= 22; // Espacio entre título y tabla
 
-                // Tabla de totales
+                // ==================== TABLA DE TOTALES ====================
+                // Configuración de la tabla
                 float tableWidth = 500;
                 float rowHeight = 30;
                 float colWidth = tableWidth / 6f;
                 float tableX = margin;
                 float tableY = yPosition;
 
-                // Dibujar bordes de la tabla
+                // Dibujar el marco exterior de la tabla
                 contentStream.setLineWidth(1);
-
-                // Rectángulo exterior
                 contentStream.addRect(tableX, tableY - rowHeight * 2, tableWidth, rowHeight * 2);
                 contentStream.stroke();
 
-                // Líneas verticales
+                // Dibujar líneas verticales para separar columnas
                 for (int i = 1; i < 6; i++) {
                     float x = tableX + i * colWidth;
                     contentStream.moveTo(x, tableY);
@@ -96,16 +117,17 @@ public class EstrategiaExportarPDF implements Exportable {
                     contentStream.stroke();
                 }
 
-                // Línea horizontal para separar encabezados y datos
+                // Línea horizontal para separar encabezados de datos
                 contentStream.moveTo(tableX, tableY - rowHeight);
                 contentStream.lineTo(tableX + tableWidth, tableY - rowHeight);
                 contentStream.stroke();
 
-                // Encabezados centrados
+                // Escribir encabezados de la tabla centrados
                 String[] headers = { "Total Boletos", "Total Facturas", "Total Ingresos", "Total Funciones",
                         "Fecha Inicio", "Fecha Fin" };
                 contentStream.setFont(fontBold, 10);
                 for (int i = 0; i < headers.length; i++) {
+                    // Calcular posición centrada para el texto
                     float textWidth = fontBold.getStringWidth(headers[i]) / 1000 * 10;
                     float cellCenter = tableX + i * colWidth + colWidth / 2;
                     float textX = cellCenter - textWidth / 2;
@@ -116,7 +138,7 @@ public class EstrategiaExportarPDF implements Exportable {
                     contentStream.endText();
                 }
 
-                // Datos centrados (ajusta estos valores según tus datos reales)
+                // Escribir los datos de la tabla centrados
                 Object[] data = {
                         datos.get("total_boletos_vendidos"), // Total Boletos
                         datos.get("total_facturas"), // Total Facturas
@@ -127,6 +149,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 };
                 contentStream.setFont(fontNormal, 10);
                 for (int i = 0; i < data.length; i++) {
+                    // Calcular posición centrada para el texto
                     float textWidth = fontNormal.getStringWidth(String.valueOf(data[i])) / 1000 * 10;
                     float cellCenter = tableX + i * colWidth + colWidth / 2;
                     float textX = cellCenter - textWidth / 2;
@@ -139,7 +162,7 @@ public class EstrategiaExportarPDF implements Exportable {
 
                 yPosition = tableY - rowHeight * 2 - 40;
 
-                // Título de sección: Ventas por Película
+                // ==================== SECCIÓN VENTAS POR PELÍCULA ====================
                 contentStream.setFont(fontBold, 13);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -148,14 +171,14 @@ public class EstrategiaExportarPDF implements Exportable {
 
                 yPosition -= 22; // Espacio entre título y tabla
 
-                // Configuración de la tabla
+                // Configuración de la tabla de películas
                 float tableWidthPeliculas = 500;
                 float rowHeightPeliculas = 25;
                 float colWidthPeliculas = tableWidthPeliculas / 4f;
                 float tableXPeliculas = margin;
                 float tableYPeliculas = yPosition;
 
-                // Datos ficticios
+                // Datos de ejemplo para la tabla de películas
                 String[][] peliculas = {
                         { "Barbie", "3", "320", ",600.00" },
                         { "Oppenheimer", "2", "210", ",300.00" },
@@ -164,13 +187,13 @@ public class EstrategiaExportarPDF implements Exportable {
                 };
                 int numFilasPeliculas = peliculas.length + 1; // +1 para encabezado
 
-                // Dibujar bordes de la tabla
+                // Dibujar el marco exterior de la tabla
                 contentStream.setLineWidth(1);
                 contentStream.addRect(tableXPeliculas, tableYPeliculas - rowHeightPeliculas * numFilasPeliculas,
                         tableWidthPeliculas, rowHeightPeliculas * numFilasPeliculas);
                 contentStream.stroke();
 
-                // Líneas verticales
+                // Dibujar líneas verticales
                 for (int i = 1; i < 4; i++) {
                     float x = tableXPeliculas + i * colWidthPeliculas;
                     contentStream.moveTo(x, tableYPeliculas);
@@ -178,7 +201,7 @@ public class EstrategiaExportarPDF implements Exportable {
                     contentStream.stroke();
                 }
 
-                // Líneas horizontales (opcional, para cada fila)
+                // Dibujar líneas horizontales para cada fila
                 for (int i = 1; i < numFilasPeliculas; i++) {
                     float y = tableYPeliculas - i * rowHeightPeliculas;
                     contentStream.moveTo(tableXPeliculas, y);
@@ -186,7 +209,7 @@ public class EstrategiaExportarPDF implements Exportable {
                     contentStream.stroke();
                 }
 
-                // Encabezados centrados
+                // Escribir encabezados de la tabla de películas
                 String[] headersPeliculas = { "Título", "Funciones", "Boletos Vendidos", "Ingresos" };
                 contentStream.setFont(fontBold, 10);
                 for (int i = 0; i < headersPeliculas.length; i++) {
@@ -200,7 +223,7 @@ public class EstrategiaExportarPDF implements Exportable {
                     contentStream.endText();
                 }
 
-                // Filas de datos centradas
+                // Escribir los datos de películas centrados
                 contentStream.setFont(fontNormal, 10);
                 for (int fila = 0; fila < peliculas.length; fila++) {
                     for (int col = 0; col < peliculas[fila].length; col++) {
@@ -217,7 +240,7 @@ public class EstrategiaExportarPDF implements Exportable {
 
                 yPosition = tableYPeliculas - rowHeightPeliculas * numFilasPeliculas - 40;
 
-                // Observaciones
+                // ==================== SECCIÓN DE OBSERVACIONES ====================
                 contentStream.setFont(fontBold, 12);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -239,7 +262,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 }
                 contentStream.endText();
 
-                // Pie de página
+                // ==================== PIE DE PÁGINA ====================
                 contentStream.setFont(fontNormal, 8);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, 50);
@@ -247,15 +270,26 @@ public class EstrategiaExportarPDF implements Exportable {
                 contentStream.endText();
             }
 
-            // Guardar el documento
+            // Guardar el documento PDF en el archivo especificado
             document.save(archivo);
             System.out.println("PDF generado exitosamente con PDFBox: " + archivo.getAbsolutePath());
         } catch (Exception e) {
+            // Manejar errores durante la generación del PDF
             System.err.println("Error al generar el PDF: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
+    /**
+     * Exporta una lista de datos a formato PDF con un diseño más simple.
+     * Este método genera un reporte PDF con una tabla de datos más básica,
+     * ideal para reportes rápidos o datos tabulares simples.
+     * 
+     * @param datos Lista de mapas con los datos a exportar
+     * @param destino Archivo donde se guardará el PDF
+     * @param tituloReporte Título principal del reporte
+     * @param infoExtra Información adicional como subtítulos
+     */
     @Override
     public void exportarFormatoPrincipal(List<Map<String, Object>> datos, File destino, String tituloReporte,
             Map<String, Object> infoExtra) {
@@ -263,13 +297,14 @@ public class EstrategiaExportarPDF implements Exportable {
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
             try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                // Configurar fuentes
                 PDType1Font fontBold = PDType1Font.HELVETICA_BOLD;
                 PDType1Font fontNormal = PDType1Font.HELVETICA;
                 float margin = 50;
                 float yPosition = page.getMediaBox().getHeight() - margin;
                 float fontSize = 12;
 
-                // Título principal
+                // Escribir título principal
                 contentStream.setFont(fontBold, 18);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -277,7 +312,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 contentStream.endText();
                 yPosition -= 40;
 
-                // Información extra
+                // Escribir información extra si existe
                 if (infoExtra != null && infoExtra.containsKey("subtitulo")) {
                     contentStream.setFont(fontNormal, fontSize);
                     contentStream.beginText();
@@ -287,7 +322,7 @@ public class EstrategiaExportarPDF implements Exportable {
                     yPosition -= 20;
                 }
 
-                // Subtítulo de la sección
+                // Subtítulo de sección
                 contentStream.setFont(fontBold, 14);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, yPosition);
@@ -295,7 +330,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 contentStream.endText();
                 yPosition -= 30;
 
-                // Tabla
+                // Configuración de tabla simplificada
                 float tableWidth = 400;
                 float rowHeight = 25;
                 float col1X = margin;
@@ -303,7 +338,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 float col3X = margin + 200;
                 float col4X = margin + 300;
 
-                // Headers
+                // Escribir encabezados de la tabla
                 contentStream.setFont(fontBold, 10);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(col1X + 5, yPosition - 15);
@@ -316,7 +351,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 contentStream.showText("Ingresos");
                 contentStream.endText();
 
-                // Datos
+                // Escribir datos de la tabla y calcular totales
                 contentStream.setFont(fontNormal, 10);
                 int totalBoletos = 0;
                 double totalIngresos = 0;
@@ -324,7 +359,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 for (int i = 0; i < datos.size(); i++) {
                     Map<String, Object> d = datos.get(i);
 
-                    // Obtener valores del mapa
+                    // Extraer valores del mapa de datos
                     String fecha = d.get("fecha").toString();
                     int boletosVendidos = (int) d.get("total_boletos_vendidos");
                     double ingreso = (double) d.get("ingreso_total");
@@ -335,6 +370,7 @@ public class EstrategiaExportarPDF implements Exportable {
                     String tipoCompleto = (tipoSala != null ? tipoSala : "Normal") + " " +
                             (formato != null ? formato : "2D");
 
+                    // Escribir fila de datos
                     contentStream.beginText();
                     contentStream.newLineAtOffset(col1X + 5, yPosition - 40 - (i * rowHeight));
                     contentStream.showText(fecha);
@@ -346,11 +382,12 @@ public class EstrategiaExportarPDF implements Exportable {
                     contentStream.showText(String.format("$%.2f", ingreso));
                     contentStream.endText();
 
+                    // Acumular totales
                     totalBoletos += boletosVendidos;
                     totalIngresos += ingreso;
                 }
 
-                // Fila de total
+                // Escribir fila de totales
                 contentStream.setFont(fontBold, 10);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(col1X + 5, yPosition - 40 - (datos.size() * rowHeight));
@@ -370,6 +407,7 @@ public class EstrategiaExportarPDF implements Exportable {
                 contentStream.showText("© 2025 CineMax - Sistema de Gestion de Reportes");
                 contentStream.endText();
             }
+            // Guardar el documento
             document.save(destino);
         } catch (IOException e) {
             System.out.println("Error al exportar el reporte a PDF: " + e.getMessage());
