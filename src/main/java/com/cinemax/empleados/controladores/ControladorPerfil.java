@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 
 public class ControladorPerfil implements Initializable {
 
+    public Button btnBack;
     @FXML
     private Label lblNombreCompleto;
 
@@ -76,28 +77,14 @@ public class ControladorPerfil implements Initializable {
     }
 
     @FXML
-    private void onVolver(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void onVolver() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(),
+                "/vistas/empleados/PantallaPortalPrincipal.fxml");
     }
 
-    @FXML
-    private void onEditarPerfil(ActionEvent event) {
-        // Implementar funcionalidad para editar perfil
-        System.out.println("Editar perfil clicked");
-    }
 
     @FXML
     private void onCambiarContrasena(ActionEvent event) {
-        // Implementar funcionalidad para cambiar contraseña
-        //System.out.println("Cambiar contraseña clicked");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PopUpCambiarContrasena.fxml"));
             Parent root = loader.load();
@@ -126,18 +113,14 @@ public class ControladorPerfil implements Initializable {
 
         if (!editandoEmail) {
             String nuevoEmail = txtEmail.getText();
-            // Aquí podrías guardar el email a base de datos o backend
             System.out.println("Nuevo email guardado: " + nuevoEmail);
-            // Relación con el servicio actualizarCorreo
             try {
                 servicioPerfilUsuario.actualizarCorreo(sesionSingleton.getUsuarioActivo(),nuevoEmail);
                 ManejadorMetodosComunes.mostrarVentanaExito("Correo actualizado exitosamente");
 
-//                mostrarAlerta(Alert.AlertType.INFORMATION, "Correo Registrado", "Actualizacion", "Correo " + nuevoEmail + " registrado exitosamente");
             } catch (SQLException e) {
                 ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar el correo");
 
-//                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el correo", "Error", e.getMessage());
             }
         }
     }
@@ -149,28 +132,16 @@ public class ControladorPerfil implements Initializable {
 
         if (!editandoTelefono) {
             String nuevoCelular = txtTelefono.getText();
-            // Aquí podrías guardar el teléfono a base de datos o backend
-//            System.out.println("Nuevo teléfono guardado: " + nuevoCelular);
+
             try {
                 servicioPerfilUsuario.actualizarCelular(sesionSingleton.getUsuarioActivo(),nuevoCelular);
                 ManejadorMetodosComunes.mostrarVentanaExito("Celular actualizado exitosamente");
 
-//                mostrarAlerta(Alert.AlertType.INFORMATION, "Celular Registrado", "Actualizacion", "Celular " + nuevoCelular + " registrado exitosamente");
             } catch (SQLException e) {
                 ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al registrar el celular");
 
-//                mostrarAlerta(Alert.AlertType.WARNING, "Error al registrar el celular", "Error", e.getMessage());
             }
         }
     }
 
-
-
-//    private void mostrarAlerta(Alert.AlertType type, String title, String header, String content) {
-//        Alert alert = new Alert(type);
-//        alert.setTitle(title);
-//        alert.setHeaderText(header);
-//        alert.setContentText(content);
-//        alert.showAndWait();
-//    }
 }

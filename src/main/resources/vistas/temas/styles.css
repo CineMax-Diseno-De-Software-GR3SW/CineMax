@@ -575,3 +575,32 @@
 #btnConfirmar:hover {
   -fx-background-color: #229954;
 }
+
+/* Estilo base para todos los RadioButton */
+.radio-button {
+  -fx-font-size: 14px;
+  -fx-text-fill: #fff; /* color del texto */
+  -fx-padding: 5 10;
+}
+
+/* Cuando el RadioButton está seleccionado */
+.radio-button:selected {
+  -fx-text-fill: #02487b; /* texto azul al estar activo */
+  -fx-font-weight: bold;
+}
+
+.radio-button .radio {
+  -fx-border-color: #02487b;
+  -fx-border-width: 2;
+  -fx-background-color: transparent;
+  -fx-background-radius: 50%;
+  -fx-padding: 3;
+  -fx-focus-color: transparent;   /* Quita el color de foco */
+  -fx-faint-focus-color: transparent; /* Quita el foco débil */
+  -fx-effect: none;               /* Elimina cualquier sombra */
+}
+
+.radio-button:selected .radio {
+  -fx-background-color: #02487b;
+  -fx-effect: none; /* También por si hay sombra */
+}
