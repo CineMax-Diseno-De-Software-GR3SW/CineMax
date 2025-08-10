@@ -39,6 +39,7 @@ public class ServicioUsuarios {
         //TODO: Creacion del usuario
 
         usuarioDAO.crearUsuario(usuario);
+        usuarioDAO.setRequiereCambioClave(usuario.getId(), usuario.isRequiereCambioClave());
 
         // Servicio de correo
         ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), clave));
