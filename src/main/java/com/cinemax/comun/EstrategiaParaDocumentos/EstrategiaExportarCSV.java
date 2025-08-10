@@ -1,4 +1,4 @@
-package com.cinemax.reportes.modelos.entidades;
+package com.cinemax.comun.EstrategiaParaDocumentos;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+
+import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 
 public class EstrategiaExportarCSV implements Exportable {
 

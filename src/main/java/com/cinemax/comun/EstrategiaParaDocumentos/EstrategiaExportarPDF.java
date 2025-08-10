@@ -1,4 +1,4 @@
-package com.cinemax.reportes.modelos.entidades;
+package com.cinemax.comun.EstrategiaParaDocumentos;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+
+import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 
 public class EstrategiaExportarPDF implements Exportable {
 

@@ -6,11 +6,11 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
+import com.cinemax.comun.EstrategiaParaDocumentos.EstrategiaExportarPDF;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
-import com.cinemax.reportes.modelos.entidades.EstrategiaExportarPDF;
 
 import java.io.File;
 import java.io.IOException;
