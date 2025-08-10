@@ -137,13 +137,10 @@ public class ServicioVisualizadorFunciones {
      */
     public void regresarPantallaCartelera(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/venta_boletos/VistaMostrarCartelera.fxml"));
-            Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root, 800, 600));
-            stage.centerOnScreen();
-        } catch (IOException e) {
+
+            ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(stage, "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 38, 500);
+        } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al regresar: " + e.getMessage());
             e.printStackTrace();
         }
@@ -168,7 +165,7 @@ public class ServicioVisualizadorFunciones {
                     currentStage,
                     new ArrayList<>(List.of(funcionSeleccionada)));
 
-            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 8, 150);
+            ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 12, 350);
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
