@@ -107,8 +107,14 @@ public class ControladorPortalPrincipal {
     }
     @FXML
     private void onVenderBoleto() {
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
-                "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
+
+        ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(
+            (Stage) btnVentaBoleto.getScene().getWindow(), 
+            "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 
+            33, 
+            500);
+        //ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
+        //        "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
     }
 
     @FXML
