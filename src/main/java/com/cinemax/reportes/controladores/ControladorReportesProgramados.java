@@ -1,4 +1,5 @@
 package com.cinemax.reportes.controladores;
+
 import com.cinemax.comun.ManejadorMetodosComunes;
 
 import java.io.IOException;
@@ -70,6 +71,9 @@ public class ControladorReportesProgramados {
 
     @FXML
     private void initialize() {
+        // Configurar la tabla de reportes generados
+        tablaReportesGenerados.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        
         // Inicializar la tabla de reportes generados
         if (tablaReportesGenerados != null) {
             inicializarTablaReportes();
@@ -182,8 +186,9 @@ public class ControladorReportesProgramados {
         // Verificar si ya existe un reporte con la misma frecuencia
         String frecuenciaSeleccionada = choiceFrecuencia.getValue();
         if (existeReporteConFrecuencia(frecuenciaSeleccionada)) {
-            ManejadorMetodosComunes.mostrarVentanaError("Ya existe un reporte programado con frecuencia " + frecuenciaSeleccionada + ".\n" +
-                    "Solo puede haber una ejecución por cada tipo de frecuencia.");
+            ManejadorMetodosComunes.mostrarVentanaError(
+                    "Ya existe un reporte programado con frecuencia " + frecuenciaSeleccionada + ".\n" +
+                            "Solo puede haber una ejecución por cada tipo de frecuencia.");
             return;
         }
 
@@ -571,43 +576,39 @@ public class ControladorReportesProgramados {
 
         VBox tablaPeliculas = new VBox(2);
         tablaPeliculas.setStyle(
-            "-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10; -fx-background-radius: 5px;");
+                "-fx-border-color: #ecf0f1; -fx-border-width: 1px; -fx-padding: 10; -fx-background-radius: 5px;");
 
         // Encabezados
         HBox headerPeliculas = new HBox();
         headerPeliculas.setStyle("-fx-background-color: #8e44ad; -fx-padding: 8;");
         headerPeliculas.getChildren().addAll(
-            crearCeldaTabla("Título", true),
-            crearCeldaTabla("Funciones", true),
-            crearCeldaTabla("Boletos Vendidos", true),
-            crearCeldaTabla("Ingresos", true));
+                crearCeldaTabla("Título", true),
+                crearCeldaTabla("Funciones", true),
+                crearCeldaTabla("Boletos Vendidos", true),
+                crearCeldaTabla("Ingresos", true));
 
         // Datos ficticios
         String[][] peliculas = {
-            { "Barbie", "3", "320", "$9,600.00" },
-            { "Oppenheimer", "2", "210", "$6,300.00" },
-            { "Intensamente 2", "2", "180", "$5,400.00" },
-            { "Garfield", "1", "80", "$2,400.00" }
+                { "Barbie", "3", "320", "$9,600.00" },
+                { "Oppenheimer", "2", "210", "$6,300.00" },
+                { "Intensamente 2", "2", "180", "$5,400.00" },
+                { "Garfield", "1", "80", "$2,400.00" }
         };
 
         VBox filasPeliculas = new VBox(2);
         for (String[] fila : peliculas) {
             HBox filaPelicula = new HBox();
             for (String celda : fila) {
-            Label lbl = crearCeldaTabla(celda, false);
-            lbl.setStyle("-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
-            filaPelicula.getChildren().add(lbl);
+                Label lbl = crearCeldaTabla(celda, false);
+                lbl.setStyle("-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
+                filaPelicula.getChildren().add(lbl);
             }
             filasPeliculas.getChildren().add(filaPelicula);
         }
 
-        
-        
-        
         tablaDatos.getChildren().addAll(headerTabla, filasDatos, totalRow);
         contenido.getChildren().addAll(tituloSeccion, tablaDatos);
-        
-        
+
         contenido.getChildren().addAll(tituloPeliculas, tablaPeliculas);
         tablaPeliculas.getChildren().addAll(headerPeliculas, filasPeliculas);
         return contenido;

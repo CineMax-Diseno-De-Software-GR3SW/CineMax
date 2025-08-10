@@ -43,19 +43,25 @@
                </children>
             </VBox>
             <AnchorPane prefHeight="406.0">
-               <children>
-                  <ChoiceBox fx:id="choiceFrecuencia" accessibleRole="CHECK_MENU_ITEM" layoutX="188.0" layoutY="61.0" prefWidth="150.0" />
-                  <Label layoutX="30.0" layoutY="63.0" prefWidth="130.0" styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Programar cada" />
-                  <Button layoutX="385.0" layoutY="82.0" mnemonicParsing="false" onAction="#confirmarReporteProgramado" prefHeight="46.0" prefWidth="129.0" styleClass="primary-button" text="Confirmar" />
-                  <TableView fx:id="tablaReportesGenerados" layoutX="9.0" layoutY="170.0" prefHeight="200.0" prefWidth="575.0">
-                     <columns>
-                        <TableColumn fx:id="columnaNombre" prefWidth="150" text="Nombre del Reporte" />
-                        <TableColumn fx:id="columnaFecha" prefWidth="132.79991149902344" text="Fecha Generación" />
-                        <TableColumn fx:id="columnaEstado" prefWidth="96.79998779296875" text="Estado" />
-                        <TableColumn fx:id="columnaAcciones" prefWidth="194.4000122070313" text="Acciones" />
-                     </columns>
-                  </TableView>
-               </children>
+                  <children>
+                     <ChoiceBox fx:id="choiceFrecuencia" layoutX="188.0" layoutY="61.0" prefWidth="150.0" />
+                     <Label layoutX="30.0" layoutY="63.0" prefWidth="130.0" text="Programar cada" />
+                     <Button layoutX="385.0" layoutY="82.0" prefHeight="46.0" prefWidth="129.0" text="Confirmar" />
+            
+                     <TableView fx:id="tablaReportesGenerados"
+                                 AnchorPane.leftAnchor="10.0"
+                                 AnchorPane.rightAnchor="10.0"
+                                 AnchorPane.topAnchor="170.0"
+                                 AnchorPane.bottomAnchor="10.0"
+                                 prefHeight="200.0">
+                        <columns>
+                              <TableColumn fx:id="columnaNombre" text="Nombre del Reporte" />
+                              <TableColumn fx:id="columnaFecha" text="Fecha Generación" />
+                              <TableColumn fx:id="columnaEstado" text="Estado" />
+                              <TableColumn fx:id="columnaAcciones" text="Acciones" />
+                        </columns>
+                     </TableView>
+                  </children>
             </AnchorPane>
          </children>
       </VBox>
