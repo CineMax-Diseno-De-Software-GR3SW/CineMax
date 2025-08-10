@@ -182,7 +182,7 @@ public class ControladorRegistrarUsuario implements Initializable {
 
 
         String nombreCompleto = nombres + " " + apellidos;
-        //Validar la cédula
+        //Validación de la cédula
         ContextoValidacion contextoValidacion = new ContextoValidacion();
         contextoValidacion.setEstrategia(new EstrategiaCedulaValidacion());
         if(!contextoValidacion.ejecutarEstrategia(campoCedula.getText())) {

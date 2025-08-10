@@ -71,7 +71,7 @@
         </VBox>
     </center>
 
-    <!-- ░░░ PANEL IZQUIERDO CON DATOS DE SESIÓN ░░░ -->
+    <!-- ░░░ PANEL IZQUIERDO CON LOS DATOS DE SESIÓN ░░░ -->
     <left>
         <VBox spacing="15" prefWidth="180" styleClass="info-admin-pane" alignment="TOP_CENTER">
             <children>

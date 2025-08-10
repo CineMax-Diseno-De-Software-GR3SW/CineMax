@@ -74,7 +74,7 @@
     <left>
         <VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="180.0" spacing="15.0"
               styleClass="summary-pane">
-            <HBox alignment="BOTTOM_LEFT" maxWidth="155.0" prefWidth="90.0">
+            <HBox alignment="BOTTOM_LEFT" maxWidth="150.0" prefWidth="90.0">
                 <!-- Datos de sesión -->
                 <VBox alignment="TOP_CENTER" maxWidth="145.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="400.0"
                       prefWidth="150.0" spacing="2" styleClass="side-bar">
