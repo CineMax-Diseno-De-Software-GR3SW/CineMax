@@ -168,8 +168,8 @@ public class ServicioVisualizadorFunciones {
             ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 12, 350);
 
         } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
-            e.printStackTrace();
+
+            
         }
     }
 
