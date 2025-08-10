@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.controladores;
+package com.cinemax.venta_boletos.Controladores;
 
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.venta_boletos.servicios.ServicioVisualizadorCartelera;

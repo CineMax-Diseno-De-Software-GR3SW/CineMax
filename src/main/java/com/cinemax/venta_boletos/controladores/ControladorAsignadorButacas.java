@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.controladores;
+package com.cinemax.venta_boletos.Controladores;
 
 import java.util.ArrayList;
 import java.util.HashSet;

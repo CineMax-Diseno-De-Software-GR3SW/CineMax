@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.controladores;
+package com.cinemax.venta_boletos.Controladores;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

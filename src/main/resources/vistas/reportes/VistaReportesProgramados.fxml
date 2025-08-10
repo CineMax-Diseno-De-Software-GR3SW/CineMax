@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -16,7 +16,7 @@
    <top>
       <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
          <children>
-            <Button fx:id="btnBack" onAction="#onBackAction" styleClass="icon-button" text="←" />
+            <Button fx:id="btnBack" onAction="#volverEscena" styleClass="stepper-button" text="←" />
             <Label styleClass="section-title" text="Gestión de Reportes">
                <font>
                   <Font name="Arial Black" size="22" />
@@ -42,20 +42,21 @@
                   <Label styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Seleccione las opciones para generar un reporte" />
                </children>
             </VBox>
-            <AnchorPane prefHeight="406.0">
-               <children>
-                  <ChoiceBox fx:id="choiceFrecuencia" accessibleRole="CHECK_MENU_ITEM" layoutX="188.0" layoutY="61.0" prefWidth="150.0" />
-                  <Label layoutX="30.0" layoutY="63.0" prefWidth="130.0" styleClass="summary-title" stylesheets="@CineMax/src/main/resources/vistas/temas/ayu-theme.css" text="Programar cada" />
-                  <Button layoutX="385.0" layoutY="82.0" mnemonicParsing="false" onAction="#confirmarReporteProgramado" prefHeight="46.0" prefWidth="129.0" styleClass="primary-button" text="Confirmar" />
-                  <TableView fx:id="tablaReportesGenerados" layoutX="9.0" layoutY="170.0" prefHeight="200.0" prefWidth="575.0">
-                     <columns>
-                        <TableColumn fx:id="columnaNombre" prefWidth="150" text="Nombre del Reporte" />
-                        <TableColumn fx:id="columnaFecha" prefWidth="132.79991149902344" text="Fecha Generación" />
-                        <TableColumn fx:id="columnaEstado" prefWidth="96.79998779296875" text="Estado" />
-                        <TableColumn fx:id="columnaAcciones" prefWidth="194.4000122070313" text="Acciones" />
-                     </columns>
-                  </TableView>
-               </children>
+            <AnchorPane>
+                  <children>
+                     <Label layoutX="30.0" layoutY="63.0" text="Programar cada: " />
+                  <ComboBox fx:id="elegirFrecuencia" layoutX="191.0" layoutY="60.0" prefWidth="150.0" promptText="Seleccionar la frecuencia de programación" />
+                     <Button layoutX="421.0" layoutY="85.0" onAction="#confirmarReporteProgramado" prefHeight="46.0" prefWidth="129.0" styleClass="primary-button" text="Confirmar" />
+            
+                     <TableView fx:id="tablaReportesGenerados" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="170.0">
+                        <columns>
+                              <TableColumn fx:id="columnaNombre" prefWidth="151.20002126693726" text="Nombre del Reporte" />
+                              <TableColumn fx:id="columnaFecha" prefWidth="155.2000274658203" text="Fecha Generación" />
+                              <TableColumn fx:id="columnaEstado" prefWidth="110.4000244140625" text="Estado" />
+                              <TableColumn fx:id="columnaAcciones" prefWidth="123.99996948242188" text="Acciones" />
+                        </columns>
+                     </TableView>
+                  </children>
             </AnchorPane>
          </children>
       </VBox>
@@ -65,7 +66,6 @@
          <children>
             <Button mnemonicParsing="false" onAction="#goToReportesPrincipal" styleClass="primary-button" text="ReportesPrincipal" />
             <Region VBox.vgrow="ALWAYS" />
-            <Button onAction="#onCerrarSesion" styleClass="primary-button" text="Log Out" />
          </children>
       </VBox>
    </left>

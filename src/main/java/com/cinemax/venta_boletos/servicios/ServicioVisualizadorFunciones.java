@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios;
+package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.comun.ControladorCargaConDatos;
 import com.cinemax.comun.ManejadorMetodosComunes;

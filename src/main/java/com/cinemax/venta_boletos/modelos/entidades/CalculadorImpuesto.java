@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.modelos.entidades;
+package com.cinemax.venta_boletos.Modelos.entidades;
 
 /**
  * Interfaz que define el contrato para el cálculo de impuestos en el sistema de venta de boletos.

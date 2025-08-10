@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.controladores;
+package com.cinemax.venta_boletos.Controladores;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.servicios;
+package com.cinemax.venta_boletos.Servicios;
 
 import java.io.File;
 import java.text.SimpleDateFormat;

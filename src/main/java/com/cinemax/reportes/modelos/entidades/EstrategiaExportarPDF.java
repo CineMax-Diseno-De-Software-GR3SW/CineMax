@@ -1,7 +1,9 @@
-package com.cinemax.reportes.modelos;
+package com.cinemax.reportes.modelos.entidades;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -10,7 +12,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-public class ExportarPDFStrategy implements Export {
+public class EstrategiaExportarPDF implements Exportable {
 
     // para generar el PDF
     @Override
@@ -155,10 +157,10 @@ public class ExportarPDFStrategy implements Export {
 
                 // Datos ficticios
                 String[][] peliculas = {
-                        { "Barbie", "3", "320", "$9,600.00" },
-                        { "Oppenheimer", "2", "210", "$6,300.00" },
-                        { "Intensamente 2", "2", "180", "$5,400.00" },
-                        { "Garfield", "1", "80", "$2,400.00" }
+                        { "Barbie", "3", "320", ",600.00" },
+                        { "Oppenheimer", "2", "210", ",300.00" },
+                        { "Intensamente 2", "2", "180", ",400.00" },
+                        { "Garfield", "1", "80", "e,400.00" }
                 };
                 int numFilasPeliculas = peliculas.length + 1; // +1 para encabezado
 
@@ -226,7 +228,7 @@ public class ExportarPDFStrategy implements Export {
                 contentStream.setFont(fontNormal, 10);
                 String[] observaciones = {
                         "• Este reporte muestra las ventas de boletos de cine en el periodo especificado.",
-                        "• Los ingresos están calculados en base al precio promedio de $30.00 por boleto.",
+                        "• Los ingresos están calculados en base al precio promedio de .00 por boleto.",
                         "• Reporte generado automáticamente por el sistema CineMax."
                 };
                 contentStream.beginText();
@@ -253,4 +255,125 @@ public class ExportarPDFStrategy implements Export {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void exportarFormatoPrincipal(List<Map<String, Object>> datos, File destino, String tituloReporte,
+            Map<String, Object> infoExtra) {
+        try (PDDocument document = new PDDocument()) {
+            PDPage page = new PDPage(PDRectangle.A4);
+            document.addPage(page);
+            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
+                PDType1Font fontBold = PDType1Font.HELVETICA_BOLD;
+                PDType1Font fontNormal = PDType1Font.HELVETICA;
+                float margin = 50;
+                float yPosition = page.getMediaBox().getHeight() - margin;
+                float fontSize = 12;
+
+                // Título principal
+                contentStream.setFont(fontBold, 18);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText(tituloReporte);
+                contentStream.endText();
+                yPosition -= 40;
+
+                // Información extra
+                if (infoExtra != null && infoExtra.containsKey("subtitulo")) {
+                    contentStream.setFont(fontNormal, fontSize);
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(margin, yPosition);
+                    contentStream.showText((String) infoExtra.get("subtitulo"));
+                    contentStream.endText();
+                    yPosition -= 20;
+                }
+
+                // Subtítulo de la sección
+                contentStream.setFont(fontBold, 14);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, yPosition);
+                contentStream.showText("RESUMEN DE VENTAS");
+                contentStream.endText();
+                yPosition -= 30;
+
+                // Tabla
+                float tableWidth = 400;
+                float rowHeight = 25;
+                float col1X = margin;
+                float col2X = margin + 100;
+                float col3X = margin + 200;
+                float col4X = margin + 300;
+
+                // Headers
+                contentStream.setFont(fontBold, 10);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(col1X + 5, yPosition - 15);
+                contentStream.showText("Fecha");
+                contentStream.newLineAtOffset(col2X - col1X - 5, 0);
+                contentStream.showText("Tipo");
+                contentStream.newLineAtOffset(col3X - col2X, 0);
+                contentStream.showText("Boletos");
+                contentStream.newLineAtOffset(col4X - col3X, 0);
+                contentStream.showText("Ingresos");
+                contentStream.endText();
+
+                // Datos
+                contentStream.setFont(fontNormal, 10);
+                int totalBoletos = 0;
+                double totalIngresos = 0;
+
+                for (int i = 0; i < datos.size(); i++) {
+                    Map<String, Object> d = datos.get(i);
+
+                    // Obtener valores del mapa
+                    String fecha = d.get("fecha").toString();
+                    int boletosVendidos = (int) d.get("total_boletos_vendidos");
+                    double ingreso = (double) d.get("ingreso_total");
+                    String tipoSala = (String) d.get("tipos_sala");
+                    String formato = (String) d.get("formatos");
+
+                    // Combinar tipo de sala y formato para mostrar como "tipo"
+                    String tipoCompleto = (tipoSala != null ? tipoSala : "Normal") + " " +
+                            (formato != null ? formato : "2D");
+
+                    contentStream.beginText();
+                    contentStream.newLineAtOffset(col1X + 5, yPosition - 40 - (i * rowHeight));
+                    contentStream.showText(fecha);
+                    contentStream.newLineAtOffset(col2X - col1X - 5, 0);
+                    contentStream.showText(tipoCompleto);
+                    contentStream.newLineAtOffset(col3X - col2X, 0);
+                    contentStream.showText(String.valueOf(boletosVendidos));
+                    contentStream.newLineAtOffset(col4X - col3X, 0);
+                    contentStream.showText(String.format("$%.2f", ingreso));
+                    contentStream.endText();
+
+                    totalBoletos += boletosVendidos;
+                    totalIngresos += ingreso;
+                }
+
+                // Fila de total
+                contentStream.setFont(fontBold, 10);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(col1X + 5, yPosition - 40 - (datos.size() * rowHeight));
+                contentStream.showText("TOTAL:");
+                contentStream.newLineAtOffset(col2X - col1X - 5, 0);
+                contentStream.showText("");
+                contentStream.newLineAtOffset(col3X - col2X, 0);
+                contentStream.showText(String.valueOf(totalBoletos));
+                contentStream.newLineAtOffset(col4X - col3X, 0);
+                contentStream.showText(String.format("$%.2f", totalIngresos));
+                contentStream.endText();
+
+                // Pie de página
+                contentStream.setFont(fontNormal, 8);
+                contentStream.beginText();
+                contentStream.newLineAtOffset(margin, 50);
+                contentStream.showText("© 2025 CineMax - Sistema de Gestion de Reportes");
+                contentStream.endText();
+            }
+            document.save(destino);
+        } catch (IOException e) {
+            System.out.println("Error al exportar el reporte a PDF: " + e.getMessage());
+        }
+    }
+
 }

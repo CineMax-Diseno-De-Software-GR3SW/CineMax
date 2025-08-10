@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.modelos.entidades;
+package com.cinemax.venta_boletos.Modelos.entidades;
 
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;

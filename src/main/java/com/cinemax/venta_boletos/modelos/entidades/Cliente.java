@@ -1,4 +1,4 @@
-package com.cinemax.venta_boletos.modelos.entidades;
+package com.cinemax.venta_boletos.Modelos.entidades;
 
 /**
  * Entidad que representa un cliente en el sistema de venta de boletos de CineMax.

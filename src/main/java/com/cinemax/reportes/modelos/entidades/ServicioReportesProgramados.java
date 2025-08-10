@@ -1,12 +1,4 @@
-package com.cinemax.reportes.servicios;
-
-import com.cinemax.reportes.modelos.AnualStrategy;
-import com.cinemax.reportes.modelos.DiarioStrategy;
-import com.cinemax.reportes.modelos.FrecuenciaStrategy;
-import com.cinemax.reportes.modelos.MensualStrategy;
-import com.cinemax.reportes.modelos.ReporteGenerado;
-import com.cinemax.reportes.modelos.SemanalStrategy;
-import com.cinemax.reportes.modelos.TrimestralStrategy;
+package com.cinemax.reportes.modelos.entidades;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -18,18 +10,18 @@ import java.util.List;
 import java.util.concurrent.*;
 
 // Aqui se aplico el patron Singleton para asegurar que solo haya una instancia de este servicio
-public class ReportesSchedulerService {
-    private static ReportesSchedulerService instance;
+public class ServicioReportesProgramados {
+    private static ServicioReportesProgramados instance;
     private final List<ReporteGenerado> reportesPendientes = new ArrayList<>();
     private final ObservableList<ReporteGenerado> reportesEjecutados = FXCollections.observableArrayList();
     private ScheduledExecutorService scheduler;
 
-    private ReportesSchedulerService() {
+    private ServicioReportesProgramados() {
     }
 
-    public static synchronized ReportesSchedulerService getInstance() {
+    public static synchronized ServicioReportesProgramados getInstance() {
         if (instance == null) {
-            instance = new ReportesSchedulerService();
+            instance = new ServicioReportesProgramados();
         }
         return instance;
     }
@@ -80,25 +72,25 @@ public class ReportesSchedulerService {
         // recurrentes
     }
 
-    private FrecuenciaStrategy getStrategy(String frecuencia) {
+    private EstrategiaDeFrecuencia getStrategy(String frecuencia) {
         switch (frecuencia) {
             case "Diario":
-                return new DiarioStrategy();
+                return new EstrategiaDiaria();
             case "Semanal":
-                return new SemanalStrategy();
+                return new EstrategiaSemanal();
             case "Mensual":
-                return new MensualStrategy();
+                return new EstrategiaMensual();
             case "Trimestral":
-                return new TrimestralStrategy();
+                return new EstrategiaTrimestal();
             case "Anual":
-                return new AnualStrategy();
+                return new EstrategiaAnual();
             default:
-                return new DiarioStrategy();
+                return new EstrategiaDiaria();
         }
     }
 
     private LocalDateTime calcularSiguienteEjecucion(LocalDateTime fechaGeneracion, String frecuencia) {
-        FrecuenciaStrategy strategy = getStrategy(frecuencia);
+        EstrategiaDeFrecuencia strategy = getStrategy(frecuencia);
         return strategy.calcularSiguiente(fechaGeneracion);
     }
 

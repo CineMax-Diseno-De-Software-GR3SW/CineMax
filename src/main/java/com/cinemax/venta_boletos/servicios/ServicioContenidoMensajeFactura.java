@@ -1,7 +1,7 @@
-package com.cinemax.venta_boletos.servicios;
+package com.cinemax.venta_boletos.Servicios;
 
 import com.cinemax.empleados.servicios.ContenidoMensaje;
-import com.cinemax.venta_boletos.modelos.entidades.Factura;
+import com.cinemax.venta_boletos.Modelos.entidades.Factura;
 
 public class ServicioContenidoMensajeFactura {
 
