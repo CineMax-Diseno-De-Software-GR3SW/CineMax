@@ -31,12 +31,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
-import com.cinemax.reportes.modelos.Export;
+import com.cinemax.reportes.modelos.Exportable;
 import com.cinemax.reportes.modelos.ExportarCSVStrategy;
 import com.cinemax.reportes.modelos.ExportarPDFStrategy;
 import com.cinemax.reportes.modelos.ReporteGenerado;
 import com.cinemax.reportes.modelos.persistencia.VentaDAO;
-import com.cinemax.reportes.servicios.ReportesSchedulerService;
+import com.cinemax.reportes.servicios.ServicioReportesProgramados;
 import com.cinemax.reportes.servicios.VentasService;
 
 // Para la dependencia de programado task
@@ -64,7 +64,7 @@ public class ControladorReportesProgramados {
     @FXML
     private TableColumn<ReporteGenerado, Void> columnaAcciones;
 
-    final ReportesSchedulerService schedulerService = ReportesSchedulerService.getInstance();
+    final ServicioReportesProgramados schedulerService = ServicioReportesProgramados.getInstance();
 
     private VentasService ventasService = new VentasService();
     private Map<String, Object> datos = ventasService.getResumenDeVentas();;
@@ -72,7 +72,7 @@ public class ControladorReportesProgramados {
     @FXML
     private void initialize() {
         // Configurar la tabla de reportes generados
-        tablaReportesGenerados.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
+        //tablaReportesGenerados.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         
         // Inicializar la tabla de reportes generados
         if (tablaReportesGenerados != null) {
@@ -634,7 +634,7 @@ public class ControladorReportesProgramados {
             File archivo = fileChooser.showSaveDialog(stage);
 
             if (archivo != null) {
-                Export exportStrategy;
+                Exportable exportStrategy;
                 if (formato.equalsIgnoreCase("pdf")) {
                     exportStrategy = new ExportarPDFStrategy();
                 } else if (formato.equalsIgnoreCase("csv")) {

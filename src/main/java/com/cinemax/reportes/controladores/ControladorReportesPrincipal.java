@@ -169,7 +169,7 @@ class ExportPDFStrategy implements ExportStrategy {
                 contentStream.setFont(fontNormal, 8);
                 contentStream.beginText();
                 contentStream.newLineAtOffset(margin, 50);
-                contentStream.showText("© 2024 CineMax - Sistema de Gestion de Reportes");
+                contentStream.showText("© 2025 CineMax - Sistema de Gestion de Reportes");
                 contentStream.endText();
             }
             document.save(destino);
@@ -244,18 +244,6 @@ public class ControladorReportesPrincipal {
     // Datos para mandarlas a la grafica
     private List<Map<String, Object>> estadisticas = ventasService.getEstadisticasDeBarras();
 
-    // Datos quemados para las gráficas
-    private final List<ReporteVentaDTO> datosSimulados = Arrays.asList(
-            new ReporteVentaDTO("2024-07-01", 80, 2400.0, "VIP", "3D"),
-            new ReporteVentaDTO("2024-07-01", 40, 1200.0, "Normal", "2D"),
-            new ReporteVentaDTO("2024-07-02", 60, 1800.0, "VIP", "2D"),
-            new ReporteVentaDTO("2024-07-02", 38, 1140.0, "Normal", "3D"),
-            new ReporteVentaDTO("2024-07-03", 90, 2700.0, "VIP", "3D"),
-            new ReporteVentaDTO("2024-07-03", 66, 1980.0, "Normal", "2D"),
-            new ReporteVentaDTO("2024-07-04", 75, 2250.0, "VIP", "2D"),
-            new ReporteVentaDTO("2024-07-04", 45, 1350.0, "Normal", "3D"),
-            new ReporteVentaDTO("2024-07-05", 85, 2550.0, "VIP", "3D"),
-            new ReporteVentaDTO("2024-07-05", 55, 1650.0, "Normal", "2D"));
 
     // Datos simulados para reportes generados
     private final List<ReporteGenerado> reportesSimulados = Arrays.asList(
@@ -369,7 +357,7 @@ public class ControladorReportesPrincipal {
     private void goToReporteProgramado(ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/reportes/ModuloReportesProgramados.fxml"));
+                    getClass().getResource("/vistas/reportes/VistaReportesProgramados.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));

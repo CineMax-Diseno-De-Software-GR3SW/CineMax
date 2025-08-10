@@ -2,10 +2,11 @@ package com.cinemax.reportes.modelos;
 
 import java.time.LocalDateTime;
 
-public class DiarioStrategy implements FrecuenciaStrategy {
+public class EstrategiaMensual implements EstrategiaDeFrecuencia {
 
     @Override
     public LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion) {
-        return fechaGeneracion.plusSeconds(10); // Incrementa un día
+        return fechaGeneracion.plusMonths(1); // Incrementa un mes
     }
+    
 }

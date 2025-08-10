@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
-public class ExportarCSVStrategy implements Export {
+public class ExportarCSVStrategy implements Exportable {
 
     @Override
     public void exportar(ReporteGenerado reporte, File archivo, Map<String, Object> datos) {
