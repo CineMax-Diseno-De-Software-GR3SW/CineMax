@@ -97,7 +97,7 @@ package servicios{
     }    
 }
 
-package Utilidades {
+package utilidades {
 
     package EstrategiaValidacionDocumentos {
 
