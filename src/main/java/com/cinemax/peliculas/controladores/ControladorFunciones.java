@@ -2,7 +2,6 @@ package com.cinemax.peliculas.controladores;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -20,7 +19,7 @@ import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.salas.servicios.ServicioSala;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.collections.FXCollections;
@@ -79,7 +78,7 @@ public class ControladorFunciones implements Initializable {
     private PeliculaDAO peliculaDAO;
 
     /** Servicio para operaciones con salas */
-    private SalaService salaService;
+    private ServicioSala servicioSala;
 
     // Componentes de la interfaz FXML para búsqueda y tabla
     /** Campo de texto para búsqueda general */
@@ -196,7 +195,7 @@ public class ControladorFunciones implements Initializable {
         this.servicioFuncion = new ServicioFuncion();
         this.funcionDAO = new FuncionDAO();
         this.peliculaDAO = new PeliculaDAO();
-        this.salaService = new SalaService();
+        this.servicioSala = new ServicioSala();
     }
 
     /**
@@ -643,7 +642,7 @@ public class ControladorFunciones implements Initializable {
     private void configurarComboBoxSalas() {
         if (cmbSala != null) {
             try {
-                List<Sala> salas = salaService.listarSalas();
+                List<Sala> salas = servicioSala.listarSalas();
                 cmbSala.setItems(FXCollections.observableArrayList(salas));
                 cmbSala.setConverter(new StringConverter<Sala>() {
                     @Override

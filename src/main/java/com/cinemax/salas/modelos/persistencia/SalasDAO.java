@@ -47,7 +47,51 @@ public class SalasDAO {
             }
         }
     }
-
+    /**
+     * Busca una sala por su nombre, ignorando mayúsculas y minúsculas.
+     *
+     * @param nombre Nombre de la sala a buscar.
+     * @return Objeto {@link Sala} si se encuentra, null si no existe.
+     * @throws Exception si ocurre un error en la consulta SQL.
+     */
+    public Sala buscarSalaPorNombre(String nombre) throws Exception {
+        String sql = "SELECT * FROM Sala WHERE LOWER(nombre) = LOWER(?)";
+        Connection conn = ConexionBaseSingleton.getInstancia().getConexion();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nombre);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Sala(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getInt("capacidad"),
+                        TipoSala.valueOf(rs.getString("tipo")),
+                        EstadoSala.valueOf(rs.getString("estado"))
+                );
+            }
+        }
+        return null;
+    }
+    // src/main/java/com/cinemax/salas/modelos/persistencia/SalasDAO.java
+    public List<Sala> buscarSalasPorNombreParcial(String nombre) throws Exception {
+        List<Sala> resultado = new ArrayList<>();
+        String sql = "SELECT * FROM Sala WHERE nombre ILIKE ?";
+        Connection conn = ConexionBaseSingleton.getInstancia().getConexion();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + nombre + "%");
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                resultado.add(new Sala(
+                        rs.getInt("id"),
+                        rs.getString("nombre"),
+                        rs.getInt("capacidad"),
+                        TipoSala.valueOf(rs.getString("tipo")),
+                        EstadoSala.valueOf(rs.getString("estado"))
+                ));
+            }
+        }
+        return resultado;
+    }
     /**
      * Recupera una sala por su ID.
      *

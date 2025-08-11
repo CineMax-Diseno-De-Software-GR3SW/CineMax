@@ -39,7 +39,7 @@ import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.salas.servicios.ServicioSala;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
@@ -72,7 +72,7 @@ public class ControladorSeleccionFuncion implements Initializable {
 
     // Servicios de negocio
     /** Servicio para operaciones con salas */
-    private final SalaService salaService;
+    private final ServicioSala servicioSala;
     
     // DAOs para acceso directo a datos
     /** DAO para acceso directo a funciones */
@@ -139,7 +139,7 @@ public class ControladorSeleccionFuncion implements Initializable {
         this.cartelera = new Cartelera(new ArrayList<>());
         this.funcionDAO = new FuncionDAO();
         this.peliculaDAO = new PeliculaDAO();
-        this.salaService = new SalaService();
+        this.servicioSala = new ServicioSala();
         this.funcionesDisponibles = new ArrayList<>();
     }
 
@@ -268,7 +268,7 @@ public class ControladorSeleccionFuncion implements Initializable {
 
         // Configurar filtro de sala
         try {
-            List<Sala> salas = salaService.listarSalas();
+            List<Sala> salas = servicioSala.listarSalas();
             cmbFiltroSala.getItems().clear();
             cmbFiltroSala.getItems().add(null); // Opción "Todas"
             cmbFiltroSala.getItems().addAll(salas);

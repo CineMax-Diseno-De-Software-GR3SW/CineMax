@@ -4,7 +4,7 @@ import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.modelos.persistencia.ButacasDAO;
 import com.cinemax.salas.modelos.persistencia.SalasDAO;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,7 +19,7 @@ import java.util.List;
  * - Generar automáticamente butacas según la capacidad de la sala.
  * - Validar disponibilidad y evitar duplicados.
  */
-public class ButacaService {
+public class ServicioButaca {
 
     /** DAO para operaciones CRUD de butacas */
     private final ButacasDAO butacasDAO = new ButacasDAO();
@@ -163,5 +163,20 @@ public class ButacaService {
     public void eliminarButaca(int id) throws Exception {
         butacasDAO.eliminarButaca(id);
     }
+    /**
+     * Lista todas las butacas de una sala por su nombre.
+     *
+     * @param nombreSala Nombre de la sala.
+     * @return Lista de butacas de la sala especificada.
+     * @throws Exception si la sala no existe o hay un error en la consulta.
+     */
+    // ServicioButaca.java
+    public List<Butaca> buscarButacasPorNombreSalaParcial(String nombreParcial) throws Exception {
+        List<Sala> salas = salasDAO.buscarSalasPorNombreParcial(nombreParcial);
+        List<Butaca> resultado = new ArrayList<>();
+        for (Sala sala : salas) {
+            resultado.addAll(butacasDAO.listarButacasPorSala(sala.getId()));
+        }
+        return resultado;
+    }
 }
-
