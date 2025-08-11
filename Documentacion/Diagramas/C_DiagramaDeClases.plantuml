@@ -116,6 +116,25 @@ package Utilidades {
         class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
         }
     }
+
+    package EstrategiaParaDocumentos {
+        interface Exportable {
+            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
+            +exportarFormatoPrincipal(datos: List<Map<String, Object>>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+        }
+
+        class EstrategiaExportarPDF {
+            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
+            +exportarFormatoPrincipal(datos: List<Map<String, Object>>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+            +crearDocumentoPDF(): PDDocument
+            +guardarPDF(document: PDDocument, archivo: File): void
+        }
+
+        class EstrategiaExportarCSV {
+            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
+            +exportarFormatoPrincipal(datos: List<Map<String, Object>>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+        }
+    }
 }
 
 ' ------------------ MODELOS ------------------
