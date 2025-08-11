@@ -2,42 +2,14 @@
 'https://plantuml.com/class-diagram
 package salas {
 package modelos {
-package persistencia {
-    class SalasDAO {
-        +crearSala(sala: Sala): void
-        +obtenerSalaPorId(id: int): Sala
-        +listarSalas(): List<Sala>
-        +actualizarSala(sala: Sala): void
-        +eliminarSala(id: int): void
-    }
-    class ButacasDAO {
-        +crearButaca(butaca: Butaca): void
-        +generarButacas(salaId: int, filas: int, columnas: int): void
-        +obtenerButacaPorId(id: int): Butaca
-        +listarTodasButacas(): List<Butaca>
-        +listarButacasPorSala(salaId: int): List<Butaca>
-        +actualizarButaca(butaca: Butaca): void
-        +eliminarButaca(id: int): void
-    }
-}
+
 package entidades{
     class Sala {
         -id: int
         -nombre: String
         -capacidad: int
-        -tipo: String
+        -tipo: TipoSala
         -estado: EstadoSala
-        +getEstado(): EstadoSala
-        +getId(): int
-        +setId(id: int): void
-        +getNombre(): String
-        +setNombre(nombre: String): void
-        +getCapacidad(): int
-        +setCapacidad(capacidad: int): void
-        +getTipo(): String
-        +setTipo(tipo: String): void
-        +toString(nombre): String
-
     }
    class Butaca {
    -id: int
@@ -45,11 +17,6 @@ package entidades{
    -fila: String
    -columna: String
    -estado: EstadoButaca
-   +getId(): int
-   +setId(): int
-   +getFila(): String
-   +getColumna(): String
-   +getEstado(): String
    }
    enum EstadoSala{
    DISPONIBLE,
@@ -60,7 +27,7 @@ package entidades{
    OCUPADA,
    INHABILITADA
    }
-   interface SalaFactory{
+   abstract class SalaFactory{
    +crearSala(int id, String nombre, int capacidad, EstadoSala estado)
    }
    class SalaNormalFactory implements SalaFactory{
@@ -70,7 +37,7 @@ package entidades{
    +crearSala(int id, String nombre, int capacidad, EstadoSala estado)
    }
    enum TipoSala{
-   -multiplicador: int
+   -multiplicador: double
    NORMAL(1.00),
    VIP(1.50)
    +getMultiplicador()
@@ -78,7 +45,7 @@ package entidades{
    }
 
    }
-}
+
 
 
     }
@@ -90,9 +57,7 @@ package entidades{
     Sala o- Butaca
     Butaca -u> EstadoButaca
     package servicios{
-    class ButacaService{
-    -butacasDAO : ButacasDAO
-    -salasDAO: SalasDAO
+    class ServicioButaca{
     +listarButacasPorSala() : List<Butaca>
     +generarButacasAutomatica() : void
     +crearButaca(Butaca butaca) : void
@@ -101,10 +66,8 @@ package entidades{
     +listarTodasButacas() : List<Butaca>
     +eliminarButaca(int id) : void
     }
-    class SalaService{
-    -salasDAO : SalasDAO
-    -butacaService : ButacaService
-    -butacasDAO : ButacasDAO
+    class ServicioSala{
+    -ServicioButaca : ServicioButaca
     +crearSala(Sala sala) : void
     +obtenerSalaPorId(int id) : Sala
     +listarSalas() : List<Sala>
@@ -115,95 +78,43 @@ package entidades{
     }
     package controladores{
     class ControladorSalas {
-        -txtNombre: TextField
-        -cmbCapacidad: ComboBox<Integer>
-        -cmbTipo: ComboBox<TipoSala>
-        -cmbEstado: ComboBox<EstadoSala>
-        -tablaSalas: TableView<Sala>
-        -colId: TableColumn<Sala, Integer>
-        -colNombre: TableColumn<Sala, String>
-        -colCapacidad: TableColumn<Sala, Integer>
-        -colTipo: TableColumn<Sala, String>
-        -colEstado: TableColumn<Sala, String>
-        -lblTotalSalas: Label
-        -txtBuscar: TextField
-        -btnEliminar: Button
-        -btnGuardar: Button
-        -btnNuevo: Button
-        -salaService: SalaService
+
+        -servicioSala: ServicioSala
         -salas: ObservableList<Sala>
-        -butacaService: ButacaService
+        -servicioButaca: ServicioButaca
         -salaEnEdicion: Sala
         +initialize(): void
-        -limpiarFormulario(): void
-        -actualizarModoFormulario(): void
-        -onLimpiarFormulario(event: ActionEvent): void
-        -actualizarEstadoFormulario(): void
-        -validarFormularioCompleto(): boolean
         +onGuardar(event: ActionEvent): void
         +onBackAction(event: ActionEvent): void
-        -cargarSalas(): void
-        -listarTodasSalas(): void
-        -crearSala(): void
-        -actualizarSala(): void
-        -eliminarSala(): void
-        -buscarSala(): void
     }
     class ControladorButacas {
-        -salaService: SalaService
-        -servicio: ButacaService
-        -txtBuscarIdSala: TextField
-        -tablaButacas: TableView<Butaca>
-        -colId: TableColumn<Butaca, Integer>
-        -colFila: TableColumn<Butaca, String>
-        -colColumna: TableColumn<Butaca, String>
-        -colEstado: TableColumn<Butaca, String>
-        -colIdSala: TableColumn<Butaca, Integer>
-        -txtFila: TextField
-        -txtColumna: TextField
-        -cmbEstado: ComboBox<EstadoButaca>
-        -cmbSala: ComboBox<Sala>
-        -lblEstado: Label
-        -lblTotalButacas: Label
+        -servicioSala : ServicioSala
+        -servicioButaca: ServicioButaca
         -salas: ObservableList<Sala>
         -butacas: ObservableList<Butaca>
         +initialize(): void
-        -validarCampos(): boolean
-        -listarButacasPorSala(e: ActionEvent): void
-        -listarTodasButacas(e: ActionEvent): void
-        -crearButaca(e: ActionEvent): void
-        -actualizarButaca(e: ActionEvent): void
-        -eliminarButaca(e: ActionEvent): void
         +onBackAction(event: ActionEvent): void
-        -limpiarCampos(): void
     }
     class ControladorDeConsultaSalas {
-        -gridButacas: GridPane
-        -vbox: VBox
-        -butacaService: ButacaService
+        -servicioButaca : ServicioButaca
         -butacasSeleccionadas: List<Butaca>
         -controladorAsignadorButacas: ControladorAsignadorButacas
         +initialize(location: URL, resources: ResourceBundle): void
         +mostrarButacasDeSala(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
-        -seleccionarButaca(butaca: Butaca, btn: Button): void
-        -deseleccionarButaca(butaca: Butaca, btn: Button): void
         +getButacasSeleccionadas(): List<Butaca>
         +setControladorAsignadorButacas(controladorAsignadorButacas: ControladorAsignadorButacas): void
     }
     }
-ButacaService -u-> ButacasDAO
-ButacaService -u-> SalasDAO
-SalaService -u-> SalasDAO
-SalaService -u-> ButacaService
-SalaService -u-> ButacasDAO
-ControladorButacas -u-> SalaService
-ControladorButacas -u-> ButacaService
+
+ServicioSala -u-> ServicioButaca
+ControladorButacas -u-> ServicioSala
+ControladorButacas -u-> ServicioButaca
 Sala -u-o ControladorButacas
 Butaca -u-o ControladorButacas
-ControladorSalas -u-> SalaService
+ControladorSalas -u-> ServicioSala
 ControladorSalas o-u- Sala
-ControladorSalas -u-> ButacaService
-ControladorDeConsultaSalas -u-> ButacaService
+ControladorSalas -u-> ServicioButaca
+ControladorDeConsultaSalas -u-> ServicioButaca
 ControladorDeConsultaSalas o-u- Butaca
 ControladorSalas -u-> SalaFactory
 }
