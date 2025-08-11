@@ -203,7 +203,7 @@ public class ControladorRegistrarUsuario implements Initializable {
                 e.printStackTrace();
             }
         } catch (IllegalArgumentException e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al validar los datos");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia(e.getMessage());
 
         } catch (Exception e) {
             e.printStackTrace();

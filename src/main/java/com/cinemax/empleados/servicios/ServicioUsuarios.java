@@ -34,9 +34,6 @@ public class ServicioUsuarios {
         if (usuario.getId() == null) {
             usuario.setId(usuarioDAO.obtenerSiguienteId());
         }
-        //TODO: generacion de contrasena (aleatoria con letras numeros y caracteres especiales)
-
-        //TODO: Creacion del usuario
 
         usuarioDAO.crearUsuario(usuario);
         usuarioDAO.setRequiereCambioClave(usuario.getId(), usuario.isRequiereCambioClave());
