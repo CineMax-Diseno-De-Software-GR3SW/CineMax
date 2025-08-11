@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,20 +28,20 @@ public class VentaDAO {
                 "JOIN funcion fun ON b.idfuncion = fun.id_funcion";
 
         Map<String, Object> resumen = new HashMap<>();
-        
+
         try (Connection conn = ConexionBaseSingleton.getInstancia().getConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             if (rs.next()) {
                 resumen.put("total_boletos_vendidos", rs.getInt("total_boletos_vendidos"));
                 resumen.put("total_facturas", rs.getInt("total_facturas"));
                 resumen.put("ingreso_total", rs.getDouble("ingreso_total"));
                 resumen.put("total_funciones", rs.getInt("total_funciones"));
-                resumen.put("fecha_inicio", 
-                    rs.getString("fecha_inicio") != null ? rs.getString("fecha_inicio") : "N/A");
-                resumen.put("fecha_fin", 
-                    rs.getString("fecha_fin") != null ? rs.getString("fecha_fin") : "N/A");
+                resumen.put("fecha_inicio",
+                        rs.getString("fecha_inicio") != null ? rs.getString("fecha_inicio") : "N/A");
+                resumen.put("fecha_fin",
+                        rs.getString("fecha_fin") != null ? rs.getString("fecha_fin") : "N/A");
             } else {
                 // Valores por defecto si no hay datos
                 resumen.put("total_boletos_vendidos", 0);
@@ -53,7 +54,7 @@ public class VentaDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("Error al obtener resumen de ventas: " + e.getMessage());
-            
+
             // Retornar valores por defecto en caso de error
             resumen.put("total_boletos_vendidos", 0);
             resumen.put("total_facturas", 0);
@@ -62,32 +63,31 @@ public class VentaDAO {
             resumen.put("fecha_inicio", "Error");
             resumen.put("fecha_fin", "Error");
         }
-        
+
         return resumen;
     }
 
-
     public List<Map<String, Object>> obtenerEstadisticasDeBarras() {
         String sql = "SELECT " +
-            "f.fecha::DATE AS fecha, " +
-            "COUNT(b.idboleto) AS total_boletos_vendidos, " +
-            "COALESCE(SUM(fac.total), 0) AS ingreso_total, " +
-            "STRING_AGG(DISTINCT s.tipo::text, ', ') AS tipos_sala, " +
-            "STRING_AGG(DISTINCT fun.formato::text, ', ') AS formatos " +
-            "FROM boleto b " +
-            "JOIN factura fac ON b.idfactura = fac.idfactura " +
-            "JOIN funcion fun ON b.idfuncion = fun.id_funcion " +
-            "JOIN sala s ON fun.id_sala = s.id " +
-            "JOIN factura f ON b.idfactura = f.idfactura " +
-            "GROUP BY f.fecha::DATE " +
-            "ORDER BY f.fecha::DATE " +
-            "LIMIT 7";
+                "f.fecha::DATE AS fecha, " +
+                "COUNT(b.idboleto) AS total_boletos_vendidos, " +
+                "COALESCE(SUM(fac.total), 0) AS ingreso_total, " +
+                "STRING_AGG(DISTINCT s.tipo::text, ', ') AS tipos_sala, " +
+                "STRING_AGG(DISTINCT fun.formato::text, ', ') AS formatos " +
+                "FROM boleto b " +
+                "JOIN factura fac ON b.idfactura = fac.idfactura " +
+                "JOIN funcion fun ON b.idfuncion = fun.id_funcion " +
+                "JOIN sala s ON fun.id_sala = s.id " +
+                "JOIN factura f ON b.idfactura = f.idfactura " +
+                "GROUP BY f.fecha::DATE " +
+                "ORDER BY f.fecha::DATE " +
+                "LIMIT 7";
 
         List<Map<String, Object>> estadisticas = new ArrayList<>();
 
         try (Connection conn = ConexionBaseSingleton.getInstancia().getConexion();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
                 Map<String, Object> fila = new HashMap<>();
@@ -106,5 +106,82 @@ public class VentaDAO {
 
         return estadisticas;
 
+    }
+
+    public List<Map<String, Object>> obtenerFiltradoDeDatos(List<Map<String, Object>> datos, String fechaDesde,
+            String fechaHasta) {
+        List<Map<String, Object>> datosFiltrados = new ArrayList<>();
+        
+        System.out.println("Filtrando desde " + fechaDesde + " hasta " + fechaHasta);
+        
+        LocalDate fechaInicioFiltro = null;
+        LocalDate fechaFinFiltro = null;
+        
+        // Convertir las fechas de filtro de String a LocalDate
+        try {
+            // Convertir fechas de formato "yyyy-MM-dd" a LocalDate
+            if (fechaDesde != null && !fechaDesde.isEmpty()) {
+                String[] partes = fechaDesde.split("-");
+                if (partes.length == 3) {
+                    int year = Integer.parseInt(partes[0]); // Tomar el año completo sin sumar 2000
+                    int month = Integer.parseInt(partes[1]);
+                    int day = Integer.parseInt(partes[2]);
+                    fechaInicioFiltro = LocalDate.of(year, month, day);
+                }
+            }
+            
+            if (fechaHasta != null && !fechaHasta.isEmpty()) {
+                String[] partes = fechaHasta.split("-");
+                if (partes.length == 3) {
+                    int year = Integer.parseInt(partes[0]); // Tomar el año completo sin sumar 2000
+                    int month = Integer.parseInt(partes[1]);
+                    int day = Integer.parseInt(partes[2]);
+                    fechaFinFiltro = LocalDate.of(year, month, day);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error al parsear fechas de filtro: " + e.getMessage());
+        }
+        
+        System.out.println("Fechas de filtro convertidas: desde " + fechaInicioFiltro + " hasta " + fechaFinFiltro);
+        
+        for (Map<String, Object> fila : datos) {
+            Object fechaObj = fila.get("fecha");
+            LocalDate fecha = null;
+
+            if (fechaObj instanceof java.sql.Date) {
+            java.sql.Date sqlDate = (java.sql.Date) fechaObj;
+            fecha = sqlDate.toLocalDate();
+            } else if (fechaObj instanceof LocalDate) {
+            fecha = (LocalDate) fechaObj;
+            } else if (fechaObj != null) {
+            try {
+                String fechaStr = fechaObj.toString();
+                fecha = LocalDate.parse(fechaStr);
+            } catch (Exception e) {
+                System.err.println("No se pudo convertir a LocalDate: " + fechaObj);
+                continue;
+            }
+            }
+
+            if (fecha != null && fechaInicioFiltro != null && fechaFinFiltro != null) {
+            boolean cumpleFechaInicial = !fecha.isBefore(fechaInicioFiltro);
+            boolean cumpleFechaFinal = !fecha.isAfter(fechaFinFiltro);
+            
+            System.out.println("Verificando " + fecha + 
+                       " >= " + fechaInicioFiltro + "? " + cumpleFechaInicial +
+                       " | <= " + fechaFinFiltro + "? " + cumpleFechaFinal);
+                       
+            if (cumpleFechaInicial && cumpleFechaFinal) {
+                datosFiltrados.add(fila);
+                System.out.println("✅ INCLUIDO en filtro: " + fecha);
+            } else {
+                System.out.println("❌ EXCLUIDO del filtro: " + fecha);
+            }
+            }
+        }
+        
+        System.out.println("Total de registros filtrados: " + datosFiltrados.size());
+        return datosFiltrados;
     }
 }

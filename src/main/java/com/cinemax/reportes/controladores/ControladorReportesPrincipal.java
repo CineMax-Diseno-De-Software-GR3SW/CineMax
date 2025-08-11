@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -61,10 +63,10 @@ public class ControladorReportesPrincipal {
     private DatePicker dateDesde;
     @FXML
     private DatePicker dateHasta;
-    
+
     @FXML
     private ComboBox<String> choiceHorario;
-    
+
     @FXML
     private BarChart<String, Number> barChart;
     @FXML
@@ -89,7 +91,6 @@ public class ControladorReportesPrincipal {
 
     // Datos para mandarlas a la grafica
     private List<Map<String, Object>> estadisticas = ventasService.getEstadisticasDeBarras();
-
 
     // Datos simulados para reportes generados
     private final List<ReporteGenerado> reportesSimulados = Arrays.asList(
@@ -122,7 +123,7 @@ public class ControladorReportesPrincipal {
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
-        //Configuracion relleno columnas 
+        // Configuracion relleno columnas
         tablaReportes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         // Configurar formato de fecha
         colFecha.setCellFactory(column -> new TableCell<ReporteGenerado, LocalDateTime>() {
@@ -208,9 +209,14 @@ public class ControladorReportesPrincipal {
 
     @FXML
     private void onFiltrar(ActionEvent event) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd-MM");
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
-        //String horario = choiceHorario.getValue();
+        
+        String desdeStr = desde != null ? desde.format(formatter) : null;
+        String hastaStr = hasta != null ? hasta.format(formatter) : null;
+
         String horario = choiceHorario.getValue();
 
         if (desde == null || hasta == null) {
@@ -218,7 +224,21 @@ public class ControladorReportesPrincipal {
             return;
         }
 
+        System.out.println("Filtrando desde " + desdeStr + " hasta " + hastaStr);
+
+        // CAMBIO AQUÍ: Primero obtener todos los datos sin filtrar
+        List<Map<String, Object>> datosOriginales = ventasService.getEstadisticasDeBarras();
+
         // Actualizar gráficas con datos filtrados
+        estadisticas = ventasService.obtenerDatosFiltrados(datosOriginales, desdeStr, hastaStr);
+
+        // Si no hay datos con ese filtro, mostrar mensaje
+        if (estadisticas.isEmpty()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("No hay datos para el período seleccionado");
+            inicializarGraficasVacias();
+            return;
+        }
+
         actualizarGraficaBarras(estadisticas);
         actualizarGraficaPastel(estadisticas);
 
@@ -233,56 +253,116 @@ public class ControladorReportesPrincipal {
 
     private void actualizarGraficaBarras(List<Map<String, Object>> estadisticas) {
         if (barChart != null) {
+            // Limpiar datos anteriores
             barChart.getData().clear();
+            barChart.layout();
 
             if (estadisticas == null || estadisticas.isEmpty()) {
                 barChart.setTitle("No hay datos para mostrar con los filtros seleccionados");
                 return;
             }
 
+            // Crear eje X y Y nuevos para evitar problemas de caché
+            CategoryAxis xAxis = new CategoryAxis();
+            NumberAxis yAxis = new NumberAxis();
+            barChart.setAnimated(false); // Desactivar animaciones para evitar problemas
+
+            // Establecer etiquetas de ejes
+            xAxis.setLabel("Fecha");
+            yAxis.setLabel("Cantidad de Boletos");
+
+            // Series para los datos
             XYChart.Series<String, Number> serieVIP = new XYChart.Series<>();
             serieVIP.setName("VIP");
-
             XYChart.Series<String, Number> serieNormal = new XYChart.Series<>();
             serieNormal.setName("Normal");
 
-            for (Map<String, Object> fila : estadisticas) {
-                String fecha = fila.get("fecha").toString();
-                // Si tienes los totales separados por tipo, usa esos campos
-                int boletosVIP = fila.containsKey("boletos_vip") ? (int) fila.get("boletos_vip") : 0;
-                int boletosNormal = fila.containsKey("boletos_normal") ? (int) fila.get("boletos_normal") : 0;
+            // Ordenar los datos por fecha
+            Map<LocalDate, Map<String, Integer>> datosPorFecha = new TreeMap<>();
+            List<String> categorias = new ArrayList<>();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-                // Si solo tienes el total, reparte por formato (esto es solo ejemplo)
-                if (boletosVIP == 0 && boletosNormal == 0) {
-                    int total = (int) fila.get("total_boletos_vendidos");
-                    // Si tienes el campo "formatos", puedes decidir cómo repartir
-                    String formatos = (String) fila.get("formatos");
-                    if (formatos != null && formatos.contains("VIP")) {
-                        boletosVIP = total; // ejemplo, si solo hay VIP
-                    } else if (formatos != null && formatos.contains("Normal")) {
-                        boletosNormal = total; // ejemplo, si solo hay Normal
-                    } else {
-                        // Si no hay info, reparte mitad y mitad
-                        boletosVIP = total / 2;
-                        boletosNormal = total - boletosVIP;
+            // Procesar y agrupar datos
+            for (Map<String, Object> fila : estadisticas) {
+                LocalDate fecha = null;
+                Object fechaObj = fila.get("fecha");
+
+                // Convertir fecha a LocalDate
+                if (fechaObj instanceof java.sql.Date) {
+                    fecha = ((java.sql.Date) fechaObj).toLocalDate();
+                } else if (fechaObj instanceof LocalDate) {
+                    fecha = (LocalDate) fechaObj;
+                } else if (fechaObj != null) {
+                    try {
+                        fecha = LocalDate.parse(fechaObj.toString());
+                    } catch (Exception e) {
+                        continue;
                     }
                 }
 
-                serieVIP.getData().add(new XYChart.Data<>(fecha, boletosVIP));
-                serieNormal.getData().add(new XYChart.Data<>(fecha, boletosNormal));
+                if (fecha == null)
+                    continue;
+
+                // Inicializar mapa para esta fecha
+                datosPorFecha.putIfAbsent(fecha, new HashMap<>());
+                String tipoSala = (String) fila.get("tipos_sala");
+                int boletos = (int) fila.get("total_boletos_vendidos");
+
+                // Dividir boletos entre VIP y Normal si hay ambos tipos
+                if (tipoSala != null && tipoSala.contains("VIP")) {
+                    if (tipoSala.contains("NORMAL")) {
+                        int boletosVIP = boletos / 2;
+                        int boletosNormal = boletos - boletosVIP;
+                        datosPorFecha.get(fecha).merge("VIP", boletosVIP, Integer::sum);
+                        datosPorFecha.get(fecha).merge("Normal", boletosNormal, Integer::sum);
+                    } else {
+                        datosPorFecha.get(fecha).merge("VIP", boletos, Integer::sum);
+                    }
+                } else {
+                    datosPorFecha.get(fecha).merge("Normal", boletos, Integer::sum);
+                }
+
+                // Añadir la fecha como categoría si no existe
+                String fechaStr = fecha.format(formatter);
+                if (!categorias.contains(fechaStr)) {
+                    categorias.add(fechaStr);
+                }
             }
 
+            System.out.println("Categorías (fechas) encontradas: " + categorias);
+
+            // Crear nuevo gráfico con los datos procesados
+            BarChart<String, Number> nuevoBarChart = new BarChart<>(xAxis, yAxis);
+            nuevoBarChart.setAnimated(false);
+
+            // Configurar categorías explícitamente
+            xAxis.setCategories(FXCollections.observableArrayList(categorias));
+
+            // Añadir datos a las series
+            for (LocalDate fecha : datosPorFecha.keySet()) {
+                String fechaStr = fecha.format(formatter);
+                Map<String, Integer> datos = datosPorFecha.get(fecha);
+
+                serieVIP.getData().add(new XYChart.Data<>(fechaStr, datos.getOrDefault("VIP", 0)));
+                serieNormal.getData().add(new XYChart.Data<>(fechaStr, datos.getOrDefault("Normal", 0)));
+            }
+
+            // Añadir series al gráfico
             barChart.getData().addAll(serieVIP, serieNormal);
 
-            // Actualizar título con información de los filtros
+            // Forzar actualización
+            barChart.layout();
+
+            // Actualizar título
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
-
             String titulo = "Ventas por Tipo de Boleto";
+
             if (desde != null && hasta != null) {
                 titulo += " (" + desde.format(DateTimeFormatter.ofPattern("dd/MM")) +
                         " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM")) + ")";
             }
+
             barChart.setTitle(titulo);
         }
     }
@@ -363,7 +443,7 @@ public class ControladorReportesPrincipal {
     private void onConfirmarReporte(ActionEvent event) {
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
-        //String horario = choiceHorario.getValue();
+        // String horario = choiceHorario.getValue();
         String horario = choiceHorario.getValue();
 
         if (desde == null || hasta == null) {
@@ -382,7 +462,6 @@ public class ControladorReportesPrincipal {
         mostrarPrevisualizacionReporte(estadisticas, true);
     }
 
-    
     @FXML
     void volverEscena(ActionEvent event) {
         try {
@@ -540,19 +619,18 @@ public class ControladorReportesPrincipal {
             double ingreso = (double) fila.get("ingreso_total");
             String tipoSala = (String) fila.get("tipos_sala");
             String formato = (String) fila.get("formatos");
-            
+
             // Crear fila para la tabla
             HBox filaTabla = new HBox();
             filaTabla.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 0 0 1 0;");
-            
+
             filaTabla.getChildren().addAll(
-                crearCeldaTabla(fecha, false),
-                crearCeldaTabla(tipoSala != null ? tipoSala : "Normal", false),
-                crearCeldaTabla(formato != null ? formato : "2D", false),
-                crearCeldaTabla(String.valueOf(boletosVendidos), false),
-                crearCeldaTabla(String.format("$%.2f", ingreso), false)
-            );
-            
+                    crearCeldaTabla(fecha, false),
+                    crearCeldaTabla(tipoSala != null ? tipoSala : "Normal", false),
+                    crearCeldaTabla(formato != null ? formato : "2D", false),
+                    crearCeldaTabla(String.valueOf(boletosVendidos), false),
+                    crearCeldaTabla(String.format("$%.2f", ingreso), false));
+
             filasDatos.getChildren().add(filaTabla);
             totalBoletos += boletosVendidos;
             totalIngresos += ingreso;
@@ -618,13 +696,13 @@ public class ControladorReportesPrincipal {
             String tipoSala = (String) fila.get("tipos_sala");
             String formato = (String) fila.get("formatos");
             int boletosVendidos = (int) fila.get("total_boletos_vendidos");
-            
+
             if (tipoSala != null) {
                 boletosPorTipo.merge(tipoSala, boletosVendidos, Integer::sum);
             } else {
                 boletosPorTipo.merge("Normal", boletosVendidos, Integer::sum);
             }
-            
+
             if (formato != null) {
                 boletosPorFormato.merge(formato, boletosVendidos, Integer::sum);
             } else {
@@ -635,7 +713,8 @@ public class ControladorReportesPrincipal {
         estadisticasBox.getChildren().addAll(
                 crearEstadistica("Total de Boletos Vendidos", String.valueOf(totalBoletos)),
                 crearEstadistica("Total de Ingresos", String.format("$%.2f", totalIngresos)),
-                crearEstadistica("Promedio por Boleto", String.format("$%.2f", totalBoletos > 0 ? totalIngresos / totalBoletos : 0)),
+                crearEstadistica("Promedio por Boleto",
+                        String.format("$%.2f", totalBoletos > 0 ? totalIngresos / totalBoletos : 0)),
                 crearEstadistica("Boletos VIP", String.valueOf(boletosPorTipo.getOrDefault("VIP", 0))),
                 crearEstadistica("Boletos Normal", String.valueOf(boletosPorTipo.getOrDefault("Normal", 0))),
                 crearEstadistica("Boletos 2D", String.valueOf(boletosPorFormato.getOrDefault("2D", 0))),
@@ -690,10 +769,10 @@ public class ControladorReportesPrincipal {
             String fecha = fila.get("fecha").toString();
             String tipoSala = (String) fila.get("tipos_sala");
             int boletosVendidos = (int) fila.get("total_boletos_vendidos");
-            
+
             // Inicializar estructura si no existe
             datosAgrupados.putIfAbsent(fecha, new HashMap<>());
-            
+
             // Si el tipo de sala es VIP o Normal, asignar a esa categoría
             if (tipoSala != null && tipoSala.contains("VIP")) {
                 datosAgrupados.get(fecha).merge("VIP", boletosVendidos, Integer::sum);
