@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,9 +51,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- * Controlador principal para la gestión de reportes de ventas en el sistema Cinemax
- * Maneja la visualización de gráficos, filtrado de datos, generación y exportación de reportes
- * Permite visualizar reportes existentes y crear nuevos con diferentes formatos de exportación
+ * Controlador principal para la gestión de reportes de ventas en el sistema
+ * Cinemax
+ * Maneja la visualización de gráficos, filtrado de datos, generación y
+ * exportación de reportes
+ * Permite visualizar reportes existentes y crear nuevos con diferentes formatos
+ * de exportación
  */
 public class ControladorReportesPrincipal {
 
@@ -68,16 +73,16 @@ public class ControladorReportesPrincipal {
     private DatePicker dateDesde; // Selector de fecha de inicio del período
     @FXML
     private DatePicker dateHasta; // Selector de fecha de fin del período
-    
+
     @FXML
     private ComboBox<String> choiceHorario; // Selector de horario (Matutino, Nocturno, Todos)
-    
+
     // Componentes gráficos para visualización de datos
     @FXML
     private BarChart<String, Number> barChart; // Gráfico de barras para mostrar ventas por tipo de boleto
     @FXML
     private PieChart pieChart; // Gráfico circular para mostrar distribución 2D vs 3D
-    
+
     // Componentes de tabla para mostrar reportes generados
     @FXML
     private TableView<ReporteGenerado> tablaReportes; // Tabla principal de reportes
@@ -102,7 +107,7 @@ public class ControladorReportesPrincipal {
     // Datos estadísticos para poblar las gráficas
     private List<Map<String, Object>> estadisticas = ventasService.getEstadisticasDeBarras();
 
-    // Datos simulados para mostrar reportes previamente generados en la tabla
+    // Datos simulados para reportes generados
     private final List<ReporteGenerado> reportesSimulados = Arrays.asList(
             new ReporteGenerado(1, "Reporte_Ventas_20241201_1430", "PDF", LocalDateTime.now().minusDays(2),
                     "C:/reportes/reporte_ventas_20241201.pdf", "Reporte de ventas del 01/12/2024 al 05/12/2024"),
@@ -111,62 +116,49 @@ public class ControladorReportesPrincipal {
             new ReporteGenerado(3, "Reporte_Ventas_20241125_1620", "PDF", LocalDateTime.now().minusDays(8),
                     "C:/reportes/reporte_ventas_20241125.pdf", "Reporte de ventas del 20/11/2024 al 25/11/2024"));
 
-    /**
-     * Método de inicialización que se ejecuta automáticamente al cargar el FXML
-     * Configura los componentes iniciales, la tabla de reportes y las gráficas
-     */
     @FXML
     private void initialize() {
-        // Poblar el ComboBox de horarios con las opciones disponibles
         choiceHorario.getItems().addAll("Todos", "Matutino", "Nocturno");
 
-        // Configurar la estructura y comportamiento de la tabla de reportes
+        // Configurar tabla de reportes
         configurarTablaReportes();
 
-        // Cargar los datos de reportes simulados en la tabla
+        // Cargar reportes simulados
         cargarReportesSimulados();
 
-        // Inicializar las gráficas sin datos, mostrando mensajes informativos
+        // Inicializar gráficas vacías
         inicializarGraficasVacias();
 
     }
 
-    /**
-     * Configura las columnas de la tabla de reportes y sus comportamientos
-     * Establece las propiedades de cada columna y crea la funcionalidad de botones de acción
-     */
     private void configurarTablaReportes() {
-        // Vincular las columnas con las propiedades del modelo ReporteGenerado
+        // Configurar las columnas
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         colFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         colDescripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
 
-        // Configurar política de redimensionamiento de columnas para usar todo el ancho disponible
+        // Configuracion relleno columnas
         tablaReportes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-        
-        // Personalizar el formato de visualización de fechas en la tabla
+        // Configurar formato de fecha
         colFecha.setCellFactory(column -> new TableCell<ReporteGenerado, LocalDateTime>() {
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
-                    setText(null); // Mostrar celda vacía si no hay datos
+                    setText(null);
                 } else {
-                    // Formatear fecha como dd/MM/yyyy HH:mm
                     setText(item.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
                 }
             }
         });
 
-        // Configurar columna de acciones con botón personalizado para abrir reportes
+        // Configurar columna de acciones con botón para abrir
         colAcciones.setCellFactory(column -> new TableCell<ReporteGenerado, Integer>() {
-            private final Button btnAbrir = new Button("Abrir"); // Botón para abrir/visualizar el reporte
+            private final Button btnAbrir = new Button("Abrir");
 
             {
-                // Aplicar estilo CSS al botón
                 btnAbrir.getStyleClass().add("primary-button");
-                // Configurar acción del botón para abrir el reporte seleccionado
                 btnAbrir.setOnAction(event -> {
                     ReporteGenerado reporte = getTableView().getItems().get(getIndex());
                     abrirReporte(reporte);
@@ -177,74 +169,51 @@ public class ControladorReportesPrincipal {
             protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) {
-                    setGraphic(null); // No mostrar botón en filas vacías
+                    setGraphic(null);
                 } else {
-                    setGraphic(btnAbrir); // Mostrar botón en filas con datos
+                    setGraphic(btnAbrir);
                 }
             }
         });
 
-        // Vincular la tabla con la lista observable de reportes
         tablaReportes.setItems(reportesGenerados);
     }
 
-    /**
-     * Carga los reportes simulados en la lista observable de la tabla
-     * Limpia la lista actual y agrega los datos de ejemplo
-     */
     private void cargarReportesSimulados() {
-        reportesGenerados.clear(); // Limpiar datos existentes
-        reportesGenerados.addAll(reportesSimulados); // Agregar reportes simulados
+        reportesGenerados.clear();
+        reportesGenerados.addAll(reportesSimulados);
     }
 
-    /**
-     * Inicializa las gráficas vacías con mensajes informativos
-     * Se ejecuta al cargar la vista antes de aplicar filtros
-     */
     private void inicializarGraficasVacias() {
-        // Configurar gráfica de barras vacía con mensaje informativo
+        // Limpiar gráfica de barras
         if (barChart != null) {
             barChart.getData().clear();
             barChart.setTitle("Seleccione filtros y haga clic en 'Filtrar' para ver datos");
         }
 
-        // Configurar gráfica de pastel vacía con mensaje informativo
+        // Limpiar gráfica de pastel
         if (pieChart != null) {
             pieChart.getData().clear();
             pieChart.setTitle("Seleccione filtros y haga clic en 'Filtrar' para ver datos");
         }
     }
 
-    /**
-     * Maneja la apertura de un reporte seleccionado desde la tabla
-     * Muestra una previsualización del reporte sin opciones de descarga
-     * 
-     * @param reporte El reporte seleccionado a visualizar
-     */
     private void abrirReporte(ReporteGenerado reporte) {
         try {
-            // Mostrar previsualización del reporte en modo solo lectura (sin descarga)
+            // Mostrar previsualización del reporte sin opciones de descarga
             mostrarPrevisualizacionReporte(estadisticas, false);
         } catch (Exception e) {
-            // Manejar errores mostrando mensaje al usuario
             ManejadorMetodosComunes.mostrarVentanaError("Error al abrir el reporte: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
-    /**
-     * Navega hacia la vista de reportes programados
-     * Carga la interfaz correspondiente y cambia la escena
-     */
     @FXML
     private void goToReporteProgramado(ActionEvent event) {
         try {
-            // Cargar el archivo FXML de la vista de reportes programados
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/vistas/reportes/VistaReportesProgramados.fxml"));
             Parent root = loader.load();
-            
-            // Obtener la ventana actual y cambiar la escena
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -253,101 +222,162 @@ public class ControladorReportesPrincipal {
         }
     }
 
-    /**
-     * Maneja el evento de filtrado de datos
-     * Aplica los filtros seleccionados y actualiza las gráficas con los datos correspondientes
-     */
     @FXML
     private void onFiltrar(ActionEvent event) {
-        // Obtener los valores de los filtros
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-dd-MM");
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
+
+        String desdeStr = desde != null ? desde.format(formatter) : null;
+        String hastaStr = hasta != null ? hasta.format(formatter) : null;
+
         String horario = choiceHorario.getValue();
 
-        // Validar que se hayan seleccionado las fechas obligatorias
         if (desde == null || hasta == null) {
             ManejadorMetodosComunes.mostrarVentanaError("Por favor seleccione las fechas de inicio y fin");
             return;
         }
 
-        // Actualizar las gráficas con los datos filtrados
+        System.out.println("Filtrando desde " + desdeStr + " hasta " + hastaStr);
+
+        // CAMBIO AQUÍ: Primero obtener todos los datos sin filtrar
+        List<Map<String, Object>> datosOriginales = ventasService.getEstadisticasDeBarras();
+
+        // Actualizar gráficas con datos filtrados
+        estadisticas = ventasService.obtenerDatosFiltrados(datosOriginales, desdeStr, hastaStr);
+
+        // Si no hay datos con ese filtro, mostrar mensaje
+        if (estadisticas.isEmpty()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("No hay datos para el período seleccionado");
+            inicializarGraficasVacias();
+            return;
+        }
+
         actualizarGraficaBarras(estadisticas);
         actualizarGraficaPastel(estadisticas);
 
-        // Crear mensaje informativo con los filtros aplicados
         String mensaje = "Filtros aplicados:\n" +
                 "• Desde: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
                 "• Hasta: " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
                 "• Horario: " + horario;
 
-        // Mostrar confirmación de filtros aplicados
+        // Mostrar mensaje de confirmación
         ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
     }
 
-    /**
-     * Actualiza la gráfica de barras con los datos estadísticos proporcionados
-     * Crea series separadas para boletos VIP y Normal basándose en los datos
-     * 
-     * @param estadisticas Lista de mapas con datos estadísticos de ventas
-     */
     private void actualizarGraficaBarras(List<Map<String, Object>> estadisticas) {
         if (barChart != null) {
-            barChart.getData().clear(); // Limpiar datos existentes
+            // Limpiar datos anteriores
+            barChart.getData().clear();
+            barChart.layout();
 
-            // Verificar si hay datos para mostrar
             if (estadisticas == null || estadisticas.isEmpty()) {
                 barChart.setTitle("No hay datos para mostrar con los filtros seleccionados");
                 return;
             }
 
-            // Crear series para cada tipo de boleto
+            // Crear eje X y Y nuevos para evitar problemas de caché
+            CategoryAxis xAxis = new CategoryAxis();
+            NumberAxis yAxis = new NumberAxis();
+            barChart.setAnimated(false); // Desactivar animaciones para evitar problemas
+
+            // Establecer etiquetas de ejes
+            xAxis.setLabel("Fecha");
+            yAxis.setLabel("Cantidad de Boletos");
+
+            // Series para los datos
             XYChart.Series<String, Number> serieVIP = new XYChart.Series<>();
             serieVIP.setName("VIP");
-
             XYChart.Series<String, Number> serieNormal = new XYChart.Series<>();
             serieNormal.setName("Normal");
 
-            // Procesar cada registro de estadísticas
-            for (Map<String, Object> fila : estadisticas) {
-                String fecha = fila.get("fecha").toString();
-                // Intentar obtener datos específicos por tipo de boleto
-                int boletosVIP = fila.containsKey("boletos_vip") ? (int) fila.get("boletos_vip") : 0;
-                int boletosNormal = fila.containsKey("boletos_normal") ? (int) fila.get("boletos_normal") : 0;
+            // Ordenar los datos por fecha
+            Map<LocalDate, Map<String, Integer>> datosPorFecha = new TreeMap<>();
+            List<String> categorias = new ArrayList<>();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-                // Si no hay datos específicos por tipo, distribuir basándose en el formato
-                if (boletosVIP == 0 && boletosNormal == 0) {
-                    int total = (int) fila.get("total_boletos_vendidos");
-                    String formatos = (String) fila.get("formatos");
-                    
-                    // Lógica de distribución basada en los formatos disponibles
-                    if (formatos != null && formatos.contains("VIP")) {
-                        boletosVIP = total; // Asignar todo a VIP si se especifica
-                    } else if (formatos != null && formatos.contains("Normal")) {
-                        boletosNormal = total; // Asignar todo a Normal si se especifica
-                    } else {
-                        // Distribución equitativa si no hay información específica
-                        boletosVIP = total / 2;
-                        boletosNormal = total - boletosVIP;
+            // Procesar y agrupar datos
+            for (Map<String, Object> fila : estadisticas) {
+                LocalDate fecha = null;
+                Object fechaObj = fila.get("fecha");
+
+                // Convertir fecha a LocalDate
+                if (fechaObj instanceof java.sql.Date) {
+                    fecha = ((java.sql.Date) fechaObj).toLocalDate();
+                } else if (fechaObj instanceof LocalDate) {
+                    fecha = (LocalDate) fechaObj;
+                } else if (fechaObj != null) {
+                    try {
+                        fecha = LocalDate.parse(fechaObj.toString());
+                    } catch (Exception e) {
+                        continue;
                     }
                 }
 
-                // Agregar datos a las series correspondientes
-                serieVIP.getData().add(new XYChart.Data<>(fecha, boletosVIP));
-                serieNormal.getData().add(new XYChart.Data<>(fecha, boletosNormal));
+                if (fecha == null)
+                    continue;
+
+                // Inicializar mapa para esta fecha
+                datosPorFecha.putIfAbsent(fecha, new HashMap<>());
+                String tipoSala = (String) fila.get("tipos_sala");
+                int boletos = (int) fila.get("total_boletos_vendidos");
+
+                // Dividir boletos entre VIP y Normal si hay ambos tipos
+                if (tipoSala != null && tipoSala.contains("VIP")) {
+                    if (tipoSala.contains("NORMAL")) {
+                        int boletosVIP = boletos / 2;
+                        int boletosNormal = boletos - boletosVIP;
+                        datosPorFecha.get(fecha).merge("VIP", boletosVIP, Integer::sum);
+                        datosPorFecha.get(fecha).merge("Normal", boletosNormal, Integer::sum);
+                    } else {
+                        datosPorFecha.get(fecha).merge("VIP", boletos, Integer::sum);
+                    }
+                } else {
+                    datosPorFecha.get(fecha).merge("Normal", boletos, Integer::sum);
+                }
+
+                // Añadir la fecha como categoría si no existe
+                String fechaStr = fecha.format(formatter);
+                if (!categorias.contains(fechaStr)) {
+                    categorias.add(fechaStr);
+                }
             }
 
-            // Agregar series a la gráfica
+            System.out.println("Categorías (fechas) encontradas: " + categorias);
+
+            // Crear nuevo gráfico con los datos procesados
+            BarChart<String, Number> nuevoBarChart = new BarChart<>(xAxis, yAxis);
+            nuevoBarChart.setAnimated(false);
+
+            // Configurar categorías explícitamente
+            xAxis.setCategories(FXCollections.observableArrayList(categorias));
+
+            // Añadir datos a las series
+            for (LocalDate fecha : datosPorFecha.keySet()) {
+                String fechaStr = fecha.format(formatter);
+                Map<String, Integer> datos = datosPorFecha.get(fecha);
+
+                serieVIP.getData().add(new XYChart.Data<>(fechaStr, datos.getOrDefault("VIP", 0)));
+                serieNormal.getData().add(new XYChart.Data<>(fechaStr, datos.getOrDefault("Normal", 0)));
+            }
+
+            // Añadir series al gráfico
             barChart.getData().addAll(serieVIP, serieNormal);
 
-            // Actualizar título con información de los filtros aplicados
+            // Forzar actualización
+            barChart.layout();
+
+            // Actualizar título
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
-
             String titulo = "Ventas por Tipo de Boleto";
+
             if (desde != null && hasta != null) {
                 titulo += " (" + desde.format(DateTimeFormatter.ofPattern("dd/MM")) +
                         " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM")) + ")";
             }
+
             barChart.setTitle(titulo);
         }
     }
@@ -471,7 +501,7 @@ public class ControladorReportesPrincipal {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
-            
+
             // Cambiar a la nueva escena
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -485,8 +515,9 @@ public class ControladorReportesPrincipal {
      * Crea y muestra una ventana modal con la previsualización completa del reporte
      * Incluye tablas de datos, gráficas y estadísticas según los filtros aplicados
      * 
-     * @param datos Lista de datos estadísticos a mostrar en el reporte
-     * @param permitirDescarga Si true, muestra botones de descarga; si false, solo visualización
+     * @param datos            Lista de datos estadísticos a mostrar en el reporte
+     * @param permitirDescarga Si true, muestra botones de descarga; si false, solo
+     *                         visualización
      */
     private void mostrarPrevisualizacionReporte(List<Map<String, Object>> datos, boolean permitirDescarga) {
         try {
@@ -606,8 +637,10 @@ public class ControladorReportesPrincipal {
     }
 
     /**
-     * Genera el contenido completo del reporte incluyendo tablas de datos, gráficas y estadísticas
-     * Crea una representación visual completa de todos los datos del período seleccionado
+     * Genera el contenido completo del reporte incluyendo tablas de datos, gráficas
+     * y estadísticas
+     * Crea una representación visual completa de todos los datos del período
+     * seleccionado
      * 
      * @param datos Lista de mapas con los datos estadísticos a procesar
      * @return VBox conteniendo todo el contenido visual del reporte
@@ -649,20 +682,19 @@ public class ControladorReportesPrincipal {
             double ingreso = (double) fila.get("ingreso_total");
             String tipoSala = (String) fila.get("tipos_sala");
             String formato = (String) fila.get("formatos");
-            
+
             // Crear fila visual para la tabla
             HBox filaTabla = new HBox();
             filaTabla.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 0 0 1 0;");
-            
+
             // Agregar celdas con datos a la fila (con valores por defecto si son nulos)
             filaTabla.getChildren().addAll(
-                crearCeldaTabla(fecha, false),
-                crearCeldaTabla(tipoSala != null ? tipoSala : "Normal", false),
-                crearCeldaTabla(formato != null ? formato : "2D", false),
-                crearCeldaTabla(String.valueOf(boletosVendidos), false),
-                crearCeldaTabla(String.format("$%.2f", ingreso), false)
-            );
-            
+                    crearCeldaTabla(fecha, false),
+                    crearCeldaTabla(tipoSala != null ? tipoSala : "Normal", false),
+                    crearCeldaTabla(formato != null ? formato : "2D", false),
+                    crearCeldaTabla(String.valueOf(boletosVendidos), false),
+                    crearCeldaTabla(String.format("$%.2f", ingreso), false));
+
             filasDatos.getChildren().add(filaTabla);
             // Acumular totales para la fila de resumen
             totalBoletos += boletosVendidos;
@@ -734,14 +766,14 @@ public class ControladorReportesPrincipal {
             String tipoSala = (String) fila.get("tipos_sala");
             String formato = (String) fila.get("formatos");
             int boletosVendidos = (int) fila.get("total_boletos_vendidos");
-            
+
             // Agrupar por tipo de sala (VIP vs Normal)
             if (tipoSala != null) {
                 boletosPorTipo.merge(tipoSala, boletosVendidos, Integer::sum);
             } else {
                 boletosPorTipo.merge("Normal", boletosVendidos, Integer::sum);
             }
-            
+
             // Agrupar por formato (2D vs 3D)
             if (formato != null) {
                 boletosPorFormato.merge(formato, boletosVendidos, Integer::sum);
@@ -754,7 +786,8 @@ public class ControladorReportesPrincipal {
         estadisticasBox.getChildren().addAll(
                 crearEstadistica("Total de Boletos Vendidos", String.valueOf(totalBoletos)),
                 crearEstadistica("Total de Ingresos", String.format("$%.2f", totalIngresos)),
-                crearEstadistica("Promedio por Boleto", String.format("$%.2f", totalBoletos > 0 ? totalIngresos / totalBoletos : 0)),
+                crearEstadistica("Promedio por Boleto",
+                        String.format("$%.2f", totalBoletos > 0 ? totalIngresos / totalBoletos : 0)),
                 crearEstadistica("Boletos VIP", String.valueOf(boletosPorTipo.getOrDefault("VIP", 0))),
                 crearEstadistica("Boletos Normal", String.valueOf(boletosPorTipo.getOrDefault("Normal", 0))),
                 crearEstadistica("Boletos 2D", String.valueOf(boletosPorFormato.getOrDefault("2D", 0))),
@@ -772,7 +805,7 @@ public class ControladorReportesPrincipal {
      * Muestra el título de la estadística y su valor correspondiente
      * 
      * @param titulo El nombre descriptivo de la estadística
-     * @param valor El valor numérico o textual de la estadística
+     * @param valor  El valor numérico o textual de la estadística
      * @return HBox conteniendo la estadística formateada
      */
     private HBox crearEstadistica(String titulo, String valor) {
@@ -803,7 +836,7 @@ public class ControladorReportesPrincipal {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
         BarChart<String, Number> barChartPreview = new BarChart<>(xAxis, yAxis);
-        
+
         // Configurar propiedades básicas de la gráfica
         barChartPreview.setTitle("Ventas por Tipo de Boleto (VIP vs Normal)");
         barChartPreview.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px;");
@@ -831,10 +864,10 @@ public class ControladorReportesPrincipal {
             String fecha = fila.get("fecha").toString();
             String tipoSala = (String) fila.get("tipos_sala");
             int boletosVendidos = (int) fila.get("total_boletos_vendidos");
-            
+
             // Inicializar estructura de agrupación si no existe
             datosAgrupados.putIfAbsent(fecha, new HashMap<>());
-            
+
             // Clasificar boletos según el tipo de sala
             if (tipoSala != null && tipoSala.contains("VIP")) {
                 datosAgrupados.get(fecha).merge("VIP", boletosVendidos, Integer::sum);
@@ -944,8 +977,9 @@ public class ControladorReportesPrincipal {
      * Método auxiliar para crear celdas de tabla con formato consistente
      * Utilizado tanto en tablas de datos como en la previsualización
      * 
-     * @param texto El contenido textual de la celda
-     * @param esHeader Indica si es una celda de encabezado (true) o de datos (false)
+     * @param texto    El contenido textual de la celda
+     * @param esHeader Indica si es una celda de encabezado (true) o de datos
+     *                 (false)
      * @return Label configurado como celda de tabla con estilos apropiados
      */
     private Label crearCeldaTabla(String texto, boolean esHeader) {
@@ -963,7 +997,7 @@ public class ControladorReportesPrincipal {
      * Permite guardar el reporte en diferentes formatos (PDF o CSV)
      * 
      * @param strategy La estrategia de exportación a utilizar (PDF o CSV)
-     * @param tipo El tipo de archivo a generar ("pdf" o "csv")
+     * @param tipo     El tipo de archivo a generar ("pdf" o "csv")
      */
     private void exportarReporte(Exportable strategy, String tipo) {
         try {
@@ -985,14 +1019,14 @@ public class ControladorReportesPrincipal {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
             fileChooser.setInitialFileName("reporte_ventas." + tipo);
-            
+
             // Agregar filtros de extensión según el tipo de archivo
             if (tipo.equals("pdf")) {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
             } else if (tipo.equals("csv")) {
                 fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
             }
-            
+
             // Obtener la ventana padre para el diálogo
             Stage stage = (Stage) btnBack.getScene().getWindow();
             File archivo = fileChooser.showSaveDialog(stage);
@@ -1014,7 +1048,7 @@ public class ControladorReportesPrincipal {
                         LocalDateTime.now(), // Fecha de generación actual
                         archivo.getAbsolutePath(), // Ruta completa del archivo
                         "Reporte de ventas del " + desde + " al " + hasta); // Descripción descriptiva
-                
+
                 // Agregar el nuevo reporte al inicio de la lista (más reciente primero)
                 reportesGenerados.add(0, nuevoReporte);
 
