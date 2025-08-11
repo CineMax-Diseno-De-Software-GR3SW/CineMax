@@ -53,12 +53,58 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
- * Controlador principal para la gestión de reportes de ventas en el sistema
- * Cinemax
- * Maneja la visualización de gráficos, filtrado de datos, generación y
- * exportación de reportes
- * Permite visualizar reportes existentes y crear nuevos con diferentes formatos
- * de exportación
+ * Controlador principal para la gestión de reportes de ventas en el sistema Cinemax.
+ * 
+ * <p>
+ * Esta clase se encarga de manejar la visualización de gráficos, filtrado de datos,
+ * generación y exportación de reportes de ventas. Permite visualizar reportes existentes,
+ * crear nuevos reportes en diferentes formatos (PDF, CSV), y mostrar análisis visual
+ * mediante gráficas de barras y pastel.
+ * </p>
+ * 
+ * <ul>
+ *   <li>Permite filtrar datos por rango de fechas y horario.</li>
+ *   <li>Genera y muestra reportes de ventas con tablas y gráficas.</li>
+ *   <li>Exporta reportes en formato PDF o CSV usando el patrón Strategy.</li>
+ *   <li>Muestra reportes generados previamente en una tabla.</li>
+ * </ul>
+ * 
+ * <p>
+ * Componentes principales:
+ * <ul>
+ *   <li>Botones de navegación y acción (filtrar, confirmar, volver, exportar).</li>
+ *   <li>Pickers de fecha y combo para horario.</li>
+ *   <li>Gráficas de barras y pastel para análisis visual.</li>
+ *   <li>Tabla de reportes generados.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * Métodos clave:
+ * <ul>
+ *   <li>{@link #initialize()} - Inicializa la vista y componentes.</li>
+ *   <li>{@link #onFiltrar(ActionEvent)} - Aplica filtros y actualiza las gráficas.</li>
+ *   <li>{@link #onConfirmarReporte(ActionEvent)} - Muestra previsualización y permite exportar.</li>
+ *   <li>{@link #actualizarGraficaBarras(List)} - Actualiza la gráfica de barras.</li>
+ *   <li>{@link #actualizarGraficaPastel(List)} - Actualiza la gráfica de pastel.</li>
+ *   <li>{@link #exportarReporte(Exportable, String)} - Exporta el reporte en el formato seleccionado.</li>
+ *   <li>{@link #mostrarPrevisualizacionReporte(List, boolean)} - Muestra la previsualización del reporte.</li>
+ * </ul>
+ * </p>
+ * 
+ * <p>
+ * Uso:
+ * <ul>
+ *   <li>El usuario selecciona un rango de fechas y horario, y presiona "Filtrar".</li>
+ *   <li>Se muestran las gráficas y datos correspondientes.</li>
+ *   <li>Puede generar y exportar reportes en PDF o CSV.</li>
+ *   <li>Puede visualizar reportes generados previamente.</li>
+ * </ul>
+ * </p>
+ * 
+ * @author Grupo E
+ * @version 1.0
+ * @since 2025-08-11
  */
 public class ControladorReportesPrincipal {
 
@@ -118,8 +164,12 @@ public class ControladorReportesPrincipal {
             new ReporteGenerado(3, "Reporte_Ventas_20241125_1620", "PDF", LocalDateTime.now().minusDays(8),
                     "C:/reportes/reporte_ventas_20241125.pdf", "Reporte de ventas del 20/11/2024 al 25/11/2024"));
 
+    /**
+     * Inicializa la vista y los componentes del controlador.
+     * Carga los datos iniciales, configura los listeners y prepara las gráficas.
+     */
     @FXML
-    private void initialize() {
+    public void initialize() {
         choiceHorario.getItems().addAll("Todos", "Matutino", "Nocturno");
 
         // Configurar tabla de reportes
@@ -133,6 +183,10 @@ public class ControladorReportesPrincipal {
 
     }
 
+    /**
+     * Configura las columnas y celdas de la tabla de reportes generados.
+     * Establece los formatos de fecha y los botones de acción.
+     */
     private void configurarTablaReportes() {
         // Configurar las columnas
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -181,11 +235,18 @@ public class ControladorReportesPrincipal {
         tablaReportes.setItems(reportesGenerados);
     }
 
+    /**
+     * Carga los reportes simulados en la tabla de reportes generados.
+     */
     private void cargarReportesSimulados() {
         reportesGenerados.clear();
         reportesGenerados.addAll(reportesSimulados);
     }
 
+    /**
+     * Inicializa las gráficas de barras y pastel en estado vacío.
+     * Se utiliza cuando no hay datos o al iniciar la vista.
+     */
     private void inicializarGraficasVacias() {
         // Limpiar gráfica de barras
         if (barChart != null) {
@@ -200,6 +261,11 @@ public class ControladorReportesPrincipal {
         }
     }
 
+    /**
+     * Abre la previsualización de un reporte generado.
+     * 
+     * @param reporte El reporte generado a visualizar.
+     */
     private void abrirReporte(ReporteGenerado reporte) {
         try {
             // Mostrar previsualización del reporte sin opciones de descarga
@@ -210,6 +276,11 @@ public class ControladorReportesPrincipal {
         }
     }
 
+    /**
+     * Navega a la vista de reportes programados.
+     * 
+     * @param event Evento de acción generado por el botón correspondiente.
+     */
     @FXML
     private void goToReporteProgramado(ActionEvent event) {
         try {
@@ -224,6 +295,11 @@ public class ControladorReportesPrincipal {
         }
     }
 
+    /**
+     * Aplica los filtros seleccionados por el usuario (fechas y horario) y actualiza las gráficas.
+     * 
+     * @param event Evento de acción generado por el botón de filtrar.
+     */
     @FXML
     private void onFiltrar(ActionEvent event) {
 
@@ -266,6 +342,35 @@ public class ControladorReportesPrincipal {
 
         // Mostrar mensaje de confirmación
         ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
+    }
+
+    /**
+     * Muestra la previsualización del reporte de ventas según los filtros aplicados.
+     * Permite al usuario confirmar la generación y exportación del reporte.
+     * 
+     * @param event Evento de acción generado por el botón de confirmar.
+     */
+    @FXML
+    private void onConfirmarReporte(ActionEvent event) {
+        // Obtener valores de los filtros
+        LocalDate desde = dateDesde.getValue();
+        LocalDate hasta = dateHasta.getValue();
+        String horario = choiceHorario.getValue();
+
+        // Validar que se hayan seleccionado las fechas obligatorias
+        if (desde == null || hasta == null) {
+            ManejadorMetodosComunes.mostrarVentanaError("Por favor seleccione las fechas de inicio y fin");
+            return;
+        }
+
+        // Verificar que haya datos para mostrar en el reporte
+        if (estadisticas.isEmpty()) {
+            ManejadorMetodosComunes.mostrarVentanaError("No hay datos para mostrar con los filtros seleccionados");
+            return;
+        }
+
+        // Mostrar previsualización del reporte con opciones de descarga habilitadas
+        mostrarPrevisualizacionReporte(estadisticas, true);
     }
 
     private void actualizarGraficaBarras(List<Map<String, Object>> estadisticas) {
@@ -466,49 +571,71 @@ public class ControladorReportesPrincipal {
     }
 
     /**
-     * Maneja la confirmación para generar un nuevo reporte
-     * Valida los filtros y muestra la previsualización con opciones de descarga
+     * Maneja la exportación de reportes utilizando el patrón Strategy
+     * Permite guardar el reporte en diferentes formatos (PDF o CSV)
+     * 
+     * @param strategy La estrategia de exportación a utilizar (PDF o CSV)
+     * @param tipo     El tipo de archivo a generar ("pdf" o "csv")
      */
-    @FXML
-    private void onConfirmarReporte(ActionEvent event) {
-        // Obtener valores de los filtros
-        LocalDate desde = dateDesde.getValue();
-        LocalDate hasta = dateHasta.getValue();
-        String horario = choiceHorario.getValue();
-
-        // Validar que se hayan seleccionado las fechas obligatorias
-        if (desde == null || hasta == null) {
-            ManejadorMetodosComunes.mostrarVentanaError("Por favor seleccione las fechas de inicio y fin");
-            return;
-        }
-
-        // Verificar que haya datos para mostrar en el reporte
-        if (estadisticas.isEmpty()) {
-            ManejadorMetodosComunes.mostrarVentanaError("No hay datos para mostrar con los filtros seleccionados");
-            return;
-        }
-
-        // Mostrar previsualización del reporte con opciones de descarga habilitadas
-        mostrarPrevisualizacionReporte(estadisticas, true);
-    }
-
-    /**
-     * Navega de vuelta al portal principal del empleado
-     * Carga la vista principal y cambia la escena
-     */
-    @FXML
-    void volverEscena(ActionEvent event) {
+    private void exportarReporte(Exportable strategy, String tipo) {
         try {
-            // Cargar el archivo FXML del portal principal
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
+            // Obtener valores de filtros para incluir en el reporte
+            LocalDate desde = dateDesde.getValue();
+            LocalDate hasta = dateHasta.getValue();
+            String horario = choiceHorario.getValue();
 
-            // Cambiar a la nueva escena
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
+            // Validar que se hayan seleccionado las fechas antes de exportar
+            if (desde == null || hasta == null) {
+                ManejadorMetodosComunes.mostrarVentanaError("Por favor seleccione las fechas antes de exportar");
+                return;
+            }
+
+            // Usar los datos estadísticos actuales para la exportación
+            List<Map<String, Object>> datos = estadisticas;
+
+            // Configurar el selector de archivos para guardar
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
+            fileChooser.setInitialFileName("reporte_ventas." + tipo);
+
+            // Agregar filtros de extensión según el tipo de archivo
+            if (tipo.equals("pdf")) {
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
+            } else if (tipo.equals("csv")) {
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
+            }
+
+            // Obtener la ventana padre para el diálogo
+            Stage stage = (Stage) btnBack.getScene().getWindow();
+            File archivo = fileChooser.showSaveDialog(stage);
+
+            if (archivo != null) {
+                // Crear información adicional para incluir en el reporte
+                Map<String, Object> infoExtra = new HashMap<>();
+                infoExtra.put("subtitulo", "Reporte generado el "
+                        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+
+                // Ejecutar la estrategia de exportación seleccionada
+                strategy.exportarFormatoPrincipal(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
+
+                // Crear nuevo registro de reporte generado para agregar a la tabla
+                ReporteGenerado nuevoReporte = new ReporteGenerado(
+                        reportesGenerados.size() + 1, // ID incremental
+                        "Reporte_Ventas_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")),
+                        tipo.toUpperCase(), // Tipo en mayúsculas (PDF/CSV)
+                        LocalDateTime.now(), // Fecha de generación actual
+                        archivo.getAbsolutePath(), // Ruta completa del archivo
+                        "Reporte de ventas del " + desde + " al " + hasta); // Descripción descriptiva
+
+                // Agregar el nuevo reporte al inicio de la lista (más reciente primero)
+                reportesGenerados.add(0, nuevoReporte);
+
+                // Mostrar mensaje de confirmación al usuario
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El reporte ha sido exportado correctamente.");
+            }
+        } catch (Exception e) {
+            // Manejar errores durante la exportación
+            ManejadorMetodosComunes.mostrarVentanaError("No se pudo exportar el reporte: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -992,76 +1119,6 @@ public class ControladorReportesPrincipal {
         celda.setStyle(esHeader ? "-fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;"
                 : "-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
         return celda;
-    }
-
-    /**
-     * Maneja la exportación de reportes utilizando el patrón Strategy
-     * Permite guardar el reporte en diferentes formatos (PDF o CSV)
-     * 
-     * @param strategy La estrategia de exportación a utilizar (PDF o CSV)
-     * @param tipo     El tipo de archivo a generar ("pdf" o "csv")
-     */
-    private void exportarReporte(Exportable strategy, String tipo) {
-        try {
-            // Obtener valores de filtros para incluir en el reporte
-            LocalDate desde = dateDesde.getValue();
-            LocalDate hasta = dateHasta.getValue();
-            String horario = choiceHorario.getValue();
-
-            // Validar que se hayan seleccionado las fechas antes de exportar
-            if (desde == null || hasta == null) {
-                ManejadorMetodosComunes.mostrarVentanaError("Por favor seleccione las fechas antes de exportar");
-                return;
-            }
-
-            // Usar los datos estadísticos actuales para la exportación
-            List<Map<String, Object>> datos = estadisticas;
-
-            // Configurar el selector de archivos para guardar
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
-            fileChooser.setInitialFileName("reporte_ventas." + tipo);
-
-            // Agregar filtros de extensión según el tipo de archivo
-            if (tipo.equals("pdf")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
-            } else if (tipo.equals("csv")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
-            }
-
-            // Obtener la ventana padre para el diálogo
-            Stage stage = (Stage) btnBack.getScene().getWindow();
-            File archivo = fileChooser.showSaveDialog(stage);
-
-            if (archivo != null) {
-                // Crear información adicional para incluir en el reporte
-                Map<String, Object> infoExtra = new HashMap<>();
-                infoExtra.put("subtitulo", "Reporte generado el "
-                        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-
-                // Ejecutar la estrategia de exportación seleccionada
-                strategy.exportarFormatoPrincipal(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
-
-                // Crear nuevo registro de reporte generado para agregar a la tabla
-                ReporteGenerado nuevoReporte = new ReporteGenerado(
-                        reportesGenerados.size() + 1, // ID incremental
-                        "Reporte_Ventas_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")),
-                        tipo.toUpperCase(), // Tipo en mayúsculas (PDF/CSV)
-                        LocalDateTime.now(), // Fecha de generación actual
-                        archivo.getAbsolutePath(), // Ruta completa del archivo
-                        "Reporte de ventas del " + desde + " al " + hasta); // Descripción descriptiva
-
-                // Agregar el nuevo reporte al inicio de la lista (más reciente primero)
-                reportesGenerados.add(0, nuevoReporte);
-
-                // Mostrar mensaje de confirmación al usuario
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El reporte ha sido exportado correctamente.");
-            }
-        } catch (Exception e) {
-            // Manejar errores durante la exportación
-            ManejadorMetodosComunes.mostrarVentanaError("No se pudo exportar el reporte: " + e.getMessage());
-            e.printStackTrace();
-        }
     }
 
 }

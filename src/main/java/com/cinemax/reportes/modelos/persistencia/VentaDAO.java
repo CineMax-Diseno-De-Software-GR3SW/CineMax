@@ -12,9 +12,32 @@ import java.util.Map;
 
 import com.cinemax.comun.ConexionBaseSingleton;
 
+/**
+ * DAO (Data Access Object) para la gestión de consultas de ventas.
+ * <p>
+ * Esta clase se encarga de interactuar con la base de datos para obtener información
+ * relacionada con ventas, como resúmenes, estadísticas y filtrado de datos.
+ * Utiliza conexiones JDBC y retorna los resultados en estructuras de tipo Map y List.
+ * </p>
+ *
+ * <ul>
+ *   <li>Obtiene un resumen general de ventas (boletos, facturas, ingresos, funciones, fechas).</li>
+ *   <li>Obtiene estadísticas para gráficas de barras (por fecha, tipo de sala y formato).</li>
+ *   <li>Filtra datos de ventas en memoria según un rango de fechas.</li>
+ * </ul>
+ *
+ * @author Grupo E
+ * @version 1.0
+ * @since 2025-08-11
+ */
 public class VentaDAO {
 
-    // Método principal para obtener resumen de ventas
+    /**
+     * Método que obtiene un resumen general de las ventas desde la base de datos.
+     *
+     * @return Un mapa con el resumen de ventas (total de boletos, facturas, ingreso, funciones, fechas).
+     *         Si ocurre un error, retorna valores por defecto y un mensaje de error.
+     */
     public Map<String, Object> obtenerResumenVentas() {
         String sql = "SELECT " +
                 "COUNT(DISTINCT b.idboleto) AS total_boletos_vendidos, " +
@@ -67,6 +90,12 @@ public class VentaDAO {
         return resumen;
     }
 
+    /**
+     * Obtiene estadísticas de ventas agrupadas por fecha para gráficas de barras.
+     *
+     * @return Una lista de mapas con los datos estadísticos de ventas por fecha.
+     *         Si ocurre un error, retorna una lista vacía.
+     */
     public List<Map<String, Object>> obtenerEstadisticasDeBarras() {
         String sql = "SELECT " +
                 "f.fecha::DATE AS fecha, " +
@@ -108,6 +137,14 @@ public class VentaDAO {
 
     }
 
+    /**
+     * Filtra en memoria los datos de ventas según un rango de fechas.
+     *
+     * @param datos      Lista de mapas con los datos de ventas a filtrar.
+     * @param fechaDesde Fecha de inicio del filtro (formato "yyyy-MM-dd").
+     * @param fechaHasta Fecha de fin del filtro (formato "yyyy-MM-dd").
+     * @return Una lista de mapas con los datos filtrados por el rango de fechas.
+     */
     public List<Map<String, Object>> obtenerFiltradoDeDatos(List<Map<String, Object>> datos, String fechaDesde,
             String fechaHasta) {
         List<Map<String, Object>> datosFiltrados = new ArrayList<>();
