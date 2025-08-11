@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 
@@ -77,6 +78,13 @@
                                 </TextFlow>
                                 <TextField fx:id="correoField" promptText="ejemplo@email.com" styleClass="text-field" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                             </children>
+                     <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                        <RowConstraints />
+                     </rowConstraints>
                         </GridPane>
                         <HBox alignment="CENTER_LEFT" spacing="5.0">
                             <children>
@@ -84,7 +92,10 @@
                                 <TextFlow>
                                     <children>
                                         <Text fill="red" style="-fx-font-weight: bold;" text="*" />
-                                        <Text fill="#b0b0b0" style="-fx-font-style: italic;" text=" Campos obligatorios" />
+                                        <Text fill="#b0b0b0" style="-fx-font-style: italic;" text=" Campos obligatorios">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font></Text>
                                     </children>
                                 </TextFlow>
                             </children>
