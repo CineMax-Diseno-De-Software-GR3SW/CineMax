@@ -18,7 +18,7 @@
 
     <TextField fx:id="txtEmail" maxWidth="-Infinity" prefHeight="36.0" prefWidth="400.0" promptText="Correo Electrónico" />
 
-    <Button onAction="#onSendClick" prefHeight="45" prefWidth="250.0" styleClass="primary-button" text="Enviar Contaseña Temporal">
+    <Button onAction="#onSendClick" prefHeight="45" prefWidth="250.0" styleClass="primary-button" text="Enviar Contraseña Temporal">
         <font>
             <Font size="18.0" />
         </font>
