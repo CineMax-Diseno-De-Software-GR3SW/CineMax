@@ -1,4 +1,4 @@
-package com.cinemax.reportes.modelos.entidades;
+package com.cinemax.reportes.servicios;
 
 import java.util.List;
 import java.util.Map;
@@ -25,13 +25,13 @@ import java.time.LocalDate;
  * @version 1.0
  * @since 2025-08-11
  */
-public class VentasService {
+public class ServicioDeReportes {
     private VentaDAO ventasDAO;
 
     /**
      * Constructor. Inicializa el DAO de ventas.
      */
-    public VentasService() {
+    public ServicioDeReportes() {
         ventasDAO = new VentaDAO();
     }
 

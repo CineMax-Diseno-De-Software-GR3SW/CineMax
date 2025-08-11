@@ -38,7 +38,7 @@ import com.cinemax.reportes.modelos.entidades.EstrategiaExportarPDF;
 import com.cinemax.reportes.modelos.entidades.Exportable;
 import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 import com.cinemax.reportes.modelos.entidades.ServicioReportesProgramados;
-import com.cinemax.reportes.modelos.entidades.VentasService;
+import com.cinemax.reportes.servicios.ServicioDeReportes;
 
 // Para la dependencia de programado task
 
@@ -75,7 +75,7 @@ public class ControladorReportesProgramados {
     final ServicioReportesProgramados schedulerService = ServicioReportesProgramados.getInstance();
 
     // Servicio para obtener datos de ventas
-    private VentasService ventasService = new VentasService();
+    private ServicioDeReportes ventasService = new ServicioDeReportes();
     // Datos del resumen de ventas que se usarán en los reportes
     private Map<String, Object> datos = ventasService.getResumenDeVentas();;
 

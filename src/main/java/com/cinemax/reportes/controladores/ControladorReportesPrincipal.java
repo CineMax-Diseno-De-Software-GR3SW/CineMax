@@ -1,104 +1,115 @@
 package com.cinemax.reportes.controladores;
 
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.stage.Stage;
-import java.io.IOException;
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.HashMap;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.ComboBox;
-
-import java.time.LocalDate;
-import javafx.scene.chart.BarChart;
-import javafx.scene.chart.XYChart;
-import javafx.scene.chart.PieChart;
-import javafx.scene.chart.CategoryAxis;
-import javafx.scene.chart.NumberAxis;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.reportes.modelos.entidades.EstrategiaExportarCSV;
 import com.cinemax.reportes.modelos.entidades.EstrategiaExportarPDF;
 import com.cinemax.reportes.modelos.entidades.Exportable;
 import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
-import com.cinemax.reportes.modelos.entidades.VentasService;
+import com.cinemax.reportes.servicios.ServicioDeReportes;
 
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
-import javafx.scene.control.TableCell;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.geometry.Insets;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.chart.BarChart;
+import javafx.scene.chart.CategoryAxis;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.PieChart;
+import javafx.scene.chart.XYChart;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 /**
- * Controlador principal para la gestión de reportes de ventas en el sistema Cinemax.
+ * Controlador principal para la gestión de reportes de ventas en el sistema
+ * Cinemax.
  * 
  * <p>
- * Esta clase se encarga de manejar la visualización de gráficos, filtrado de datos,
- * generación y exportación de reportes de ventas. Permite visualizar reportes existentes,
- * crear nuevos reportes en diferentes formatos (PDF, CSV), y mostrar análisis visual
+ * Esta clase se encarga de manejar la visualización de gráficos, filtrado de
+ * datos,
+ * generación y exportación de reportes de ventas. Permite visualizar reportes
+ * existentes,
+ * crear nuevos reportes en diferentes formatos (PDF, CSV), y mostrar análisis
+ * visual
  * mediante gráficas de barras y pastel.
  * </p>
  * 
  * <ul>
- *   <li>Permite filtrar datos por rango de fechas y horario.</li>
- *   <li>Genera y muestra reportes de ventas con tablas y gráficas.</li>
- *   <li>Exporta reportes en formato PDF o CSV usando el patrón Strategy.</li>
- *   <li>Muestra reportes generados previamente en una tabla.</li>
+ * <li>Permite filtrar datos por rango de fechas y horario.</li>
+ * <li>Genera y muestra reportes de ventas con tablas y gráficas.</li>
+ * <li>Exporta reportes en formato PDF o CSV usando el patrón Strategy.</li>
+ * <li>Muestra reportes generados previamente en una tabla.</li>
  * </ul>
  * 
  * <p>
  * Componentes principales:
  * <ul>
- *   <li>Botones de navegación y acción (filtrar, confirmar, volver, exportar).</li>
- *   <li>Pickers de fecha y combo para horario.</li>
- *   <li>Gráficas de barras y pastel para análisis visual.</li>
- *   <li>Tabla de reportes generados.</li>
+ * <li>Botones de navegación y acción (filtrar, confirmar, volver,
+ * exportar).</li>
+ * <li>Pickers de fecha y combo para horario.</li>
+ * <li>Gráficas de barras y pastel para análisis visual.</li>
+ * <li>Tabla de reportes generados.</li>
  * </ul>
  * </p>
  * 
  * <p>
  * Métodos clave:
  * <ul>
- *   <li>{@link #initialize()} - Inicializa la vista y componentes.</li>
- *   <li>{@link #onFiltrar(ActionEvent)} - Aplica filtros y actualiza las gráficas.</li>
- *   <li>{@link #onConfirmarReporte(ActionEvent)} - Muestra previsualización y permite exportar.</li>
- *   <li>{@link #actualizarGraficaBarras(List)} - Actualiza la gráfica de barras.</li>
- *   <li>{@link #actualizarGraficaPastel(List)} - Actualiza la gráfica de pastel.</li>
- *   <li>{@link #exportarReporte(Exportable, String)} - Exporta el reporte en el formato seleccionado.</li>
- *   <li>{@link #mostrarPrevisualizacionReporte(List, boolean)} - Muestra la previsualización del reporte.</li>
+ * <li>{@link #initialize()} - Inicializa la vista y componentes.</li>
+ * <li>{@link #onFiltrar(ActionEvent)} - Aplica filtros y actualiza las
+ * gráficas.</li>
+ * <li>{@link #onConfirmarReporte(ActionEvent)} - Muestra previsualización y
+ * permite exportar.</li>
+ * <li>{@link #actualizarGraficaBarras(List)} - Actualiza la gráfica de
+ * barras.</li>
+ * <li>{@link #actualizarGraficaPastel(List)} - Actualiza la gráfica de
+ * pastel.</li>
+ * <li>{@link #exportarReporte(Exportable, String)} - Exporta el reporte en el
+ * formato seleccionado.</li>
+ * <li>{@link #mostrarPrevisualizacionReporte(List, boolean)} - Muestra la
+ * previsualización del reporte.</li>
  * </ul>
  * </p>
  * 
  * <p>
  * Uso:
  * <ul>
- *   <li>El usuario selecciona un rango de fechas y horario, y presiona "Filtrar".</li>
- *   <li>Se muestran las gráficas y datos correspondientes.</li>
- *   <li>Puede generar y exportar reportes en PDF o CSV.</li>
- *   <li>Puede visualizar reportes generados previamente.</li>
+ * <li>El usuario selecciona un rango de fechas y horario, y presiona
+ * "Filtrar".</li>
+ * <li>Se muestran las gráficas y datos correspondientes.</li>
+ * <li>Puede generar y exportar reportes en PDF o CSV.</li>
+ * <li>Puede visualizar reportes generados previamente.</li>
  * </ul>
  * </p>
  * 
@@ -149,20 +160,15 @@ public class ControladorReportesPrincipal {
     private ObservableList<ReporteGenerado> reportesGenerados = FXCollections.observableArrayList();
 
     // Servicios y datos del negocio
-    private VentasService ventasService = new VentasService(); // Servicio para obtener datos de ventas
-    private Map<String, Object> datos = ventasService.getResumenDeVentas(); // Datos resumen de ventas
+    private ServicioDeReportes servicioReportes = new ServicioDeReportes(); // Servicio para obtener datos de ventas
+    private Map<String, Object> datos = servicioReportes.getResumenDeVentas(); // Datos resumen de ventas
 
     // Datos estadísticos para poblar las gráficas
-    private List<Map<String, Object>> estadisticas = ventasService.getEstadisticasDeBarras();
+    private List<Map<String, Object>> estadisticas = servicioReportes.getEstadisticasDeBarras();
 
     // Datos simulados para reportes generados
-    private final List<ReporteGenerado> reportesSimulados = Arrays.asList(
-            new ReporteGenerado(1, "Reporte_Ventas_20241201_1430", "PDF", LocalDateTime.now().minusDays(2),
-                    "C:/reportes/reporte_ventas_20241201.pdf", "Reporte de ventas del 01/12/2024 al 05/12/2024"),
-            new ReporteGenerado(2, "Reporte_Ventas_20241128_0915", "CSV", LocalDateTime.now().minusDays(5),
-                    "C:/reportes/reporte_ventas_20241128.csv", "Reporte de ventas del 25/11/2024 al 30/11/2024"),
-            new ReporteGenerado(3, "Reporte_Ventas_20241125_1620", "PDF", LocalDateTime.now().minusDays(8),
-                    "C:/reportes/reporte_ventas_20241125.pdf", "Reporte de ventas del 20/11/2024 al 25/11/2024"));
+    private final List<ReporteGenerado> reportesSimulados = Arrays.asList();
+
 
     /**
      * Inicializa la vista y los componentes del controlador.
@@ -296,7 +302,8 @@ public class ControladorReportesPrincipal {
     }
 
     /**
-     * Aplica los filtros seleccionados por el usuario (fechas y horario) y actualiza las gráficas.
+     * Aplica los filtros seleccionados por el usuario (fechas y horario) y
+     * actualiza las gráficas.
      * 
      * @param event Evento de acción generado por el botón de filtrar.
      */
@@ -320,10 +327,10 @@ public class ControladorReportesPrincipal {
         System.out.println("Filtrando desde " + desdeStr + " hasta " + hastaStr);
 
         // CAMBIO AQUÍ: Primero obtener todos los datos sin filtrar
-        List<Map<String, Object>> datosOriginales = ventasService.getEstadisticasDeBarras();
+        List<Map<String, Object>> datosOriginales = servicioReportes.getEstadisticasDeBarras();
 
         // Actualizar gráficas con datos filtrados
-        estadisticas = ventasService.obtenerDatosFiltrados(datosOriginales, desdeStr, hastaStr);
+        estadisticas = servicioReportes.obtenerDatosFiltrados(datosOriginales, desdeStr, hastaStr);
 
         // Si no hay datos con ese filtro, mostrar mensaje
         if (estadisticas.isEmpty()) {
@@ -345,7 +352,8 @@ public class ControladorReportesPrincipal {
     }
 
     /**
-     * Muestra la previsualización del reporte de ventas según los filtros aplicados.
+     * Muestra la previsualización del reporte de ventas según los filtros
+     * aplicados.
      * Permite al usuario confirmar la generación y exportación del reporte.
      * 
      * @param event Evento de acción generado por el botón de confirmar.
@@ -630,8 +638,6 @@ public class ControladorReportesPrincipal {
                 // Agregar el nuevo reporte al inicio de la lista (más reciente primero)
                 reportesGenerados.add(0, nuevoReporte);
 
-                // Mostrar mensaje de confirmación al usuario
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El reporte ha sido exportado correctamente.");
             }
         } catch (Exception e) {
             // Manejar errores durante la exportación
@@ -735,6 +741,7 @@ public class ControladorReportesPrincipal {
                 btnDescargarCSV.setOnAction(e -> {
                     ventanaPrevia.close();
                     exportarReporte(new EstrategiaExportarCSV(), "csv");
+
                 });
 
                 botonesBox.getChildren().addAll(btnDescargarPDF, btnDescargarCSV);
@@ -1119,6 +1126,20 @@ public class ControladorReportesPrincipal {
         celda.setStyle(esHeader ? "-fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 5; -fx-alignment: center;"
                 : "-fx-text-fill: #ecf0f1; -fx-padding: 5; -fx-alignment: center;");
         return celda;
+    }
+
+    @FXML
+    void volverEscena(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
