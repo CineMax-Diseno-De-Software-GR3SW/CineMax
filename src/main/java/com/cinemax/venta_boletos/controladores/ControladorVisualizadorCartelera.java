@@ -113,11 +113,11 @@ public class ControladorVisualizadorCartelera {
         imagenPelicula.getStyleClass().add("movie-poster");
 
         // Estilo de las etiquetas
+        // Se usa la clase específica para la cartelera para no afectar otras vistas
         tituloLabel.getStyleClass().add("movie-title-card");
-        tituloLabel.setWrapText(true);
-        tituloLabel.setMaxWidth(160);
+        tituloLabel.setMaxWidth(160); // Ancho máximo para que el texto sepa cuándo ajustarse
+
         generoAnioLabel.getStyleClass().add("movie-genre-year-card");
-        generoAnioLabel.setWrapText(true);
         generoAnioLabel.setMaxWidth(160);
 
         // Creación del contenedor principal
@@ -125,7 +125,12 @@ public class ControladorVisualizadorCartelera {
         card.getStyleClass().add("movie-card");
         card.setAlignment(Pos.TOP_CENTER);
         card.setSpacing(5);
-        card.setPrefSize(180, 300);
+
+        // Se establece un ancho preferido y una altura MÍNIMA.
+        // Esto permite que la tarjeta crezca verticalmente si el título es largo.
+        card.setPrefWidth(180);
+        card.setMinHeight(300);
+
         card.setStyle("-fx-border-color: transparent; -fx-border-width: 0px;");
 
         // Carga de imagen con manejo de errores
