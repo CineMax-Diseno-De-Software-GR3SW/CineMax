@@ -118,7 +118,7 @@
                                         </style>
                                     </ImageView>
                                     
-                                    <Button fx:id="btnSeleccionarImagen" text="Seleccionar Imagen" onAction="#onSeleccionarImagen" />
+                                    <Button fx:id="btnSeleccionarImagen" text="Seleccionar Imagen" onAction="#onSeleccionarImagen" styleClass="primary-button" />
 
                                 </children>
                             </VBox>
