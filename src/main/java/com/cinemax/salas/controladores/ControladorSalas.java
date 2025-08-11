@@ -1,9 +1,11 @@
 package com.cinemax.salas.controladores;
+
+import com.cinemax.salas.modelos.entidades.*;
+import com.cinemax.salas.servicios.ButacaService;
+import com.cinemax.salas.servicios.SalaService;
 import com.cinemax.utilidades.*;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.*;
-import com.cinemax.salas.servicios.ServicioButaca;
-import com.cinemax.salas.servicios.ServicioSala;
 import com.cinemax.salas.modelos.entidades.SalaFactory;
 import com.cinemax.salas.modelos.entidades.SalaNormalFactory;
 import com.cinemax.salas.modelos.entidades.SalaVIPFactory;
@@ -77,11 +79,11 @@ public class ControladorSalas {
     // ===== SERVICIOS, LISTAS Y ESTADO INTERNO =====
 
     /** Servicio de salas (acceso a datos y lógica de negocio) */
-    private final ServicioSala servicioSala = new ServicioSala();
+    private final SalaService salaService = new SalaService();
     /** Lista observable que respalda la tabla de salas */
     private final ObservableList<Sala> salas = FXCollections.observableArrayList();
     /** Servicio de butacas (para autogenerar asientos cuando aplique) */
-    private final ServicioButaca servicioButaca = new ServicioButaca();
+    private final ButacaService butacaService = new ButacaService();
     /** Referencia a la sala en edición (null = modo crear) */
     private Sala salaEnEdicion = null;
 
@@ -224,15 +226,22 @@ public class ControladorSalas {
      * Regresa al portal principal cargando la vista correspondiente.
      */
     public void onBackAction(ActionEvent event) {
-        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-        ManejadorMetodosComunes.cambiarVentana(stage, "/vistas/empleados/PantallaPortalPrincipal.fxml");
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     // ===== CARGA Y LISTADO =====
 
     /** Carga todas las salas desde el servicio y limpia el formulario. */
     private void cargarSalas() throws Exception {
-        salas.setAll(servicioSala.listarSalas());
+        salas.setAll(salaService.listarSalas());
         limpiarFormulario();
     }
 
@@ -272,7 +281,7 @@ public class ControladorSalas {
             }
 
             // Validación de duplicados (por nombre, case-insensitive)
-            boolean existe = servicioSala.listarSalas().stream()
+            boolean existe = salaService.listarSalas().stream()
                     .anyMatch(s -> s.getNombre().equalsIgnoreCase(nombreSala));
             if (existe) {
                 ManejadorMetodosComunes.mostrarVentanaAdvertencia("Ya existe una sala con el nombre \"" + nombreSala + "\". Por favor elige otro nombre.");
@@ -293,7 +302,7 @@ public class ControladorSalas {
             );
 
             // Persistencia
-            servicioSala.crearSala(sala);
+            salaService.crearSala(sala);
 
             // Recarga y confirmación
             listarTodasSalas();
@@ -304,12 +313,12 @@ public class ControladorSalas {
             if (msg != null && msg.contains("Ya existe una sala con ese nombre")) {
                 // Si la sala ya existía en otra transacción, intentamos generar butacas para esa sala
                 try {
-                    Sala existente = servicioSala.listarSalas().stream()
+                    Sala existente = salaService.listarSalas().stream()
                             .filter(s -> s.getNombre().equalsIgnoreCase(txtNombre.getText().trim()))
                             .findFirst()
                             .orElseThrow(() -> new Exception("No se encontró la sala existente"));
 
-                    servicioButaca.generarButacasAutomatica(existente.getId());
+                    butacaService.generarButacasAutomatica(existente.getId());
 
                     listarTodasSalas();
                     ManejadorMetodosComunes.mostrarVentanaExito("Butacas creadas exitosamente para la sala existente \"" +
@@ -351,7 +360,7 @@ public class ControladorSalas {
                 }
 
                 // Evitar duplicados por nombre (ignorando la misma sala)
-                boolean existe = servicioSala.listarSalas().stream()
+                boolean existe = salaService.listarSalas().stream()
                         .anyMatch(s -> s.getNombre().equalsIgnoreCase(nombreSala) && s.getId() != seleccionada.getId());
                 if (existe) {
                     ManejadorMetodosComunes.mostrarVentanaAdvertencia("Ya existe una sala con el nombre \"" + nombreSala + "\". Por favor elige otro nombre.");
@@ -365,7 +374,7 @@ public class ControladorSalas {
                 seleccionada.setEstado(cmbEstado.getValue());
 
                 // Persistir y refrescar
-                servicioSala.actualizarSala(seleccionada);
+                salaService.actualizarSala(seleccionada);
                 listarTodasSalas();
 
                 ManejadorMetodosComunes.mostrarVentanaExito("Sala actualizada correctamente.");
@@ -397,20 +406,12 @@ public class ControladorSalas {
         }
         if (seleccionada != null) {
             try {
-                servicioSala.eliminarSala(seleccionada.getId());
+                salaService.eliminarSala(seleccionada.getId());
                 listarTodasSalas();
                 // limpiarCampos(); // Si tuvieras un método adicional de limpieza
                 ManejadorMetodosComunes.mostrarVentanaExito("Sala eliminada correctamente.");
-            }
-            catch (Exception e) {
-                String msg = e.getMessage();
-                if (msg != null && msg.toLowerCase().contains("violates foreign key")) {
-                    ManejadorMetodosComunes.mostrarVentanaAdvertencia(
-                            "No se puede eliminar porque está asociada a la venta de un boleto o una función."
-                    );
-                } else {
-                    ManejadorMetodosComunes.mostrarVentanaError(msg);
-                }
+            } catch (Exception e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Error inesperado en eliminarSala: " + e.getMessage());
             }
         } else {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Selecciona una sala para eliminar.");
@@ -440,10 +441,11 @@ public class ControladorSalas {
             // Si es número, busca por ID
             int id = Integer.parseInt(criterio);
             try {
-                Sala sala = servicioSala.obtenerSalaPorId(id);
+                Sala sala = salaService.obtenerSalaPorId(id);
                 if (sala != null) {
                     salas.setAll(sala);
                     lblTotalSalas.setText("Total Salas: 1");
+                    ManejadorMetodosComunes.mostrarVentanaExito("Sala encontrada.");
                 } else {
                     salas.clear();
                     lblTotalSalas.setText("Total Salas: 0");
@@ -457,7 +459,7 @@ public class ControladorSalas {
         } catch (NumberFormatException e) {
             // Si no es número, busca por nombre
             try {
-                List<Sala> resultado = servicioSala.buscarSalasPorNombre(criterio);
+                List<Sala> resultado = salaService.buscarSalasPorNombre(criterio);
                 if (resultado.isEmpty()) {
                     salas.clear();
                     lblTotalSalas.setText("Total Salas: 0");
@@ -465,6 +467,7 @@ public class ControladorSalas {
                 } else {
                     salas.setAll(resultado);
                     lblTotalSalas.setText("Total Salas: " + resultado.size());
+                    ManejadorMetodosComunes.mostrarVentanaExito("Salas encontradas.");
                 }
             } catch (Exception ex) {
                 salas.clear();

@@ -10,11 +10,15 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.Node;
 import javafx.application.Platform;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
@@ -153,7 +157,7 @@ public class ServicioVisualizadorFunciones {
 
         try {
             Stage currentStage = (Stage) tabla.getScene().getWindow();
-            ServicioTemporizador.getInstancia().empezarTemporizador(currentStage);
+            ServicioTemporizador.getInstance().empezarTemporizador(currentStage);
 
             ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
                     "/vistas/venta_boletos/VistaSeleccionButacas.fxml",

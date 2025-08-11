@@ -29,7 +29,7 @@ public class ServicioTemporizador {
      * Obtiene la instancia única del servicio de temporizador.
      * @return La instancia única.
      */
-    public static synchronized ServicioTemporizador getInstancia() {
+    public static synchronized ServicioTemporizador getInstance() {
         if (instancia == null) {
             instancia = new ServicioTemporizador();
         }

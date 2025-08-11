@@ -140,7 +140,7 @@ public class ControladorAsignadorButacas {
 
         // Vincular el label del temporizador para que se actualice automáticamente
         if (timerLabel != null) {
-            timerLabel.textProperty().bind(ServicioTemporizador.getInstancia().tiempoRestanteProperty());
+            timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
         }
 
 
@@ -214,7 +214,7 @@ public class ControladorAsignadorButacas {
     @FXML
     void onBackAction(ActionEvent event) {
         // Detener el temporizador al retroceder
-        ServicioTemporizador.getInstancia().detenerTemporizador();
+        ServicioTemporizador.getInstance().detenerTemporizador();
         // Obtener referencia a la ventana actual
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
 

@@ -13,6 +13,7 @@ import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
+import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
@@ -89,9 +90,9 @@ public class ControladorFacturacion {
     private double yOffset = 0;
 
     /** Servicio que gestiona la lógica de facturación (generación de factura, validaciones). */
-    private ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
+    private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
-    private ServicioCliente servicioCliente = new ServicioCliente();
+    private final ServicioCliente servicioCliente = new ServicioCliente();
 
     /** Controlador del panel lateral que muestra información de la función. */
     private ControladorInformacionDeVenta controladorInformacionDeVenta;
@@ -116,7 +117,7 @@ public class ControladorFacturacion {
 
         // 3. Vincular el label del temporizador
         if (timerLabel != null) {
-            timerLabel.textProperty().bind(ServicioTemporizador.getInstancia().tiempoRestanteProperty());
+            timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
         }
 
         // 4.. Configurar eventos para permitir mover la ventana arrastrando el header.
@@ -222,7 +223,7 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de búsqueda.
      */
     @FXML
-    private void buscarCliente(ActionEvent event) {
+    void buscarCliente(ActionEvent event) {
         // Validar que el campo de identificación no esté vacío.
         if (identificacionField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
@@ -301,7 +302,7 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de actualizar cliente.
      */
     @FXML
-    public void crearOActualizarCliente(ActionEvent event) {
+    void crearOActualizarCliente(ActionEvent event) {
 
         // Validar que el documento sea válido antes de continuar con la actualización.
         if (!validarNumeroDocumentoCliente()) {
@@ -339,7 +340,7 @@ public class ControladorFacturacion {
      */
 
     @FXML
-    private void pagarBoletos(ActionEvent event) {
+    protected void pagarBoletos() {
         // Validar que todos los campos estén llenos antes de proceder con la compra.
         if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -380,7 +381,7 @@ public class ControladorFacturacion {
 
 
         // Detener el temporizador después de un pago exitoso
-        ServicioTemporizador.getInstancia().detenerTemporizador();
+        ServicioTemporizador.getInstance().detenerTemporizador();
 
         // Redirigir al usuario a la pantalla principal del portal de empleados.
         ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
@@ -427,7 +428,7 @@ public class ControladorFacturacion {
     }
     
     @FXML
-    public void onLimpiarFormulario(ActionEvent event) {
+    void onLimpiarFormulario(ActionEvent event) {
         limpiarFormulario();
     }
 

@@ -7,7 +7,10 @@ import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -64,8 +67,8 @@ public class ControladorPortalPrincipal {
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
         habilitarOpcionSiTienePermiso(btnGestionButacas, Permiso.GESTIONAR_SALA);
 
-        if (ServicioTemporizador.getInstancia().tempEnEjecucion()){
-            ServicioTemporizador.getInstancia().detenerTemporizador();
+        if (ServicioTemporizador.getInstance().tempEnEjecucion()){
+            ServicioTemporizador.getInstance().detenerTemporizador();
         }
     }
 

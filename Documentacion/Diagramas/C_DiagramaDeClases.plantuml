@@ -7,10 +7,6 @@ skinparam linetype ortho
 
 package controladores {
 
-    class ControladorPortalPrincipal{
-        +initialize(): void
-    }
-
     class ControladorAsignadorButacas {
         - funcionSeleccionada: Funcion
         - ControladorInformacionDeVenta: ControladorInformacionDeVenta
@@ -20,7 +16,6 @@ package controladores {
         - cargarMapaButacas(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
         + agregarButacaSeleccionada(butaca: Butaca): void
         + quitarButacaDeseleccionada(butaca: Butaca): void
-        - timerLabel: Label
     }
 
     class ControladorFacturacion {
@@ -54,7 +49,7 @@ package controladores {
     class ControladorVisualizadorCartelera {
         - servicioVisualizarCartelera: ServicioVisualizarCartelera
         - cargarCartelera(peliculas: List<Pelicula>): void
-    }
+    }   
 
     class ControladorVisualizadorFunciones {
         - servicioVisualizadorFunciones: ServicioVisualizadorFunciones
@@ -142,7 +137,7 @@ package utilidades {
             + setEstrategia(estrategia: EstrategiaValidacion): void
             + ejecutarEstrategia(documento: String): boolean
         }
-
+        
         class EstrategiaCedulaValidacion implements EstrategiaValidacion {
         }
         interface EstrategiaValidacion {
@@ -182,10 +177,6 @@ package utilidades {
         - crearSesionSMTP(): Session
         + enviarCorreo(destinatario: String, contenido: ContenidoMensaje): boolean
         + enviarCorreo(destinatario: String, contenido: ContenidoMensaje, adjunto: File): boolean
-    }
-
-    class ServicioMostrarFunciones{
-        + confirmarFuncion(): void
     }
 }
 
@@ -271,12 +262,6 @@ Boleto "1" *-- "1" Butaca
 
 ' Patrón Strategy
 ContextoValidacion o--> EstrategiaValidacion
-
-'Patron Singleton de ServicioTemporizador
-ServicioMostrarFunciones ..> ServicioTemporizador : <<usa>>
-ControladorAsignadorButacas ..> ServicioTemporizador : <<usa y observa>>
-ControladorFacturacion ..> ServicioTemporizador : <<usa y observa>>
-ControladorPortalPrincipal ..> ServicioTemporizador : <<usa>>
 
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
