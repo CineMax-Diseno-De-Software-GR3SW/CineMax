@@ -37,94 +37,97 @@
     </top>
 
     <!-- RIGHT: INFO PELÍCULA -->
-<right>
-    <VBox style="-fx-background-color: #2a2a2a; -fx-border-color: #3a3a3a; -fx-border-width: 0 0 0 1;" alignment="TOP_CENTER" spacing="15">
-        <padding>
-            <Insets top="20" right="20" bottom="0" left="20"/>
-        </padding>
-        <children>
-            <Label fx:id="labelNombrePelicula" prefHeight="0" prefWidth="274" styleClass="movie-title" 
-                   text="Nombre de la película" textAlignment="CENTER" wrapText="true" 
-                   alignment="CENTER" contentDisplay="CENTER">
-                <font>
-                    <Font name="System Bold" size="16.0" />
-                </font>
-                <VBox.margin>
-                    <Insets bottom="10" />
-                </VBox.margin>
-            </Label>
-            
-            <ImageView fx:id="imagenPelicula" fitWidth="180" preserveRatio="true" />
-            
-            <HBox spacing="10.0" alignment="CENTER_LEFT">
-                <VBox spacing="5.0" prefWidth="70">
-                    <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Género:" />
-                    <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Duración:" />
-                </VBox>
-                <Separator orientation="VERTICAL" prefHeight="45.0" />
-                <VBox spacing="5.0" HBox.hgrow="ALWAYS">
-                    <Label fx:id="etiquetaGenero" style="-fx-text-fill: #EAEAEA;" />
-                    <Label fx:id="etiquetaDuracion" style="-fx-text-fill: #EAEAEA;" />
-                </VBox>
-            </HBox>
-        </children>
-    </VBox>
-</right>
-
-    <!-- CENTER: FILTROS + TABLA -->
-<center>
-    <VBox spacing="10">
-        <padding>
-            <Insets top="0" right="20" bottom="20" left="20"/>
-        </padding>
-
-        <!-- Label 'Filtros:' arriba -->
-        <Label text="Filtros:" style="-fx-text-fill: white; -fx-font-weight: bold;" />
-
-        <!-- FILTROS: ancho limitado -->
-        <HBox 
-            style="-fx-background-color: #2a2a2a; -fx-background-radius: 8; -fx-padding: 10 15; -fx-border-color: #3a3a3a; -fx-border-radius: 8; -fx-border-width: 1;" 
-            alignment="TOP_LEFT" spacing="8"
-            maxWidth="450"
-            >
+    <right>
+        <VBox style="-fx-background-color: #2a2a2a; -fx-border-color: #3a3a3a; -fx-border-width: 0 0 0 1;" alignment="TOP_CENTER" spacing="15">
+            <padding>
+                <Insets top="20" right="20" bottom="0" left="20"/>
+            </padding>
             <children>
-                <HBox spacing="10" alignment="CENTER_LEFT">
-                    <children>
-                        <VBox spacing="5">
-                            <Label text="Fecha:" style="-fx-text-fill: white;" />
-                            <DatePicker fx:id="selectorFecha" styleClass="date-picker" prefWidth="150" />
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="Formato:" style="-fx-text-fill: white;" />
-                            <ComboBox fx:id="cmbFiltroFormato" promptText="Todos" prefWidth="120" styleClass="combo-box" />
-                        </VBox>
-                        <VBox spacing="5">
-                            <Label text="Tipo Sala:" style="-fx-text-fill: white;" />
-                            <ComboBox fx:id="cmbFiltroTipoSala" promptText="Todos" prefWidth="120" styleClass="combo-box" />
-                        </VBox>
-                    </children>
+                <Label fx:id="labelNombrePelicula" prefHeight="0" prefWidth="274" styleClass="movie-title" 
+                       text="Nombre de la película" textAlignment="CENTER" wrapText="true" 
+                       alignment="CENTER" contentDisplay="CENTER">
+                    <font>
+                        <Font name="System Bold" size="16.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="10" />
+                    </VBox.margin>
+                </Label>
+                
+                <ImageView fx:id="imagenPelicula" fitWidth="180" preserveRatio="true" />
+                
+                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                    <VBox spacing="5.0" prefWidth="70">
+                        <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Género:" />
+                        <Label style="-fx-text-fill: #EAEAEA; -fx-font-weight: bold;" text="Duración:" />
+                    </VBox>
+                    <Separator orientation="VERTICAL" prefHeight="45.0" />
+                    <VBox spacing="5.0" HBox.hgrow="ALWAYS">
+                        <Label fx:id="etiquetaGenero" style="-fx-text-fill: #EAEAEA;" />
+                        <Label fx:id="etiquetaDuracion" style="-fx-text-fill: #EAEAEA;" />
+                    </VBox>
                 </HBox>
             </children>
-        </HBox>
+        </VBox>
+    </right>
 
-        <!-- TABLA: más alta -->
-        <TableView fx:id="tablaFunciones" styleClass="content-list" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" prefHeight="600" maxHeight="600">
-            <columns>
-                <TableColumn fx:id="columnaHora" minWidth="8" prefWidth="80" text="Hora" />
-                <TableColumn fx:id="columnaSala" minWidth="8" prefWidth="80" text="Sala" />
-                <TableColumn fx:id="columnaTipoSala" minWidth="1" prefWidth="100" text="Tipo Sala" />
-                <TableColumn fx:id="columnaFormato" minWidth="10" prefWidth="100" text="Formato" />
-                <TableColumn fx:id="columnaTipoEstreno" minWidth="12" prefWidth="100" text="Tipo Estreno" />
-                <TableColumn fx:id="columnaPrecio" minWidth="8" prefWidth="80" text="Precio" />
-                <TableColumn fx:id="columnaFecha" minWidth="10" prefWidth="120" text="Fecha" />
-            </columns>
-            <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-            </columnResizePolicy>
-        </TableView>
-    </VBox>
-</center>
+    <!-- CENTER: FILTROS + TABLA -->
+    <center>
+        <VBox spacing="10">
+            <padding>
+                <Insets top="0" right="20" bottom="20" left="20"/>
+            </padding>
 
+            <!-- Label 'Filtros:' arriba -->
+            <Label text="Filtros:" style="-fx-text-fill: white; -fx-font-weight: bold;" />
+
+            <!-- FILTROS + BOTÓN LIMPIAR -->
+            <HBox 
+                style="-fx-background-color: #2a2a2a; -fx-background-radius: 8; -fx-padding: 10 15; -fx-border-color: #3a3a3a; -fx-border-radius: 8; -fx-border-width: 1;" 
+                alignment="TOP_LEFT" spacing="8"
+                maxWidth="600">
+                <children>
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <children>
+                            <VBox spacing="5">
+                                <Label text="Fecha:" style="-fx-text-fill: white;" />
+                                <DatePicker fx:id="selectorFecha" styleClass="date-picker" prefWidth="150" />
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label text="Formato:" style="-fx-text-fill: white;" />
+                                <ComboBox fx:id="cmbFiltroFormato" promptText="Todos" prefWidth="120" styleClass="combo-box" />
+                            </VBox>
+                            <VBox spacing="5">
+                                <Label text="Tipo Sala:" style="-fx-text-fill: white;" />
+                                <ComboBox fx:id="cmbFiltroTipoSala" promptText="Todos" prefWidth="120" styleClass="combo-box" />
+                            </VBox>
+                            <!-- Botón Limpiar Filtros -->
+                            <VBox spacing="5" alignment="BOTTOM_CENTER">
+                                <Label text=" " /> <!-- Espacio para alinear -->
+                                <Button fx:id="btnLimpiar" text="Limpiar" styleClass="link-button" onAction="#onLimpiarFiltros" />
+                            </VBox>
+                        </children>
+                    </HBox>
+                </children>
+            </HBox>
+
+            <!-- TABLA -->
+            <TableView fx:id="tablaFunciones" styleClass="content-list" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" prefHeight="600" maxHeight="600">
+                <columns>
+                    <TableColumn fx:id="columnaHora" minWidth="8" prefWidth="80" text="Hora" />
+                    <TableColumn fx:id="columnaSala" minWidth="8" prefWidth="80" text="Sala" />
+                    <TableColumn fx:id="columnaTipoSala" minWidth="1" prefWidth="100" text="Tipo Sala" />
+                    <TableColumn fx:id="columnaFormato" minWidth="10" prefWidth="100" text="Formato" />
+                    <TableColumn fx:id="columnaTipoEstreno" minWidth="12" prefWidth="100" text="Tipo Estreno" />
+                    <TableColumn fx:id="columnaPrecio" minWidth="8" prefWidth="120" text="Precio Unitario" />
+                    <TableColumn fx:id="columnaFecha" minWidth="10" prefWidth="120" text="Fecha" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+    </center>
 
     <!-- BOTTOM: BOTÓN CONFIRMAR -->
     <bottom>

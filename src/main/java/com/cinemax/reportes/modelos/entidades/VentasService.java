@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
 import com.cinemax.reportes.modelos.persistencia.VentaDAO;
+import java.time.LocalDate;
 
 public class VentasService {
     private VentaDAO ventasDAO;
@@ -44,4 +45,16 @@ public class VentasService {
             return new ArrayList<>();
         }
     }
+
+    public List<Map<String, Object>> obtenerDatosFiltrados(List<Map<String, Object>> datos, String desde,
+            String hasta) {
+        try {
+            return ventasDAO.obtenerFiltradoDeDatos(datos, desde, hasta);
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.err.println("Error en obtenerDatosFiltrados: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
 }

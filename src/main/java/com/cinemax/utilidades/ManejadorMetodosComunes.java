@@ -1,4 +1,4 @@
-package com.cinemax.comun;
+package com.cinemax.utilidades;
 
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;

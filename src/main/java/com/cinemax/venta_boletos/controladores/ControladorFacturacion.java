@@ -1,19 +1,18 @@
 package com.cinemax.venta_boletos.controladores;
 
-import com.cinemax.comun.ControladorCargaConDatos;
-import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.ContextoValidacion;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaPasaporteValidacion;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
+import com.cinemax.utilidades.ControladorCargaConDatos;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.utilidades.strategyValidacionDocumentos.ContextoValidacion;
+import com.cinemax.utilidades.strategyValidacionDocumentos.EstrategiaCedulaValidacion;
+import com.cinemax.utilidades.strategyValidacionDocumentos.EstrategiaPasaporteValidacion;
+import com.cinemax.utilidades.strategyValidacionDocumentos.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
-import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
@@ -73,12 +72,15 @@ public class ControladorFacturacion {
     @FXML
     private Label timerLabel;
 
+    /** Botón para crear o actualizar un cliente. */
     @FXML
     private Button buttonCrearOActualizar;
 
+    /** Botón para solicitar crear un nuevo cliente. */
     @FXML
     private Button buttonNuevoCliente;
 
+    /** Botón para limpiar el formulario. */
     @FXML
     private Button buttonLimpiarFormulario;
 
@@ -86,26 +88,32 @@ public class ControladorFacturacion {
 
     /** Lista de productos seleccionados, representando los boletos de cine. */
     private List<Producto> boletos;
+
+    /** Cliente que está siendo editado (si aplica). */
+    private Cliente clienteEnEdicion = null;
+
     private double xOffset = 0;
     private double yOffset = 0;
 
-    /** Servicio que gestiona la lógica de facturación (generación de factura, validaciones). */
+    /** Servicio que gestiona la lógica de facturación (generación de factura con los boletos asociados, validaciones). */
     private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
+    /** Servicio que gestiona la lógica de cliente (creación, actualización, búsqueda de clientes). */
     private final ServicioCliente servicioCliente = new ServicioCliente();
 
     /** Controlador del panel lateral que muestra información de la función. */
     private ControladorInformacionDeVenta controladorInformacionDeVenta;
 
-    private Cliente clienteEnEdicion = null;
-
     /**
-     * Inicializa los elementos gráficos y configura eventos personalizados.
+     * Inicializa los elementos gráficos de la vista y configura los eventos asociados.
      *
      * Proceso de inicialización:
-     * 1. Llena el ComboBox de tipo de documento con opciones predefinidas.
-     * 2. Selecciona por defecto el valor "Cédula" en el ComboBox.
-     * 3. Configura eventos de mouse para permitir arrastrar la ventana desde la barra superior (headerBar).
+     * 1. Configura el ComboBox de tipo de documento con opciones predefinidas.
+     * 2. Establece el valor por defecto "Seleccione un tipo de documento".
+     * 3. Vincula el Label del temporizador a la propiedad del ServicioTemporizador.
+     * 4. Configura eventos para permitir mover la ventana arrastrando el header.
+     * 5. Añade listeners para validar campos y actualizar el estado del formulario.
+     * 6. Aplica filtros de entrada a los campos para aceptar únicamente caracteres válidos.
      */
     @FXML
     public void initialize() {
@@ -120,39 +128,80 @@ public class ControladorFacturacion {
             timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
         }
 
-        // 4.. Configurar eventos para permitir mover la ventana arrastrando el header.
+        // 4. Configurar eventos para permitir mover la ventana arrastrando el header.
         headerBar.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
+
         headerBar.setOnMouseDragged(event -> {
             ((Stage) headerBar.getScene().getWindow()).setX(event.getScreenX() - xOffset);
             ((Stage) headerBar.getScene().getWindow()).setY(event.getScreenY() - yOffset);
         });
 
-        // Listeners para validar y actualizar el texto del botón
+        // 5. Añadir listeners para validar campos y actualizar el estado del formulario.
         nombreField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
         apellidoField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
         documentoField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
         correoField.textProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
         tipoDocumentoBox.valueProperty().addListener((o, ov, nv) -> actualizarEstadoFormulario());
 
-        // Primera validación al iniciar
         actualizarEstadoFormulario();
+
+        // 6. Filtros de entrada para los campos de texto.
+        nombreField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]", "");
+            if (!nombreField.getText().equals(filteredValue)) {
+                nombreField.setText(filteredValue);
+            }
+        });
+
+        apellidoField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^a-zA-ZáéíóúÁÉÍÓÚñÑ ]", "");
+            if (!apellidoField.getText().equals(filteredValue)) {
+                apellidoField.setText(filteredValue);
+            }
+        });
+
+        documentoField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^0-9]", "");
+            if (!documentoField.getText().equals(filteredValue)) {
+                documentoField.setText(filteredValue);
+            }
+        });
+
+        identificacionField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == null) {
+                return;
+            }
+            String filteredValue = newValue.replaceAll("[^0-9]", "");
+            if (!identificacionField.getText().equals(filteredValue)) {
+                identificacionField.setText(filteredValue);
+            }
+        });
     }
 
 
     /**
-     * Inicializa la vista con los boletos seleccionados y muestra la información lateral correspondiente.
-     * 
+     * Carga los boletos seleccionados en la vista y actualiza la sección lateral con la información de la venta.
+     *
      * Proceso de inicialización:
-     * 1. Asigna la lista de boletos a la variable local.
-     * 2. Verifica si el controlador lateral está inicializado.
-     * 3. Carga la vista de información lateral desde el controlador correspondiente.
-     * 4. Limpia y agrega la vista al contenedor principal.
-     * 5. Calcula el total a pagar con base en los boletos seleccionados.
-     * 
-     * @param boletos Lista de productos (boletos) que fueron seleccionados por el usuario.
+     * 1. Guarda la lista de boletos recibida en la variable local.
+     * 2. Verifica que el controlador de información lateral esté inicializado.
+     * 3. Obtiene la vista asociada al controlador lateral.
+     * 4. Limpia el contenedor lateral y agrega la vista obtenida.
+     * 5. Calcula el total a pagar según los boletos seleccionados.
+     *
+     * @param boletos Lista de productos (boletos) seleccionados por el usuario.
      */
     public void cargarBoletosSeleccionados(List<Producto> boletos) {
         this.boletos = boletos;
@@ -175,39 +224,35 @@ public class ControladorFacturacion {
     }
 
     /**
-     * Maneja el evento de búsqueda de cliente por número de identificación.
-     * Limpia los campos de texto y busca al cliente en la base de datos.
-     * Si el cliente es encontrado, llena los campos con su información.
-     * Si no se encuentra, muestra un mensaje de advertencia.
-     * @param event Evento de acción al hacer clic en el botón de búsqueda.
-     */
+    * Maneja el evento de búsqueda de cliente por número de identificación.
+    * Limpia los campos de texto y busca al cliente en la base de datos.
+    * Si el cliente es encontrado, llena los campos con su información.
+    * Si no se encuentra, muestra un mensaje de advertencia.
+    * @param event Evento de acción al hacer clic en el botón de búsqueda.
+    */
     @FXML
-    void buscarCliente(ActionEvent event) {
+    private void buscarCliente(ActionEvent event) {
         // Validar que el campo de identificación no esté vacío.
         if (identificacionField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
             return;
         }
 
-        try {
-            // Buscar al cliente por su número de identificación.
-            clienteEnEdicion = servicioCliente.buscarCliente(identificacionField.getText());
+        // Buscar al cliente por su número de identificación y colocarlo en la variable local clienteEnEdicion.
+        clienteEnEdicion = servicioCliente.buscarCliente(identificacionField.getText());
 
-            // Si el cliente es encontrado, se llenan los campos con su información.
-            if (clienteEnEdicion != null) {
-                nombreField.setText(clienteEnEdicion.getNombre());
-                apellidoField.setText(clienteEnEdicion.getApellido());
-                documentoField.setText(String.valueOf(clienteEnEdicion.getIdCliente()));
-                tipoDocumentoBox.setValue(clienteEnEdicion.getTipoDocumento());
-                correoField.setText(clienteEnEdicion.getCorreoElectronico());
-                actualizarModoFormulario();
-                ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
-            } else { 
-                // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
-            }
-        } catch (NumberFormatException e) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El número de identificación debe ser un número válido.");
+        // Si el cliente es encontrado, se llenan los campos con su información.
+        if (clienteEnEdicion != null) {
+            nombreField.setText(clienteEnEdicion.getNombre());
+            apellidoField.setText(clienteEnEdicion.getApellido());
+            documentoField.setText(String.valueOf(clienteEnEdicion.getIdCliente()));
+            tipoDocumentoBox.setValue(clienteEnEdicion.getTipoDocumento());
+            correoField.setText(clienteEnEdicion.getCorreoElectronico());
+            actualizarModoFormulario();
+            ManejadorMetodosComunes.mostrarVentanaExito("Cliente encontrado exitosamente.");
+        } else { 
+            // Si no se encuentra al cliente, se muestra un mensaje de advertencia.
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("Cliente no encontrado.");
         }
     }
 
@@ -234,7 +279,6 @@ public class ControladorFacturacion {
             case "Cédula":
                 contextoValidacion.setEstrategia(new EstrategiaCedulaValidacion());
                 break;
-
             case "RUC":
                 contextoValidacion.setEstrategia(new EstrategiaRucValidacion());
                 break;
@@ -258,26 +302,26 @@ public class ControladorFacturacion {
     }
 
     /**
-     * Maneja el evento de actualización de cliente.
-     * Valida los campos de entrada y actualiza la información del cliente en la base de datos.
-     * Si el cliente no existe, muestra un mensaje de advertencia.
-     * Si hay un error al actualizar, muestra un mensaje de error.
-     * @param event Evento de acción al hacer clic en el botón de actualizar cliente.
+     * Maneja el evento de creación o actualización de cliente.
+     * Valida los campos de entrada y crea o actualiza la información del cliente en la base de datos.
+     * Si hay un error al crear o actualizar, muestra un mensaje de error.
+     * @param event Evento de acción al hacer clic en el botón de crear o actualizar cliente.
      */
     @FXML
     void crearOActualizarCliente(ActionEvent event) {
 
-        // Validar que el documento sea válido antes de continuar con la actualización.
+        // Validar que el documento sea válido antes de continuar con la creación o actualización.
         if (!validarNumeroDocumentoCliente()) {
             return; 
         }
 
-        // Validar que todos los campos estén llenos antes de proceder con la actualización.
+        // Validar que todos los campos estén llenos antes de proceder con la creación o actualización.
         if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
             return;
         }
 
+        // Validar el formato del correo electrónico.
         if (!Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")
                     .matcher(correoField.getText().trim())
                     .matches()) {
@@ -299,11 +343,10 @@ public class ControladorFacturacion {
      * Valida los campos de entrada, verifica si se ha confirmado la compra y si el documento es válido.
      * Si todo es correcto, genera la factura y los boletos, y muestra un mensaje de éxito.
      * Si hay algún error durante el proceso, muestra un mensaje de error.
-     *  event Evento de acción al hacer clic en el botón de pagar.
+     * @param event Evento de acción al hacer clic en el botón de pagar.
      */
-
     @FXML
-    protected void pagarBoletos() {
+    private void pagarBoletos(ActionEvent event) {
         // Validar que todos los campos estén llenos antes de proceder con la compra.
         if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -321,34 +364,29 @@ public class ControladorFacturacion {
             return;
         }
 
+        // Crear al cliente en caso de no haber dado clic en el botón de crear.
         Cliente cliente = null;
         
-        try {
-            cliente = new Cliente(
-            nombreField.getText(),
-            apellidoField.getText(),
-            documentoField.getText(),
-            correoField.getText(),
-            tipoDocumentoBox.getValue());
-            // Si el cliente no existe, crear uno nuevo con los datos ingresados.
-            if (!servicioCliente.existeCliente(documentoField.getText())) {
-                servicioCliente.crearCliente(cliente);
-            }
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
+        cliente = new Cliente(
+        nombreField.getText(),
+        apellidoField.getText(),
+        documentoField.getText(),
+        correoField.getText(),
+        tipoDocumentoBox.getValue());
+
+        // Si el cliente no existe, crear uno nuevo con los datos ingresados.
+        if (!servicioCliente.existeCliente(documentoField.getText())) {
+            servicioCliente.crearCliente(cliente);
         }
 
-        // Generar los boletos en formato PDF.
+        // Generar los boletos y la factura.
         ServicioContenidoFactura generador = new ServicioContenidoFactura();
         generador.generarBoletos(boletos);
-
         CalculadorImpuesto calculadorImpuesto = new CalculadorIVA();
-        // Generar la factura con los boletos y el cliente.
         servicioFacturacion.generarFactura(this.boletos, cliente,calculadorImpuesto);
 
 
-        // Detener el temporizador después de un pago exitoso
+        // Detener el temporizador después de un pago exitoso.
         ServicioTemporizador.getInstance().detenerTemporizador();
 
         // Redirigir al usuario a la pantalla principal del portal de empleados.
@@ -359,11 +397,10 @@ public class ControladorFacturacion {
      * Maneja la acción de retroceso al hacer clic en el botón de retroceso.
      * Cierra la ventana actual y redirige al usuario a la pantalla de selección de butacas.
      * Si ocurre un error durante el proceso, muestra un mensaje de error.
-     * param event Evento de acción al hacer clic en el botón de retroceso.
+     * @param event Evento de acción al hacer clic en el botón de retroceso.
      */
     @FXML
-    protected void regresarAMapaButacas() {
-
+    protected void regresarAMapaButacas(ActionEvent event) {
         try {
 
             // Obtener la ventana actual desde el headerBar.
@@ -395,12 +432,19 @@ public class ControladorFacturacion {
         this.controladorInformacionDeVenta = controladorInformacionLateral;
         controladorInformacionLateral.mostrarTodaLaInformacionDelPago();
     }
-    
+
+    /**
+     * Maneja la acción de limpiar el formulario al hacer clic en el botón de limpiar.
+     * @param event Evento de acción al hacer clic en el botón de limpiar.
+     */
     @FXML
-    void onLimpiarFormulario(ActionEvent event) {
+    private void onLimpiarFormulario(ActionEvent event) {
         limpiarFormulario();
     }
 
+    /**
+     * Limpia los campos del formulario.
+     */
     private void limpiarFormulario() {
         nombreField.clear();
         apellidoField.clear();
@@ -413,6 +457,9 @@ public class ControladorFacturacion {
         actualizarModoFormulario();
     }
 
+    /**
+     * Actualiza el modo del formulario (crear/editar).
+     */
     private void actualizarModoFormulario() {
         if (clienteEnEdicion == null) {
             // Modo crear
@@ -439,6 +486,9 @@ public class ControladorFacturacion {
         actualizarEstadoFormulario();
     }
 
+    /**
+     * Actualiza el estado del formulario (habilitar/deshabilitar el botón de crear/actualizar).
+     */
     private void actualizarEstadoFormulario() {
         if (buttonCrearOActualizar != null) {
             boolean formularioValido = validarFormularioCompleto();
@@ -446,6 +496,10 @@ public class ControladorFacturacion {
         }
     }
 
+    /**
+     * Valida que todos los campos del formulario estén completos.
+     * @return true si el formulario es válido, false en caso contrario.
+     */
     private boolean validarFormularioCompleto() {
         return !nombreField.getText().isEmpty() &&
                !apellidoField.getText().isEmpty() &&
@@ -454,39 +508,35 @@ public class ControladorFacturacion {
                !correoField.getText().isEmpty();
     }
 
+    /**
+     * Crea un nuevo cliente.
+     */
     private void crearCliente(){
-        try {
-            if (servicioCliente.existeCliente(documentoField.getText())) {
-                ManejadorMetodosComunes.mostrarVentanaError("El cliente que intenta crear ya existe.");
-                return;
-            }
-            Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
-                    correoField.getText(), tipoDocumentoBox.getValue());
-            servicioCliente.crearCliente(cliente);
-            ManejadorMetodosComunes.mostrarVentanaExito("Cliente creado exitosamente.");
-        } catch (NumberFormatException e) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
+        if (servicioCliente.existeCliente(documentoField.getText())) {
+            ManejadorMetodosComunes.mostrarVentanaError("El cliente que intenta crear ya existe.");
+            return;
         }
+        Cliente cliente = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
+                correoField.getText(), tipoDocumentoBox.getValue());
+        servicioCliente.crearCliente(cliente);
+        ManejadorMetodosComunes.mostrarVentanaExito("Cliente creado exitosamente.");
     }
 
+    /**
+     * Actualiza un cliente existente.
+     */
     private void actualizarCliente(){
-        try {
-            clienteEnEdicion = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
-                    correoField.getText(), tipoDocumentoBox.getValue());
-            // Verificar si el cliente existe en la base de datos.
-            if (!servicioCliente.existeCliente(clienteEnEdicion.getIdCliente())) {
-                // Si el cliente no existe, mostrar un mensaje de advertencia.
-                ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
-            } else {
-                // Si el cliente existe, actualizar su información en la base de datos.
-                servicioCliente.actualizarCliente(clienteEnEdicion);
-                actualizarModoFormulario();
-                ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
-            }
-
-        } catch (NumberFormatException e) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El documento ingresado no es un número válido.");
+        clienteEnEdicion = new Cliente(nombreField.getText(), apellidoField.getText(), documentoField.getText(),
+                correoField.getText(), tipoDocumentoBox.getValue());
+        // Verificar si el cliente existe en la base de datos.
+        if (!servicioCliente.existeCliente(clienteEnEdicion.getIdCliente())) {
+            // Si el cliente no existe, mostrar un mensaje de advertencia.
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("El cliente no existe, tiene que registrarlo primero.");
+        } else {
+            // Si el cliente existe, actualizar su información en la base de datos.
+            servicioCliente.actualizarCliente(clienteEnEdicion);
+            actualizarModoFormulario();
+            ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
         }
     }
-    
 }

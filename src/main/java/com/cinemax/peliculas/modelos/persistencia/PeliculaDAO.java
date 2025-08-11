@@ -7,9 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 
 /**
  * Clase de acceso a datos (DAO) para la gestión de películas.

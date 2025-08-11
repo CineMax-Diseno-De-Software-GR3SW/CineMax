@@ -1,14 +1,15 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.comun.EstrategiaValidacionDocumentos.ContextoValidacion;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
 
 import com.cinemax.empleados.servicios.ValidadorUsuario;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.utilidades.strategyValidacionDocumentos.ContextoValidacion;
+import com.cinemax.utilidades.strategyValidacionDocumentos.EstrategiaCedulaValidacion;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -203,7 +204,7 @@ public class ControladorRegistrarUsuario implements Initializable {
                 e.printStackTrace();
             }
         } catch (IllegalArgumentException e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al validar los datos");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia(e.getMessage());
 
         } catch (Exception e) {
             e.printStackTrace();

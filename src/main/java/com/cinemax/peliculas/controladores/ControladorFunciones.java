@@ -2,7 +2,6 @@ package com.cinemax.peliculas.controladores;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
@@ -21,7 +19,8 @@ import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.salas.servicios.ServicioSala;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,7 +78,7 @@ public class ControladorFunciones implements Initializable {
     private PeliculaDAO peliculaDAO;
 
     /** Servicio para operaciones con salas */
-    private SalaService salaService;
+    private ServicioSala servicioSala;
 
     // Componentes de la interfaz FXML para búsqueda y tabla
     /** Campo de texto para búsqueda general */
@@ -196,7 +195,7 @@ public class ControladorFunciones implements Initializable {
         this.servicioFuncion = new ServicioFuncion();
         this.funcionDAO = new FuncionDAO();
         this.peliculaDAO = new PeliculaDAO();
-        this.salaService = new SalaService();
+        this.servicioSala = new ServicioSala();
     }
 
     /**
@@ -496,13 +495,75 @@ public class ControladorFunciones implements Initializable {
     }
 
     /**
-     * Maneja el evento de búsqueda.
+     * Busca funciones según el criterio ingresado:
+     * - Si el campo está vacío, recarga todas las funciones
+     * - Si es un número, busca por ID exacto
+     * - Si es texto, busca por nombre de película o sala
+     * - Maneja errores de formato/consulta con mensajes claros
      * 
      * @param event Evento de acción del botón
      */
     @FXML
     private void onBuscar(ActionEvent event) {
-        aplicarFiltros();
+        String criterio = txtBuscar.getText().trim();
+        if (criterio.isEmpty()) {
+            cargarFunciones(); // Recarga todas las funciones
+            funcionEnEdicion = null;
+            actualizarModoFormulario();
+            return;
+        }
+        
+        try {
+            // Si es número, busca por ID
+            int id = Integer.parseInt(criterio);
+            try {
+                Funcion funcion = funcionDAO.buscarPorId(id);
+                if (funcion != null) {
+                    funcionesFiltradas.setAll(funcion);
+                    lblTotalFunciones.setText("Total de funciones: 1");
+                } else {
+                    funcionesFiltradas.clear();
+                    lblTotalFunciones.setText("Total de funciones: 0");
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("No existe función con ID " + id);
+                }
+            } catch (Exception ex) {
+                funcionesFiltradas.clear();
+                lblTotalFunciones.setText("Total de funciones: 0");
+                ManejadorMetodosComunes.mostrarVentanaError("Error en la búsqueda por ID: " + ex.getMessage());
+            }
+        } catch (NumberFormatException e) {
+            // Si no es número, busca por nombre de película o sala
+            try {
+                List<Funcion> resultado = listaFunciones.stream()
+                    .filter(funcion -> 
+                        (funcion.getPelicula() != null && funcion.getPelicula().getTitulo() != null &&
+                         funcion.getPelicula().getTitulo().toLowerCase().contains(criterio.toLowerCase())) ||
+                        (funcion.getSala() != null && funcion.getSala().getNombre() != null &&
+                         funcion.getSala().getNombre().toLowerCase().contains(criterio.toLowerCase()))
+                    )
+                    .collect(Collectors.toList());
+                    
+                if (resultado.isEmpty()) {
+                    funcionesFiltradas.clear();
+                    lblTotalFunciones.setText("Total de funciones: 0");
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia("No se encontraron funciones con el criterio \"" + criterio + "\".");
+                } else {
+                    funcionesFiltradas.setAll(resultado);
+                    lblTotalFunciones.setText("Total de funciones: " + resultado.size());
+                }
+            } catch (Exception ex) {
+                funcionesFiltradas.clear();
+                lblTotalFunciones.setText("Total de funciones: 0");
+                ManejadorMetodosComunes.mostrarVentanaError("Error en la búsqueda: " + ex.getMessage());
+            }
+        }
+        
+        // Limpiar estadísticas cuando se hace una búsqueda específica
+        if (funcionesFiltradas.size() == 0) {
+            lblEstadisticas.setText("No hay funciones que mostrar");
+        } else {
+            lblEstadisticas.setText(""); // Limpiar el label de estadísticas
+        }
     }
 
     /**
@@ -596,8 +657,8 @@ public class ControladorFunciones implements Initializable {
      * Configura los eventos de la interfaz.
      */
     private void configurarEventos() {
-        // Configurar búsqueda en tiempo real
-        txtBuscar.textProperty().addListener((obs, oldText, newText) -> aplicarFiltros());
+        // La búsqueda ahora se activa solo al hacer click en el botón lupa
+        // (removida la búsqueda en tiempo real para seguir el patrón de Salas)
     }
 
     /**
@@ -643,7 +704,7 @@ public class ControladorFunciones implements Initializable {
     private void configurarComboBoxSalas() {
         if (cmbSala != null) {
             try {
-                List<Sala> salas = salaService.listarSalas();
+                List<Sala> salas = servicioSala.listarSalas();
                 cmbSala.setItems(FXCollections.observableArrayList(salas));
                 cmbSala.setConverter(new StringConverter<Sala>() {
                     @Override

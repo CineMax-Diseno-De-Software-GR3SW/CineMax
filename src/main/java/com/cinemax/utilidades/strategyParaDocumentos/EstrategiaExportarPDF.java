@@ -1,4 +1,4 @@
-package com.cinemax.comun.EstrategiaParaDocumentos;
+package com.cinemax.utilidades.strategyParaDocumentos;
 
 import java.io.File;
 import java.io.IOException;

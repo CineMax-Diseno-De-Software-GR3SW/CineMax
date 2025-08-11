@@ -1,4 +1,4 @@
-package com.cinemax.comun.EstrategiaValidacionDocumentos;
+package com.cinemax.utilidades.strategyValidacionDocumentos;
 
 /**
  * Estrategia de validación específica para números de pasaporte.

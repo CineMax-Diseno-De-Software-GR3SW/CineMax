@@ -9,7 +9,6 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
@@ -17,7 +16,8 @@ import com.cinemax.peliculas.modelos.entidades.TipoEstreno;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.salas.servicios.ServicioSala;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -114,7 +114,7 @@ public class ControladorFormularioFuncion implements Initializable {
     private ServicioPelicula servicioPelicula;
     
     /** Servicio para operaciones con salas */
-    private SalaService salaService;
+    private ServicioSala servicioSala;
     
     /** Función en modo edición (null para creación) */
     private Funcion funcionEditando;
@@ -128,7 +128,7 @@ public class ControladorFormularioFuncion implements Initializable {
     public ControladorFormularioFuncion() {
         this.servicioFuncion = new ServicioFuncion();
         this.servicioPelicula = new ServicioPelicula();
-        this.salaService = new SalaService();
+        this.servicioSala = new ServicioSala();
     }
 
     /**
@@ -280,7 +280,7 @@ public class ControladorFormularioFuncion implements Initializable {
             cmbPelicula.setItems(FXCollections.observableArrayList(peliculas));
 
             // Cargar salas
-            List<Sala> salas = salaService.listarSalas();
+            List<Sala> salas = servicioSala.listarSalas();
             cmbSala.setItems(FXCollections.observableArrayList(salas));
         } catch (Exception e) {
             mostrarError("Error al cargar datos", "No se pudieron cargar las películas o salas: " + e.getMessage());

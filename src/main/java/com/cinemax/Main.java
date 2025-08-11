@@ -2,8 +2,8 @@ package com.cinemax;
 
 import java.io.IOException;
 
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
-import com.cinemax.comun.conexiones.ConexionFirebaseStorage;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
+import com.cinemax.utilidades.conexiones.ConexionFirebaseStorage;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

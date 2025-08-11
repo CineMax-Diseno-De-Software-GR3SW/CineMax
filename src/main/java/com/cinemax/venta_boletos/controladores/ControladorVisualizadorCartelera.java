@@ -114,24 +114,25 @@ public class ControladorVisualizadorCartelera {
 
         // Estilo de las etiquetas
         tituloLabel.getStyleClass().add("movie-title-card");
-        tituloLabel.setWrapText(true);
         tituloLabel.setMaxWidth(160);
+
         generoAnioLabel.getStyleClass().add("movie-genre-year-card");
-        generoAnioLabel.setWrapText(true);
         generoAnioLabel.setMaxWidth(160);
+        generoAnioLabel.setWrapText(true);
 
         // Creación del contenedor principal
         VBox card = new VBox(imagenPelicula, tituloLabel, generoAnioLabel);
         card.getStyleClass().add("movie-card");
         card.setAlignment(Pos.TOP_CENTER);
         card.setSpacing(5);
-        card.setPrefSize(180, 300);
+
+        // Se establece un ancho preferido y una altura MÍNIMA.
+        card.setPrefWidth(180);
+        card.setMinHeight(340);
         card.setStyle("-fx-border-color: transparent; -fx-border-width: 0px;");
 
-        // Carga de imagen con manejo de errores
         cargarImagenPelicula(pelicula, imagenPelicula);
 
-        // Configuración de evento de selección
         configurarEventoSeleccion(pelicula, card);
 
         return card;

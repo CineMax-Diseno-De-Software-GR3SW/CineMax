@@ -118,13 +118,16 @@
                                         </style>
                                     </ImageView>
                                     
-                                    <Button fx:id="btnSeleccionarImagen" text="Seleccionar Imagen" onAction="#onSeleccionarImagen" />
+                                    <Button fx:id="btnSeleccionarImagen" text="Seleccionar Imagen" onAction="#onSeleccionarImagen" styleClass="primary-button" />
 
                                 </children>
                             </VBox>
 
                             <VBox spacing="8.0">
-                                    <Label text="* campos obligatorios" styleClass="required-asterisk" />
+                                    <HBox alignment="CENTER_LEFT" spacing="2">
+                                        <Label text="*" styleClass="required-asterisk"/>
+                                        <Label text="Campos Obligatorios" styleClass="help-text"/>
+                                    </HBox>
                             </VBox>
 
                         </VBox>

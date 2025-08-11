@@ -3,9 +3,9 @@ package com.cinemax.venta_boletos.controladores;
 import java.io.IOException;
 import java.util.List;
 
-import com.cinemax.comun.ControladorCargaConDatos;
-import com.cinemax.comun.ResultadoCarga;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.utilidades.ControladorCargaConDatos;
+import com.cinemax.utilidades.ResultadoCarga;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

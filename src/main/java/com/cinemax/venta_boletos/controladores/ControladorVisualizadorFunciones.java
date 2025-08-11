@@ -3,11 +3,11 @@ package com.cinemax.venta_boletos.controladores;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.salas.modelos.entidades.TipoSala;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.servicios.ServicioVisualizadorFunciones;
 
 import javafx.fxml.FXML;
@@ -219,6 +219,28 @@ public class ControladorVisualizadorFunciones {
      * Aplica los filtros actuales y recarga las funciones
      */
     private void aplicarFiltros() {
+        cargarFunciones();
+    }
+
+    /**
+     * Limpia los filtros de selección (fecha, formato y tipo de sala) y recarga
+     * la tabla de funciones sin aplicar ningún filtro.
+     * <p>
+     * Este método restablece el selector de fecha a nulo, y los ComboBoxes de
+     * formato y tipo de sala a la opción "Todos". Luego invoca la recarga de
+     * funciones para mostrar todas las funciones disponibles para la película
+     * seleccionada.
+     * </p>
+     * <p>
+     * Debe ser invocado desde la interfaz de usuario, típicamente asociado a un
+     * botón de "Limpiar filtros".
+     * </p>
+     */
+    @FXML
+    private void onLimpiarFiltros() {
+        selectorFecha.setValue(null);
+        cmbFiltroFormato.getSelectionModel().selectFirst(); // Selecciona "Todos"
+        cmbFiltroTipoSala.getSelectionModel().selectFirst(); // Selecciona "Todos"
         cargarFunciones();
     }
 

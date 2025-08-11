@@ -1,6 +1,5 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,6 +11,7 @@ import javafx.scene.Parent;
 
 import javafx.fxml.FXML;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 public class ControladorLogin {
 

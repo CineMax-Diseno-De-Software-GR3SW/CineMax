@@ -1,10 +1,11 @@
 package com.cinemax.empleados.controladores;
 
 import com.cinemax.Main;
-import com.cinemax.comun.ControladorAlertas;
-import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.utilidades.ControladorAlertas;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
+import com.cinemax.empleados.servicios.ValidadorUsuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -13,6 +14,8 @@ import javafx.scene.control.PasswordField;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 import javafx.stage.Stage;
+
+import java.io.InvalidObjectException;
 
 public class ControladorCambioClaveObligatorio {
 
@@ -48,8 +51,8 @@ public class ControladorCambioClaveObligatorio {
             return;
         }
 
-        if (nuevaClave.length() < 8) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La contraseña debe tener al menos 8 caracteres.");
+        if (ValidadorUsuario.validarClave(nuevaClave)) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva contraseña no cumple con los requisitos de seguridad.");
             return;
         }
 

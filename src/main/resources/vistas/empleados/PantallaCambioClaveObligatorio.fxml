@@ -17,6 +17,12 @@
             <Font size="16.0" />
         </font>
     </Label>
+    <Label text="La contraseña debe contener al menos 6 caracteres, incluyendo: una letra, un número y un carácter especial.">
+
+    <font>
+            <Font size="16.0" />
+        </font>
+    </Label>
 
     <PasswordField fx:id="txtNuevaClave" maxWidth="400" prefHeight="36" promptText="Nueva Contraseña" />
 

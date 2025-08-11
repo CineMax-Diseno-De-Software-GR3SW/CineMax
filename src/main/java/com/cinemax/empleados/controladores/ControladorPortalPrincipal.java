@@ -1,19 +1,13 @@
 package com.cinemax.empleados.controladores;
 
-import java.io.IOException;
-
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -97,13 +91,13 @@ public class ControladorPortalPrincipal {
     @FXML
     public void onGestionSalas() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionSalas.getScene().getWindow(),
-                "/vistas/salas/VistaGSalas.fxml");
+                "/vistas/salas/VistaGestionSalas.fxml");
     }
 
     @FXML
     public void onGestionButacas() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
-                "/vistas/salas/VistaGButacas.fxml");
+                "/vistas/salas/VistaGestionButacas.fxml");
     }
     @FXML
     private void onVenderBoleto() {
@@ -112,7 +106,7 @@ public class ControladorPortalPrincipal {
             (Stage) btnVentaBoleto.getScene().getWindow(), 
             "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 
             33, 
-            500);
+            225);
         //ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
         //        "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
     }

@@ -5,9 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.servicios.ContenidoMensaje;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.utilidades.ServicioCorreoSingleton;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
@@ -19,8 +19,13 @@ import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
 
 public class ServicioFacturacion {
 
-    private FacturaDAO facturaDAO = new FacturaDAO();
-    private BoletoDAO boletoDAO = new BoletoDAO();
+    private FacturaDAO facturaDAO;
+    private BoletoDAO boletoDAO;
+
+    public ServicioFacturacion() {
+        this.facturaDAO = new FacturaDAO();
+        this.boletoDAO = new BoletoDAO();
+    }
 
     public void generarFactura(List<Producto> productos, Cliente cliente, CalculadorImpuesto calculadorImpuesto) {
         Factura factura = new Factura(

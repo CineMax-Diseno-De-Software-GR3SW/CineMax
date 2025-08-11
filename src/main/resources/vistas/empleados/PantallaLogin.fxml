@@ -3,16 +3,17 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
-<!-- stylesheets = "@ayu-theme.css" -->
 
 <VBox alignment="CENTER" minHeight="500" minWidth="800" spacing="20.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
 
-    <Label styleClass="title" text="CineMax">
-        <font>
-            <Font size="700.0" />
-        </font>
-    </Label>
+    <ImageView fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+        <image>
+            <Image url="@../../imagenes/logoMax.png" />
+        </image>
+    </ImageView>
 
     <TextField fx:id="txtUsuario" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Usuario" />
 

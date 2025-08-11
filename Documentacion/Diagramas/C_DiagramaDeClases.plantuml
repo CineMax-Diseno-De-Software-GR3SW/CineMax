@@ -19,11 +19,17 @@ package controladores {
     }
 
     class ControladorFacturacion {
-        - boletos: List<Producto>
-        - {final} servicioFacturacion: ServicioFacturacion
+        - servicioFacturacion: ServicioFacturacion
+        - servicioCliente: ServicioCliente
         - ControladorInformacionDeVenta: ControladorInformacionDeVenta
+        - boletos: List<Producto>
         + cargarBoletosSeleccionados(boletos: List<Producto>): void
-        - validarDocumento(): boolean
+        - crearCliente(): void
+        - actualizarCliente(): void
+        - buscarCliente(): void
+        - pagarBoletos(): void
+        - validarNumeroDocumentoCliente(): boolean
+        - timerLabel: Label
     }
 
     class ControladorInformacionDeVenta {
@@ -52,14 +58,15 @@ package controladores {
 ' ------------------ SERVICIOS ------------------
 package servicios{
 
-    class ServicioContenidoMensajeFactura {
-        + {static}crearMensajeFactura(factura: Factura): ContenidoMensaje
+    class ServicioContenidoFactura {
+        +generarFactura(factura: Factura): void
+        +generarBoletos(boletos: List<Producto>): void
+        +unirPDFsFacturaYBoletos(facturaFile: File, boletosFiles: List<File>, archivoSalida: File): void
+        +generarNombreArchivoBoleto(boleto: Boleto): String
     }
 
     class ServicioFacturacion {
         + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): Factura
-        - generarCodigoFactura(): long
-        - getFechaActual(): String
     }
 
     interface ServicioGeneradorArchivo {
@@ -91,12 +98,34 @@ package servicios{
         + cargarFunciones(pelicula: Pelicula): List<Funcion>
         + seleccionarFuncion(tabla: TableView<Funcion>): void
         - validarSeleccionFuncion(funcion: Funcion): void
-    }    
+    }
+
+    class ServicioCliente {
+        + crearCliente(cliente: Cliente): void
+        + actualizarCliente(cliente: Cliente): void
+        + buscarCliente(numeroIdentificacion: String): Cliente
+        + existeCliente(numeroIdentificacion: String): boolean
+    }
+
+    class ServicioTemporizador{
+        - {static} instancia: ServicioTemporizador
+        - temporizador: Timer
+        - tempEnEjecucion: boolean
+        - finTiempo: long
+        - tiempoRestante: StringProperty
+        --
+        + {static} getInstancia(): ServicioTemporizador
+        + empezarTemporizador(stage: Stage): void
+        + detenerTemporizador(): void
+        + tempEnEjecucion(): boolean
+        + tiempoRestanteProperty(): StringProperty
+    }
+
 }
 
-package Utilidades {
+package utilidades {
 
-    package EstrategiaValidacionDocumentos {
+    package strategyValidacionDocumentos {
 
         class ContextoValidacion{
             - estrategia: EstrategiaValidacion
@@ -115,6 +144,34 @@ package Utilidades {
 
         class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
         }
+    }
+
+    package strategyParaDocumentos {
+        interface Exportable {
+            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
+        }
+
+        class EstrategiaExportarPDF implements Exportable {
+            +crearDocumentoPDF(): PDDocument
+            +guardarPDF(document: PDDocument, archivo: File): void
+        }
+
+        class EstrategiaExportarCSV implements Exportable {
+
+        }
+    }
+
+    class ServicioCorreoSingleton {
+        - instancia: ServicioCorreoSingleton
+        - remitente: String
+        - clave: String
+        - sesion: Session
+        - transport: Transport
+        - ServicioCorreoSingleton()
+        + getInstancia(): ServicioCorreoSingleton
+        - crearSesionSMTP(): Session
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje): boolean
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje, adjunto: File): boolean
     }
 }
 
@@ -168,6 +225,7 @@ package modelos {
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
 ControladorFacturacion *--> ServicioFacturacion
+ControladorFacturacion *--> ServicioCliente
 ControladorVisualizadorCartelera *--> ServicioVisualizadorCartelera
 ControladorVisualizadorFunciones *--> ServicioVisualizadorFunciones
 ControladorAsignadorButacas o--> ControladorInformacionDeVenta
@@ -183,7 +241,8 @@ ControladorFacturacion ..> CalculadorImpuesto
 ServicioGeneradorBoleto ..> Boleto
 ServicioFacturacion ..> Factura
 ServicioFacturacion ..> ServicioGeneradorArchivoPDF
-ServicioFacturacion ..> ServicioContenidoMensajeFactura
+ServicioFacturacion ..> ServicioContenidoFactura
+ServicioContenidoFactura ..> EstrategiaExportarPDF
 ServicioFacturacion ..left> Cliente
 
 ' Relaciones de herencia e implementación
@@ -202,4 +261,6 @@ ContextoValidacion o--> EstrategiaValidacion
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
 
+ControladorReportesPrincipal --> Exportable
+ServicioFacturacion ..> ServicioCorreoSingleton
 @enduml

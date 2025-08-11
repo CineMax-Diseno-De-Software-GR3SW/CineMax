@@ -1,8 +1,8 @@
 package com.cinemax.empleados.servicios;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import java.sql.SQLException;
 
@@ -71,7 +71,7 @@ public class ServicioPerfilUsuario {
         }
 
         if (!ValidadorUsuario.validarClave(nuevaClave)) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad.");
             throw new IllegalArgumentException("Nueva clave inválida");
         }
         String claveHasheada = UtilidadClave.hashClave(nuevaClave);
