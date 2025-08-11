@@ -19,11 +19,16 @@ package controladores {
     }
 
     class ControladorFacturacion {
+        - servicioFacturacion: ServicioFacturacion
+        - servicioCliente: ServicioCliente
         - boletos: List<Producto>
-        - {final} servicioFacturacion: ServicioFacturacion
         - ControladorInformacionDeVenta: ControladorInformacionDeVenta
         + cargarBoletosSeleccionados(boletos: List<Producto>): void
-        - validarDocumento(): boolean
+        - buscarCliente(): void
+        - crearCliente(): void
+        - actualizarCliente(): void
+        - pagarBoletos(): void
+        - validarNumeroDocumentoCliente(): boolean
     }
 
     class ControladorInformacionDeVenta {
@@ -61,8 +66,6 @@ package servicios{
 
     class ServicioFacturacion {
         + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): Factura
-        - generarCodigoFactura(): long
-        - getFechaActual(): String
     }
 
     interface ServicioGeneradorArchivo {
@@ -95,6 +98,13 @@ package servicios{
         + seleccionarFuncion(tabla: TableView<Funcion>): void
         - validarSeleccionFuncion(funcion: Funcion): void
     }    
+
+    class ServicioCliente {
+        + crearCliente(cliente: Cliente): void
+        + actualizarCliente(cliente: Cliente): void
+        + buscarCliente(numeroIdentificacion: String): Cliente
+        + existeCliente(numeroIdentificacion: String): boolean
+    }
 }
 
 package utilidades {
@@ -199,6 +209,7 @@ package modelos {
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
 ControladorFacturacion *--> ServicioFacturacion
+ControladorFacturacion *--> ServicioCliente
 ControladorVisualizadorCartelera *--> ServicioVisualizadorCartelera
 ControladorVisualizadorFunciones *--> ServicioVisualizadorFunciones
 ControladorAsignadorButacas o--> ControladorInformacionDeVenta
