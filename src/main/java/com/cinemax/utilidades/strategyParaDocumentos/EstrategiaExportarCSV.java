@@ -1,4 +1,4 @@
-package com.cinemax.utilidades.estrategiaParaDocumentos;
+package com.cinemax.utilidades.strategyParaDocumentos;
 
 import java.io.BufferedWriter;
 import java.io.File;

@@ -31,9 +31,9 @@ import javafx.scene.chart.NumberAxis;
 import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 import com.cinemax.reportes.modelos.entidades.VentasService;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
-import com.cinemax.utilidades.estrategiaParaDocumentos.EstrategiaExportarCSV;
-import com.cinemax.utilidades.estrategiaParaDocumentos.EstrategiaExportarPDF;
-import com.cinemax.utilidades.estrategiaParaDocumentos.Exportable;
+import com.cinemax.utilidades.strategyParaDocumentos.EstrategiaExportarCSV;
+import com.cinemax.utilidades.strategyParaDocumentos.EstrategiaExportarPDF;
+import com.cinemax.utilidades.strategyParaDocumentos.Exportable;
 
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;

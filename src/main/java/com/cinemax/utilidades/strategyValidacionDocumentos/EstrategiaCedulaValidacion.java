@@ -1,4 +1,4 @@
-package com.cinemax.utilidades.estrategiaValidacionDocumentos;
+package com.cinemax.utilidades.strategyValidacionDocumentos;
 
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 

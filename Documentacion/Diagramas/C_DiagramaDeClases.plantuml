@@ -130,7 +130,7 @@ package servicios{
 
 package utilidades {
 
-    package EstrategiaValidacionDocumentos {
+    package strategyValidacionDocumentos {
 
         class ContextoValidacion{
             - estrategia: EstrategiaValidacion
@@ -151,7 +151,7 @@ package utilidades {
         }
     }
 
-    package EstrategiaParaDocumentos {
+    package strategyParaDocumentos {
         interface Exportable {
             +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
         }

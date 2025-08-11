@@ -33,9 +33,9 @@ import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 import com.cinemax.reportes.modelos.entidades.ServicioReportesProgramados;
 import com.cinemax.reportes.modelos.entidades.VentasService;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
-import com.cinemax.utilidades.estrategiaParaDocumentos.EstrategiaExportarCSV;
-import com.cinemax.utilidades.estrategiaParaDocumentos.EstrategiaExportarPDF;
-import com.cinemax.utilidades.estrategiaParaDocumentos.Exportable;
+import com.cinemax.utilidades.strategyParaDocumentos.EstrategiaExportarCSV;
+import com.cinemax.utilidades.strategyParaDocumentos.EstrategiaExportarPDF;
+import com.cinemax.utilidades.strategyParaDocumentos.Exportable;
 
 // Para la dependencia de programado task
 

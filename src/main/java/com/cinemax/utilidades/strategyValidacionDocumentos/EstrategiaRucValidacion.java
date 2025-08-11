@@ -1,4 +1,4 @@
-package com.cinemax.utilidades.estrategiaValidacionDocumentos;
+package com.cinemax.utilidades.strategyValidacionDocumentos;
 
 /**
  * Estrategia de validación específica para RUC (Registro Único de Contribuyentes) ecuatoriano.

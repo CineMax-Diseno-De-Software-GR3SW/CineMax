@@ -7,8 +7,8 @@ import com.cinemax.empleados.servicios.ServicioUsuarios;
 
 import com.cinemax.empleados.servicios.ValidadorUsuario;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
-import com.cinemax.utilidades.estrategiaValidacionDocumentos.ContextoValidacion;
-import com.cinemax.utilidades.estrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
+import com.cinemax.utilidades.strategyValidacionDocumentos.ContextoValidacion;
+import com.cinemax.utilidades.strategyValidacionDocumentos.EstrategiaCedulaValidacion;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
