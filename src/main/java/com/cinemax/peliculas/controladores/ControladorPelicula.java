@@ -652,7 +652,18 @@ public class ControladorPelicula implements Initializable {
      */
     @FXML
     private void onBuscar() {
+        String criterio = txtBuscar.getText().trim();
+        if (criterio.isEmpty()) {
+            aplicarFiltros();
+            return;
+        }
+        
         aplicarFiltros();
+        
+        // Mostrar advertencia si no hay resultados
+        if (peliculasFiltradas.isEmpty()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("No se encontraron películas con el criterio \"" + criterio + "\".");
+        }
     }
 
     /**
