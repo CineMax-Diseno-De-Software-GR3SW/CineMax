@@ -20,13 +20,13 @@ import java.util.List;
  * - Listar, obtener, actualizar y eliminar salas.
  * - Ajustar las butacas de la sala si cambia la capacidad.
  */
-public class SalaService {
+public class ServicioSala {
 
     /** DAO para operaciones CRUD de salas */
     private final SalasDAO salasDAO = new SalasDAO();
 
     /** Servicio para la gestión de butacas (generación automática) */
-    private ButacaService butacaService = new ButacaService();
+    private ServicioButaca servicioButaca = new ServicioButaca();
 
     /** DAO para operaciones CRUD de butacas */
     private ButacasDAO butacasDAO = new ButacasDAO();
@@ -56,7 +56,7 @@ public class SalaService {
         salasDAO.crearSala(sala);
 
         // 2) Generar butacas automáticamente
-        butacaService.generarButacasAutomatica(sala.getId());
+        servicioButaca.generarButacasAutomatica(sala.getId());
     }
 
     /**
@@ -65,6 +65,14 @@ public class SalaService {
     public Sala obtenerSalaPorId(int id) throws Exception {
         return salasDAO.obtenerSalaPorId(id);
     }
+
+    /**
+     * Busca salas por nombre (parcial).
+     *
+     * @param nombre Nombre o parte del nombre de la sala a buscar.
+     * @return Lista de salas que coinciden con el criterio.
+     * @throws Exception si el nombre es nulo o vacío.
+     */
     public List<Sala> buscarSalasPorNombre(String nombre) throws Exception {
         if (nombre == null || nombre.trim().isEmpty())
             throw new Exception("El nombre de la sala no puede estar vacío.");
@@ -190,4 +198,3 @@ public class SalaService {
         salasDAO.eliminarSala(id);
     }
 }
-
