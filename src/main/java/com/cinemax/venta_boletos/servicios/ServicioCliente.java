@@ -12,16 +12,6 @@ public class ServicioCliente {
         this.clienteDAO = new ClienteDAO();
     }
 
-    public Cliente buscarCliente (String numeroIdentificacion) {
-        try {
-            return clienteDAO.buscarPorId(numeroIdentificacion);
-        } catch (Exception e) {
-            e.printStackTrace();
-            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al buscar al cliente.");
-        }
-        return null;
-    }
-
     public void crearCliente(Cliente cliente) {
         try {
             clienteDAO.crearCliente(cliente);
@@ -38,6 +28,16 @@ public class ServicioCliente {
             e.printStackTrace();
             ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar al cliente.");
         }
+    }
+
+    public Cliente buscarCliente (String numeroIdentificacion) {
+        try {
+            return clienteDAO.buscarPorId(numeroIdentificacion);
+        } catch (Exception e) {
+            e.printStackTrace();
+            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al buscar al cliente.");
+        }
+        return null;
     }
 
     public boolean existeCliente(String numeroIdentificacion) {

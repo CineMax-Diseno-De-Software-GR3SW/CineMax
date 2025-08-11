@@ -19,8 +19,13 @@ import com.cinemax.venta_boletos.modelos.persistencia.FacturaDAO;
 
 public class ServicioFacturacion {
 
-    private FacturaDAO facturaDAO = new FacturaDAO();
-    private BoletoDAO boletoDAO = new BoletoDAO();
+    private FacturaDAO facturaDAO;
+    private BoletoDAO boletoDAO;
+
+    public ServicioFacturacion() {
+        this.facturaDAO = new FacturaDAO();
+        this.boletoDAO = new BoletoDAO();
+    }
 
     public void generarFactura(List<Producto> productos, Cliente cliente, CalculadorImpuesto calculadorImpuesto) {
         Factura factura = new Factura(

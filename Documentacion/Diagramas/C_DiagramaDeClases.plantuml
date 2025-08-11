@@ -21,20 +21,15 @@ package controladores {
     class ControladorFacturacion {
         - servicioFacturacion: ServicioFacturacion
         - servicioCliente: ServicioCliente
-        - boletos: List<Producto>
         - ControladorInformacionDeVenta: ControladorInformacionDeVenta
+        - boletos: List<Producto>
         + cargarBoletosSeleccionados(boletos: List<Producto>): void
-        - buscarCliente(): void
         - crearCliente(): void
         - actualizarCliente(): void
+        - buscarCliente(): void
         - pagarBoletos(): void
         - validarNumeroDocumentoCliente(): boolean
         - timerLabel: Label
-        --
-        + initialize(): void
-        + onPagarAction(): void
-        + onBackAction(): void
-
     }
 
     class ControladorInformacionDeVenta {
