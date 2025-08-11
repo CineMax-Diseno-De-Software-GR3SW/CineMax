@@ -16,6 +16,7 @@ import java.util.TreeMap;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javafx.scene.control.DatePicker;
@@ -837,54 +838,50 @@ public class ControladorReportesPrincipal {
         NumberAxis yAxis = new NumberAxis();
         BarChart<String, Number> barChartPreview = new BarChart<>(xAxis, yAxis);
 
-        // Configurar propiedades básicas de la gráfica
         barChartPreview.setTitle("Ventas por Tipo de Boleto (VIP vs Normal)");
         barChartPreview.setStyle("-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px;");
-
-        // Configurar etiquetas de los ejes
         xAxis.setLabel("Fecha");
         yAxis.setLabel("Cantidad de Boletos Vendidos");
-
-        // Aplicar estilos personalizados a los ejes
         xAxis.setStyle("-fx-tick-label-fill: #ecf0f1; -fx-font-weight: bold;");
         yAxis.setStyle("-fx-tick-label-fill: #ecf0f1; -fx-font-weight: bold;");
 
-        // Crear series de datos para cada tipo de boleto
         XYChart.Series<String, Number> serieVIP = new XYChart.Series<>();
         serieVIP.setName("VIP");
-
         XYChart.Series<String, Number> serieNormal = new XYChart.Series<>();
         serieNormal.setName("Normal");
 
-        // Estructura para agrupar datos por fecha y tipo
+        // Agrupar datos por fecha y tipo, igual que en actualizarGraficaBarras
         Map<String, Map<String, Integer>> datosAgrupados = new HashMap<>();
-
-        // Procesar cada registro para agrupar por fecha y tipo de boleto
         for (Map<String, Object> fila : datos) {
             String fecha = fila.get("fecha").toString();
             String tipoSala = (String) fila.get("tipos_sala");
             int boletosVendidos = (int) fila.get("total_boletos_vendidos");
-
-            // Inicializar estructura de agrupación si no existe
             datosAgrupados.putIfAbsent(fecha, new HashMap<>());
 
-            // Clasificar boletos según el tipo de sala
             if (tipoSala != null && tipoSala.contains("VIP")) {
-                datosAgrupados.get(fecha).merge("VIP", boletosVendidos, Integer::sum);
+                if (tipoSala.contains("NORMAL")) {
+                    int boletosVIP = boletosVendidos / 2;
+                    int boletosNormal = boletosVendidos - boletosVIP;
+                    datosAgrupados.get(fecha).merge("VIP", boletosVIP, Integer::sum);
+                    datosAgrupados.get(fecha).merge("Normal", boletosNormal, Integer::sum);
+                } else {
+                    datosAgrupados.get(fecha).merge("VIP", boletosVendidos, Integer::sum);
+                }
             } else {
-                // Si no es VIP o no se especifica, asignar a Normal
                 datosAgrupados.get(fecha).merge("Normal", boletosVendidos, Integer::sum);
             }
         }
 
-        // Agregar puntos de datos a las series correspondientes
-        for (String fecha : datosAgrupados.keySet()) {
+        // Ordenar fechas
+        List<String> fechasOrdenadas = new ArrayList<>(datosAgrupados.keySet());
+        fechasOrdenadas.sort(Comparator.naturalOrder());
+
+        for (String fecha : fechasOrdenadas) {
             Map<String, Integer> tiposEnFecha = datosAgrupados.get(fecha);
             serieVIP.getData().add(new XYChart.Data<>(fecha, tiposEnFecha.getOrDefault("VIP", 0)));
             serieNormal.getData().add(new XYChart.Data<>(fecha, tiposEnFecha.getOrDefault("Normal", 0)));
         }
 
-        // Agregar las series a la gráfica
         barChartPreview.getData().addAll(serieVIP, serieNormal);
 
         // Aplicar estilos personalizados a todos los elementos de la gráfica
