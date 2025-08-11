@@ -71,7 +71,7 @@ public class ServicioPerfilUsuario {
         }
 
         if (!ValidadorUsuario.validarClave(nuevaClave)) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad");
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad.");
             throw new IllegalArgumentException("Nueva clave inválida");
         }
         String claveHasheada = UtilidadClave.hashClave(nuevaClave);

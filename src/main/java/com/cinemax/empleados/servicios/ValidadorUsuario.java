@@ -27,4 +27,9 @@ public class ValidadorUsuario {
 
         return tieneLetra && tieneNumero && tieneEspecial;
     }
+
+    public static boolean validarCelular(String celular) {
+        return celular.matches("^\\+?[0-9]{7,15}$");
+    }
+
 } 
