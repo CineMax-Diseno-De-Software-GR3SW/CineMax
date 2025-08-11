@@ -1,6 +1,6 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
