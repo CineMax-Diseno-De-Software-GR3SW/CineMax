@@ -282,7 +282,7 @@ public class ControladorReportesProgramados {
             contenidoReporte.getStyleClass().add("content-pane");
 
             // Título de la sección de ventas
-            Label tituloSeccion = new Label("📊 RESUMEN DE VENTAS");
+            Label tituloSeccion = new Label("RESUMEN DE VENTAS");
             tituloSeccion.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
             // Crear tabla de datos de ventas
@@ -291,7 +291,7 @@ public class ControladorReportesProgramados {
 
             // Encabezado de la tabla de ventas
             HBox headerTabla = new HBox();
-            headerTabla.setStyle("-fx-background-color: #3498db; -fx-padding: 8;");
+            headerTabla.setStyle("-fx-background-color: #02487b; -fx-padding: 8;");
             Label colFecha = crearCeldaTabla("Fecha", true);
             Label colBoletos = crearCeldaTabla("Boletos Vendidos", true);
             Label colIngresos = crearCeldaTabla("Ingresos", true);
@@ -310,7 +310,7 @@ public class ControladorReportesProgramados {
 
             // Fila de totales
             HBox totalRow = new HBox();
-            totalRow.setStyle("-fx-background-color: #2ecc71; -fx-padding: 8;");
+            totalRow.setStyle("-fx-background-color: #02487b; -fx-padding: 8;");
             Label totalLabel = crearCeldaTabla("TOTAL:", true);
             Label totalBoletos = crearCeldaTabla("125", true);
             Label totalIngresos = crearCeldaTabla("$1,250.00", true);
@@ -326,7 +326,7 @@ public class ControladorReportesProgramados {
             contenidoReporte.getChildren().addAll(tituloSeccion, tablaDatos);
 
             // Sección de películas
-            Label tituloPeliculas = new Label("🎬 RESUMEN POR PELÍCULA");
+            Label tituloPeliculas = new Label("RESUMEN POR PELÍCULA");
             tituloPeliculas.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
             // Crear tabla de películas
@@ -338,7 +338,7 @@ public class ControladorReportesProgramados {
 
             // Encabezados de la tabla de películas
             HBox headerPeliculas = new HBox();
-            headerPeliculas.setStyle("-fx-background-color: #8e44ad; -fx-padding: 8;");
+            headerPeliculas.setStyle("-fx-background-color: #02487b; -fx-padding: 8;");
             headerPeliculas.getChildren().addAll(
                     crearCeldaTabla("Título", true),
                     crearCeldaTabla("Funciones", true),
@@ -369,13 +369,13 @@ public class ControladorReportesProgramados {
 
             // Nota informativa sobre la previsualización
             Label notaInfo = new Label(
-                    "📝 Nota: Este es un ejemplo de cómo se verá el reporte cuando se genere automáticamente.");
+                    "Nota: Este es un ejemplo de cómo se verá el reporte cuando se genere automáticamente.");
             notaInfo.setStyle("-fx-font-size: 11px; -fx-text-fill: #b2bec3; -fx-font-style: italic;");
             notaInfo.setWrapText(true);
 
             // Mostrar cuándo será la próxima generación
-            Label proximaGeneracion = new Label("⏰ Próxima generación programada: " + fechaEjecucion);
-            proximaGeneracion.setStyle("-fx-font-size: 11px; -fx-text-fill: #27ae60; -fx-font-weight: bold;");
+            Label proximaGeneracion = new Label("Próxima generación programada: " + fechaEjecucion);
+            proximaGeneracion.setStyle("-fx-font-size: 11px; -fx-text-fill: #ffffffff; -fx-font-weight: bold;");
 
             infoAdicional.getChildren().addAll(notaInfo, proximaGeneracion);
 
@@ -385,12 +385,11 @@ public class ControladorReportesProgramados {
             botonesBox.setPadding(new Insets(15, 0, 5, 0));
 
             // Botón para confirmar la programación del reporte
-            Button btnConfirmar = new Button("✅ Programar Reporte");
+            Button btnConfirmar = new Button("Programar Reporte");
             btnConfirmar.getStyleClass().add("btn-small");
             btnConfirmar.setOnAction(e -> {
                 agregarReporteATabla(fechaEjecucion); // Agregar el reporte a la tabla
-                String mensaje = "✅ Reporte Programado\n"
-                        + "El reporte ha sido programado exitosamente.\n"
+                String mensaje = "Reporte Programado exitosamente\n"
                         + "Se ejecutará: " + frecuenciaSeleccionada;
 
                 ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
@@ -549,7 +548,7 @@ public class ControladorReportesProgramados {
 
             // Frecuencia del reporte
             Label frecuencia = new Label("Frecuencia: " + reporte.getFrecuencia());
-            frecuencia.setStyle("-fx-font-size: 12px; -fx-text-fill: #27ae60; -fx-font-weight: bold;");
+            frecuencia.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffffff; -fx-font-weight: bold;");
 
             headerBox.getChildren().addAll(titulo, fechaGen, frecuencia);
 
@@ -558,9 +557,9 @@ public class ControladorReportesProgramados {
 
             // Nota informativa sobre la descarga
             Label notaPDF = new Label(
-                    "📄 Nota: Al descargar se generará un archivo PDF con este contenido y formato profesional.");
+                    "Nota: Al descargar se generará un archivo PDF con este contenido y formato profesional.");
             notaPDF.setStyle(
-                    "-fx-font-size: 11px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-background-color: #232323; -fx-padding: 10; -fx-border-radius: 5px;");
+                    "-fx-font-size: 11px; -fx-text-fill: #ffffffff; -fx-font-style: italic; -fx-background-color: #232323; -fx-padding: 10; -fx-border-radius: 5px;");
             notaPDF.setWrapText(true);
 
             // Sección de botones de acción
@@ -577,7 +576,7 @@ public class ControladorReportesProgramados {
             });
 
             // Botón para descargar como CSV
-            Button btnDescargarCSV = new Button("📊 Descargar como CSV");
+            Button btnDescargarCSV = new Button("Descargar como CSV");
             btnDescargarCSV.setStyle(
                     "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
             btnDescargarCSV.setOnAction(e -> {
@@ -586,9 +585,9 @@ public class ControladorReportesProgramados {
             });
 
             // Botón para eliminar el reporte
-            Button btnEliminar = new Button("🗑️ Eliminar Reporte");
+            Button btnEliminar = new Button("Eliminar Reporte");
             btnEliminar.setStyle(
-                    "-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
+                    "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
             btnEliminar.setOnAction(e -> {
                 ventanaPrevia.close();
                 eliminarReporteProgramado(reporte);
@@ -636,7 +635,7 @@ public class ControladorReportesProgramados {
         contenido.getStyleClass().add("content-pane"); // Aplicar fondo secundario oscuro
 
         // Título de la sección de resumen de ventas
-        Label tituloSeccion = new Label("📊 EJEMPLO DE RESUMEN DE VENTAS RECOPILADO");
+        Label tituloSeccion = new Label("EJEMPLO DE RESUMEN DE VENTAS RECOPILADO");
         tituloSeccion.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         // Crear contenedor para la tabla de datos de ventas
@@ -645,7 +644,7 @@ public class ControladorReportesProgramados {
 
         // Crear encabezados de la tabla de ventas
         HBox headerTabla = new HBox();
-        headerTabla.setStyle("-fx-background-color: #3498db; -fx-padding: 8;");
+        headerTabla.setStyle("-fx-background-color: #02487b; -fx-padding: 8;");
         headerTabla.getChildren().addAll(
                 crearCeldaTabla("Fecha", true),
                 crearCeldaTabla("Boletos Vendidos", true),
@@ -658,14 +657,14 @@ public class ControladorReportesProgramados {
 
         // Crear fila de totales
         HBox totalRow = new HBox();
-        totalRow.setStyle("-fx-background-color: #2ecc71; -fx-padding: 8;");
+        totalRow.setStyle("-fx-background-color: #02487b; -fx-padding: 8;");
         totalRow.getChildren().addAll(
                 crearCeldaTabla("TOTAL:", true),
                 crearCeldaTabla("466", true),
                 crearCeldaTabla("$13,980.00", true));
 
         // Título de la sección de películas
-        Label tituloPeliculas = new Label("🎬 RESUMEN POR PELÍCULA");
+        Label tituloPeliculas = new Label("RESUMEN POR PELÍCULA");
         tituloPeliculas.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         // Crear contenedor para la tabla de películas
@@ -675,7 +674,7 @@ public class ControladorReportesProgramados {
 
         // Crear encabezados de la tabla de películas
         HBox headerPeliculas = new HBox();
-        headerPeliculas.setStyle("-fx-background-color: #8e44ad; -fx-padding: 8;");
+        headerPeliculas.setStyle("-fx-background-color: #02487b; -fx-padding: 8;");
         headerPeliculas.getChildren().addAll(
                 crearCeldaTabla("Título", true),
                 crearCeldaTabla("Funciones", true),

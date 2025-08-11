@@ -558,7 +558,7 @@ public class ControladorReportesPrincipal {
 
             Label estado = new Label("Estado: Generado el "
                     + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-            estado.setStyle("-fx-font-size: 12px; -fx-text-fill: #27ae60; -fx-font-weight: bold;");
+            estado.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffffff; -fx-font-weight: bold;");
 
             headerBox.getChildren().addAll(titulo, fechaGen, horarioLabel, estado);
 
@@ -573,9 +573,9 @@ public class ControladorReportesPrincipal {
             barraNota.setMaxWidth(Double.MAX_VALUE);
 
             Label notaReporte = new Label(
-                    "📊 Este reporte incluye datos de ventas, gráficas de distribución y análisis detallado del período seleccionado.");
+                    "Este reporte incluye datos de ventas, gráficas de distribución y análisis detallado del período seleccionado.");
             notaReporte.setStyle(
-                    "-fx-font-size: 12px; -fx-text-fill: #e67e22; -fx-font-style: italic; -fx-padding: 0 20 0 20;");
+                    "-fx-font-size: 12px; -fx-text-fill: #ffffffff; -fx-font-style: italic; -fx-padding: 0 20 0 20;");
             notaReporte.setMaxWidth(Double.MAX_VALUE);
 
             barraNota.getChildren().add(notaReporte);
@@ -587,7 +587,7 @@ public class ControladorReportesPrincipal {
             // Mostrar botones de descarga solo si está habilitado
             if (permitirDescarga) {
                 // Botón para descargar como PDF
-                Button btnDescargarPDF = new Button("📄 Descargar como PDF");
+                Button btnDescargarPDF = new Button("Descargar como PDF");
                 btnDescargarPDF.setStyle(
                         "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
                 btnDescargarPDF.setOnAction(e -> {
@@ -596,7 +596,7 @@ public class ControladorReportesPrincipal {
                 });
 
                 // Botón para descargar como CSV
-                Button btnDescargarCSV = new Button("📊 Descargar como CSV");
+                Button btnDescargarCSV = new Button("Descargar como CSV");
                 btnDescargarCSV.setStyle(
                         "-fx-background-color: #02487b; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;");
                 btnDescargarCSV.setOnAction(e -> {
@@ -651,7 +651,7 @@ public class ControladorReportesPrincipal {
                 "-fx-background-color: #2B2B2B; -fx-border-color: #2B2B2B; -fx-border-width: 1px; -fx-padding: 20; -fx-border-radius: 5px;");
 
         // Sección de resumen de datos tabulares
-        Label tituloSeccion = new Label("📊 RESUMEN DE VENTAS");
+        Label tituloSeccion = new Label("RESUMEN DE VENTAS");
         tituloSeccion.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         // Contenedor para la tabla de datos de ventas
@@ -661,7 +661,7 @@ public class ControladorReportesPrincipal {
 
         // Crear encabezados de la tabla de ventas
         HBox headerTabla = new HBox();
-        headerTabla.setStyle("-fx-background-color: #3498db; -fx-padding: 8;");
+        headerTabla.setStyle("-fx-background-color: #02487b; -fx-padding: 8;");
         headerTabla.getChildren().addAll(
                 crearCeldaTabla("Fecha", true),
                 crearCeldaTabla("Tipo Boleto", true),
@@ -703,7 +703,7 @@ public class ControladorReportesPrincipal {
 
         // Crear fila de totales al final de la tabla
         HBox totalRow = new HBox();
-        totalRow.setStyle("-fx-background-color: #2ecc71; -fx-padding: 8;");
+        totalRow.setStyle("-fx-background-color: #fdfdfdff; -fx-padding: 8;");
         totalRow.getChildren().addAll(
                 crearCeldaTabla("TOTAL:", true),
                 crearCeldaTabla("", true), // Columna vacía
@@ -715,7 +715,7 @@ public class ControladorReportesPrincipal {
         tablaDatos.getChildren().addAll(headerTabla, filasDatos, totalRow);
 
         // Sección de gráficas de análisis visual
-        Label tituloGraficas = new Label("📈 GRÁFICAS DE ANÁLISIS");
+        Label tituloGraficas = new Label("GRÁFICAS DE ANÁLISIS");
         tituloGraficas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         VBox graficasBox = new VBox(15);
@@ -724,7 +724,7 @@ public class ControladorReportesPrincipal {
         // Contenedor para gráfica de barras
         VBox graficaBarras = new VBox(10);
         graficaBarras.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 15; -fx-border-radius: 5px;");
-        Label lblGraficaBarras = new Label("📊 Gráfica de Barras: Ventas por Tipo de Boleto (VIP vs Normal)");
+        Label lblGraficaBarras = new Label("Gráfica de Barras: Ventas por Tipo de Boleto (VIP vs Normal)");
         lblGraficaBarras.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-font-size: 14px;");
 
         // Crear la gráfica de barras con los datos procesados
@@ -737,7 +737,7 @@ public class ControladorReportesPrincipal {
         // Contenedor para gráfica de pastel
         VBox graficaPastel = new VBox(10);
         graficaPastel.setStyle("-fx-background-color: #2B2B2B; -fx-padding: 15; -fx-border-radius: 5px;");
-        Label lblGraficaPastel = new Label("🥧 Gráfica de Pastel: Distribución de Boletos por Formato (2D vs 3D)");
+        Label lblGraficaPastel = new Label("Gráfica de Pastel: Distribución de Boletos por Formato (2D vs 3D)");
         lblGraficaPastel.setStyle("-fx-font-weight: bold; -fx-text-fill: #ecf0f1; -fx-font-size: 14px;");
 
         // Crear la gráfica de pastel con los datos procesados
@@ -751,7 +751,7 @@ public class ControladorReportesPrincipal {
         graficasBox.getChildren().addAll(graficaBarras, graficaPastel);
 
         // Sección de estadísticas calculadas adicionales
-        Label tituloEstadisticas = new Label("📋 ESTADÍSTICAS ADICIONALES");
+        Label tituloEstadisticas = new Label("ESTADÍSTICAS ADICIONALES");
         tituloEstadisticas.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #ecf0f1;");
 
         VBox estadisticasBox = new VBox(10);
@@ -818,7 +818,7 @@ public class ControladorReportesPrincipal {
 
         // Etiqueta para el valor de la estadística con color distintivo
         Label lblValor = new Label(valor);
-        lblValor.setStyle("-fx-text-fill: #27ae60; -fx-font-weight: bold;");
+        lblValor.setStyle("-fx-text-fill: #02487b; -fx-font-weight: bold;");
 
         estadistica.getChildren().addAll(lblTitulo, lblValor);
         return estadistica;
