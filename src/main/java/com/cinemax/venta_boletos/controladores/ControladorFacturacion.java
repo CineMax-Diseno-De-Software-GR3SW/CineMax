@@ -13,7 +13,6 @@ import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
-import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
@@ -90,9 +89,9 @@ public class ControladorFacturacion {
     private double yOffset = 0;
 
     /** Servicio que gestiona la lógica de facturación (generación de factura, validaciones). */
-    private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
+    private ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
-    private final ServicioCliente servicioCliente = new ServicioCliente();
+    private ServicioCliente servicioCliente = new ServicioCliente();
 
     /** Controlador del panel lateral que muestra información de la función. */
     private ControladorInformacionDeVenta controladorInformacionDeVenta;
@@ -223,7 +222,7 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de búsqueda.
      */
     @FXML
-    void buscarCliente(ActionEvent event) {
+    private void buscarCliente(ActionEvent event) {
         // Validar que el campo de identificación no esté vacío.
         if (identificacionField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
@@ -302,7 +301,7 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de actualizar cliente.
      */
     @FXML
-    void crearOActualizarCliente(ActionEvent event) {
+    public void crearOActualizarCliente(ActionEvent event) {
 
         // Validar que el documento sea válido antes de continuar con la actualización.
         if (!validarNumeroDocumentoCliente()) {
@@ -340,7 +339,7 @@ public class ControladorFacturacion {
      */
 
     @FXML
-    protected void pagarBoletos() {
+    private void pagarBoletos(ActionEvent event) {
         // Validar que todos los campos estén llenos antes de proceder con la compra.
         if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -428,7 +427,7 @@ public class ControladorFacturacion {
     }
     
     @FXML
-    void onLimpiarFormulario(ActionEvent event) {
+    public void onLimpiarFormulario(ActionEvent event) {
         limpiarFormulario();
     }
 
