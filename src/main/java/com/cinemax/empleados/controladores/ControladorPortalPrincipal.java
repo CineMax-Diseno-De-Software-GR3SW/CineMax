@@ -1,19 +1,13 @@
 package com.cinemax.empleados.controladores;
 
-import java.io.IOException;
-
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
-
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -70,8 +64,8 @@ public class ControladorPortalPrincipal {
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
         habilitarOpcionSiTienePermiso(btnGestionButacas, Permiso.GESTIONAR_SALA);
 
-        if (ServicioTemporizador.getInstance().tempEnEjecucion()){
-            ServicioTemporizador.getInstance().detenerTemporizador();
+        if (ServicioTemporizador.getInstancia().tempEnEjecucion()){
+            ServicioTemporizador.getInstancia().detenerTemporizador();
         }
     }
 
@@ -112,7 +106,7 @@ public class ControladorPortalPrincipal {
             (Stage) btnVentaBoleto.getScene().getWindow(), 
             "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 
             33, 
-            500);
+            225);
         //ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
         //        "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
     }

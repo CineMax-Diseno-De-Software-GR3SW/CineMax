@@ -1,21 +1,16 @@
 package com.cinemax.salas.controladores;
-
-import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.utilidades.*;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.servicios.ButacaService;
-import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.salas.servicios.ServicioButaca;
 import com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas;
 
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,7 +22,7 @@ public class ControladorDeConsultaSalas implements Initializable {
 
     @FXML
     private GridPane gridButacas;
-    
+
     @FXML
     private VBox vbox;
 
@@ -36,22 +31,22 @@ public class ControladorDeConsultaSalas implements Initializable {
         // Inicializar componentes de la vista
     }
 
-    private final ButacaService butacaService = new ButacaService();
+    private final ServicioButaca servicioButaca = new ServicioButaca();
     private List<Butaca> butacasSeleccionadas = new ArrayList<>();
 
     private ControladorAsignadorButacas controladorAsignadorButacas;
 
     public void mostrarButacasDeSala(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada) {
         gridButacas.getChildren().clear();
-        
+
         System.out.println("=== DEBUG MOSTRAR BUTACAS ===");
         System.out.println("Sala seleccionada ID: " + salaSeleccionada.getId());
         System.out.println("Códigos butacas ocupadas: " + codigosButacasOcupadas);
-                
+
         try {
-            List<Butaca> butacas = butacaService.listarButacasPorSala(salaSeleccionada.getId());
+            List<Butaca> butacas = servicioButaca.listarButacasPorSala(salaSeleccionada.getId());
             System.out.println("Total butacas obtenidas de la sala: " + butacas.size());
-            
+
             for (Butaca butaca : butacas) {
                 Button btn = new Button(butaca.getFila().toUpperCase() + butaca.getColumna());
                 btn.setMinSize(60, 60);
@@ -59,7 +54,7 @@ public class ControladorDeConsultaSalas implements Initializable {
                 btn.setMaxSize(60, 60);
 
                 System.out.println("Procesando butaca: " + butaca.getFila() + butaca.getColumna() + " Estado: " + butaca.getEstado() + " ID: " + butaca.getId());
-                
+
                 // Si selecciona una butaca que ya escogió, significa que la quiere deseleccionar
                 if (butacasSeleccionadas.contains(butaca)) {
                     // Butaca seleccionada por el usuario actual
@@ -73,12 +68,12 @@ public class ControladorDeConsultaSalas implements Initializable {
 
                     if(!butaca.getEstado().equals("OCUPADA")) { // Si la butaca no fue marcada como ocupada, se la marca aquí
                         butaca.setEstado(EstadoButaca.OCUPADA.toString());
-                        butacaService.actualizarButaca(butaca);
+                        servicioButaca.actualizarButaca(butaca);
                     }
                     btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
                     btn.setDisable(true);
-                    
-                } else { 
+
+                } else {
                     switch (butaca.getEstado()) {
                         case "DISPONIBLE": // Si la butaca nunca fue seleccionada para una venta de boletos
                             btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");

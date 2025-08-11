@@ -29,10 +29,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.servicios.ServicioFuncion;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

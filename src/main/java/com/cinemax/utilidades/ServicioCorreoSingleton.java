@@ -1,4 +1,4 @@
-package com.cinemax.comun;
+package com.cinemax.utilidades;
 
 import com.cinemax.empleados.servicios.ContenidoMensaje;
 import jakarta.mail.*;

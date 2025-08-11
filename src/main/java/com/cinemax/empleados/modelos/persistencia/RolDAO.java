@@ -1,7 +1,7 @@
 package com.cinemax.empleados.modelos.persistencia;
 
 import com.cinemax.empleados.modelos.entidades.Rol;
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import java.sql.*;
 import java.util.ArrayList;

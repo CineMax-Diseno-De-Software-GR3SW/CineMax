@@ -40,7 +40,7 @@ import com.cinemax.peliculas.modelos.persistencia.FuncionDAO;
 import com.cinemax.peliculas.modelos.persistencia.PeliculaDAO;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.SalaService;
-import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;

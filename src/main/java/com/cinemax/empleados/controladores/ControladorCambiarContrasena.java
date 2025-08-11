@@ -1,9 +1,9 @@
 package com.cinemax.empleados.controladores;
 
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

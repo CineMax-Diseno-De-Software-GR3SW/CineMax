@@ -1,6 +1,5 @@
 package com.cinemax.reportes.modelos.persistencia;
 
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,6 +8,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 
 public class VentaDAO {
 

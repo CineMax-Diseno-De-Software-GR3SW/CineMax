@@ -6,7 +6,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 
-import com.cinemax.comun.EstrategiaParaDocumentos.EstrategiaExportarPDF;
+import com.cinemax.utilidades.EstrategiaParaDocumentos.EstrategiaExportarPDF;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;

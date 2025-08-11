@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
 

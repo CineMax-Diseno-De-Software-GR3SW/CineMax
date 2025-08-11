@@ -5,11 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.controladores.ControladorDeConsultaSalas;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
@@ -140,7 +140,7 @@ public class ControladorAsignadorButacas {
 
         // Vincular el label del temporizador para que se actualice automáticamente
         if (timerLabel != null) {
-            timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
+            timerLabel.textProperty().bind(ServicioTemporizador.getInstancia().tiempoRestanteProperty());
         }
 
 
@@ -214,7 +214,7 @@ public class ControladorAsignadorButacas {
     @FXML
     void onBackAction(ActionEvent event) {
         // Detener el temporizador al retroceder
-        ServicioTemporizador.getInstance().detenerTemporizador();
+        ServicioTemporizador.getInstancia().detenerTemporizador();
         // Obtener referencia a la ventana actual
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
 

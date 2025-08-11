@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.Factura;
 

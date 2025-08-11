@@ -5,9 +5,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.comun.ServicioCorreoSingleton;
 import com.cinemax.empleados.servicios.ContenidoMensaje;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.utilidades.ServicioCorreoSingleton;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;

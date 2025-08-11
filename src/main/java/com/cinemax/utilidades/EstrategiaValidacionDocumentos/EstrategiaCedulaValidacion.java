@@ -1,6 +1,6 @@
-package com.cinemax.comun.EstrategiaValidacionDocumentos;
+package com.cinemax.utilidades.EstrategiaValidacionDocumentos;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 /**
  * Estrategia de validación específica para cédulas ecuatorianas.

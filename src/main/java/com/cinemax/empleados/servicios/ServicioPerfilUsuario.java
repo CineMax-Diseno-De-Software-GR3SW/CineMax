@@ -1,8 +1,8 @@
 package com.cinemax.empleados.servicios;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.modelos.persistencia.UsuarioDAO;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import java.sql.SQLException;
 

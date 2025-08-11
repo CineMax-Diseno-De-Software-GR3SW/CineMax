@@ -9,12 +9,12 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.comun.conexiones.ConexionFirebaseStorage;
 import com.cinemax.peliculas.modelos.entidades.Genero;
 import com.cinemax.peliculas.modelos.entidades.Idioma;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.peliculas.servicios.ServicioPelicula;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.utilidades.conexiones.ConexionFirebaseStorage;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

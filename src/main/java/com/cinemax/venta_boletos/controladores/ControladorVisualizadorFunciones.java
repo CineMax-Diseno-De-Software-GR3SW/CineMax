@@ -3,11 +3,11 @@ package com.cinemax.venta_boletos.controladores;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.salas.modelos.entidades.TipoSala;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.servicios.ServicioVisualizadorFunciones;
 
 import javafx.fxml.FXML;

@@ -1,11 +1,11 @@
 package com.cinemax.salas.controladores;
-
-import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.utilidades.*;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.salas.servicios.ButacaService;
-import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.salas.servicios.ServicioButaca;
+import com.cinemax.salas.servicios.ServicioSala;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,7 +19,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.List;
-
+import java.util.Arrays;
 /**
  * Controlador para la gestión de butacas en la interfaz de administración.
  *
@@ -53,8 +53,7 @@ public class ControladorButacas {
     /** Columna: Estado (DISPONIBLE, OCUPADA, etc.) */
     @FXML private TableColumn<Butaca, String> colEstado;
     /** Columna: ID de sala */
-    @FXML private TableColumn<Butaca, Integer> colIdSala;
-
+    @FXML private TableColumn<Butaca, String> colIdSala;
     // ===== CAMPOS DEL FORMULARIO =====
     /** Campo: fila de la butaca (letra A-Z) */
     @FXML private TextField txtFila;
@@ -83,9 +82,9 @@ public class ControladorButacas {
     /** Referencia a la butaca en edición (null = modo crear) */
     private Butaca butacaEnEdicion = null;
     /** Servicio de salas (catálogo) */
-    private final SalaService salaService    = new SalaService();
+    private final ServicioSala servicioSala = new ServicioSala();
     /** Servicio de butacas (CRUD) */
-    private final ButacaService servicio     = new ButacaService();
+    private final ServicioButaca servicio     = new ServicioButaca();
 
     /**
      * Hook de JavaFX: se ejecuta al cargar la vista.
@@ -97,10 +96,13 @@ public class ControladorButacas {
      */
     public void initialize() throws Exception {
         // Estados disponibles (enum)
-        cmbEstado.setItems(FXCollections.observableArrayList(EstadoButaca.values()));
-
+        cmbEstado.setItems(FXCollections.observableArrayList(
+                Arrays.stream(EstadoButaca.values())
+                        .filter(e -> !e.name().equals("OCUPADA"))
+                        .toList()
+        ));
         // Catálogo de salas
-        salas.setAll(salaService.listarSalas());
+        salas.setAll(servicioSala.listarSalas());
         cmbSala.setItems(salas);
 
         // Bindings de columnas a propiedades del modelo Butaca
@@ -108,8 +110,15 @@ public class ControladorButacas {
         colFila.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getFila()));
         colColumna.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getColumna()));
         colEstado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEstado()));
-        colIdSala.setCellValueFactory(data -> new SimpleIntegerProperty(data.getValue().getIdSala()).asObject());
-
+        colIdSala.setCellValueFactory(data -> {
+            int idSala = data.getValue().getIdSala();
+            Sala sala = salas.stream()
+                    .filter(s -> s.getId() == idSala)
+                    .findFirst()
+                    .orElse(null);
+            String nombreSala = (sala != null) ? sala.getNombre() : "Desconocida";
+            return new SimpleStringProperty(nombreSala);
+        });
         // Origen de datos de la tabla
         tablaButacas.setItems(butacas);
 
@@ -183,9 +192,17 @@ public class ControladorButacas {
     private void listarButacasPorSala(ActionEvent e) {
         try {
             String txt = txtBuscarIdSala.getText().trim();
-            List<Butaca> lista = txt.isEmpty()
-                    ? servicio.listarTodasButacas()
-                    : servicio.listarButacasPorSala(Integer.parseInt(txt));
+            List<Butaca> lista;
+            if (txt.isEmpty()) {
+                lista = servicio.listarTodasButacas();
+            } else {
+                try {
+                    int id = Integer.parseInt(txt);
+                    lista = servicio.listarButacasPorSala(id);
+                } catch (NumberFormatException ex) {
+                    lista = servicio.buscarButacasPorNombreSalaParcial(txt);
+                }
+            }
             tablaButacas.getItems().setAll(lista);
             lblTotalButacas.setText("Total Butacas: " + lista.size());
         } catch (Exception ex) {
@@ -233,10 +250,24 @@ public class ControladorButacas {
      * - Llama al servicio actualizarButaca
      * - Refresca la tabla y muestra confirmación
      */
+
     private void actualizarButaca(ActionEvent e) {
         Butaca sel = tablaButacas.getSelectionModel().getSelectedItem();
-        if (sel == null) return;
-        if (!validarCampos()) return;
+        if (sel == null) {
+            limpiarFormulario();
+            return;
+        }
+        if (!validarCampos()) {
+            limpiarFormulario();
+            return;
+        }
+
+        // Guardar valores originales
+        String filaOriginal = sel.getFila();
+        String columnaOriginal = sel.getColumna();
+        String estadoOriginal = sel.getEstado();
+        int idSalaOriginal = sel.getIdSala();
+
         try {
             sel.setFila(txtFila.getText());
             sel.setColumna(txtColumna.getText());
@@ -248,6 +279,12 @@ public class ControladorButacas {
             listarButacasPorSala(null);
             ManejadorMetodosComunes.mostrarVentanaExito("Butaca actualizada correctamente.");
         } catch (Exception ex) {
+            // Restaurar valores originales
+            sel.setFila(filaOriginal);
+            sel.setColumna(columnaOriginal);
+            sel.setEstado(estadoOriginal);
+            sel.setIdSala(idSalaOriginal);
+
             String msg = ex.getMessage().toLowerCase();
             if (msg.contains("ya existe")) {
                 ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
@@ -256,6 +293,10 @@ public class ControladorButacas {
             } else {
                 ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
             }
+        } finally {
+            limpiarFormulario();
+            butacaEnEdicion = null;
+            actualizarModoFormulario();
         }
     }
 
@@ -360,8 +401,16 @@ public class ControladorButacas {
             listarButacasPorSala(null);
             // limpiarCampos(); // si existiera un método de limpieza adicional
             ManejadorMetodosComunes.mostrarVentanaExito("Butaca eliminada correctamente.");
-        } catch (Exception ex) {
-            ManejadorMetodosComunes.mostrarVentanaError(ex.getMessage());
+        }
+        catch (Exception ex) {
+            String msg = ex.getMessage();
+            if (msg != null && msg.toLowerCase().contains("violates foreign key")) {
+                ManejadorMetodosComunes.mostrarVentanaAdvertencia(
+                        "No se puede eliminar porque está asociada a la venta de un boleto o una función."
+                );
+            } else {
+                ManejadorMetodosComunes.mostrarVentanaError(msg);
+            }
         }
     }
 
@@ -369,14 +418,7 @@ public class ControladorButacas {
      * Acción del botón Volver: cambia la escena al portal principal.
      */
     public void onBackAction(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+        ManejadorMetodosComunes.cambiarVentana(stage, "/vistas/empleados/PantallaPortalPrincipal.fxml");
     }
 }

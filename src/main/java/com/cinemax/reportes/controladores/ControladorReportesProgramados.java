@@ -1,10 +1,5 @@
 package com.cinemax.reportes.controladores;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.comun.EstrategiaParaDocumentos.EstrategiaExportarCSV;
-import com.cinemax.comun.EstrategiaParaDocumentos.EstrategiaExportarPDF;
-import com.cinemax.comun.EstrategiaParaDocumentos.Exportable;
-
 import java.io.IOException;
 
 import javafx.application.Platform;
@@ -37,6 +32,10 @@ import java.util.Optional;
 import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 import com.cinemax.reportes.modelos.entidades.ServicioReportesProgramados;
 import com.cinemax.reportes.modelos.entidades.VentasService;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.utilidades.EstrategiaParaDocumentos.EstrategiaExportarCSV;
+import com.cinemax.utilidades.EstrategiaParaDocumentos.EstrategiaExportarPDF;
+import com.cinemax.utilidades.EstrategiaParaDocumentos.Exportable;
 
 // Para la dependencia de programado task
 
