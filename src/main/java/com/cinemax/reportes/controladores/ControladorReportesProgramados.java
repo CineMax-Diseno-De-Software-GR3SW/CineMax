@@ -17,6 +17,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -42,7 +44,8 @@ import com.cinemax.reportes.modelos.entidades.VentasService;
 
 /**
  * Controlador para la gestión de reportes programados en el sistema Cinemax
- * Permite programar reportes automáticos, visualizar reportes generados y exportarlos
+ * Permite programar reportes automáticos, visualizar reportes generados y
+ * exportarlos
  */
 public class ControladorReportesProgramados {
 
@@ -122,7 +125,8 @@ public class ControladorReportesProgramados {
      * Establece los valores de las celdas y crea la columna de acciones con botones
      */
     private void inicializarTablaReportes() {
-        // Configurar las columnas usando PropertyValueFactory para mapear con los atributos del modelo
+        // Configurar las columnas usando PropertyValueFactory para mapear con los
+        // atributos del modelo
         columnaNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         columnaFecha.setCellValueFactory(new PropertyValueFactory<>("fechaGeneracion"));
         columnaEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
@@ -172,7 +176,8 @@ public class ControladorReportesProgramados {
             }
         });
 
-        // Listener para habilitar/deshabilitar el ComboBox según si hay reportes ejecutados
+        // Listener para habilitar/deshabilitar el ComboBox según si hay reportes
+        // ejecutados
         schedulerService.getReportesEjecutados()
                 .addListener((javafx.collections.ListChangeListener<ReporteGenerado>) change -> {
                     if (!schedulerService.getReportesPendientes().isEmpty()) {
@@ -224,7 +229,8 @@ public class ControladorReportesProgramados {
      * Revisa tanto en reportes ejecutados como en pendientes
      * 
      * @param frecuencia La frecuencia a verificar
-     * @return true si ya existe un reporte con esa frecuencia, false en caso contrario
+     * @return true si ya existe un reporte con esa frecuencia, false en caso
+     *         contrario
      */
     private boolean existeReporteConFrecuencia(String frecuencia) {
         // Revisar en la tabla de reportes ejecutados
@@ -259,6 +265,10 @@ public class ControladorReportesProgramados {
             contenidoPrincipal.setPadding(new Insets(15));
             contenidoPrincipal.getStyleClass().add("root");
 
+            // Agregar ícono usando la lógica sugerida
+            Image icon = new Image(getClass().getResourceAsStream("/imagenes/logo.png"));
+            ventanaPrevia.getIcons().add(icon);
+            
             // Sección del encabezado con información del reporte
             VBox headerBox = new VBox(5);
             headerBox.getStyleClass().add("content-pane");
@@ -430,8 +440,9 @@ public class ControladorReportesProgramados {
     /**
      * Método auxiliar para crear celdas de tabla con formato consistente
      * 
-     * @param texto El texto a mostrar en la celda
-     * @param esHeader Indica si es una celda de encabezado (true) o de datos (false)
+     * @param texto    El texto a mostrar en la celda
+     * @param esHeader Indica si es una celda de encabezado (true) o de datos
+     *                 (false)
      * @return Label configurado como celda de tabla
      */
     private Label crearCeldaTabla(String texto, boolean esHeader) {
@@ -447,8 +458,8 @@ public class ControladorReportesProgramados {
     /**
      * Crea una fila de tabla con los datos proporcionados
      * 
-     * @param fecha Fecha para la primera columna
-     * @param boletos Número de boletos para la segunda columna
+     * @param fecha    Fecha para la primera columna
+     * @param boletos  Número de boletos para la segunda columna
      * @param ingresos Ingresos para la tercera columna
      * @return HBox que representa una fila de tabla
      */
@@ -479,7 +490,9 @@ public class ControladorReportesProgramados {
                 "Reporte de Ventas - " + frecuencia, // Nombre del reporte
                 "Programado", // Estado inicial
                 fecha, // Fecha de ejecución
-                "/reportes/ventas_" + frecuencia.toLowerCase() + "_" + fechaEjecucion.replace("-", "_") + ".pdf", // Ruta del archivo
+                "/reportes/ventas_" + frecuencia.toLowerCase() + "_" + fechaEjecucion.replace("-", "_") + ".pdf", // Ruta
+                                                                                                                  // del
+                                                                                                                  // archivo
                 frecuencia); // Frecuencia de ejecución
 
         // Agregar el reporte a la lista de pendientes del servicio
@@ -517,7 +530,8 @@ public class ControladorReportesProgramados {
     }
 
     /**
-     * Muestra una ventana modal con la vista previa completa del reporte seleccionado
+     * Muestra una ventana modal con la vista previa completa del reporte
+     * seleccionado
      * Permite visualizar el contenido antes de descargarlo
      * 
      * @param reporte El reporte a visualizar
@@ -712,7 +726,8 @@ public class ControladorReportesProgramados {
 
     /**
      * Maneja la descarga de reportes en diferentes formatos (PDF o CSV)
-     * Abre un diálogo para seleccionar la ubicación de guardado y utiliza las estrategias de exportación
+     * Abre un diálogo para seleccionar la ubicación de guardado y utiliza las
+     * estrategias de exportación
      * 
      * @param reporte El reporte a descargar
      * @param formato El formato de descarga ("pdf" o "csv")
@@ -725,7 +740,7 @@ public class ControladorReportesProgramados {
 
             // Determinar la extensión del archivo según el formato
             String extension = formato.equalsIgnoreCase("pdf") ? ".pdf" : ".csv";
-            
+
             // Crear nombre de archivo limpio eliminando caracteres especiales
             String nombreArchivo = reporte.getNombre().replaceAll("[^a-zA-Z0-9\\s]", "_") + "_" +
                     reporte.getFechaGeneracion().format(DateTimeFormatter.ofPattern("ddMMyyyy"));
@@ -753,7 +768,8 @@ public class ControladorReportesProgramados {
                     ManejadorMetodosComunes.mostrarVentanaError("Formato de exportación no soportado.");
                     return;
                 }
-                // TODO: Aquí se exportan los datos del reporte usando la estrategia seleccionada
+                // TODO: Aquí se exportan los datos del reporte usando la estrategia
+                // seleccionada
                 exportStrategy.exportar(reporte, archivo, datos);
 
                 // Mostrar mensaje de éxito al usuario
@@ -782,7 +798,7 @@ public class ControladorReportesProgramados {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/vistas/reportes/VistaReportesPrincipal.fxml"));
             Parent root = loader.load();
-            
+
             // Obtener la ventana actual y cambiar la escena
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -803,7 +819,7 @@ public class ControladorReportesProgramados {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
             Parent root = loader.load();
-            
+
             // Obtener la ventana actual y cambiar la escena
             Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));

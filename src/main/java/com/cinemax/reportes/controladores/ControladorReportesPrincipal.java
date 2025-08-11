@@ -39,6 +39,7 @@ import com.cinemax.reportes.modelos.entidades.VentasService;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.control.TableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -526,6 +527,10 @@ public class ControladorReportesPrincipal {
             Stage ventanaPrevia = new Stage();
             ventanaPrevia.setTitle("Previsualización del Reporte - CineMax");
             ventanaPrevia.setResizable(true);
+
+            // Agregar ícono usando la lógica sugerida
+            Image icon = new Image(getClass().getResourceAsStream("/imagenes/logo.png"));
+            ventanaPrevia.getIcons().add(icon);
 
             // Contenedor principal con estilo oscuro
             VBox contenido = new VBox(15);
