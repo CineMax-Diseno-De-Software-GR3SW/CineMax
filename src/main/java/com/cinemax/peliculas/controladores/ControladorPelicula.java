@@ -649,11 +649,9 @@ public class ControladorPelicula implements Initializable {
 
     /**
      * Maneja el evento de búsqueda.
-     *
-     * @param event Evento de acción del botón
      */
     @FXML
-    private void onBuscar(ActionEvent event) {
+    private void onBuscar() {
         aplicarFiltros();
     }
 
@@ -772,7 +770,7 @@ public class ControladorPelicula implements Initializable {
      * Configura los eventos de la interfaz.
      */
     private void configurarEventos() {
-        txtBuscar.textProperty().addListener((obs, oldText, newText) -> aplicarFiltros());
+        // Sin búsqueda automática - solo por botón
     }
 
     /**
