@@ -1,4 +1,4 @@
-package com.cinemax.reportes.modelos.entidades;
+package com.cinemax.reportes.servicios;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -8,6 +8,14 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
+
+import com.cinemax.reportes.modelos.entidades.EstrategiaAnual;
+import com.cinemax.reportes.modelos.entidades.EstrategiaDeFrecuencia;
+import com.cinemax.reportes.modelos.entidades.EstrategiaDiaria;
+import com.cinemax.reportes.modelos.entidades.EstrategiaMensual;
+import com.cinemax.reportes.modelos.entidades.EstrategiaSemanal;
+import com.cinemax.reportes.modelos.entidades.EstrategiaTrimestal;
+import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
 
 /**
  * Servicio que gestiona la programación y ejecución automática de reportes.

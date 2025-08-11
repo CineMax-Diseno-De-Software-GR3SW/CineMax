@@ -32,8 +32,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.cinemax.reportes.modelos.entidades.ReporteGenerado;
-import com.cinemax.reportes.modelos.entidades.ServicioReportesProgramados;
 import com.cinemax.reportes.servicios.ServicioDeReportes;
+import com.cinemax.reportes.servicios.ServicioReportesProgramados;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.utilidades.strategyParaDocumentos.EstrategiaExportarCSV;
 import com.cinemax.utilidades.strategyParaDocumentos.EstrategiaExportarPDF;
