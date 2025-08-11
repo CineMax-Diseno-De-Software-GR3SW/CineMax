@@ -1,6 +1,6 @@
 package com.cinemax.venta_boletos.servicios;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.persistencia.ClienteDAO;
 

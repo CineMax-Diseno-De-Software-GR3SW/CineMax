@@ -1,6 +1,5 @@
 package com.cinemax.venta_boletos.servicios;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -8,6 +7,8 @@ import javafx.stage.Stage;
 
 import java.util.Timer;
 import java.util.TimerTask;
+
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 /**
  * Servicio Singleton para gestionar un temporizador de inactividad durante la venta de boletos.

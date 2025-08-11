@@ -3,12 +3,12 @@ package com.cinemax.empleados.controladores;
 import java.io.IOException;
 import java.util.List;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -275,7 +275,7 @@ public class ControladorGestionUsuarios {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/comun/VistaConfirmacion.fxml"));
             Parent root = loader.load();
-            com.cinemax.comun.ControladorConfirmacion controlador = loader.getController();
+            com.cinemax.utilidades.ControladorConfirmacion controlador = loader.getController();
             controlador.setTitulo("Confirmar Eliminación");
             controlador.setMensaje("¿Estás seguro de que deseas eliminar este usuario?\n\nUsuario: "
                     + usuarioSeleccionado.getNombreCompleto() + "\n\nEsta acción no se puede deshacer.");

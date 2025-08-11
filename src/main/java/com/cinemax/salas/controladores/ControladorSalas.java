@@ -1,9 +1,9 @@
 package com.cinemax.salas.controladores;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.*;
 import com.cinemax.salas.servicios.ButacaService;
 import com.cinemax.salas.servicios.SalaService;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.salas.modelos.entidades.SalaFactory;
 import com.cinemax.salas.modelos.entidades.SalaNormalFactory;
 import com.cinemax.salas.modelos.entidades.SalaVIPFactory;

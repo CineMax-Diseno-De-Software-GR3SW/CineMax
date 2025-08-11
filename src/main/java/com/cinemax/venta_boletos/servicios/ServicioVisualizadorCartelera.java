@@ -1,8 +1,8 @@
 package com.cinemax.venta_boletos.servicios;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.peliculas.controladores.ControladorCartelera;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.controladores.ControladorVisualizadorFunciones;
 
 import javafx.collections.FXCollections;

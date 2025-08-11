@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cinemax.salas.modelos.entidades.Sala;
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import com.cinemax.salas.modelos.entidades.EstadoSala;
 import com.cinemax.salas.modelos.entidades.TipoSala;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 
 /**
  * DAO (Data Access Object) para gestionar operaciones de persistencia

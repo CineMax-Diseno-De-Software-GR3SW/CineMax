@@ -1,18 +1,19 @@
 package com.cinemax.venta_boletos.controladores;
 
-import com.cinemax.comun.ControladorCargaConDatos;
-import com.cinemax.comun.ManejadorMetodosComunes;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.ContextoValidacion;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaPasaporteValidacion;
-import com.cinemax.comun.EstrategiaValidacionDocumentos.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
+import com.cinemax.utilidades.ControladorCargaConDatos;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.utilidades.EstrategiaValidacionDocumentos.ContextoValidacion;
+import com.cinemax.utilidades.EstrategiaValidacionDocumentos.EstrategiaCedulaValidacion;
+import com.cinemax.utilidades.EstrategiaValidacionDocumentos.EstrategiaPasaporteValidacion;
+import com.cinemax.utilidades.EstrategiaValidacionDocumentos.EstrategiaRucValidacion;
 import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
 import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
+import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorImpuesto;
 
@@ -89,9 +90,9 @@ public class ControladorFacturacion {
     private double yOffset = 0;
 
     /** Servicio que gestiona la lógica de facturación (generación de factura, validaciones). */
-    private ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
+    private final ServicioFacturacion servicioFacturacion = new ServicioFacturacion();
 
-    private ServicioCliente servicioCliente = new ServicioCliente();
+    private final ServicioCliente servicioCliente = new ServicioCliente();
 
     /** Controlador del panel lateral que muestra información de la función. */
     private ControladorInformacionDeVenta controladorInformacionDeVenta;
@@ -222,7 +223,7 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de búsqueda.
      */
     @FXML
-    private void buscarCliente(ActionEvent event) {
+    void buscarCliente(ActionEvent event) {
         // Validar que el campo de identificación no esté vacío.
         if (identificacionField.getText().isEmpty()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, ingrese un número de identificación para buscar al cliente.");
@@ -301,7 +302,7 @@ public class ControladorFacturacion {
      * @param event Evento de acción al hacer clic en el botón de actualizar cliente.
      */
     @FXML
-    public void crearOActualizarCliente(ActionEvent event) {
+    void crearOActualizarCliente(ActionEvent event) {
 
         // Validar que el documento sea válido antes de continuar con la actualización.
         if (!validarNumeroDocumentoCliente()) {
@@ -339,7 +340,7 @@ public class ControladorFacturacion {
      */
 
     @FXML
-    private void pagarBoletos(ActionEvent event) {
+    protected void pagarBoletos() {
         // Validar que todos los campos estén llenos antes de proceder con la compra.
         if (!validarFormularioCompleto()) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Llene todos los campos para continuar");
@@ -427,7 +428,7 @@ public class ControladorFacturacion {
     }
     
     @FXML
-    public void onLimpiarFormulario(ActionEvent event) {
+    void onLimpiarFormulario(ActionEvent event) {
         limpiarFormulario();
     }
 

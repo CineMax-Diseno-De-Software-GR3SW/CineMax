@@ -1,10 +1,11 @@
 package com.cinemax.empleados.controladores;
 
 import com.cinemax.Main;
-import com.cinemax.comun.ControladorAlertas;
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
+import com.cinemax.utilidades.ControladorAlertas;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;

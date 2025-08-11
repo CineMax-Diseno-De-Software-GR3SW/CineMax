@@ -2,10 +2,10 @@ package com.cinemax.peliculas.modelos.persistencia;
 
 import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.peliculas.modelos.entidades.Pelicula;
-import com.cinemax.comun.conexiones.ConexionBaseSingleton;
 import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
 import com.cinemax.peliculas.modelos.entidades.TipoEstreno;
 import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 
 import java.sql.*;
 import java.util.ArrayList;

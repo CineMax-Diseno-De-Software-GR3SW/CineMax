@@ -8,8 +8,8 @@ module com.cinemax {
     requires org.apache.pdfbox;
 
     //paquetes del módulo común
-    exports com.cinemax.comun;
-    opens com.cinemax.comun to javafx.fxml;
+    exports com.cinemax.utilidades;
+    opens com.cinemax.utilidades to javafx.fxml;
 
     //funcionamiento firebase
     requires firebase.admin;

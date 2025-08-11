@@ -1,8 +1,9 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.comun.ManejadorMetodosComunes;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
 import com.cinemax.empleados.servicios.ValidadorUsuario;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

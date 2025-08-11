@@ -1,4 +1,4 @@
-package com.cinemax.comun.conexiones;
+package com.cinemax.utilidades.conexiones;
 
 import java.io.File;
 import java.io.FileInputStream;

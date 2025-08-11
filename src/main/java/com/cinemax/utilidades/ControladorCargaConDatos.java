@@ -1,4 +1,4 @@
-package com.cinemax.comun;
+package com.cinemax.utilidades;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.cinemax.comun;
+package com.cinemax.utilidades;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
