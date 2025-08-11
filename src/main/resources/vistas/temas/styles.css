@@ -604,3 +604,52 @@
   -fx-background-color: #02487b;
   -fx-effect: none; /* También por si hay sombra */
 }
+
+#lblNombreUsuario {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold; /* Opcional: para que sea negrita */
+}
+
+#lblRolUsuario {
+    -fx-font-size: 18px;
+}
+
+/* --- BOTONES DEL PANEL DE GESTIÓN (DASHBOARD) --- */
+.dashboard-button {
+    -fx-background-color: #02487b;
+    -fx-background-radius: 14px;
+    -fx-padding: 10; 
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 5);
+}
+.dashboard-button:hover {
+    -fx-background-color: #035a9a; 
+}
+
+/* Estilo para los títulos de las nuevas secciones del dashboard */
+.section-header {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0079cf; 
+    -fx-padding: 25 0 15 5; 
+    -fx-border-color: #4a4a4a;
+    -fx-border-width: 0 0 1px 0; 
+}
+
+.welcome-title {
+    -fx-font-size: 36px; 
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff; 
+}
+
+.welcome-information{
+    -fx-font-size: 18px; 
+    -fx-font-weight: bold;
+    -fx-text-fill: #b0b0b0; 
+}
+
+.dashboard-button .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px; 
+}
