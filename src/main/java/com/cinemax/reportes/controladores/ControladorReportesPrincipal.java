@@ -167,8 +167,7 @@ public class ControladorReportesPrincipal {
     private List<Map<String, Object>> estadisticas = servicioReportes.getEstadisticasDeBarras();
 
     // Datos simulados para reportes generados
-    private final List<ReporteGenerado> reportesSimulados = Arrays.asList();
-
+    private final List<ReporteGenerado> reportesSimulados = cargarReportesDesdeCarpeta();
 
     /**
      * Inicializa la vista y los componentes del controlador.
@@ -241,6 +240,45 @@ public class ControladorReportesPrincipal {
         tablaReportes.setItems(reportesGenerados);
     }
 
+    // Agrega este método en tu clase:
+    private List<ReporteGenerado> cargarReportesDesdeCarpeta() {
+        List<ReporteGenerado> lista = new ArrayList<>();
+        File carpetaReportes = new File("Reportes");
+        if (carpetaReportes.exists() && carpetaReportes.isDirectory()) {
+            File[] archivos = carpetaReportes.listFiles();
+            if (archivos != null) {
+                int contador = 1;
+                for (File archivo : archivos) {
+                    if (archivo.isFile()
+                            && (archivo.getName().endsWith(".pdf") || archivo.getName().endsWith(".csv"))) {
+                        // Extraer tipo y nombre
+                        String tipo = archivo.getName().endsWith(".pdf") ? "PDF" : "CSV";
+                        String nombre = archivo.getName();
+                        // Extraer fecha de creación (puedes ajustar el formato si lo necesitas)
+                        LocalDateTime fechaCreacion = LocalDateTime.now();
+                        try {
+                            fechaCreacion = LocalDateTime.ofInstant(
+                                    java.nio.file.Files.getLastModifiedTime(archivo.toPath()).toInstant(),
+                                    java.time.ZoneId.systemDefault());
+                        } catch (Exception e) {
+                            // Si falla, usa la fecha actual
+                        }
+                        // Descripción genérica
+                        String descripcion = "Reporte generado automáticamente";
+                        lista.add(new ReporteGenerado(
+                                contador++,
+                                nombre,
+                                tipo,
+                                fechaCreacion,
+                                archivo.getAbsolutePath(),
+                                descripcion));
+                    }
+                }
+            }
+        }
+        return lista;
+    }
+
     /**
      * Carga los reportes simulados en la tabla de reportes generados.
      */
@@ -273,12 +311,30 @@ public class ControladorReportesPrincipal {
      * @param reporte El reporte generado a visualizar.
      */
     private void abrirReporte(ReporteGenerado reporte) {
-        try {
-            // Mostrar previsualización del reporte sin opciones de descarga
-            mostrarPrevisualizacionReporte(estadisticas, false);
-        } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al abrir el reporte: " + e.getMessage());
-            e.printStackTrace();
+        File archivo = new File(reporte.getRutaArchivo());
+        if (archivo.exists()) {
+            try {
+                String ruta = archivo.getAbsolutePath();
+                String os = System.getProperty("os.name").toLowerCase();
+                if (os.contains("win")) {
+                    // Windows
+                    Runtime.getRuntime().exec(new String[] { "cmd", "/c", "start", "\"\"", ruta });
+                } else if (os.contains("mac")) {
+                    // macOS
+                    Runtime.getRuntime().exec(new String[] { "open", ruta });
+                } else if (os.contains("nix") || os.contains("nux")) {
+                    // Linux
+                    Runtime.getRuntime().exec(new String[] { "xdg-open", ruta });
+                } else {
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia(
+                            "No se puede abrir el archivo automáticamente en este sistema operativo.");
+                }
+            } catch (Exception e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Error al abrir el archivo: " + e.getMessage());
+                e.printStackTrace();
+            }
+        } else {
+            ManejadorMetodosComunes.mostrarVentanaError("No se encontró el archivo: " + archivo.getAbsolutePath());
         }
     }
 
@@ -601,44 +657,34 @@ public class ControladorReportesPrincipal {
             // Usar los datos estadísticos actuales para la exportación
             List<Map<String, Object>> datos = estadisticas;
 
-            // Configurar el selector de archivos para guardar
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Guardar Reporte " + tipo.toUpperCase());
-            fileChooser.setInitialFileName("reporte_ventas." + tipo);
-
-            // Agregar filtros de extensión según el tipo de archivo
-            if (tipo.equals("pdf")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
-            } else if (tipo.equals("csv")) {
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Archivos CSV (*.csv)", "*.csv"));
+            // Crear carpeta /Reportes si no existe
+            File carpetaReportes = new File("Reportes");
+            if (!carpetaReportes.exists()) {
+                carpetaReportes.mkdirs();
             }
 
-            // Obtener la ventana padre para el diálogo
-            Stage stage = (Stage) btnBack.getScene().getWindow();
-            File archivo = fileChooser.showSaveDialog(stage);
+            // Nombre de archivo automático
+            String nombreArchivo = "reporte_ventas_" +
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss")) +
+                    "." + tipo;
+            File archivo = new File(carpetaReportes, nombreArchivo);
 
-            if (archivo != null) {
-                // Crear información adicional para incluir en el reporte
-                Map<String, Object> infoExtra = new HashMap<>();
-                infoExtra.put("subtitulo", "Reporte generado el "
-                        + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+            Map<String, Object> infoExtra = new HashMap<>();
+            infoExtra.put("subtitulo", "Reporte generado el "
+                    + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
-                // Ejecutar la estrategia de exportación seleccionada
-                strategy.exportarFormatoPrincipal(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
+            strategy.exportarFormatoPrincipal(datos, archivo, "REPORTE DE VENTAS - CINEMAX", infoExtra);
 
-                // Crear nuevo registro de reporte generado para agregar a la tabla
-                ReporteGenerado nuevoReporte = new ReporteGenerado(
-                        reportesGenerados.size() + 1, // ID incremental
-                        "Reporte_Ventas_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")),
-                        tipo.toUpperCase(), // Tipo en mayúsculas (PDF/CSV)
-                        LocalDateTime.now(), // Fecha de generación actual
-                        archivo.getAbsolutePath(), // Ruta completa del archivo
-                        "Reporte de ventas del " + desde + " al " + hasta); // Descripción descriptiva
+            ReporteGenerado nuevoReporte = new ReporteGenerado(
+                    reportesGenerados.size() + 1,
+                    "Reporte_Ventas_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmm")),
+                    tipo.toUpperCase(),
+                    LocalDateTime.now(),
+                    archivo.getAbsolutePath(),
+                    "Reporte de ventas del " + desde + " al " + hasta);
 
-                // Agregar el nuevo reporte al inicio de la lista (más reciente primero)
-                reportesGenerados.add(0, nuevoReporte);
+            reportesGenerados.add(0, nuevoReporte);
 
-            }
         } catch (Exception e) {
             // Manejar errores durante la exportación
             ManejadorMetodosComunes.mostrarVentanaError("No se pudo exportar el reporte: " + e.getMessage());
