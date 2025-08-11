@@ -5,6 +5,7 @@ import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.ServicioButaca;
+import com.cinemax.salas.servicios.ServicioSala;
 import com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas;
 
 import javafx.fxml.FXML;
