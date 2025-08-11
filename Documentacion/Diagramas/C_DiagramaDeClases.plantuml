@@ -52,8 +52,11 @@ package controladores {
 ' ------------------ SERVICIOS ------------------
 package servicios{
 
-    class ServicioContenidoMensajeFactura {
-        + {static}crearMensajeFactura(factura: Factura): ContenidoMensaje
+    class ServicioContenidoFactura {
+        +generarFactura(factura: Factura): void
+        +generarBoletos(boletos: List<Producto>): void
+        +unirPDFsFacturaYBoletos(facturaFile: File, boletosFiles: List<File>, archivoSalida: File): void
+        +generarNombreArchivoBoleto(boleto: Boleto): String
     }
 
     class ServicioFacturacion {
@@ -120,20 +123,29 @@ package Utilidades {
     package EstrategiaParaDocumentos {
         interface Exportable {
             +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
-            +exportarFormatoPrincipal(datos: List<Map<String, Object>>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
         }
 
-        class EstrategiaExportarPDF {
-            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
-            +exportarFormatoPrincipal(datos: List<Map<String, Object>>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+        class EstrategiaExportarPDF implements Exportable {
             +crearDocumentoPDF(): PDDocument
             +guardarPDF(document: PDDocument, archivo: File): void
         }
 
-        class EstrategiaExportarCSV {
-            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
-            +exportarFormatoPrincipal(datos: List<Map<String, Object>>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+        class EstrategiaExportarCSV implements Exportable {
+
         }
+    }
+
+    class ServicioCorreoSingleton {
+        - instancia: ServicioCorreoSingleton
+        - remitente: String
+        - clave: String
+        - sesion: Session
+        - transport: Transport
+        - ServicioCorreoSingleton()
+        + getInstancia(): ServicioCorreoSingleton
+        - crearSesionSMTP(): Session
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje): boolean
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje, adjunto: File): boolean
     }
 }
 
@@ -202,7 +214,8 @@ ControladorFacturacion ..> CalculadorImpuesto
 ServicioGeneradorBoleto ..> Boleto
 ServicioFacturacion ..> Factura
 ServicioFacturacion ..> ServicioGeneradorArchivoPDF
-ServicioFacturacion ..> ServicioContenidoMensajeFactura
+ServicioFacturacion ..> ServicioContenidoFactura
+ServicioContenidoFactura ..> EstrategiaExportarPDF
 ServicioFacturacion ..left> Cliente
 
 ' Relaciones de herencia e implementación
@@ -221,4 +234,6 @@ ContextoValidacion o--> EstrategiaValidacion
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
 
+ControladorReportesPrincipal --> Exportable
+ServicioFacturacion ..> ServicioCorreoSingleton
 @enduml
