@@ -1,10 +1,6 @@
 package com.cinemax.empleados.modelos.persistencia;
 
 import com.cinemax.comun.ConexionBaseSingleton;
-<<<<<<< HEAD
-import com.cinemax.empleados.modelos.entidades.Permiso;
-=======
->>>>>>> 70777b19aee4af7a063e70b323e48454dd478cc0
 import com.cinemax.empleados.modelos.entidades.Rol;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import java.sql.*;
