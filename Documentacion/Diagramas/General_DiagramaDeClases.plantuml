@@ -597,7 +597,7 @@ package controladores {
     class ControladorVisualizadorCartelera {
         - servicioVisualizarCartelera: ServicioVisualizarCartelera
         - cargarCartelera(peliculas: List<Pelicula>): void
-    }   
+    }
 
     class ControladorVisualizadorFunciones {
         - servicioVisualizadorFunciones: ServicioVisualizadorFunciones
@@ -660,25 +660,25 @@ package servicios{
         + existeCliente(numeroIdentificacion: String): boolean
     }
 
-    class ServicioTemporizador{
-        - {static} instancia: ServicioTemporizador
-        - temporizador: Timer
-        - tempEnEjecucion: boolean
-        - finTiempo: long
-        - tiempoRestante: StringProperty
-        --
-        + {static} getInstancia(): ServicioTemporizador
-        + empezarTemporizador(stage: Stage): void
-        + detenerTemporizador(): void
-        + tempEnEjecucion(): boolean
-        + tiempoRestanteProperty(): StringProperty
+    class ServicioTemporizador #lightblue{
+            - {static} instancia: ServicioTemporizador
+            - temporizador: Timer
+            - tempEnEjecucion: boolean
+            - finTiempo: long
+            --
+            + {static} getInstancia(): ServicioTemporizador
+            + empezarTemporizador(stage: Stage): void
+            + detenerTemporizador(): void
     }
 
+    class ServicioVisualizadorFunciones{
+       + seleccionarFuncion(): void
+    }
 }
 
 package utilidades {
 
-    package estrategiaValidacionDocumentos 
+    package estrategiaValidacionDocumentos
     {
 
         class ContextoValidacion #lightblue {
@@ -686,7 +686,7 @@ package utilidades {
             + setEstrategia(estrategia: EstrategiaValidacion): void
             + ejecutarEstrategia(documento: String): boolean
         }
-        
+
         class EstrategiaCedulaValidacion #lightblue implements EstrategiaValidacion  {
         }
         interface EstrategiaValidacion #lightblue {
@@ -700,7 +700,7 @@ package utilidades {
         }
     }
 
-    package estrategiaParaDocumentos <<Package>> {
+    package estrategiaParaDocumentos {
         interface Exportable {
             +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
         }
@@ -775,12 +775,12 @@ package modelos {
 ' ------------------ RELACIONES ------------------
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
-ControladorFacturacion --> ServicioFacturacion
-ControladorFacturacion --> ServicioCliente
+ControladorFacturacion *--> ServicioFacturacion
+ControladorFacturacion *--> ServicioCliente
 ControladorVisualizadorCartelera --> ServicioVisualizadorCartelera
 ControladorVisualizadorFunciones --> ServicioVisualizadorFunciones
-ControladorAsignadorButacas --> ControladorInformacionDeVenta
-ControladorFacturacion --> ControladorInformacionDeVenta
+ControladorAsignadorButacas o--> ControladorInformacionDeVenta
+ControladorFacturacion o--> ControladorInformacionDeVenta
 
 ' Relaciones de uso/dependencia (se crean o usan temporalmente)
 ControladorAsignadorButacas ..> ServicioGeneradorBoleto
@@ -801,13 +801,13 @@ Producto <|-- Boleto
 CalculadorIVA ..up|> CalculadorImpuesto
 
 ' Asociaciones entre entidades
-Factura "1" --> "1..*" Producto
-Factura "1" --> "1..*" Cliente
-Boleto "1..*" --> "1" Funcion
-Boleto "1" --> "1" Butaca
+Factura "1" *-- "1..*" Producto
+Factura "1" *-- "1..*" Cliente
+Boleto "1" *-- "1" Funcion
+Boleto "1" *-- "1" Butaca
 
 ' Patrón Strategy
-ContextoValidacion --> EstrategiaValidacion
+ContextoValidacion o--> EstrategiaValidacion
 
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
@@ -853,8 +853,8 @@ package "Reportes"{
         - String frecuencia
         --
     }
-        
-        
+
+
     }
 
     ' ===== SERVICIOS (REPORTES) =====
@@ -890,7 +890,7 @@ package "Reportes"{
 
 
     ' ===== CONTROLADOR (REPORTES) =====
-    package "Controlador" <<Package>> {
+    package "Controlador" {
 
         class ControladorReportesPrincipal {
             - Button botonRegresar
@@ -925,7 +925,7 @@ package "Reportes"{
             - Label crearCeldaTabla(String texto, boolean esHeader)
             + void volverEscena(ActionEvent event)
         }
-    
+
         class ControladorReportesProgramados {
             - Button botonRegresar
             - ComboBox<String> elegirFrecuencia
@@ -949,33 +949,37 @@ package "Reportes"{
             + void volverEscena(ActionEvent event)
         }
     ControladorReportesPrincipal --> ServicioDeReportes
-    ControladorReportesPrincipal --> ControladorReportesProgramados
+    ControladorReportesPrincipal --> Exportable
+    ControladorReportesPrincipal --> EstrategiaExportarPDF
+    ControladorReportesPrincipal --> EstrategiaExportarCSV
 
 
 
-    
-    
     ControladorReportesProgramados --> ServicioReportesProgramados
     ControladorReportesProgramados --> ServicioDeReportes
     ControladorReportesProgramados --> Exportable
-    ControladorReportesPrincipal --> Exportable
-    
+    ControladorReportesProgramados --> EstrategiaExportarPDF
+    ControladorReportesProgramados --> EstrategiaExportarCSV
+
     ServicioReportesProgramados --> ServicioReportesProgramados
-    
-    
+
+
     ReporteGenerado <-- ControladorReportesPrincipal
     ReporteGenerado <-- ControladorReportesProgramados
-ControladorPortalPrincipal ..> ControladorReportesPrincipal
     }
 }
 
 ' ============================== RELACIONES GENERALES ==============================
-
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
 ControladorPortalPrincipal ..> ControladorVisualizadorCartelera
 ControladorPortalPrincipal ..> ControladorPelicula
 ControladorPortalPrincipal ..> ControladorFunciones
 ControladorPortalPrincipal ..> ControladorSalas
-ControladorVisualizadorCartelera ..> ControladorCartelera 
-ControladorVisualizadorFunciones ..> ControladorFunciones 
+ControladorPortalPrincipal ..> ControladorReportes
+ControladorVisualizadorCartelera ..> ControladorCartelera
+ControladorVisualizadorFunciones ..> ControladorFunciones
+ServicioVisualizadorFunciones ..> ServicioTemporizador
+ControladorAsignadorButacas ..> ServicioTemporizador
+ControladorFacturacion ..> ServicioTemporizador
+
 @enduml
