@@ -23,6 +23,8 @@
             </children>
         </HBox>
     </top>
+
+    <!-- CENTRO -->
     <center>
         <VBox spacing="25.0" alignment="CENTER" VBox.vgrow="ALWAYS">
             <padding>
@@ -30,10 +32,13 @@
             </padding>
 
             <!-- GRID DE INFORMACIÓN -->
-            <GridPane hgap="12.0" vgap="20.0" alignment="CENTER">
+            <GridPane hgap="12.0" vgap="50.0" alignment="CENTER">
+                <padding>
+                    <Insets bottom="80.0" />
+                </padding>
                 <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="100.0" prefWidth="200.0" />
-                    <ColumnConstraints hgrow="ALWAYS" minWidth="150.0" prefWidth="400.0" />
+                    <ColumnConstraints halignment="LEFT" minWidth="100.0" prefWidth="200.0" />
+                    <ColumnConstraints halignment="LEFT" minWidth="150.0" prefWidth="400.0" />
                 </columnConstraints>
 
                 <!-- Altura y alineación de filas -->
@@ -47,27 +52,27 @@
                 </rowConstraints>
 
                 <!-- Filas -->
-                <Label text="Nombre Completo:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="label" />
-                <Label fx:id="lblNombreCompleto" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="label" />
+                <Label text="Nombre Completo:" GridPane.columnIndex="0" GridPane.rowIndex="0" styleClass="perfil-label" />
+                <Label fx:id="lblNombreCompleto" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="0" styleClass="perfil-label" />
 
-                <Label text="Cédula:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="label" />
-                <Label fx:id="lblCedula" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="label" />
+                <Label text="Cédula:" GridPane.columnIndex="0" GridPane.rowIndex="1" styleClass="perfil-label" />
+                <Label fx:id="lblCedula" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="1" styleClass="perfil-label" />
 
-                <Label text="Usuario:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="label" />
-                <Label fx:id="lblUsuario" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="label" />
+                <Label text="Usuario:" GridPane.columnIndex="0" GridPane.rowIndex="2" styleClass="perfil-label" />
+                <Label fx:id="lblUsuario" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="2" styleClass="perfil-label" />
 
-                <Label text="Rol:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="label" />
-                <Label fx:id="lblRol" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="label" />
+                <Label text="Rol:" GridPane.columnIndex="0" GridPane.rowIndex="3" styleClass="perfil-label" />
+                <Label fx:id="lblRol" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="3" styleClass="perfil-label" />
 
-                <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="label" />
-                <Label fx:id="txtEmail" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="label" />
+                <Label text="Email:" GridPane.columnIndex="0" GridPane.rowIndex="4" styleClass="perfil-label" />
+                <Label fx:id="txtEmail" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="4" styleClass="perfil-label" />
 
-                <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="label" />
-                <Label fx:id="txtTelefono" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="label" />
+                <Label text="Teléfono:" GridPane.columnIndex="0" GridPane.rowIndex="5" styleClass="perfil-label" />
+                <Label fx:id="txtTelefono" text="-----" GridPane.columnIndex="1" GridPane.rowIndex="5" styleClass="perfil-label" />
             </GridPane>
 
             <!-- BOTONES -->
-            <HBox spacing="12.0" alignment="CENTER">
+            <HBox spacing="30.0" alignment="CENTER">
                 <Button fx:id="btnCambiarContrasena"
                         onAction="#onCambiarContrasena"
                         text="Cambiar Contraseña"

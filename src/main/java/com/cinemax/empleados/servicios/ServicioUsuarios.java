@@ -26,7 +26,7 @@ public class ServicioUsuarios {
 
         validarDatos(correo, nombreUsuario);
         String clave = generarClaveAleatoria();
-        String claveHasheada = UtilidadClave.hashClave(clave);
+        String claveHasheada = ServicioClave.hashClave(clave);
 
         Usuario usuario = new Usuario(nombreUsuario,correo,claveHasheada,nombreCompleto,
                 cedula,celular,cargoSeleccionado, estadoActivo, true);
@@ -176,7 +176,7 @@ public class ServicioUsuarios {
             Usuario usuario = usuarioDAO.buscarPorCorreo(correo);
 
             String nuevaClave = generarClaveAleatoria();
-            String claveHasheada = UtilidadClave.hashClave(nuevaClave);
+            String claveHasheada = ServicioClave.hashClave(nuevaClave);
             usuario.setClave(claveHasheada);
             usuarioDAO.actualizarClave(usuario.getId(), usuario.getClave());
             usuario.setRequiereCambioClave(true);
@@ -187,7 +187,7 @@ public class ServicioUsuarios {
     }
 
     public void actualizarClaveTemporal(Usuario usuarioActivo, String nuevaClave) throws SQLException {
-        String claveHasheada = UtilidadClave.hashClave(nuevaClave);
+        String claveHasheada = ServicioClave.hashClave(nuevaClave);
         usuarioActivo.actualizarClave(claveHasheada);
         usuarioDAO.actualizarClaveTemporal(usuarioActivo.getId(), claveHasheada);
     }

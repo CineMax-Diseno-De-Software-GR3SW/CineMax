@@ -9,11 +9,12 @@
 
 <VBox alignment="CENTER" minHeight="500" minWidth="800" spacing="20.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
 
-    <ImageView fitHeight="400.0" fitWidth="400.0" pickOnBounds="true" preserveRatio="true">
+    <ImageView fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
         <image>
-            <Image url="@../../imagenes/logoMax.png" />
+            <Image url="@../../imagenes/logoMax_v4.png" />
         </image>
     </ImageView>
+    <Label maxWidth="300" text="CineMax" wrapText="true" styleClass="title"  alignment="CENTER" />
 
     <TextField fx:id="txtUsuario" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Usuario" />
 

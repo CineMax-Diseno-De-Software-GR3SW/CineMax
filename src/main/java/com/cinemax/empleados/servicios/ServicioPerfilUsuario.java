@@ -74,7 +74,7 @@ public class ServicioPerfilUsuario {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad.");
             throw new IllegalArgumentException("Nueva clave inválida");
         }
-        String claveHasheada = UtilidadClave.hashClave(nuevaClave);
+        String claveHasheada = ServicioClave.hashClave(nuevaClave);
         usuarioActivo.setClave(claveHasheada);
         usuarioDAO.actualizarClave(usuarioActivo.getId(), usuarioActivo.getClave());
     }

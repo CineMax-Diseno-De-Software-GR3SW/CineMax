@@ -63,6 +63,8 @@ public class ControladorPortalPrincipal {
         habilitarOpcionSiTienePermiso(btnGestionSalas, Permiso.GESTIONAR_SALA);
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
         habilitarOpcionSiTienePermiso(btnGestionButacas, Permiso.GESTIONAR_SALA);
+        habilitarOpcionSiTienePermiso(btnGestionFunciones, Permiso.GESTIONAR_FUNCION );
+        habilitarOpcionSiTienePermiso(btnGestionPeliculas , Permiso.GESTIONAR_FUNCION );
 
         if (ServicioTemporizador.getInstancia().tempEnEjecucion()){
             ServicioTemporizador.getInstancia().detenerTemporizador();
@@ -73,13 +75,20 @@ public class ControladorPortalPrincipal {
     private void habilitarOpcionSiTienePermiso(Node nodo, Permiso permiso) {
         boolean visible = gestorSesion.tienePermiso(permiso);
         nodo.setVisible(visible);
+        //todo: Revisar huecos
         nodo.setManaged(visible); // evita huecos
     }
 
     @FXML
     private void onGestionUsuarios(ActionEvent event) {
-        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionUsuarios.getScene().getWindow(),
-                "/vistas/empleados/PantallaGestionUsuarios.fxml");
+        ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(
+                (Stage) btnGestionUsuarios.getScene().getWindow(),
+                "/vistas/empleados/PantallaGestionUsuarios.fxml",
+                33,
+                225);
+
+//        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionUsuarios.getScene().getWindow(),
+//                "/vistas/empleados/PantallaGestionUsuarios.fxml");
     }
 
     @FXML
