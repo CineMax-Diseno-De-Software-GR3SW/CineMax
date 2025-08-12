@@ -28,8 +28,8 @@ import java.util.concurrent.ExecutionException;
 public class ControladorCarga implements Initializable {
     private static final long TIEMPO_MINIMO_CARGA = 500;
     
-    @FXML
-    private ProgressBar progressBar;
+//    @FXML
+//    private ProgressBar progressBar;
 
     public ControladorCarga() {
     }
@@ -44,7 +44,7 @@ public class ControladorCarga implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         // Inicializar el progress bar en 0% al cargar la vista
-        progressBar.setProgress(0.0);
+//        progressBar.setProgress(0.0);
     } 
     
     /**
@@ -83,14 +83,14 @@ public class ControladorCarga implements Initializable {
                         break;
                     }
                     
-                    Thread.sleep(tiempoPorSalto);
-                    
-                    final double progreso = (double) (i + 1) / totalPasos;
-                    Platform.runLater(() -> {
-                        if (!isCancelled()) {
-                            progressBar.setProgress(progreso);
-                        }
-                    });
+//                    Thread.sleep(tiempoPorSalto);
+//
+//                    final double progreso = (double) (i + 1) / totalPasos;
+//                    Platform.runLater(() -> {
+//                        if (!isCancelled()) {
+////                            progressBar.setProgress(progreso);
+//                        }
+//                    });
                 }
                 
                 return null;
@@ -106,7 +106,7 @@ public class ControladorCarga implements Initializable {
             protected void failed() {
                 Platform.runLater(() -> {
                     ManejadorMetodosComunes.mostrarVentanaError("Error en la animación de carga: " + getException().getMessage());
-                    progressBar.setProgress(0.0);
+//                    progressBar.setProgress(0.0);
                 });
                 // Cancelar la carga real si la animación falla
                 cargaReal.cancel(true);
@@ -117,7 +117,7 @@ public class ControladorCarga implements Initializable {
         cargaReal.exceptionally(throwable -> {
             Platform.runLater(() -> {
                 ManejadorMetodosComunes.mostrarVentanaError("Error cargando la siguiente ventana: " + throwable.getMessage());
-                progressBar.setProgress(0.0);
+//                progressBar.setProgress(0.0);
             });
             // Cancelar la animación si la carga real falla
             tareaAnimacion.cancel();
@@ -168,7 +168,7 @@ public class ControladorCarga implements Initializable {
                     final double progreso = (double) (i + 1) / totalPasos;
                     Platform.runLater(() -> {
                         if (!isCancelled()) {
-                            progressBar.setProgress(progreso);
+//                            progressBar.setProgress(progreso);
                         }
                     });
                 }
@@ -186,7 +186,7 @@ public class ControladorCarga implements Initializable {
             protected void failed() {
                 Platform.runLater(() -> {
                     ManejadorMetodosComunes.mostrarVentanaError("Error en la animación: " + getException().getMessage());
-                    progressBar.setProgress(0.0);
+//                    progressBar.setProgress(0.0);
                 });
                 cargaReal.cancel(true);
             }
@@ -196,7 +196,7 @@ public class ControladorCarga implements Initializable {
         cargaReal.exceptionally(throwable -> {
             Platform.runLater(() -> {
                 ManejadorMetodosComunes.mostrarVentanaError("Error cargando vista con datos: " + throwable.getMessage());
-                progressBar.setProgress(0.0);
+//                progressBar.setProgress(0.0);
             });
             tareaAnimacion.cancel();
             return null;
@@ -233,7 +233,7 @@ public class ControladorCarga implements Initializable {
             } catch (InterruptedException | ExecutionException e) {
                 Platform.runLater(() -> {
                     ManejadorMetodosComunes.mostrarVentanaError("Error sincronizando carga: " + e.getMessage());
-                    progressBar.setProgress(0.0);
+//                    progressBar.setProgress(0.0);
                 });
             }
         });
@@ -262,7 +262,7 @@ public class ControladorCarga implements Initializable {
             } catch (InterruptedException | ExecutionException e) {
                 Platform.runLater(() -> {
                     ManejadorMetodosComunes.mostrarVentanaError("Error ejecutando controlador: " + e.getMessage());
-                    progressBar.setProgress(0.0);
+//                    progressBar.setProgress(0.0);
                 });
             }
         });
