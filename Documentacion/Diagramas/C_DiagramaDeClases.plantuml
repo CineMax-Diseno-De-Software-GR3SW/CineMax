@@ -108,18 +108,15 @@ package servicios{
         + existeCliente(numeroIdentificacion: String): boolean
     }
 
-    class ServicioTemporizador{
+    class ServicioTemporizador #lightblue{
         - {static} instancia: ServicioTemporizador
         - temporizador: Timer
         - tempEnEjecucion: boolean
         - finTiempo: long
-        - tiempoRestante: StringProperty
         --
         + {static} getInstancia(): ServicioTemporizador
         + empezarTemporizador(stage: Stage): void
         + detenerTemporizador(): void
-        + tempEnEjecucion(): boolean
-        + tiempoRestanteProperty(): StringProperty
     }
 
     class ServicioMostrarFunciones{
@@ -266,7 +263,6 @@ ContextoValidacion o--> EstrategiaValidacion
 ServicioMostrarFunciones ..> ServicioTemporizador : <<usa>>
 ControladorAsignadorButacas ..> ServicioTemporizador : <<usa y observa>>
 ControladorFacturacion ..> ServicioTemporizador : <<usa y observa>>
-ControladorPortalPrincipal ..> ServicioTemporizador : <<usa>>
 
 
 ' Uso de interfaces/clases abstractas
