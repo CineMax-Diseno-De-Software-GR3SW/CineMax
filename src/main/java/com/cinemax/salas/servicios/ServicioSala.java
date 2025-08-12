@@ -2,6 +2,7 @@ package com.cinemax.salas.servicios;
 
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.Sala;
+import com.cinemax.salas.modelos.entidades.EstadoSala; // Asegúrate de importar
 import com.cinemax.salas.modelos.persistencia.ButacasDAO;
 import com.cinemax.salas.modelos.persistencia.SalasDAO;
 import java.util.ArrayList;
@@ -113,8 +114,12 @@ public class ServicioSala {
                 throw new Exception("Ya existe una sala con ese nombre.");
         }
 
-        // Comparar capacidad anterior y nueva
+        // Validación DISPONIBLE -> MANTENIMIENTO con funciones asociadas
         Sala original = salasDAO.obtenerSalaPorId(sala.getId());
+        if (original.getEstado() == EstadoSala.DISPONIBLE
+                && sala.getEstado() == EstadoSala.MANTENIMIENTO
+                && salasDAO.salaTieneFunciones(sala.getId())) {
+            throw new Exception("No se puede cambiar a MANTENIMIENTO: la sala tiene funciones asociadas.");        }
         int capacidadAnterior = original.getCapacidad();
         int capacidadNueva = sala.getCapacidad();
 

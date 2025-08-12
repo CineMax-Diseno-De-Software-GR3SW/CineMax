@@ -176,4 +176,24 @@ public class SalasDAO {
             stmt.executeUpdate();
         }
     }
+
+    /**
+     * Verifica si una sala tiene funciones programadas.
+     *
+     * @param idSala ID de la sala a verificar.
+     * @return true si la sala tiene funciones, false en caso contrario.
+     * @throws Exception si ocurre un error en la consulta SQL.
+     */
+    public boolean salaTieneFunciones(int idSala) throws Exception {
+        String sql = "SELECT COUNT(*) FROM Funcion WHERE id_sala = ?";
+        Connection conn = ConexionBaseSingleton.getInstancia().getConexion();
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idSala);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
 }

@@ -338,6 +338,8 @@ public class ControladorSalas {
      * - Actualiza campos y persiste
      * - Refresca lista y muestra confirmación
      */
+// src/main/java/com/cinemax/salas/controladores/ControladorSalas.java
+
     @FXML
     private void actualizarSala() {
         Sala seleccionada = tablaSalas.getSelectionModel().getSelectedItem();
@@ -371,10 +373,13 @@ public class ControladorSalas {
 
                 ManejadorMetodosComunes.mostrarVentanaExito("Sala actualizada correctamente.");
             } catch (Exception e) {
-                if (e instanceof NumberFormatException) {
+                String msg = e.getMessage();
+                if (msg != null && msg.contains("No se puede cambiar a MANTENIMIENTO: la sala tiene funciones asociadas.")) {
+                    ManejadorMetodosComunes.mostrarVentanaAdvertencia(msg);
+                } else if (e instanceof NumberFormatException) {
                     ManejadorMetodosComunes.mostrarVentanaAdvertencia("La capacidad debe ser un número válido.");
                 } else {
-                    ManejadorMetodosComunes.mostrarVentanaError("" + e.getMessage());
+                    ManejadorMetodosComunes.mostrarVentanaError("" + msg);
                 }
             }
         } else {
