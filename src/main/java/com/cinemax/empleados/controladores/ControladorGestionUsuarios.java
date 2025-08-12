@@ -1,10 +1,12 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.empleados.modelos.entidades.*;
-import com.cinemax.empleados.servicios.GestorSesionSingleton;
 import com.cinemax.empleados.servicios.ServicioRoles;
-import com.cinemax.empleados.servicios.ServicioUsuarios;
+import com.cinemax.empleados.servicios.ServicioSesionSingleton;
+import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.modelos.entidades.*;
 
+
+import com.cinemax.empleados.servicios.ServicioUsuarios;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -42,7 +44,7 @@ public class ControladorGestionUsuarios {
     private ServicioUsuarios servicioUsuarios;
 
     private ServicioRoles servicioRoles;
-    private GestorSesionSingleton gestorSesion;
+    private ServicioSesionSingleton gestorSesion;
 
 
     @FXML
@@ -52,7 +54,7 @@ public class ControladorGestionUsuarios {
         servicioRoles = new ServicioRoles();
 
 
-        gestorSesion = GestorSesionSingleton.getInstancia();
+        gestorSesion = ServicioSesionSingleton.getInstancia();
         Usuario use = gestorSesion.getUsuarioActivo();
         lblNombreUsuario.setText(use.getNombreCompleto());
         lblRolUsuario.setText(use.getDescripcionRol());
@@ -180,16 +182,58 @@ public class ControladorGestionUsuarios {
         // abrir diálogo / escena de edición
     }
 
-    public void onBackAction(ActionEvent actionEvent) {
+    public void onBackAction(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
+            Parent root = loader.load();
+            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void onAgregarUsuario(ActionEvent actionEvent) {
+    public void onAgregarUsuario(ActionEvent event) {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRegistrarUsuario.fxml"));
+        try {
+            Parent root = loader.load();
+
+            // Obtener el Stage actual desde el botón o cualquier nodo
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setTitle("Registrar nuevo empleado");
+            stage.setScene(new Scene(root));
+            stage.show();
+//        try {
+//            URL fxmlLocation = getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml");
+//
+//            if (fxmlLocation == null) {
+//                throw new IOException("No se pudo encontrar el archivo FXML: /Vista/empleados/PantallaRegistrarUsuario.fxml");
+//            }
+//
+//            FXMLLoader loader = new FXMLLoader(fxmlLocation);
+//            Parent root = loader.load();
+//
+//            Stage stage = new Stage();
+//            stage.setTitle("Registrar Nuevo Empleado");
+//            stage.setScene(new Scene(root));
+//            stage.initModality(Modality.APPLICATION_MODAL);
+//            stage.showAndWait();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error de Carga");
+            alert.setHeaderText("No se pudo abrir la ventana de registro.");
+            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
     @FXML
     private void onCerrarSesion(ActionEvent event) {
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/empleados/PantallaLogin.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaLogin.fxml"));
         try {
             Parent root = loader.load();
 
@@ -210,156 +254,3 @@ public class ControladorGestionUsuarios {
     }
 
 }
-//
-//package com.cinemax.empleados.Controlador;
-//
-//import com.cinemax.empleados.Servicios.GestorSesionSingleton;
-//import com.cinemax.empleados.Modelo.Entidades.Usuario;
-//import com.cinemax.empleados.Modelo.Entidades.*;
-//
-//
-//import com.cinemax.empleados.Servicios.GestorUsuarios;
-//import javafx.collections.FXCollections;
-//import javafx.event.ActionEvent;
-//import javafx.fxml.FXML;
-//import javafx.fxml.FXMLLoader;
-//import javafx.scene.Node;
-//import javafx.scene.Parent;
-//import javafx.scene.Scene;
-//import javafx.scene.control.*;
-//import javafx.scene.control.cell.PropertyValueFactory;
-//import javafx.scene.layout.HBox;
-//import javafx.scene.layout.VBox;
-//import javafx.scene.text.Text;
-//import javafx.stage.Stage;
-//
-//import java.io.IOException;
-//import java.net.URL;
-//import java.util.concurrent.ForkJoinPool;
-//
-//import javafx.fxml.FXML;
-//
-//public class ControladorGestionUsuarios {
-//
-//    public Button btnAgregarUsuario;
-//    public Button btnBack;
-//    public Label lblNombreUsuario;
-//    public Label lblRolUsuario;
-//    @FXML private TableView<Usuario> tableUsuarios;
-//    @FXML private TableColumn<Usuario, Boolean> colActivo;
-//    @FXML private TableColumn<Usuario, Long> colUsuario;
-//    @FXML private TableColumn<Usuario, String> colNombre;
-//    @FXML private TableColumn<Usuario, String> colEmail;
-//    @FXML private TableColumn<Usuario, String> colRol;
-//    @FXML private TableColumn<Usuario, Void> colEditar;
-//    private GestorUsuarios gestorUsuarios;
-//
-//
-//    @FXML
-//    public void initialize() {
-//        // Configurar columnas…
-//        gestorUsuarios = new GestorUsuarios();
-//
-//        colActivo.setCellValueFactory(new PropertyValueFactory<>("activo"));
-//        colUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
-//        colNombre.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
-//        colEmail.setCellValueFactory(new PropertyValueFactory<>("correo"));
-//        colRol.setCellValueFactory(new PropertyValueFactory<>("nombreRol"));
-//
-//
-//        // Columna de botones de edición
-//        colEditar.setCellFactory(tc -> new TableCell<>() {
-//            private final Button btn = new Button("✎");
-//            {
-//                btn.getStyleClass().add("icon-button");
-//                btn.setOnAction(e -> editarUsuario(getTableView().getItems().get(getIndex())));
-//            }
-//            @Override protected void updateItem(Void itm, boolean empty) {
-//                super.updateItem(itm, empty);
-//                setGraphic(empty ? null : btn);
-//            }
-//        });
-//
-//        // Cargar datos…
-//        try {
-//            tableUsuarios.setItems(FXCollections.observableArrayList(gestorUsuarios.listarUsuarios()));
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        colActivo.setCellFactory(tc -> new TableCell<>() {
-//
-//            private final ToggleButton toggle = new ToggleButton();
-//
-//            {
-//                // ‑‑‑ estilos opcionales
-//                toggle.getStyleClass().add("switch");   // pon tu estilo en CSS
-//                toggle.setMinWidth(70);
-//
-//                // Cuando el usuario haga clic, actualiza el modelo y persiste
-//                toggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
-//                    Usuario u = getTableRow().getItem();
-//                    if (u != null) {
-//                        u.setActivo(newVal);            // actualiza el POJO
-//
-//                        // ⇣  Si manejas BD o servicio, persiste aquí
-//                        try {
-//                            gestorUsuarios.actualizarEstado(u.getId(), newVal);
-//                        } catch (Exception e) {
-//                            throw new RuntimeException(e);
-//                        }
-//                    }
-//                    // Texto opcional
-//                    toggle.setText(newVal ? "ON  " : "  OFF");
-//                });
-//            }
-//
-//            @Override
-//            protected void updateItem(Boolean activo, boolean empty) {
-//                super.updateItem(activo, empty);
-//
-//                if (empty || activo == null) {
-//                    setGraphic(null);
-//                } else {
-//                    toggle.setSelected(activo);
-//                    toggle.setText(activo ? "ON  " : "  OFF");
-//                    setGraphic(toggle);
-//                }
-//            }
-//        });
-//    }
-//
-//    private void editarUsuario(Usuario u) {
-//        // abrir diálogo / escena de edición
-//    }
-//
-//    public void onBackAction(ActionEvent actionEvent) {
-//    }
-//
-//    public void onAgregarUsuario(ActionEvent actionEvent) {
-//    }
-//
-//    @FXML
-//    private void onCerrarSesion(ActionEvent event) {
-//
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("/Vista/PantallaLogin.fxml"));
-//        try {
-//            Parent root = loader.load();
-//
-//            // Obtener el Stage actual desde el botón o cualquier nodo
-//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            stage.setTitle("Portal del Administrador");
-//            stage.setScene(new Scene(root));
-//            stage.show();
-//
-//        } catch (IOException e) {
-//            System.out.println(e.getMessage());
-//        }
-//        // Ejemplo de cerrar ventana actual (si fuera necesario)
-//        // Stage stage = (Stage) txtBienvenida.getScene().getWindow();
-//        // stage.close();
-//
-//
-//    }
-//
-//}

@@ -1,8 +1,12 @@
 package com.cinemax.empleados.modelos.persistencia;
 
 import com.cinemax.comun.ConexionBaseSingleton;
+<<<<<<< HEAD
 import com.cinemax.empleados.modelos.entidades.Rol;
+=======
+>>>>>>> 70777b19aee4af7a063e70b323e48454dd478cc0
 import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.modelos.entidades.Rol;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -26,16 +30,17 @@ public class UsuarioDAO {
             INSERT INTO USUARIO (IDUSUARIO, IDROL, NOMBREUSUARIO, CORREO, CLAVE,
                                  NOMBRECOMPLETO, CEDULA, CELULAR, ACTIVO,
                                  FECHACREACION, FECHAULTIMAMODIFICACION)
-            VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %d, '%s', '%s')
+            VALUES (%d, %d, '%s', '%s', '%s', '%s', '%s', '%s', %b, '%s', '%s')
             """.formatted(
                 u.getId(), u.getRol().getId(), u.getNombreUsuario(), u.getCorreo(),
                 u.getClave(), u.getNombreCompleto(), u.getCedula(), u.getCelular(),
-                u.isActivo() ? 1 : 0,
+                u.isActivo(),
                 u.getFechaCreacion().format(formatter),
                 u.getFechaUltimaModificacion().format(formatter)
         );
 
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+//        db.insertarModificarEliminar(sql);
     }
 
     public void actualizarUsuario(Usuario u) throws Exception {
@@ -48,18 +53,20 @@ public class UsuarioDAO {
                 NOMBRECOMPLETO = '%s',
                 CEDULA = '%s',
                 CELULAR = '%s',
-                ACTIVO = %d,
+                ACTIVO = %b,
                 FECHAULTIMAMODIFICACION = '%s'
             WHERE IDUSUARIO = %d
             """.formatted(
                 u.getRol().getId(), u.getNombreUsuario(), u.getCorreo(), u.getClave(),
                 u.getNombreCompleto(), u.getCedula(), u.getCelular(),
-                u.isActivo() ? 1 : 0,
+                u.isActivo(),
                 LocalDateTime.now().format(formatter),
                 u.getId()
         );
 
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 
     /* ======================= BÚSQUEDAS ======================= */
@@ -72,9 +79,19 @@ public class UsuarioDAO {
             WHERE u.IDUSUARIO = %d
             """.formatted(id);
 
-        db.consultarBase(sql);
-        ResultSet rs = db.getResultado();
-        return rs.next() ? mapear(rs) : null;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? mapear(rs) : null;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? mapear(rs) : null;
     }
 
     public Usuario buscarPorNombreUsuario(String nombre) throws Exception {
@@ -85,9 +102,19 @@ public class UsuarioDAO {
             WHERE u.NOMBREUSUARIO = '%s'
             """.formatted(nombre);
 
-        db.consultarBase(sql);
-        ResultSet rs = db.getResultado();
-        return rs.next() ? mapear(rs) : null;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? mapear(rs) : null;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? mapear(rs) : null;
     }
 
     public Usuario buscarPorCorreo(String correo) throws Exception {
@@ -98,9 +125,19 @@ public class UsuarioDAO {
             WHERE u.CORREO = '%s'
             """.formatted(correo);
 
-        db.consultarBase(sql);
-        ResultSet rs = db.getResultado();
-        return rs.next() ? mapear(rs) : null;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? mapear(rs) : null;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? mapear(rs) : null;
     }
 
     /* ======================= LISTADOS ======================= */
@@ -113,8 +150,17 @@ public class UsuarioDAO {
             ORDER BY u.NOMBREUSUARIO
             """;
 
-        db.consultarBase(sql);
-        return mapearLista(db.getResultado());
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return mapearLista(rs);
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+//        db.consultarBase(sql);
+//        return mapearLista(db.getResultado());
     }
 
     public List<Usuario> listarActivos() throws Exception {
@@ -126,8 +172,18 @@ public class UsuarioDAO {
             ORDER BY u.NOMBREUSUARIO
             """;
 
-        db.consultarBase(sql);
-        return mapearLista(db.getResultado());
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return mapearLista(rs);
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        return mapearLista(db.getResultado());
     }
 
     /* ======================= ESTADO ======================= */
@@ -142,32 +198,47 @@ public class UsuarioDAO {
 
     public void eliminarUsuario(Long id) throws Exception {
         String sql = "DELETE FROM USUARIO WHERE IDUSUARIO = " + id;
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 
     /* ======================= UTIL ======================= */
 
     public Long obtenerSiguienteId() throws Exception {
-        String sql = "SELECT ISNULL(MAX(IDUSUARIO),0)+1 AS SIGUIENTE_ID FROM USUARIO";
-        db.consultarBase(sql);
+        String sql = "SELECT COALESCE(MAX(IDUSUARIO),0)+1 AS SIGUIENTE_ID FROM USUARIO";
 
-        ResultSet rs = db.getResultado();
-        return rs.next() ? rs.getLong("SIGUIENTE_ID") : 1L;
+        // SELECT
+        ResultSet rs = null;
+        Statement st  = null;
+        try {
+            rs = db.ejecutarConsulta(sql);
+            return rs.next() ? rs.getLong("SIGUIENTE_ID") : 1L;
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, st);  // Libera recursos
+        }
+
+//        db.consultarBase(sql);
+//        ResultSet rs = db.getResultado();
+//        return rs.next() ? rs.getLong("SIGUIENTE_ID") : 1L;
     }
 
     /* ===================================================== */
 
     public void cambiarEstado(Long id, boolean activo) throws Exception {
         String sql = """
-            UPDATE USUARIO SET ACTIVO = %d,
+            UPDATE USUARIO SET ACTIVO = %b,
                 FECHAULTIMAMODIFICACION = '%s'
             WHERE IDUSUARIO = %d
             """.formatted(
-                activo ? 1 : 0,
+//                activo ? 1 : 0,
+                activo,
                 LocalDateTime.now().format(formatter),
                 id
         );
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 
     private List<Usuario> mapearLista(ResultSet rs) throws SQLException {
@@ -217,6 +288,8 @@ public class UsuarioDAO {
                 LocalDateTime.now().format(formatter),
                 idUsuario
         );
-        db.insertarModificarEliminar(sql);
+        db.ejecutarActualizacion(sql);
+
+//        db.insertarModificarEliminar(sql);
     }
 }
