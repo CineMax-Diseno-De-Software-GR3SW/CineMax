@@ -132,8 +132,6 @@ public class ControladorReportesPrincipal {
     @FXML
     private DatePicker dateHasta; // Selector de fecha de fin del período
 
-    @FXML
-    private ComboBox<String> choiceHorario; // Selector de horario (Matutino, Nocturno, Todos)
 
     // Componentes gráficos para visualización de datos
     @FXML
@@ -174,7 +172,6 @@ public class ControladorReportesPrincipal {
      */
     @FXML
     public void initialize() {
-        choiceHorario.getItems().addAll("Todos", "Matutino", "Nocturno");
 
         // Configurar tabla de reportes
         configurarTablaReportes();
@@ -371,14 +368,12 @@ public class ControladorReportesPrincipal {
         String desdeStr = desde != null ? desde.format(formatter) : null;
         String hastaStr = hasta != null ? hasta.format(formatter) : null;
 
-        String horario = choiceHorario.getValue();
 
         if (desde == null || hasta == null) {
             ManejadorMetodosComunes.mostrarVentanaError("Por favor seleccione las fechas de inicio y fin");
             return;
         }
 
-        System.out.println("Filtrando desde " + desdeStr + " hasta " + hastaStr);
 
         // CAMBIO AQUÍ: Primero obtener todos los datos sin filtrar
         List<Map<String, Object>> datosOriginales = servicioReportes.getEstadisticasDeBarras();
@@ -396,10 +391,7 @@ public class ControladorReportesPrincipal {
         actualizarGraficaBarras(estadisticas);
         actualizarGraficaPastel(estadisticas);
 
-        String mensaje = "Filtros aplicados:\n" +
-                "• Desde: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
-                "• Hasta: " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + "\n" +
-                "• Horario: " + horario;
+        String mensaje = "Filtros de graficas aplicados";
 
         // Mostrar mensaje de confirmación
         ManejadorMetodosComunes.mostrarVentanaAdvertencia(mensaje);
@@ -417,7 +409,6 @@ public class ControladorReportesPrincipal {
         // Obtener valores de los filtros
         LocalDate desde = dateDesde.getValue();
         LocalDate hasta = dateHasta.getValue();
-        String horario = choiceHorario.getValue();
 
         // Validar que se hayan seleccionado las fechas obligatorias
         if (desde == null || hasta == null) {
@@ -513,7 +504,6 @@ public class ControladorReportesPrincipal {
                 }
             }
 
-            System.out.println("Categorías (fechas) encontradas: " + categorias);
 
             // Crear nuevo gráfico con los datos procesados
             BarChart<String, Number> nuevoBarChart = new BarChart<>(xAxis, yAxis);
@@ -644,7 +634,6 @@ public class ControladorReportesPrincipal {
             // Obtener valores de filtros para incluir en el reporte
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
-            String horario = choiceHorario.getValue();
 
             // Validar que se hayan seleccionado las fechas antes de exportar
             if (desde == null || hasta == null) {
@@ -729,21 +718,19 @@ public class ControladorReportesPrincipal {
             // Obtener información de filtros para mostrar en el encabezado
             LocalDate desde = dateDesde.getValue();
             LocalDate hasta = dateHasta.getValue();
-            String horario = choiceHorario.getValue();
 
             // Etiquetas informativas del reporte
             Label fechaGen = new Label("Período: " + desde.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) +
                     " - " + hasta.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
             fechaGen.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
 
-            Label horarioLabel = new Label("Horario: " + horario);
-            horarioLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #ecf0f1;");
+
 
             Label estado = new Label("Estado: Generado el "
                     + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
             estado.setStyle("-fx-font-size: 12px; -fx-text-fill: #ffffffff; -fx-font-weight: bold;");
 
-            headerBox.getChildren().addAll(titulo, fechaGen, horarioLabel, estado);
+            headerBox.getChildren().addAll(titulo, fechaGen, estado);
 
             // Generar el contenido completo del reporte con gráficas y tablas
             VBox contenidoReporte = generarContenidoReporteCompleto(datos);

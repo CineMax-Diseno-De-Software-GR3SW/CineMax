@@ -890,7 +890,7 @@ package "Reportes"{
 
 
     ' ===== CONTROLADOR (REPORTES) =====
-    package "Controlador" {
+    package "Controlador" <<Package>> {
 
         class ControladorReportesPrincipal {
             - Button botonRegresar
@@ -949,33 +949,33 @@ package "Reportes"{
             + void volverEscena(ActionEvent event)
         }
     ControladorReportesPrincipal --> ServicioDeReportes
-    ControladorReportesPrincipal --> Exportable
-    ControladorReportesPrincipal --> EstrategiaExportarPDF
-    ControladorReportesPrincipal --> EstrategiaExportarCSV
-    
+    ControladorReportesPrincipal --> ControladorReportesProgramados
+
+
+
     
     
     ControladorReportesProgramados --> ServicioReportesProgramados
     ControladorReportesProgramados --> ServicioDeReportes
     ControladorReportesProgramados --> Exportable
-    ControladorReportesProgramados --> EstrategiaExportarPDF
-    ControladorReportesProgramados --> EstrategiaExportarCSV
+    ControladorReportesPrincipal --> Exportable
     
     ServicioReportesProgramados --> ServicioReportesProgramados
     
     
     ReporteGenerado <-- ControladorReportesPrincipal
     ReporteGenerado <-- ControladorReportesProgramados
+ControladorPortalPrincipal ..> ControladorReportesPrincipal
     }
 }
 
 ' ============================== RELACIONES GENERALES ==============================
+
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
 ControladorPortalPrincipal ..> ControladorVisualizadorCartelera
 ControladorPortalPrincipal ..> ControladorPelicula
 ControladorPortalPrincipal ..> ControladorFunciones
 ControladorPortalPrincipal ..> ControladorSalas
-ControladorPortalPrincipal ..> ControladorReportes
 ControladorVisualizadorCartelera ..> ControladorCartelera 
 ControladorVisualizadorFunciones ..> ControladorFunciones 
 @enduml

@@ -15,15 +15,19 @@ import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 /**
  * DAO (Data Access Object) para la gestión de consultas de ventas.
  * <p>
- * Esta clase se encarga de interactuar con la base de datos para obtener información
+ * Esta clase se encarga de interactuar con la base de datos para obtener
+ * información
  * relacionada con ventas, como resúmenes, estadísticas y filtrado de datos.
- * Utiliza conexiones JDBC y retorna los resultados en estructuras de tipo Map y List.
+ * Utiliza conexiones JDBC y retorna los resultados en estructuras de tipo Map y
+ * List.
  * </p>
  *
  * <ul>
- *   <li>Obtiene un resumen general de ventas (boletos, facturas, ingresos, funciones, fechas).</li>
- *   <li>Obtiene estadísticas para gráficas de barras (por fecha, tipo de sala y formato).</li>
- *   <li>Filtra datos de ventas en memoria según un rango de fechas.</li>
+ * <li>Obtiene un resumen general de ventas (boletos, facturas, ingresos,
+ * funciones, fechas).</li>
+ * <li>Obtiene estadísticas para gráficas de barras (por fecha, tipo de sala y
+ * formato).</li>
+ * <li>Filtra datos de ventas en memoria según un rango de fechas.</li>
  * </ul>
  *
  * @author Grupo E
@@ -35,8 +39,10 @@ public class VentaDAO {
     /**
      * Método que obtiene un resumen general de las ventas desde la base de datos.
      *
-     * @return Un mapa con el resumen de ventas (total de boletos, facturas, ingreso, funciones, fechas).
-     *         Si ocurre un error, retorna valores por defecto y un mensaje de error.
+     * @return Un mapa con el resumen de ventas (total de boletos, facturas,
+     *         ingreso, funciones, fechas).
+     *         Si ocurre un error, retorna valores por defecto y un mensaje de
+     *         error.
      */
     public Map<String, Object> obtenerResumenVentas() {
         String sql = "SELECT " +
@@ -148,12 +154,10 @@ public class VentaDAO {
     public List<Map<String, Object>> obtenerFiltradoDeDatos(List<Map<String, Object>> datos, String fechaDesde,
             String fechaHasta) {
         List<Map<String, Object>> datosFiltrados = new ArrayList<>();
-        
-        System.out.println("Filtrando desde " + fechaDesde + " hasta " + fechaHasta);
-        
+
         LocalDate fechaInicioFiltro = null;
         LocalDate fechaFinFiltro = null;
-        
+
         // Convertir las fechas de filtro de String a LocalDate
         try {
             // Convertir fechas de formato "yyyy-MM-dd" a LocalDate
@@ -166,7 +170,7 @@ public class VentaDAO {
                     fechaInicioFiltro = LocalDate.of(year, month, day);
                 }
             }
-            
+
             if (fechaHasta != null && !fechaHasta.isEmpty()) {
                 String[] partes = fechaHasta.split("-");
                 if (partes.length == 3) {
@@ -179,46 +183,40 @@ public class VentaDAO {
         } catch (Exception e) {
             System.err.println("Error al parsear fechas de filtro: " + e.getMessage());
         }
-        
-        System.out.println("Fechas de filtro convertidas: desde " + fechaInicioFiltro + " hasta " + fechaFinFiltro);
-        
+
         for (Map<String, Object> fila : datos) {
             Object fechaObj = fila.get("fecha");
             LocalDate fecha = null;
 
             if (fechaObj instanceof java.sql.Date) {
-            java.sql.Date sqlDate = (java.sql.Date) fechaObj;
-            fecha = sqlDate.toLocalDate();
+                java.sql.Date sqlDate = (java.sql.Date) fechaObj;
+                fecha = sqlDate.toLocalDate();
             } else if (fechaObj instanceof LocalDate) {
-            fecha = (LocalDate) fechaObj;
+                fecha = (LocalDate) fechaObj;
             } else if (fechaObj != null) {
-            try {
-                String fechaStr = fechaObj.toString();
-                fecha = LocalDate.parse(fechaStr);
-            } catch (Exception e) {
-                System.err.println("No se pudo convertir a LocalDate: " + fechaObj);
-                continue;
-            }
+                try {
+                    String fechaStr = fechaObj.toString();
+                    fecha = LocalDate.parse(fechaStr);
+                } catch (Exception e) {
+                    System.err.println("No se pudo convertir a LocalDate: " + fechaObj);
+                    continue;
+                }
             }
 
             if (fecha != null && fechaInicioFiltro != null && fechaFinFiltro != null) {
-            boolean cumpleFechaInicial = !fecha.isBefore(fechaInicioFiltro);
-            boolean cumpleFechaFinal = !fecha.isAfter(fechaFinFiltro);
-            
-            System.out.println("Verificando " + fecha + 
-                       " >= " + fechaInicioFiltro + "? " + cumpleFechaInicial +
-                       " | <= " + fechaFinFiltro + "? " + cumpleFechaFinal);
-                       
-            if (cumpleFechaInicial && cumpleFechaFinal) {
-                datosFiltrados.add(fila);
-                System.out.println("✅ INCLUIDO en filtro: " + fecha);
-            } else {
-                System.out.println("❌ EXCLUIDO del filtro: " + fecha);
-            }
+                boolean cumpleFechaInicial = !fecha.isBefore(fechaInicioFiltro);
+                boolean cumpleFechaFinal = !fecha.isAfter(fechaFinFiltro);
+
+                System.out.println("Verificando " + fecha +
+                        " >= " + fechaInicioFiltro + "? " + cumpleFechaInicial +
+                        " | <= " + fechaFinFiltro + "? " + cumpleFechaFinal);
+
+                if (cumpleFechaInicial && cumpleFechaFinal) {
+                    datosFiltrados.add(fila);
+                } else {
+                }
             }
         }
-        
-        System.out.println("Total de registros filtrados: " + datosFiltrados.size());
         return datosFiltrados;
     }
 }
