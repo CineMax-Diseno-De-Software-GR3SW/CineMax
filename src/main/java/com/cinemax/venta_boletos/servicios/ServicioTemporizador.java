@@ -29,7 +29,7 @@ public class ServicioTemporizador {
      * Obtiene la instancia única del servicio de temporizador.
      * @return La instancia única.
      */
-    public static synchronized ServicioTemporizador getInstance() {
+    public static synchronized ServicioTemporizador getInstancia() {
         if (instancia == null) {
             instancia = new ServicioTemporizador();
         }
@@ -41,9 +41,7 @@ public class ServicioTemporizador {
      * La Ui se puede vincular a esta propiedad para mostrar la cuenta regresiva
      * @return la propiedad del tiempo restante
      */
-    public StringProperty tiempoRestanteProperty(){
-        return tiempoRestante;
-    }
+    public StringProperty tiempoRestanteProperty(){return tiempoRestante;}
 
     /**
      * Inicia el temporizador de 15 minutos.
@@ -56,7 +54,7 @@ public class ServicioTemporizador {
             return;
         }
 
-        temporizador = new Timer(true); // true para que el hilo sea un daemon
+        temporizador = new Timer(true); // true para que sea un hilo daemon
         tempEnEjecucion = true;
         long duracion = 15 * 60 * 1000; // 15 minutos
         finTiempo = System.currentTimeMillis() + duracion;
@@ -101,7 +99,5 @@ public class ServicioTemporizador {
      * Verifica si el temporizador está actualmente en ejecución.
      * @return true si el temporizador está activo, false en caso contrario.
      */
-    public boolean tempEnEjecucion() {
-        return tempEnEjecucion;
-    }
+    public boolean tempEnEjecucion() {return tempEnEjecucion;}
 }

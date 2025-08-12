@@ -125,7 +125,7 @@ public class ControladorFacturacion {
 
         // 3. Vincular el label del temporizador
         if (timerLabel != null) {
-            timerLabel.textProperty().bind(ServicioTemporizador.getInstance().tiempoRestanteProperty());
+            timerLabel.textProperty().bind(ServicioTemporizador.getInstancia().tiempoRestanteProperty());
         }
 
         // 4. Configurar eventos para permitir mover la ventana arrastrando el header.
@@ -387,7 +387,7 @@ public class ControladorFacturacion {
 
 
         // Detener el temporizador después de un pago exitoso.
-        ServicioTemporizador.getInstance().detenerTemporizador();
+        ServicioTemporizador.getInstancia().detenerTemporizador();
 
         // Redirigir al usuario a la pantalla principal del portal de empleados.
         ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
