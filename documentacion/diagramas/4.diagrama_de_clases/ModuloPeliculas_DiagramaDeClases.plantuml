@@ -1,468 +1,169 @@
 @startuml DiagramaUnico
+
 skinparam linetype ortho
+
 package peliculas {
     ' ==================== PAQUETE: MODELO ====================
     package modelos {
-        package entidades{
-        
-        class Cartelera {
-            - peliculas: List<Pelicula>
-            + Cartelera(peliculas: List<Pelicula>)
-            + getPeliculas(): List<Pelicula>
-            + setPeliculas(peliculas: List<Pelicula>): void
-        }
+            class Cartelera {
+                - peliculas: List<Pelicula>
+            }
 
-        enum DiaSemana {
-            LUNES
-            MARTES
-            MIERCOLES
-            JUEVES
-            VIERNES
-            SABADO
-            DOMINGO
-            - precio: BigDecimal {readOnly}
-            - DiaSemana(precio: BigDecimal)
-            + getPrecio(): BigDecimal
-            + {static} obtenerDiaDeFecha(fechaHora: LocalDateTime): DiaSemana
-            + esFinDeSemana(): boolean
-            + toString(): String
-        }
+            enum DiaSemana {
+                LUNES, MARTES, MIERCOLES, JUEVES
+                VIERNES, SABADO, DOMINGO
+                --
+                - precio: BigDecimal {readOnly}
+                --
+                + {static} obtenerDiaDeFecha(fechaHora: LocalDateTime): DiaSemana
+                + esFinDeSemana(): boolean
+            }
 
-        enum FormatoFuncion {
-            DOS_D
-            TRES_D
-            - multiplicadorPrecio: BigDecimal {readOnly}
-            - FormatoFuncion(multiplicadorPrecio: BigDecimal)
-            + getMultiplicadorPrecio(): BigDecimal
-            + toString(): String
-            + {static} fromString(value: String): FormatoFuncion
-        }
+            enum FormatoFuncion {
+                DOS_D, TRES_D
+                --
+                - multiplicadorPrecio: BigDecimal {readOnly}
+            }
 
-        class Funcion {
-            - id: int
-            - pelicula: Pelicula
-            - sala: Sala
-            - fechaHoraInicio: LocalDateTime
-            - fechaHoraFin: LocalDateTime
-            - formato: FormatoFuncion
-            - tipoEstreno: TipoEstreno
-            + Funcion(id: int, pelicula: Pelicula, sala: Sala, fechaHoraInicio: LocalDateTime, fechaHoraFin: LocalDateTime, formato: FormatoFuncion, tipoEstreno: TipoEstreno)
-            + getId(): int
-            + getPelicula(): Pelicula
-            + getSala(): Sala
-            + getFechaHoraInicio(): LocalDateTime
-            + getFechaHoraFin(): LocalDateTime
-            + getFormato(): FormatoFuncion
-            + getTipoEstreno(): TipoEstreno
-            + setId(id: int): void
-            + setPelicula(pelicula: Pelicula): void
-            + setSala(sala: Sala): void
-            + setFechaHoraInicio(fechaHoraInicio: LocalDateTime): void
-            + setFechaHoraFin(fechaHoraFin: LocalDateTime): void
-            + setFormato(formato: FormatoFuncion): void
-            + setTipoEstreno(tipoEstreno: TipoEstreno): void
-            + getDiaSemana(): DiaSemana
-            + getPrecioPorDia(): BigDecimal
-            + getMultiplicadorFormato(): BigDecimal
-            + getMultiplicadorTipoEstreno(): BigDecimal
-            + calcularPrecioFinal(): BigDecimal
-        }
+            class Funcion {
+                - id: int
+                - pelicula: Pelicula
+                - sala: Sala
+                - fechaHoraInicio: LocalDateTime
+                - fechaHoraFin: LocalDateTime
+                - formato: FormatoFuncion
+                - tipoEstreno: TipoEstreno
+            }
 
-        enum Genero {
-            ACCION
-            COMEDIA
-            DRAMA
-            TERROR
-            CIENCIA_FICCION
-            ANIMACION
-            ROMANCE
-            DOCUMENTAL
-            AVENTURA
-            FANTASIA
-            - nombre: String {readOnly}
-            - Genero(nombre: String)
-            + getNombre(): String
-            + {static} porNombre(nombre: String): Genero
-            + {static} validarGeneros(generos: String): boolean
-            + {static} normalizarGeneros(generos: String): String
-            + {static} obtenerTodosLosGeneros(): List<String>
-            + toString(): String
-        }
+            enum Genero {
+                ACCION, COMEDIA, DRAMA, TERROR, CIENCIA_FICCION
+                ANIMACION, ROMANCE, DOCUMENTAL, AVENTURA, FANTASIA
+                --
+                - nombre: String {readOnly}
+                --
+                + {static} obtenerTodosLosGeneros(): List<String>
+            }
 
-        enum Idioma {
-            ESPANOL
-            INGLES
-            CHINO
-            - nombre: String {readOnly}
-            - codigo: String {readOnly}
-            - Idioma(nombre: String, codigo: String)
-            + getNombre(): String
-            + getCodigo(): String
-            + {static} porCodigo(codigo: String): Idioma
-            + {static} porNombre(nombre: String): Idioma
-            + toString(): String
-        }
+            enum Idioma {
+                ESPANOL, INGLES, CHINO
+                --
+                - nombre: String {readOnly}
+                - codigo: String {readOnly}
+            }
 
-        class Pelicula {
-            - id: int
-            - titulo: String
-            - sinopsis: String
-            - duracionMinutos: int
-            - anio: int
-            - idioma: Idioma
-            - generos: List<Genero>
-            - imagenUrl: String
-            + Pelicula()
-            + Pelicula(id: int, titulo: String, sinopsis: String, duracionMinutos: int, anio: int, idioma: Idioma, generos: List<Genero>, imagenUrl: String)
-            + Pelicula(titulo: String, sinopsis: String, duracionMinutos: int, anio: int, idioma: Idioma, generos: List<Genero>, imagenUrl: String)
-            + getId(): int
-            + getTitulo(): String
-            + getSinopsis(): String
-            + getDuracionMinutos(): int
-            + getAnio(): int
-            + getIdioma(): Idioma
-            + getGeneros(): List<Genero>
-            + getImagenUrl(): String
-            + getUrlImagen(): String
-            + getGenero(): String
-            + getGenerosComoString(): String
-            + setId(id: int): void
-            + setTitulo(titulo: String): void
-            + setSinopsis(sinopsis: String): void
-            + setDuracionMinutos(duracionMinutos: int): void
-            + setAnio(anio: int): void
-            + setIdioma(idioma: Idioma): void
-            + setGeneros(generos: List<Genero>): void
-            + setImagenUrl(imagenUrl: String): void
-            + setIdiomaPorCodigo(codigoIdioma: String): void
-            + setGenerosPorString(generosString: String): void
-            + agregarGenero(genero: Genero): void
-            + eliminarGenero(genero: Genero): void
-            + toString(): String
-        }
+            class Pelicula {
+                - id: int
+                - titulo: String
+                - sinopsis: String
+                - duracionMinutos: int
+                - anio: int
+                - idioma: Idioma
+                - generos: List<Genero>
+                - imagenUrl: String
+                --
+                + agregarGenero(genero: Genero): void
+                + eliminarGenero(genero: Genero): void
+                + getGenerosComoString(): String
+            }
 
-        enum TipoEstreno {
-            ESTRENO
-            PREESTRENO
-            - multiplicadorPrecio: BigDecimal {readOnly}
-            - TipoEstreno(multiplicadorPrecio: BigDecimal)
-            + getMultiplicadorPrecio(): BigDecimal
-            + toString(): String
-        }
-        }
-    }
-
-    ' ==================== PAQUETE: CONTROLADORES ====================
-
-    package controladores {
-        class ControladorCartelera {
-            - servicioPelicula: ServicioPelicula
-            - cartelera: Cartelera
-            - listaPeliculasCartelera: ObservableList<Pelicula>
-            - peliculasFiltradas: ObservableList<Pelicula>
-            - peliculaSeleccionada: Pelicula
-            + ControladorCartelera()
-            + initialize(location: URL, resources: ResourceBundle): void
-            - onActualizarCartelera(event: ActionEvent): void
-            - onBuscarTitulo(event: ActionEvent): void
-            - onBuscarId(event: ActionEvent): void
-            - onLimpiarBusqueda(event: ActionEvent): void
-            - onVerDetalles(event: ActionEvent): void
-            - onVolver(event: ActionEvent): void
-            + obtenerCartelera(): List<Pelicula>
-            - configurarIndicadorCarga(): void
-            - mostrarIndicadorCarga(mostrar: boolean): void
-            - cargarCarteleraAsync(): void
-            - actualizarCarteleraAsync(): void
-            - actualizarGrilla(peliculas: List<Pelicula>): void
-            - actualizarGrilla(): void
-            - limpiarSeleccionPrevia(): void
-            - cargarImagenAsync(imageView: ImageView, urlImagen: String): void
-            - mostrarTodasLasPeliculas(): void
-            - actualizarEstadisticas(): void
-            - mostrarDetallesPelicula(pelicula: Pelicula): void
-            - navegarADetallesCartelera(pelicula: Pelicula): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorDetallesCartelera {
-            - peliculaActual: Pelicula
-            - servicioFuncion: ServicioFuncion
-            + ControladorDetallesCartelera()
-            + initialize(location: URL, resources: ResourceBundle): void
-            + cargarPelicula(pelicula: Pelicula): void
-            - onVolver(event: ActionEvent): void
-            - onGestionarFunciones(event: ActionEvent): void
-            - onEditarPelicula(event: ActionEvent): void
-            - onActualizarInfo(event: ActionEvent): void
-            - onLogOut(event: ActionEvent): void
-            - mostrarDetallesPelicula(): void
-            - cargarInformacionCartelera(): void
-            - volverACartelera(): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorDetallesFuncion {
-            - funcionActual: Funcion
-            + initialize(location: URL, resources: ResourceBundle): void
-            + cargarFuncion(funcion: Funcion): void
-            - onVolver(event: ActionEvent): void
-            - onEditarFuncion(event: ActionEvent): void
-            - onGestionarBoletos(event: ActionEvent): void
-            - onActualizar(event: ActionEvent): void
-            - onLogOut(event: ActionEvent): void
-            - mostrarDetallesFuncion(): void
-            - cargarInformacionAdicional(): void
-            - volverAGestionFunciones(): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorDetallesPelicula {
-            - servicioPelicula: ServicioPelicula
-            - pelicula: Pelicula
-            + ControladorDetallesPelicula()
-            + initialize(location: URL, resources: ResourceBundle): void
-            + cargarPelicula(pelicula: Pelicula): void
-            - onVolver(event: ActionEvent): void
-            - onEditar(event: ActionEvent): void
-            - onLogOut(event: ActionEvent): void
-            - mostrarDetallesPelicula(): void
-            - cargarImagen(urlImagen: String): void
-            - cargarImagenPorDefecto(): void
-            - volverAPantallaPrincipal(): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorFormularioFuncion {
-            - servicioFuncion: ServicioFuncion
-            - servicioPelicula: ServicioPelicula
-            - salaService: SalaService
-            - funcionEditando: Funcion
-            - modoEdicion: boolean
-            + ControladorFormularioFuncion()
-            + initialize(location: URL, resources: ResourceBundle): void
-            + configurarParaEdicion(funcion: Funcion): void
-            - onGuardar(event: ActionEvent): void
-            - onCancelar(event: ActionEvent): void
-            - onLimpiar(event: ActionEvent): void
-            - onVolver(event: ActionEvent): void
-            - onLogOut(event: ActionEvent): void
-            - configurarFormulario(): void
-            - configurarValidaciones(): void
-            - cargarDatos(): void
-            - calcularHoraFin(): void
-            - actualizarEstadoFormulario(): void
-            - esFormularioValido(): boolean
-            - esHoraValida(hora: String): boolean
-            - limpiarFormulario(): void
-            - volverAGestionFunciones(): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorFormularioPelicula {
-            - servicioPelicula: ServicioPelicula
-            - peliculaEditando: Pelicula
-            - modoEdicion: boolean
-            + ControladorFormularioPelicula()
-            + initialize(location: URL, resources: ResourceBundle): void
-            + configurarParaEdicion(pelicula: Pelicula): void
-            - onGuardar(event: ActionEvent): void
-            - onCancelar(event: ActionEvent): void
-            - onLimpiar(event: ActionEvent): void
-            - onVolver(event: ActionEvent): void
-            - onLogOut(event: ActionEvent): void
-            - configurarFormulario(): void
-            - configurarValidaciones(): void
-            - actualizarEstadoFormulario(): void
-            - esFormularioValido(): boolean
-            - limpiarFormulario(): void
-            - volverAPantallaPrincipal(): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorFunciones {
-            - servicioFuncion: ServicioFuncion
-            - salaService: SalaService
-            - listaFunciones: ObservableList<Funcion>
-            - funcionesFiltradas: ObservableList<Funcion>
-            + ControladorFunciones()
-            + initialize(location: URL, resources: ResourceBundle): void
-            + obtenerFuncionesPorNombrePelicula(nombrePelicula: String): List<Funcion>
-            - onNuevaFuncion(event: ActionEvent): void
-            - onEditarFuncion(event: ActionEvent): void
-            - onEliminarFuncion(event: ActionEvent): void
-            - onVerDetalles(event: ActionEvent): void
-            - onBuscar(event: ActionEvent): void
-            - onLimpiar(event: ActionEvent): void
-            - onVolver(event: ActionEvent): void
-            - navegarAFormularioFuncion(funcion: Funcion): void
-            - mostrarFormularioFuncion(funcionExistente: Funcion): void
-            - mostrarErrorRestriccion(funcion: Funcion): void
-            - navegarADetallesFuncion(funcion: Funcion): void
-            - cargarFuncionesAsync(): void
-            - configurarFiltros(): void
-            - configurarTabla(): void
-            - configurarEventos(): void
-            - aplicarFiltros(): void
-            - actualizarEstadisticas(): void
-            - mostrarDetallesFuncion(funcion: Funcion): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorPelicula {
-            - servicioPelicula: ServicioPelicula
-            - listaPeliculas: ObservableList<Pelicula>
-            - peliculasFiltradas: ObservableList<Pelicula>
-            + ControladorPelicula()
-            + initialize(location: URL, resources: ResourceBundle): void
-            - onNuevaPelicula(event: ActionEvent): void
-            - onEditarPelicula(event: ActionEvent): void
-            - onEliminarPelicula(event: ActionEvent): void
-            - onVerDetalles(event: ActionEvent): void
-            - onBuscar(event: ActionEvent): void
-            - onLimpiar(event: ActionEvent): void
-            - onLogOut(event: ActionEvent): void
-            - onVolver(event: ActionEvent): void
-            - mostrarFormularioNuevaPelicula(): void
-            - mostrarFormularioEditarPelicula(peliculaOriginal: Pelicula): void
-            - mostrarErrorRestriccion(pelicula: Pelicula): void
-            - configurarTabla(): void
-            - configurarFiltros(): void
-            - actualizarFiltroGeneros(): void
-            - configurarEventos(): void
-            - cargarPeliculas(): void
-            - aplicarFiltros(): void
-            - coincideConGenero(generosPelicula: String, generoFiltro: String): boolean
-            - actualizarEstadisticas(): void
-            - mostrarDetallesPelicula(pelicula: Pelicula): void
-            - navegarAFormularioPelicula(pelicula: Pelicula): void
-            - navegarADetallesPelicula(pelicula: Pelicula): void
-            - mostrarError(titulo: String, mensaje: String): void
-            - mostrarInformacion(titulo: String, mensaje: String): void
-        }
-
-        class ControladorSeleccionFuncion {
-            - servicioPelicula: ServicioPelicula
-            - servicioFuncion: ServicioFuncion
-            - salaService: SalaService
-            - cartelera: Cartelera
-            - peliculaSeleccionada: Pelicula
-            - fechaSeleccionada: LocalDate
-            - funcionesDisponibles: List<Funcion>
-            - cargandoPeliculas: AtomicBoolean
-            - cargandoFunciones: AtomicBoolean
-            - tareaActualPeliculas: Task<?>
-            - tareaActualFunciones: Task<?>
-            + ControladorSeleccionFuncion()
-            + initialize(location: URL, resources: ResourceBundle): void
-            - onActualizarCartelera(event: ActionEvent): void
-            - onLimpiarBusqueda(event: ActionEvent): void
-            - onSeleccionarDia(event: ActionEvent): void
-            - onVolver(event: ActionEvent): void
-            - configurarFiltros(): void
-            - configurarGrupoFechas(): void
-            - configurarEventos(): void
-            - actualizarCarteleraAsync(): void
-            - mostrarPeliculasEnGrillaAsync(): void
-            - crearTarjetaPeliculaAsync(pelicula: Pelicula): VBox
-            - cargarImagenAsync(imageView: ImageView, urlImagen: String): void
-            - cargarFuncionesPeliculaSeleccionadaAsync(): void
-            - seleccionarFuncion(funcion: Funcion): void
-            - actualizarCartelera(): void
-            - mostrarPeliculasEnGrilla(): void
-            - obtenerPeliculasFiltradas(): List<Pelicula>
-            - filtrarPeliculas(): void
-            - crearTarjetaPelicula(pelicula: Pelicula): VBox
-            - seleccionarPelicula(pelicula: Pelicula): void
-            - cargarFuncionesPeliculaSeleccionada(): void
-            - mostrarFunciones(): void
-            - crearTarjetaFuncion(funcion: Funcion): HBox
-            - actualizarLabelFecha(): void
-            - mostrarError(titulo: String, mensaje: String): void
-        }
+            enum TipoEstreno {
+                ESTRENO, PREESTRENO
+                --
+                - multiplicadorPrecio: BigDecimal {readOnly}
+            }
     }
 
     ' ==================== PAQUETE: SERVICIOS ====================
     package servicios {
         class ServicioFuncion {
-            - funcionDAO: FuncionDAO
-            + ServicioFuncion()
-            + crearFuncion(pelicula: Pelicula, sala: Sala, fechaHoraInicio: LocalDateTime, formato: FormatoFuncion, tipoEstreno: TipoEstreno): Funcion {throws IllegalArgumentException, SQLException}
-            + actualizarFuncion(id: int, pelicula: Pelicula, sala: Sala, fechaHoraInicio: LocalDateTime, formato: FormatoFuncion, tipoEstreno: TipoEstreno): void {throws SQLException}
+            + crearFuncion(...): Funcion
+            + actualizarFuncion(...): void
             + listarTodasLasFunciones(): List<Funcion>
-            + buscarFuncionPorId(id: int): Funcion {throws SQLException}
+            + buscarFuncionPorId(id: int): Funcion
             + listarFuncionesPorSala(salaId: int): List<Funcion>
-            + eliminarFuncion(id: int): void {throws SQLException}
-            + obtenerFuncionesPorNombrePelicula(nombrePelicula: String): List<Funcion> {throws Exception}
-            - validarDatosFuncion(pelicula: Pelicula, sala: Sala, fechaHoraInicio: LocalDateTime, formato: FormatoFuncion, tipoEstreno: TipoEstreno): void
-            - validarHorarioTrabajo(inicio: LocalDateTime, fin: LocalDateTime): void
-            - validarTraslapeFunciones(sala: Sala, inicio: LocalDateTime, fin: LocalDateTime): void {throws SQLException}
-            - validarTraslapeFunciones(sala: Sala, inicio: LocalDateTime, fin: LocalDateTime, idFuncionAExcluir: int): void {throws SQLException}
+            + eliminarFuncion(id: int): void
+            + obtenerFuncionesPorNombrePelicula(...): List<Funcion>
+            - validarDatosFuncion(...): void
+            - validarHorarioTrabajo(...): void
+            - validarTraslapeFunciones(...): void
         }
 
         class ServicioPelicula {
-            - peliculaDAO: PeliculaDAO
-            + ServicioPelicula()
-            + crearPelicula(titulo: String, sinopsis: String, duracionMinutos: int, anio: int, idioma: Idioma, genero: String, imagenUrl: String): Pelicula {throws IllegalArgumentException, SQLException}
-            + actualizarPelicula(id: int, titulo: String, sinopsis: String, duracionMinutos: int, anio: int, idioma: Idioma, genero: String, imagenUrl: String): void {throws IllegalArgumentException, SQLException}
-            + eliminarPelicula(id: int): void {throws IllegalArgumentException, SQLException}
-            + buscarPeliculaPorId(id: int): Pelicula {throws IllegalArgumentException, SQLException}
-            + obtenerPeliculas(): List<Pelicula> {throws SQLException}
-            + buscarPeliculasPorTitulo(titulo: String): List<Pelicula> {throws IllegalArgumentException, SQLException}
-            + existePeliculaDuplicada(titulo: String, anio: int): boolean {throws SQLException}
-            + listarTodasLasPeliculas(): List<Pelicula> {throws Exception}
-            - validarDatosPelicula(titulo: String, sinopsis: String, duracionMinutos: int, anio: int, genero: String): void {throws IllegalArgumentException}
+            + crearPelicula(...): Pelicula
+            + actualizarPelicula(...): void
+            + eliminarPelicula(id: int): void
+            + buscarPeliculaPorId(id: int): Pelicula
+            + listarTodasLasPeliculas(): List<Pelicula>
+            + buscarPeliculasPorTitulo(titulo: String): List<Pelicula>
+            + existePeliculaDuplicada(titulo: String, anio: int): boolean
+            - validarDatosPelicula(...): void
         }
     }
 
-    ' ==================== CLASES EXTERNAS ====================
-    package salas {
-        class Sala {}
-        package servicios {
-            class SalaService {}
+    ' ==================== PAQUETE: CONTROLADORES ====================
+    package controladores {
+        class ControladorCartelera {
+            - servicioPelicula: ServicioPelicula
+            - cartelera: Cartelera
+            --
+            + obtenerCartelera(): List<Pelicula>
+        }
+
+
+        class ControladorFunciones {
+            - servicioFuncion: ServicioFuncion
+            - servicioSala: ServicioSala
+            --
+            + obtenerFuncionesPorNombrePelicula(...): List<Funcion>
+        }
+
+        class ControladorPelicula {
+            - servicioPelicula: ServicioPelicula
         }
     }
+}
+
+' ==================== CLASES EXTERNAS ====================
+package salas {
+    package modelos {
+            class Sala {
+                - id: int
+                - nombre: String
+                - capacidad: int
+                - tipo: TipoSala
+                - estado: EstadoSala
+            }
+    }
+    
+    package servicios {
+        class ServicioSala {
+            - ServicioButaca: ServicioButaca
+            --
+            + crearSala(Sala sala): void
+            + obtenerSalaPorId(int id): Sala
+            + listarSalas(): List<Sala>
+            + actualizarSala(Sala sala): void
+            + eliminarSala(int id): void
+            + buscarSalaPorNombre(String nombre): List<Sala>
+        }
+    }
+}
 
     ' ==================== RELACIONES ====================
-    modelos.entidades.Cartelera "1" -- "0..*" modelos.entidades.Pelicula
-    modelos.entidades.Funcion "0..*" -- "1" modelos.entidades.Pelicula
-    modelos.entidades.Funcion "0..*" -- "1" salas.Sala
-    modelos.entidades.Funcion "1" -- "1" modelos.entidades.FormatoFuncion
-    modelos.entidades.Funcion "1" -- "1" modelos.entidades.TipoEstreno
-    modelos.entidades.Funcion "1" -- "1" modelos.entidades.DiaSemana
-    modelos.entidades.Pelicula "1" -- "1" modelos.entidades.Idioma
-    modelos.entidades.Pelicula "1" -- "1..*" modelos.entidades.Genero
 
-    controladores.ControladorCartelera ..> servicios.ServicioPelicula
-    controladores.ControladorDetallesCartelera ..> servicios.ServicioFuncion
-    controladores.ControladorDetallesPelicula ..> servicios.ServicioPelicula
-    controladores.ControladorFormularioFuncion ..> servicios.ServicioFuncion
-    controladores.ControladorFormularioFuncion ..> servicios.ServicioPelicula
-    controladores.ControladorFormularioPelicula ..> servicios.ServicioPelicula
-    controladores.ControladorFunciones ..> servicios.ServicioFuncion
-    controladores.ControladorPelicula ..> servicios.ServicioPelicula
-    controladores.ControladorSeleccionFuncion ..> servicios.ServicioPelicula
-    controladores.ControladorSeleccionFuncion ..> servicios.ServicioFuncion
+    peliculas.modelos.Cartelera "1" -- "0..*" peliculas.modelos.Pelicula
+    peliculas.modelos.Pelicula "1" -- "1" peliculas.modelos.Idioma
+    peliculas.modelos.Pelicula "1" -- "1..*" peliculas.modelos.Genero
+    peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.Pelicula
+    peliculas.modelos.Funcion "1" -- "1" salas.modelos.Sala
+    peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.FormatoFuncion
+    peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.TipoEstreno
+    peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.DiaSemana
+    peliculas.servicios.ServicioPelicula ..> peliculas.modelos.Pelicula
+    peliculas.servicios.ServicioFuncion ..> peliculas.modelos.Funcion
+    peliculas.servicios.ServicioPelicula <.. peliculas.controladores.ControladorPelicula
+    peliculas.servicios.ServicioPelicula <.. peliculas.controladores.ControladorCartelera
+    peliculas.servicios.ServicioFuncion <.. peliculas.controladores.ControladorFunciones
+    salas.servicios.ServicioSala <.. peliculas.controladores.ControladorFunciones
 
-    controladores.ControladorFormularioFuncion ..> salas.servicios.SalaService
-    controladores.ControladorFunciones ..> salas.servicios.SalaService
-    controladores.ControladorSeleccionFuncion ..> salas.servicios.SalaService
-
-    controladores.ControladorCartelera ..> modelos.entidades.Cartelera
-    controladores.ControladorCartelera ..> modelos.entidades.Pelicula
-    controladores.ControladorDetallesCartelera ..> modelos.entidades.Pelicula
-    controladores.ControladorDetallesFuncion ..> modelos.entidades.Funcion
-    controladores.ControladorDetallesPelicula ..> modelos.entidades.Pelicula
-    controladores.ControladorFormularioFuncion ..> modelos.entidades.Funcion
-    controladores.ControladorFormularioPelicula ..> modelos.entidades.Pelicula
-    controladores.ControladorSeleccionFuncion ..> modelos.entidades.Cartelera
-    controladores.ControladorSeleccionFuncion ..> modelos.entidades.Pelicula
-}
 @enduml
