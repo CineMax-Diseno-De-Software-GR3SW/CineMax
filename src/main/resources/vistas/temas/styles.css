@@ -366,6 +366,65 @@
   -fx-font-weight: bold;
 }
 
+/* --- DatePicker --- */
+.date-picker .text-field {
+  -fx-background-color: #2b2b2b;
+  -fx-text-fill: #eaeaea;
+  -fx-border-color: #4a4a4a;
+}
+
+.date-picker .arrow-button {
+  -fx-background-color: #02487b;
+  -fx-background-radius: 0 8 8 0;
+}
+
+.date-picker .arrow-button .arrow {
+  -fx-background-color: white;
+}
+
+.date-picker-popup {
+  -fx-background-color: #2b2b2b;
+  -fx-border-color: #0079cf;
+  -fx-border-width: 1px;
+}
+
+.date-picker-popup .month-year-pane {
+  -fx-background-color: #02487b;
+}
+
+.date-picker-popup .month-year-pane .label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+}
+
+.date-picker-popup .spinner .button .left-arrow,
+.date-picker-popup .spinner .button .right-arrow {
+  -fx-background-color: white;
+}
+
+.date-picker-popup .day-cell {
+  -fx-text-fill: #eaeaea;
+  -fx-background-color: #2b2b2b;
+}
+
+.date-picker-popup .day-cell:hover {
+  -fx-background-color: #4a4a4a;
+}
+
+.date-picker-popup .day-cell.today {
+  -fx-border-color: #0079cf;
+  -fx-border-width: 1px;
+}
+
+.date-picker-popup .day-cell:selected {
+  -fx-background-color: #0079cf;
+  -fx-text-fill: white;
+}
+
+.date-picker-popup .week-number-cell {
+  -fx-text-fill: #b0b0b0;
+}
+
 /* --- TABLAS --- */
 
 .table-view {
@@ -545,18 +604,4 @@
   -fx-font-size: 24px;
   -fx-text-fill: #43a047;
   -fx-font-weight: bold;
-}
-
-
-.titleLogin {
-  -fx-font-size: 42px;         /* Tamaño grande, pero no exagerado */
-  -fx-font-weight: 300;        /* Peso ligero */
-  -fx-text-fill: #1e88e5;      /* Azul moderno */
-  -fx-font-family: "Segoe UI", "Arial", sans-serif; /* Fuente limpia */
-  -fx-alignment: center;       /* Centrado horizontal */
-}
-
-.perfil-label {
-  -fx-font-size: 20px;         /* Tamaño más grande para mejor lectura */
-
 }
