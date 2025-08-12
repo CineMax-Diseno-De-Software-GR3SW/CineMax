@@ -1,6 +1,6 @@
 package com.cinemax.empleados.modelos.entidades;
 
-import com.cinemax.empleados.servicios.UtilidadClave;
+import com.cinemax.empleados.servicios.ServicioClave;
 
 import java.time.LocalDateTime;
 
@@ -57,7 +57,7 @@ public class Usuario {
     }
 
     public boolean verificarClave(String ingresada) {
-        return UtilidadClave.verificarClave(ingresada, this.clave);
+        return ServicioClave.verificarClave(ingresada, this.clave);
     }
 
     // Getters y Setters

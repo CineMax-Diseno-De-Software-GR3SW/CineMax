@@ -62,6 +62,10 @@
                         text="Crear"
                         onAction="#onAgregarUsuario"
                         styleClass="primary-button"/>
+                <Button fx:id="btnActualizar"
+                        text="Actualizar"
+                        onAction="#onActualizar"
+                        styleClass="primary-button"/>
                 <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="primary-button" disable="true"/>
             </HBox>
 

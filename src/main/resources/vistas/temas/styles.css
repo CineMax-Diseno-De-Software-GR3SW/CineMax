@@ -653,3 +653,16 @@
     -fx-font-weight: bold;
     -fx-font-size: 16px; 
 }
+
+.titleLogin {
+  -fx-font-size: 42px;         /* Tamaño grande, pero no exagerado */
+  -fx-font-weight: 300;        /* Peso ligero */
+  -fx-text-fill: #1e88e5;      /* Azul moderno */
+  -fx-font-family: "Segoe UI", "Arial", sans-serif; /* Fuente limpia */
+  -fx-alignment: center;       /* Centrado horizontal */
+}
+
+.perfil-label {
+  -fx-font-size: 20px;         /* Tamaño más grande para mejor lectura */
+
+}

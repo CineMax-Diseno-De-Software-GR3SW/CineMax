@@ -28,12 +28,17 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class ControladorGestionUsuarios {
 
     public Button btnAgregarUsuario;
     public Button btnBack;
     public Label lblNombreUsuario;
     public Label lblRolUsuario;
+    public Button btnActualizar;
 
     @FXML
     private TextField txtBuscar;
@@ -73,6 +78,9 @@ public class ControladorGestionUsuarios {
     private ServicioRoles servicioRoles;
     private ServicioSesionSingleton gestorSesion;
 
+    // Mapa para acumular cambios pendientes
+    private Map<Long, Usuario> cambiosPendientes = new HashMap<>();
+
     @FXML
     public void initialize() {
         // Configurar columnas…
@@ -82,6 +90,7 @@ public class ControladorGestionUsuarios {
 
         // Deshabilitar el botón Eliminar por defecto
         btnEliminar.setDisable(true);
+        btnActualizar.setDisable(true); // Deshabilitar botón guardar cambios inicialmente
         // Habilitar solo cuando hay selección
         tableUsuarios.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
             btnEliminar.setDisable(newSel == null);
@@ -114,52 +123,31 @@ public class ControladorGestionUsuarios {
         // });
 
         // Cargar datos…
-        try {
-            // 1. Usuario logeado (lo obtienes de tu singleton de sesión)
-            Usuario usuarioActual = gestorSesion.getUsuarioActivo();
+        // Carga asíncrona para evitar bloqueo UI
+        new Thread(() -> {
+            try {
+                Usuario usuarioActual = gestorSesion.getUsuarioActivo();
 
-            // 2. Filtras la lista que viene de la BD
-            List<Usuario> soloOtros = servicioUsuarios.listarUsuarios()
-                    .stream()
-                    .filter(u -> !u.getId().equals(usuarioActual.getId())) // ≠ usuario conectado
-                    .toList(); // Java 16+; o collect(Collectors.toList())
+                List<Usuario> soloOtros = servicioUsuarios.listarUsuarios()
+                        .stream()
+                        .filter(u -> !u.getId().equals(usuarioActual.getId()))
+                        .toList();
 
-            // 3. Cargas la tabla con la lista filtrada
-            listaUsuariosCompleta = FXCollections.observableArrayList(soloOtros);
-            tableUsuarios.setItems(listaUsuariosCompleta);
+                listaUsuariosCompleta = FXCollections.observableArrayList(soloOtros);
 
-            // 4. Actualizar contador de usuarios
-            actualizarContadorUsuarios();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-        colActivo.setCellFactory(tc -> new TableCell<>() {
-
-            private final ToggleButton toggle = new ToggleButton();
-
-            {
-                // ‑‑‑ estilos opcionales
-                toggle.getStyleClass().add("switch"); // pon tu estilo en CSS
-                toggle.setMinWidth(70);
-
-                // Cuando el usuario haga clic, actualiza el modelo y persiste
-                toggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
-                    Usuario u = getTableRow().getItem();
-                    if (u != null) {
-                        u.setActivo(newVal); // actualiza el POJO
-
-                        // ⇣ Si manejas BD o servicio, persiste aquí
-                        try {
-                            servicioUsuarios.actualizarEstado(u.getId(), newVal);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    // Texto opcional
-                    toggle.setText(newVal ? "ON  " : "  OFF");
+                // Actualizar UI en hilo JavaFX
+                javafx.application.Platform.runLater(() -> {
+                    tableUsuarios.setItems(listaUsuariosCompleta);
+                    actualizarContadorUsuarios();
                 });
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
+        }).start();
+
+        // Modificar cell factory para acumular cambios en lugar de actualizar inmediatamente
+        colActivo.setCellFactory(tc -> new TableCell<>() {
+            private ToggleButton toggle;
 
             @Override
             protected void updateItem(Boolean activo, boolean empty) {
@@ -167,15 +155,43 @@ public class ControladorGestionUsuarios {
 
                 if (empty || activo == null) {
                     setGraphic(null);
-                } else {
-                    toggle.setSelected(activo);
-                    toggle.setText(activo ? "ON  " : "  OFF");
-                    setGraphic(toggle);
+                    return;
                 }
+
+                if (toggle == null) {
+                    toggle = new ToggleButton();
+                    toggle.getStyleClass().add("switch");
+                    toggle.setMinWidth(70);
+
+                    toggle.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                        Usuario u = getTableRow().getItem();
+                        if (u != null) {
+                                if (oldVal != newVal) {  // Aquí agregas la comparación
+                                    if (u.isActivo() != newVal) {
+                                        u.setActivo(newVal);
+                                        cambiosPendientes.put(u.getId(), u);
+                                        btnActualizar.setDisable(false);
+                                    }
+                                    toggle.setText(newVal ? "ON  " : "  OFF");
+                                }
+                        }
+//                        if (u != null) {
+//                            u.setActivo(newVal);
+//                            toggle.setText(newVal ? "ON  " : "  OFF");
+//
+//                            // Guardar cambio pendiente
+//                            cambiosPendientes.put(u.getId(), u);
+//                            btnActualizar.setDisable(false);
+//                        }
+                    });
+                }
+
+                toggle.setSelected(activo);
+                toggle.setText(activo ? "ON  " : "  OFF");
+                setGraphic(toggle);
             }
         });
 
-        /* ----- 1. cargar roles una sola vez ----- */
         try {
             rolesObservable = FXCollections.observableArrayList(servicioRoles.listarRoles());
         } catch (Exception e) {
@@ -183,10 +199,8 @@ public class ControladorGestionUsuarios {
             rolesObservable = FXCollections.observableArrayList();
         }
 
-        /* ----- 2. value factory: muestra el rol actual ----- */
         colRol.setCellValueFactory(new PropertyValueFactory<>("rol"));
 
-        /* ----- 3. cell factory: ComboBox editable ----- */
         colRol.setCellFactory(col -> {
             ComboBoxTableCell<Usuario, Rol> cell = new ComboBoxTableCell<>(new StringConverter<>() {
                 @Override
@@ -202,24 +216,36 @@ public class ControladorGestionUsuarios {
                 }
             }, rolesObservable);
 
-            // /* al confirmar la edición */
             colRol.setOnEditCommit(evt -> {
                 Usuario u = evt.getRowValue();
                 Rol nuevo = evt.getNewValue();
                 if (nuevo != null && !nuevo.equals(u.getRol())) {
-                    u.setRol(nuevo); // 1) actualiza modelo
-                    try {
-                        servicioUsuarios.actualizarRolUsuario(u.getId(), nuevo); // 2) guarda en BD
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    tableUsuarios.refresh(); // refresca por si hay renderizado
+                    u.setRol(nuevo);
+                    cambiosPendientes.put(u.getId(), u);
+                    btnActualizar.setDisable(false);
                 }
             });
             return cell;
         });
-        tableUsuarios.setEditable(true); // imprescindible para ComboBoxTableCell
+        tableUsuarios.setEditable(true);
     }
+
+    @FXML
+    private void onActualizar() {
+        for (Usuario u : cambiosPendientes.values()) {
+            try {
+                servicioUsuarios.actualizarEstado(u.getId(), u.isActivo());
+                servicioUsuarios.actualizarRolUsuario(u.getId(), u.getRol());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        cambiosPendientes.clear();
+        btnActualizar.setDisable(true);
+        ManejadorMetodosComunes.mostrarVentanaExito("Cambios guardados correctamente.");
+    }
+
+
 
     // Método para actualizar el contador de usuarios
     private void actualizarContadorUsuarios() {
@@ -311,63 +337,11 @@ public class ControladorGestionUsuarios {
     public void onBackAction() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(),
                 "/vistas/empleados/PantallaPortalPrincipal.fxml");
-
-        // try {
-        // FXMLLoader loader = new
-        // FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-        // Parent root = loader.load();
-        // Stage stage = (Stage) ((javafx.scene.Node)
-        // event.getSource()).getScene().getWindow();
-        // stage.setScene(new Scene(root));
-        // stage.show();
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        // }
     }
 
     public void onAgregarUsuario() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnAgregarUsuario.getScene().getWindow(),
                 "/vistas/empleados/PantallaRegistrarUsuario.fxml");
-
-        //
-        // FXMLLoader loader = new
-        // FXMLLoader(getClass().getResource("/vistas/empleados/PantallaRegistrarUsuario.fxml"));
-        // try {
-        // Parent root = loader.load();
-        //
-        // // Obtener el Stage actual desde el botón o cualquier nodo
-        // Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        // stage.setTitle("Registrar nuevo empleado");
-        // stage.setScene(new Scene(root));
-        // stage.show();
-        // try {
-        // URL fxmlLocation =
-        // getClass().getResource("/Vista/empleados/PantallaRegistrarUsuario.fxml");
-        //
-        // if (fxmlLocation == null) {
-        // throw new IOException("No se pudo encontrar el archivo FXML:
-        // /Vista/empleados/PantallaRegistrarUsuario.fxml");
-        // }
-        //
-        // FXMLLoader loader = new FXMLLoader(fxmlLocation);
-        // Parent root = loader.load();
-        //
-        // Stage stage = new Stage();
-        // stage.setTitle("Registrar Nuevo Empleado");
-        // stage.setScene(new Scene(root));
-        // stage.initModality(Modality.APPLICATION_MODAL);
-        // stage.showAndWait();
-
-        // } catch (IOException e) {
-        // e.printStackTrace();
-        ////            Alert alert = new Alert(Alert.AlertType.ERROR);
-////            alert.setTitle("Error de Carga");
-////            alert.setHeaderText("No se pudo abrir la ventana de registro.");
-////            alert.setContentText("Ocurrió un error al cargar el FXML: " + e.getMessage());
-////            alert.showAndWait();
-        // ManejadorMetodosComunes.mostrarVentanaError("No se pudo abrir la ventana de
-        // registro.");
-        // }
     }
 
 }
