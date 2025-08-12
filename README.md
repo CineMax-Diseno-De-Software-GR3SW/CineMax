@@ -31,11 +31,11 @@ CineMax/
 │       └── resources/
 │           ├── vistas/                  # Archivos FXML y recursos de UI
 │           ├── temas/                   # Hojas de estilos CSS
-│           └── imagenes/                # Imágenes y logos
-├── lib/                                # Dependencias externas (ej. postgresql-42.7.3.jar)
+│           |── imagenes/                # Imágenes y logos
+|           └── lib/                     # Dependencias externas (ej. postgresql-42.7.3.jar)
 ├── Reportes/                           # Reportes y facturas generados
 ├── PDFsGenerados_BoletoFactura/        # Boletos y facturas generados en PDF
-├── Documentacion/                      # Documentación y diagramas
+├── Documentacion/                      # Diagramas
 ├── pom.xml                             # Configuración Maven
 └── README.md                           # Este archivo
 ```
@@ -114,7 +114,7 @@ CineMax/
 - Utiliza los menús para navegar entre las distintas funcionalidades.
 - Los archivos generados (boletos, facturas, reportes) se guardan en los directorios correspondientes.
 
-Consulta la carpeta `Documentacion` para diagramas y guías de uso.
+Consulta la carpeta `Documentacion` para diagramas de clases, casos de uso, ssecuencia, entre otros.
 
 
 ## 📝 Licencia

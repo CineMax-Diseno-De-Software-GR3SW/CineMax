@@ -86,9 +86,12 @@ package servicios{
         + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
     }
 
-    class ServicioVisualizadorCartelera {
+class ServicioVisualizadorCartelera {
+        - {static} instancia: ServicioVisualizadorCartelera
+        - planificador: ScheduledExecutorService
         - controladorCartelera: ControladorCartelera
         - peliculaSeleccionada: Pelicula
+        + {static} obtenerInstancia(): ServicioVisualizadorCartelera
         + cargarPeliculasDeCartelera(): void
         + seleccionarPelicula(pelicula: Pelicula, currentStage: Stage): void
         - validarSeleccionPelicula(pelicula: Pelicula): void

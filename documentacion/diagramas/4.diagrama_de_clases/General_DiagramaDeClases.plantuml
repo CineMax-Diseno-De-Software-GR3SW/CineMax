@@ -239,8 +239,6 @@ package peliculas {
                 DOS_D, TRES_D
                 --
                 - multiplicadorPrecio: BigDecimal {readOnly}
-                --
-                + {static} fromString(value: String): FormatoFuncion
             }
 
             class Funcion {
@@ -259,7 +257,6 @@ package peliculas {
                 --
                 - nombre: String {readOnly}
                 --
-                + {static} porNombre(nombre: String): Genero
                 + {static} obtenerTodosLosGeneros(): List<String>
             }
 
@@ -268,8 +265,6 @@ package peliculas {
                 --
                 - nombre: String {readOnly}
                 - codigo: String {readOnly}
-                --
-                + {static} porCodigo(codigo: String): Idioma
             }
 
             class Pelicula {
@@ -304,6 +299,9 @@ package peliculas {
             + listarFuncionesPorSala(salaId: int): List<Funcion>
             + eliminarFuncion(id: int): void
             + obtenerFuncionesPorNombrePelicula(...): List<Funcion>
+            - validarDatosFuncion(...): void
+            - validarHorarioTrabajo(...): void
+            - validarTraslapeFunciones(...): void
         }
 
         class ServicioPelicula {
@@ -314,6 +312,7 @@ package peliculas {
             + listarTodasLasPeliculas(): List<Pelicula>
             + buscarPeliculasPorTitulo(titulo: String): List<Pelicula>
             + existePeliculaDuplicada(titulo: String, anio: int): boolean
+            - validarDatosPelicula(...): void
         }
     }
 
@@ -322,114 +321,45 @@ package peliculas {
         class ControladorCartelera {
             - servicioPelicula: ServicioPelicula
             - cartelera: Cartelera
-            - peliculaSeleccionada: Pelicula
             --
             + obtenerCartelera(): List<Pelicula>
         }
 
-        class ControladorDetallesCartelera {
-            - peliculaActual: Pelicula
-            - servicioFuncion: ServicioFuncion
-            --
-            + cargarPelicula(pelicula: Pelicula): void
-        }
-
-        class ControladorDetallesFuncion {
-            - funcionActual: Funcion
-            --
-            + cargarFuncion(funcion: Funcion): void
-        }
-
-        class ControladorDetallesPelicula {
-            - servicioPelicula: ServicioPelicula
-            - pelicula: Pelicula
-            --
-            + cargarPelicula(pelicula: Pelicula): void
-        }
-
-        class ControladorFormularioFuncion {
-            - servicioFuncion: ServicioFuncion
-            - servicioPelicula: ServicioPelicula
-            - servicioSala: ServicioSala
-            - funcionEditando: Funcion
-            - modoEdicion: boolean
-            --
-            + configurarParaEdicion(funcion: Funcion): void
-        }
-
-        class ControladorFormularioPelicula {
-            - servicioPelicula: ServicioPelicula
-            - peliculaEditando: Pelicula
-            - modoEdicion: boolean
-            --
-            + configurarParaEdicion(pelicula: Pelicula): void
-        }
 
         class ControladorFunciones {
             - servicioFuncion: ServicioFuncion
             - servicioSala: ServicioSala
-            - listaFunciones: ObservableList<Funcion>
             --
             + obtenerFuncionesPorNombrePelicula(...): List<Funcion>
         }
 
         class ControladorPelicula {
             - servicioPelicula: ServicioPelicula
-            - listaPeliculas: ObservableList<Pelicula>
-        }
-
-        class ControladorSeleccionFuncion {
-            - servicioPelicula: ServicioPelicula
-            - servicioFuncion: ServicioFuncion
-            - servicioSala: ServicioSala
-            - cartelera: Cartelera
-            - peliculaSeleccionada: Pelicula
-            - fechaSeleccionada: LocalDate
         }
     }
 
     ' ==================== RELACIONES ====================
-
     peliculas.modelos.Cartelera "1" -- "0..*" peliculas.modelos.Pelicula
     peliculas.modelos.Pelicula "1" -- "1" peliculas.modelos.Idioma
     peliculas.modelos.Pelicula "1" -- "1..*" peliculas.modelos.Genero
     peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.Pelicula
-    peliculas.modelos.Funcion "1" -- "1" salas.modelos.entidades.Sala
+    
     peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.FormatoFuncion
     peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.TipoEstreno
-    peliculas.modelos.Funcion .up.> peliculas.modelos.DiaSemana : usa
-
-    peliculas.servicios.ServicioPelicula ..> peliculas.modelos.Pelicula : gestiona
-    peliculas.servicios.ServicioFuncion ..> peliculas.modelos.Funcion : gestiona
-
-    peliculas.servicios.ServicioPelicula <.left. peliculas.controladores.ControladorPelicula
-    peliculas.servicios.ServicioPelicula <.left. peliculas.controladores.ControladorFormularioPelicula
-    peliculas.servicios.ServicioPelicula <.left. peliculas.controladores.ControladorDetallesPelicula
-    peliculas.servicios.ServicioPelicula <.left. peliculas.controladores.ControladorCartelera
-    peliculas.servicios.ServicioPelicula <.left. peliculas.controladores.ControladorSeleccionFuncion
-
-    peliculas.servicios.ServicioFuncion <.left. peliculas.controladores.ControladorFunciones
-    peliculas.servicios.ServicioFuncion <.left. peliculas.controladores.ControladorFormularioFuncion
-    peliculas.servicios.ServicioFuncion <.left. peliculas.controladores.ControladorDetallesCartelera
-    peliculas.servicios.ServicioFuncion <.left. peliculas.controladores.ControladorSeleccionFuncion
-
-    salas.servicios.ServicioSala <.left. peliculas.controladores.ControladorFunciones
-    salas.servicios.ServicioSala <.left. peliculas.controladores.ControladorFormularioFuncion
-    salas.servicios.ServicioSala <.left. peliculas.controladores.ControladorSeleccionFuncion
-
-    peliculas.controladores.ControladorFormularioPelicula "1" -- "0..1" peliculas.modelos.Pelicula : edita
-    peliculas.controladores.ControladorDetallesPelicula "1" -- "1" peliculas.modelos.Pelicula : muestra
-    peliculas.controladores.ControladorFormularioFuncion "1" -- "0..1" peliculas.modelos.Funcion : edita
-    peliculas.controladores.ControladorDetallesFuncion "1" -- "1" peliculas.modelos.Funcion : muestra
-    peliculas.controladores.ControladorDetallesCartelera "1" -- "1" peliculas.modelos.Pelicula : muestra
-    peliculas.controladores.ControladorCartelera "1" -- "1" peliculas.modelos.Cartelera : gestiona
-    peliculas.controladores.ControladorSeleccionFuncion "1" -- "1" peliculas.modelos.Cartelera : usa
+    peliculas.modelos.Funcion "1" -- "1" peliculas.modelos.DiaSemana
+    peliculas.servicios.ServicioPelicula ..> peliculas.modelos.Pelicula
+    peliculas.servicios.ServicioFuncion ..> peliculas.modelos.Funcion
+    peliculas.servicios.ServicioPelicula <.. peliculas.controladores.ControladorPelicula
+    peliculas.servicios.ServicioPelicula <.. peliculas.controladores.ControladorCartelera
+    peliculas.servicios.ServicioFuncion <.. peliculas.controladores.ControladorFunciones
+    
 }
+
+peliculas.modelos.Funcion "1" -- "1" salas.modelos.Sala
+salas.servicios.ServicioSala <.. peliculas.controladores.ControladorFunciones
 
 package salas {
 package modelos {
-
-package entidades{
     class Sala {
         -id: int
         -nombre: String
@@ -467,14 +397,10 @@ package entidades{
    NORMAL(1.00),
    VIP(1.50)
    +getMultiplicador()
-
    }
 
    }
 
-
-
-    }
 
     Sala -u> TipoSala
     SalaNormalFactory -u> Sala
@@ -631,8 +557,11 @@ package servicios{
     }
 
     class ServicioVisualizadorCartelera {
+        - {static} instancia: ServicioVisualizadorCartelera
+        - planificador: ScheduledExecutorService
         - controladorCartelera: ControladorCartelera
         - peliculaSeleccionada: Pelicula
+        + {static} obtenerInstancia(): ServicioVisualizadorCartelera
         + cargarPeliculasDeCartelera(): void
         + seleccionarPelicula(pelicula: Pelicula, currentStage: Stage): void
         - validarSeleccionPelicula(pelicula: Pelicula): void
