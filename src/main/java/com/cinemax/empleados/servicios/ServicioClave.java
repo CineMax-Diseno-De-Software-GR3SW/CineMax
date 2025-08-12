@@ -1,7 +1,7 @@
 package com.cinemax.empleados.servicios;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-public class UtilidadClave {
+public class ServicioClave {
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public static String hashClave(String plainPassword) {
