@@ -695,7 +695,7 @@ package utilidades {
         }
     }
 
-    package estrategiaParaDocumentos {
+    package estrategiaParaDocumentos <<Package>> {
         interface Exportable {
             +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
         }
@@ -885,7 +885,7 @@ package "Reportes"{
 
 
     ' ===== CONTROLADOR (REPORTES) =====
-    package "Controlador" {
+    package "Controlador" <<Package>> {
 
         class ControladorReportesPrincipal {
             - Button botonRegresar
@@ -944,27 +944,28 @@ package "Reportes"{
             + void volverEscena(ActionEvent event)
         }
     ControladorReportesPrincipal --> ServicioDeReportes
-    ControladorReportesPrincipal --> Exportable
-    ControladorReportesPrincipal --> EstrategiaExportarPDF
-    ControladorReportesPrincipal --> EstrategiaExportarCSV
-    
+    ControladorReportesPrincipal --> ControladorReportesProgramados
+
+
+
     
     
     ControladorReportesProgramados --> ServicioReportesProgramados
     ControladorReportesProgramados --> ServicioDeReportes
     ControladorReportesProgramados --> Exportable
-    ControladorReportesProgramados --> EstrategiaExportarPDF
-    ControladorReportesProgramados --> EstrategiaExportarCSV
+    ControladorReportesPrincipal --> Exportable
     
     ServicioReportesProgramados --> ServicioReportesProgramados
     
     
     ReporteGenerado <-- ControladorReportesPrincipal
     ReporteGenerado <-- ControladorReportesProgramados
+ControladorPortalPrincipal ..> ControladorReportesPrincipal
     }
 }
 
 ' ============================== RELACIONES GENERALES ==============================
+
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
 ControladorAsignadorFuncion ..> ControladorCartelera
 
@@ -973,6 +974,4 @@ ControladorPortalPrincipal ..> ControladorPelicula
 ControladorPortalPrincipal ..> ControladorFuncion
 ControladorPortalPrincipal ..> ControladorSalas
 ControladorPortalPrincipal ..> ControladorButacas
-ControladorPortalPrincipal ..> ControladorReportes
-ControladorReportes ..> ControladorVentaBoletos 
 @enduml

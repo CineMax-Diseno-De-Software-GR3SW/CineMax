@@ -772,8 +772,7 @@ public class ControladorReportesProgramados {
                 exportStrategy.exportar(reporte, archivo, datos);
 
                 // Mostrar mensaje de éxito al usuario
-                String mensaje = "✅ Descarga Exitosa\n"
-                        + "El reporte '" + reporte.getNombre() + "' se ha sido registrado exitosamente\n";
+                String mensaje = "El reporte '" + reporte.getNombre() + "' se ha sido registrado exitosamente\n";
 
                 ManejadorMetodosComunes.mostrarVentanaExito(mensaje);
             } else {
