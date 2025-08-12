@@ -775,12 +775,12 @@ package modelos {
 ' ------------------ RELACIONES ------------------
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
-ControladorFacturacion *--> ServicioFacturacion
-ControladorFacturacion *--> ServicioCliente
+ControladorFacturacion --> ServicioFacturacion
+ControladorFacturacion --> ServicioCliente
 ControladorVisualizadorCartelera --> ServicioVisualizadorCartelera
 ControladorVisualizadorFunciones --> ServicioVisualizadorFunciones
-ControladorAsignadorButacas o--> ControladorInformacionDeVenta
-ControladorFacturacion o--> ControladorInformacionDeVenta
+ControladorAsignadorButacas --> ControladorInformacionDeVenta
+ControladorFacturacion --> ControladorInformacionDeVenta
 
 ' Relaciones de uso/dependencia (se crean o usan temporalmente)
 ControladorAsignadorButacas ..> ServicioGeneradorBoleto
@@ -801,13 +801,13 @@ Producto <|-- Boleto
 CalculadorIVA ..up|> CalculadorImpuesto
 
 ' Asociaciones entre entidades
-Factura "1" *-- "1..*" Producto
-Factura "1" *-- "1..*" Cliente
-Boleto "1" *-- "1" Funcion
-Boleto "1" *-- "1" Butaca
+Factura "1" --> "1..*" Producto
+Factura "1" --> "1..*" Cliente
+Boleto "1..*" --> "1" Funcion
+Boleto "1" --> "1" Butaca
 
 ' Patrón Strategy
-ContextoValidacion o--> EstrategiaValidacion
+ContextoValidacion --> EstrategiaValidacion
 
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
