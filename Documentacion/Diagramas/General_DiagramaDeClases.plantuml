@@ -966,13 +966,10 @@ package "Reportes"{
 
 ' ============================== RELACIONES GENERALES ==============================
 ControladorAsignadorButacas ..> ControladorDeConsultaSalas
-ControladorAsignadorFuncion ..> ControladorCartelera
-
-ControladorPortalPrincipal ..> ControladorVentaBoletos
+ControladorPortalPrincipal ..> ControladorVisualizadorCartelera
 ControladorPortalPrincipal ..> ControladorPelicula
 ControladorPortalPrincipal ..> ControladorFuncion
 ControladorPortalPrincipal ..> ControladorSalas
 ControladorPortalPrincipal ..> ControladorButacas
 ControladorPortalPrincipal ..> ControladorReportes
-ControladorReportes ..> ControladorVentaBoletos 
 @enduml
