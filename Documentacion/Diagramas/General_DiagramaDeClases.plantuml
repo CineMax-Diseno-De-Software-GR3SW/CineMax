@@ -772,7 +772,7 @@ package modelos {
 ' Relaciones de composición y agregación (tienen instancias como atributos)
 ControladorFacturacion *--> ServicioFacturacion
 ControladorFacturacion *--> ServicioCliente
-ControladorVisualizadorCartelera /--> ServicioVisualizadorCartelera
+ControladorVisualizadorCartelera --> ServicioVisualizadorCartelera
 ControladorVisualizadorFunciones --> ServicioVisualizadorFunciones
 ControladorAsignadorButacas o--> ControladorInformacionDeVenta
 ControladorFacturacion o--> ControladorInformacionDeVenta

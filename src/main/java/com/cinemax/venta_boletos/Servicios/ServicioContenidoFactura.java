@@ -416,13 +416,12 @@ public class ServicioContenidoFactura {
                 for (int i = 0; i < datosBoleto.length && i < anchosColumna.length; i++) {
                     String texto = datosBoleto[i];
                     
-                    // Para película (índice 0) y género (índice 1), manejar textos largos
-                    if ((i == 0 || i == 1) && texto.length() > getMaxCharsPorColumna(anchosColumna[i], 8)) {
+                    // Para película (índice 0), género (índice 1) y sala (índice 4), manejar textos largos
+                    if ((i == 0 || i == 1 || i == 4) && texto.length() > getMaxCharsPorColumna(anchosColumna[i], 8)) {
                         int maxChars = getMaxCharsPorColumna(anchosColumna[i], 8);
                         String textoLinea1 = "";
                         String textoLinea2 = "";
-                        
-                        if (i == 1 && texto.contains(",")) { // Género con múltiples valores
+                        if ((i == 1 || i == 4) && texto.contains(",")) { // Género o Sala con múltiples valores
                             int puntoCorte = texto.lastIndexOf(',', maxChars);
                             if (puntoCorte > 0) {
                                 textoLinea1 = texto.substring(0, puntoCorte + 1).trim();
@@ -435,19 +434,17 @@ public class ServicioContenidoFactura {
                                     necesitaSegundaLinea = true;
                                 }
                             }
-                        } else { // Película u otros textos largos
+                        } else { // Película, Sala u otros textos largos
                             textoLinea1 = texto.substring(0, Math.min(maxChars, texto.length()));
                             if (texto.length() > maxChars) {
                                 textoLinea2 = texto.substring(maxChars);
                                 necesitaSegundaLinea = true;
                             }
                         }
-                        
                         contentStream.beginText();
                         contentStream.newLineAtOffset(x, y);
                         contentStream.showText(textoLinea1);
                         contentStream.endText();
-                        
                         segundaLinea[i] = textoLinea2;
                     } else {
                         // Texto normal que cabe en una línea
@@ -484,10 +481,10 @@ public class ServicioContenidoFactura {
             }
         }
         
-        // Agregar espacio adicional después de la tabla
-        y -= 20;
+    // Agregar espacio adicional después de la tabla
+    y -= 20;
         
-        return y;
+    return y;
     }
 
     /**
