@@ -82,7 +82,7 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
     private ControladorInformacionDeVenta ControladorInformacionDeVenta;
 
     /** Controlador para la gestión del mapa de butacas y su visualización */
-    private ControladorDeConsultaSalas controladorDeConsultaSalas;
+    //private ControladorDeConsultaSalas controladorDeConsultaSalas;
 
     private List<Butaca> butacasSeleccionadas;
 
@@ -193,9 +193,9 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
             mapaButacasContainer.getChildren().add(mapaButacas);
 
             // 3. Configurar comunicación bidireccional entre controladores
-            controladorDeConsultaSalas = loader.getController();
+            ControladorDeConsultaSalas controladorDeConsultaSalas = loader.getController();
             //controladorDeConsultaSalas.setControladorAsignadorButacas(this);
-            controladorDeConsultaSalas.setSuscriptoresSeleccionButacas(this);
+            controladorDeConsultaSalas.suscribir(this);
 
             // 4. Renderizar butacas con estado visual (ocupada/disponible)
             controladorDeConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);

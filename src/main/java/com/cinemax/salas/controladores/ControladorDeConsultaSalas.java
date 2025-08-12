@@ -48,8 +48,12 @@ public class ControladorDeConsultaSalas implements Initializable {
     //private ControladorAsignadorButacas controladorAsignadorButacas;
     private List<SuscriptorSeleccionButaca> suscriptoresSeleccionButacas = new ArrayList<>();
 
-    public void setSuscriptoresSeleccionButacas(SuscriptorSeleccionButaca suscriptorSeleccionButaca) {
+    public void suscribir(SuscriptorSeleccionButaca suscriptorSeleccionButaca) {
         this.suscriptoresSeleccionButacas.add(suscriptorSeleccionButaca);
+    }
+
+    public void desuscribir(SuscriptorSeleccionButaca suscriptorSeleccionButaca) {
+        this.suscriptoresSeleccionButacas.remove(suscriptorSeleccionButaca);
     }
 
     /**
@@ -178,9 +182,9 @@ public class ControladorDeConsultaSalas implements Initializable {
         }
     }
 
-    public List<Butaca> getButacasSeleccionadas() {
-        return new ArrayList<>(butacasSeleccionadas);
-    }
+    //public List<Butaca> getButacasSeleccionadas() {
+    //    return new ArrayList<>(butacasSeleccionadas);
+    //}
 
     //public void setControladorAsignadorButacas(ControladorAsignadorButacas controladorAsignadorButacas) {
     //    this.controladorAsignadorButacas = controladorAsignadorButacas;

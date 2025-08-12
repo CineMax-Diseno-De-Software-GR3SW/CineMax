@@ -435,7 +435,6 @@ package modelos {
         -salas: ObservableList<Sala>
         -servicioButaca: ServicioButaca
         -salaEnEdicion: Sala
-        +initialize(): void
         +onGuardar(event: ActionEvent): void
         +onBackAction(event: ActionEvent): void
     }
@@ -444,17 +443,19 @@ package modelos {
         -servicioButaca: ServicioButaca
         -salas: ObservableList<Sala>
         -butacas: ObservableList<Butaca>
-        +initialize(): void
-        +onBackAction(event: ActionEvent): void
     }
-    class ControladorDeConsultaSalas {
+    class ControladorDeConsultaSalas #lightblue{
         -servicioButaca : ServicioButaca
         -butacasSeleccionadas: List<Butaca>
-        -controladorAsignadorButacas: ControladorAsignadorButacas
-        +initialize(location: URL, resources: ResourceBundle): void
+        - suscriptoresSeleccionButaca: List<SuscriptorSeleccionButaca>
+        ''-controladorAsignadorButacas: ControladorAsignadorButacas
+        +suscribir(suscriptorSeleccionButaca: SuscriptorSeleccionButaca): void
+        +desuscribir(suscriptorSeleccionButaca: SuscriptorSeleccionButaca): void
         +mostrarButacasDeSala(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
-        +getButacasSeleccionadas(): List<Butaca>
-        +setControladorAsignadorButacas(controladorAsignadorButacas: ControladorAsignadorButacas): void
+        -seleccionarButaca(butaca: Butaca): void
+        -deseleccionarButaca(butaca: Butaca): void
+        ''+getButacasSeleccionadas(): List<Butaca>
+        ''+setControladorAsignadorButacas(controladorAsignadorButacas: ControladorAsignadorButacas): void
     }
     }
 
@@ -478,21 +479,24 @@ package venta_boletos {
 
 package controladores {
 
-    class ControladorAsignadorButacas {
+    interface SuscriptorSeleccionButaca #lightblue {
+        + agregarButacaSeleccionada(butaca: Butaca): void
+        + quitarButacaDeseleccionada(butaca: Butaca): void
+    }
+
+    class ControladorAsignadorButacas #lightblue implements SuscriptorSeleccionButaca {
         - funcionSeleccionada: Funcion
-        - ControladorInformacionDeVenta: ControladorInformacionDeVenta
-        - controladorDeConsultaSalas: ControladorDeConsultaSalas
+        - controladorInformacionDeVenta: ControladorInformacionDeVenta
+        ''- controladorDeConsultaSalas: ControladorDeConsultaSalas
         - butacasSeleccionadas: List<Butaca>
         + inicializarDatos(funcionSeleccionada: Funcion): void
         - cargarMapaButacas(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
-        + agregarButacaSeleccionada(butaca: Butaca): void
-        + quitarButacaDeseleccionada(butaca: Butaca): void
     }
 
     class ControladorFacturacion {
         - servicioFacturacion: ServicioFacturacion
         - servicioCliente: ServicioCliente
-        - ControladorInformacionDeVenta: ControladorInformacionDeVenta
+        - controladorInformacionDeVenta: ControladorInformacionDeVenta
         - boletos: List<Producto>
         + cargarBoletosSeleccionados(boletos: List<Producto>): void
         - crearCliente(): void
@@ -513,7 +517,7 @@ package controladores {
     }
 
     class ControladorVisualizadorCartelera {
-        - servicioVisualizarCartelera: ServicioVisualizarCartelera
+        - servicioVisualizadorCartelera: ServicioVisualizadorCartelera
         - cargarCartelera(peliculas: List<Pelicula>): void
     }
 
@@ -544,7 +548,7 @@ package servicios{
         + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
     }
 
-    class ServicioVisualizadorCartelera {
+    class ServicioVisualizadorCartelera #lightblue{
         - {static} instancia: ServicioVisualizadorCartelera
         - planificador: ScheduledExecutorService
         - controladorCartelera: ControladorCartelera
@@ -805,7 +809,6 @@ package "Reportes"{
             - List<Map<String, Object>> estadisticas
             - List<ReporteGenerado> reportesSimulados
             --
-            + void initialize()
             - void configurarTablaReportes()
             - List<ReporteGenerado> cargarReportesDesdeCarpeta()
             - void cargarReportesSimulados()
@@ -833,7 +836,6 @@ package "Reportes"{
             - ServicioDeReportes servicioVentas
             - Map<String, Object> datos
             --
-            + void initialize()
             - void inicializarTablaReportes()
             + void confirmarReporteProgramado(ActionEvent event)
             - boolean existeReporteConFrecuencia(String frecuencia)
@@ -875,7 +877,7 @@ ControladorPortalPrincipal ..> ControladorVisualizadorCartelera
 ControladorPortalPrincipal ..> ControladorPelicula
 ControladorPortalPrincipal ..> ControladorFunciones
 ControladorPortalPrincipal ..> ControladorSalas
-ControladorPortalPrincipal ..> ControladorReportes
+ControladorPortalPrincipal ..> ControladorReportesPrincipal
 ControladorVisualizadorCartelera ..> ControladorCartelera
 ControladorVisualizadorFunciones ..> ControladorFunciones
 ServicioVisualizadorFunciones ..> ServicioTemporizador
@@ -883,6 +885,7 @@ ControladorAsignadorButacas ..> ServicioTemporizador
 ControladorFacturacion ..> ServicioTemporizador
 ServicioFacturacion ..> ServicioCorreoSingleton
 ServicioContenidoFactura ..> EstrategiaExportarPDF
+ControladorDeConsultaSalas o--> SuscriptorSeleccionButaca
 venta_boletos.controladores.ControladorFacturacion ..> utilidades.estrategiaValidacionDocumentos.ContextoValidacion
 
 @enduml
