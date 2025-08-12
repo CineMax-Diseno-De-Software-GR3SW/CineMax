@@ -1,4 +1,4 @@
-package com.cinemax.utilidades.strategyValidacionDocumentos;
+package com.cinemax.utilidades.estrategiaValidacionDocumentos;
 
 /**
  * Contexto del patrón Strategy para validación de documentos en el módulo de venta de boletos.

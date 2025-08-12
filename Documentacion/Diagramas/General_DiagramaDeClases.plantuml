@@ -655,7 +655,7 @@ package servicios{
 
 package utilidades {
 
-    package strategyValidacionDocumentos  #lightyellow
+    package estrategiaValidacionDocumentos  #lightyellow
     {
 
         class ContextoValidacion #lightblue {
@@ -677,7 +677,7 @@ package utilidades {
         }
     }
 
-    package strategyParaDocumentos {
+    package estrategiaParaDocumentos {
         interface Exportable {
             +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
         }
