@@ -13,54 +13,54 @@ public class ServicioPerfilUsuario {
         this.usuarioDAO = new UsuarioDAO();
     }
     
-    public void actualizarPerfil(Usuario usuario, String nuevoCorreo, String nuevoCelular) throws Exception {
-        if (usuario == null) {
-            throw new IllegalArgumentException("El usuario no puede ser null");
-        }
-        
-        if (nuevoCorreo != null && !ValidadorUsuario.validarCorreo(nuevoCorreo)) {
-            throw new IllegalArgumentException("El nuevo correo electrónico no es válido");
-        }
-        
-        // Verificar que el nuevo correo no esté en uso por otro usuario
-        if (nuevoCorreo != null && !nuevoCorreo.equals(usuario.getCorreo())) {
-            Usuario usuarioConCorreo = usuarioDAO.buscarPorCorreo(nuevoCorreo);
-            if (usuarioConCorreo != null && !usuarioConCorreo.getId().equals(usuario.getId())) {
-                throw new IllegalArgumentException("El correo electrónico ya está en uso por otro usuario");
-            }
-        }
-        
-        usuario.actualizarContacto(nuevoCorreo, nuevoCelular);
-        usuarioDAO.actualizarUsuario(usuario);
-    }
+//    public void actualizarPerfil(Usuario usuario, String nuevoCorreo, String nuevoCelular) throws Exception {
+//        if (usuario == null) {
+//            throw new IllegalArgumentException("El usuario no puede ser null");
+//        }
+//
+//        if (nuevoCorreo != null && !ValidadorUsuario.validarCorreo(nuevoCorreo)) {
+//            throw new IllegalArgumentException("El nuevo correo electrónico no es válido");
+//        }
+//
+//        // Verificar que el nuevo correo no esté en uso por otro usuario
+//        if (nuevoCorreo != null && !nuevoCorreo.equals(usuario.getCorreo())) {
+//            Usuario usuarioConCorreo = usuarioDAO.buscarPorCorreo(nuevoCorreo);
+//            if (usuarioConCorreo != null && !usuarioConCorreo.getId().equals(usuario.getId())) {
+//                throw new IllegalArgumentException("El correo electrónico ya está en uso por otro usuario");
+//            }
+//        }
+//
+//        usuario.actualizarContacto(nuevoCorreo, nuevoCelular);
+//        usuarioDAO.actualizarUsuario(usuario);
+//    }
     
 
-    /**
-     * Obtiene el perfil completo de un usuario por su ID
-     */
-    public Usuario obtenerPerfil(Long idUsuario) throws Exception {
-        if (idUsuario == null) {
-            return null;
-        }
-        
-        return usuarioDAO.buscarPorId(idUsuario);
-    }
+//    /**
+//     * Obtiene el perfil completo de un usuario por su ID
+//     */
+//    public Usuario obtenerPerfil(Long idUsuario) throws Exception {
+//        if (idUsuario == null) {
+//            return null;
+//        }
+//
+//        return usuarioDAO.buscarPorId(idUsuario);
+//    }
     
-    /**
-     * Verifica si un usuario puede actualizar su perfil
-     */
-    public boolean puedeActualizarPerfil(Usuario usuarioActual, Long idUsuarioPerfil) {
-        // Un usuario solo puede actualizar su propio perfil
-        return usuarioActual != null && usuarioActual.getId().equals(idUsuarioPerfil);
-    }
+//    /**
+//     * Verifica si un usuario puede actualizar su perfil
+//     */
+//    public boolean puedeActualizarPerfil(Usuario usuarioActual, Long idUsuarioPerfil) {
+//        // Un usuario solo puede actualizar su propio perfil
+//        return usuarioActual != null && usuarioActual.getId().equals(idUsuarioPerfil);
+//    }
 
     public void actualizarCorreo(Usuario usuarioActivo, String nuevoEmail) throws SQLException {
-        usuarioActivo.actualizarCorreo(nuevoEmail);
+        usuarioActivo.setCorreo(nuevoEmail);
         usuarioDAO.actualizarCorreo(usuarioActivo.getId(),nuevoEmail);
     }
 
     public void actualizarCelular(Usuario usuarioActivo, String nuevoCelular) throws SQLException {
-        usuarioActivo.actualizarCelular(nuevoCelular);
+        usuarioActivo.setCelular(nuevoCelular);
         usuarioDAO.actualizarCelular(usuarioActivo.getId(), nuevoCelular);
     }
 
