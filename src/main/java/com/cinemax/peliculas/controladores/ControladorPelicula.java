@@ -649,12 +649,21 @@ public class ControladorPelicula implements Initializable {
 
     /**
      * Maneja el evento de búsqueda.
-     *
-     * @param event Evento de acción del botón
      */
     @FXML
-    private void onBuscar(ActionEvent event) {
+    private void onBuscar() {
+        String criterio = txtBuscar.getText().trim();
+        if (criterio.isEmpty()) {
+            aplicarFiltros();
+            return;
+        }
+        
         aplicarFiltros();
+        
+        // Mostrar advertencia si no hay resultados
+        if (peliculasFiltradas.isEmpty()) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia("No se encontraron películas con el criterio \"" + criterio + "\".");
+        }
     }
 
     /**
@@ -772,7 +781,7 @@ public class ControladorPelicula implements Initializable {
      * Configura los eventos de la interfaz.
      */
     private void configurarEventos() {
-        txtBuscar.textProperty().addListener((obs, oldText, newText) -> aplicarFiltros());
+        // Sin búsqueda automática - solo por botón
     }
 
     /**

@@ -16,25 +16,21 @@ package controladores {
         - cargarMapaButacas(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
         + agregarButacaSeleccionada(butaca: Butaca): void
         + quitarButacaDeseleccionada(butaca: Butaca): void
+        - timerLabel: Label
     }
 
     class ControladorFacturacion {
         - servicioFacturacion: ServicioFacturacion
         - servicioCliente: ServicioCliente
-        - boletos: List<Producto>
         - ControladorInformacionDeVenta: ControladorInformacionDeVenta
+        - boletos: List<Producto>
         + cargarBoletosSeleccionados(boletos: List<Producto>): void
-        - buscarCliente(): void
         - crearCliente(): void
         - actualizarCliente(): void
+        - buscarCliente(): void
         - pagarBoletos(): void
         - validarNumeroDocumentoCliente(): boolean
         - timerLabel: Label
-        --
-        + initialize(): void
-        + onPagarAction(): void
-        + onBackAction(): void
-
     }
 
     class ControladorInformacionDeVenta {
@@ -71,7 +67,7 @@ package servicios{
     }
 
     class ServicioFacturacion {
-        + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): Factura
+        + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): void
     }
 
     interface ServicioGeneradorArchivo {
@@ -126,28 +122,33 @@ package servicios{
         + tiempoRestanteProperty(): StringProperty
     }
 
+    class ServicioMostrarFunciones{
+            + confirmarFuncion(): void
+    }
+
 }
 
 package utilidades {
 
-    package strategyValidacionDocumentos {
+    package strategyValidacionDocumentos  #lightyellow
+    {
 
-        class ContextoValidacion{
+        class ContextoValidacion #lightblue {
             - estrategia: EstrategiaValidacion
             + setEstrategia(estrategia: EstrategiaValidacion): void
             + ejecutarEstrategia(documento: String): boolean
         }
         
-        class EstrategiaCedulaValidacion implements EstrategiaValidacion {
+        class EstrategiaCedulaValidacion #lightblue implements EstrategiaValidacion  {
         }
-        interface EstrategiaValidacion {
+        interface EstrategiaValidacion #lightblue {
             + validar(documento: String): boolean
         }
 
-        class EstrategiaPasaporteValidacion implements EstrategiaValidacion {
+        class EstrategiaPasaporteValidacion #lightblue implements EstrategiaValidacion {
         }
 
-        class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
+        class EstrategiaRucValidacion #lightblue extends EstrategiaCedulaValidacion {
         }
     }
 
@@ -183,47 +184,45 @@ package utilidades {
 ' ------------------ MODELOS ------------------
 package modelos {
 
-    package entidades{
-
-        class Boleto {
-            - funcion: Funcion
-            - butaca: Butaca
-        }
-
-        interface CalculadorImpuesto {
-            + calcularImpuesto(subtotal: double): double
-        }
-
-        class CalculadorIVA {
-            - {static} IVA_TASA: double
-        }
-
-        class Cliente {
-            - idCliente: String
-            - tipoDocumento: String
-            - nombre: String
-            - apellido: String
-            - correoElectronico: String
-        }
-
-        class Factura {
-            - codigoFactura: long
-            - fecha: String
-            - cliente: Cliente
-            - productos: List<Producto>
-            - subtotal: double
-            - total: double
-            + calcularSubTotal(): void
-            + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
-        }
-
-        abstract class Producto {
-            - precio: double
-            + {abstract} calcularPrecio(): void
-        }
-
+    class Boleto {
+        - funcion: Funcion
+        - butaca: Butaca
     }
+
+    interface CalculadorImpuesto {
+        + calcularImpuesto(subtotal: double): double
+    }
+
+    class CalculadorIVA {
+        - {static} IVA_TASA: double
+    }
+
+    class Cliente {
+        - idCliente: String
+        - tipoDocumento: String
+        - nombre: String
+        - apellido: String
+        - correoElectronico: String
+    }
+
+    class Factura {
+        - codigoFactura: long
+        - fecha: String
+        - cliente: Cliente
+        - productos: List<Producto>
+        - subtotal: double
+        - total: double
+        + calcularSubTotal(): void
+        + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
+    }
+
+    abstract class Producto {
+        - precio: double
+        + {abstract} calcularPrecio(): void
+    }
+
 }
+
 
 
 ' ------------------ RELACIONES ------------------
@@ -262,6 +261,13 @@ Boleto "1" *-- "1" Butaca
 
 ' Patrón Strategy
 ContextoValidacion o--> EstrategiaValidacion
+
+'Patron Singleton de ServicioTemporizador
+ServicioMostrarFunciones ..> ServicioTemporizador : <<usa>>
+ControladorAsignadorButacas ..> ServicioTemporizador : <<usa y observa>>
+ControladorFacturacion ..> ServicioTemporizador : <<usa y observa>>
+ControladorPortalPrincipal ..> ServicioTemporizador : <<usa>>
+
 
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto

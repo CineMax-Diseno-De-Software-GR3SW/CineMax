@@ -354,7 +354,7 @@ public class ControladorInformacionDeVenta {
      * 
      * @param butaca La butaca a remover de la visualización
      */
-    public void removerButacaDeLista(Butaca butaca) {
+    public void removerButacaSeleccionada(Butaca butaca) {
         // Buscar y eliminar el elemento visual con el ID correspondiente
         listaBoletos.getChildren().removeIf(node ->
             ("butaca-" + butaca.getId()).equals(node.getId()));

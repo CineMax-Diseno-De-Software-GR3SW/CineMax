@@ -66,8 +66,8 @@ public class ControladorPortalPrincipal {
         habilitarOpcionSiTienePermiso(btnGestionFunciones, Permiso.GESTIONAR_FUNCION );
         habilitarOpcionSiTienePermiso(btnGestionPeliculas , Permiso.GESTIONAR_FUNCION );
 
-        if (ServicioTemporizador.getInstance().tempEnEjecucion()){
-            ServicioTemporizador.getInstance().detenerTemporizador();
+        if (ServicioTemporizador.getInstancia().tempEnEjecucion()){
+            ServicioTemporizador.getInstancia().detenerTemporizador();
         }
     }
 

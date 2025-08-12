@@ -43,7 +43,7 @@
                 <Insets top="20" right="20" bottom="0" left="20"/>
             </padding>
             <children>
-                <Label fx:id="labelNombrePelicula" prefHeight="0" prefWidth="274" styleClass="movie-title" 
+                <Label fx:id="labelNombrePelicula" prefWidth="274" maxWidth="274" styleClass="movie-title" 
                        text="Nombre de la película" textAlignment="CENTER" wrapText="true" 
                        alignment="CENTER" contentDisplay="CENTER">
                     <font>
