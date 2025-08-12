@@ -66,7 +66,7 @@
 /* --- ESTILOS DE TEXTO --- */
 
 .title {
-  -fx-font-size: 50px;
+  -fx-font-size: 60px;
   -fx-font-weight: bold;
   -fx-text-fill: #02487b;
 }
@@ -605,3 +605,4 @@
   -fx-text-fill: #43a047;
   -fx-font-weight: bold;
 }
+

@@ -54,9 +54,11 @@
                                 </VBox>
                                 <ImageView fitHeight="280.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
-                                        <Image url="@../../imagenes/logoMax_v2.png" />
+                                        <Image url="@../../imagenes/logoMax_v4.png" />
                                     </image>
                                 </ImageView>
+
+
                             </children>
                         </HBox>
 
