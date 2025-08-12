@@ -46,7 +46,8 @@ public class ControladorVisualizadorCartelera {
     // ===== ATRIBUTOS DE LÓGICA =====
 
     /** Servicio para gestión de datos de la cartelera */
-    private final ServicioVisualizadorCartelera servicioMostrarCartelera = new ServicioVisualizadorCartelera();
+    private final ServicioVisualizadorCartelera servicioMostrarCartelera = ServicioVisualizadorCartelera
+            .obtenerInstancia();
 
     /** Referencia a la tarjeta de película actualmente seleccionada */
     private VBox selectedMovieCard = null;
