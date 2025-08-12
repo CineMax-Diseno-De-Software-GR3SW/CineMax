@@ -98,12 +98,12 @@ public class ServicioRoles {
         return rolDAO.listarTodos();
     }
     
-    /**
-     * Lista roles activos
-     */
-    public List<Rol> listarRolesActivos() throws Exception {
-        return rolDAO.listarActivos();
-    }
+//    /**
+//     * Lista roles activos
+//     */
+//    public List<Rol> listarRolesActivos() throws Exception {
+//        return rolDAO.listarActivos();
+//    }
     
     /**
      * Activa un rol

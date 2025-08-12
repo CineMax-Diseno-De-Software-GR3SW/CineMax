@@ -4,7 +4,7 @@ skinparam linetype ortho
 package empleados {
 ' ============================== MODELO DE DOMINIO ==============================
 package modelo {
-package entidades{
+'package entidades{
 class Usuario {
   - id: Long
   - nombreUsuario: String
@@ -18,8 +18,6 @@ class Usuario {
   - fechaUltimaModificacion: DateTime
   - requiereCambioClave: boolean
   --
-  + actualizarContacto(nuevoCorreo: String, nuevoCelular: String): void
-  + actualizarRol(nuevoRol: Rol): void
   + verificarClave(ingresada: String): boolean
   + getNombreRol(): String
   + getDescripcionRol(): String
@@ -44,12 +42,12 @@ enum Permiso {
     GESTIONAR_FUNCION
     GESTIONAR_REPORTES
 }
-}
+'}
 
 }
 
 Usuario  *-- "1" Rol
-Permiso "0..*" o-- Rol
+Permiso "0..*" -o  Rol
 
 ' ============================== SERVICIOS ==============================
 
@@ -57,6 +55,7 @@ package servicios{
 
 ' ============================== SERVICIOS DE VALIDACIÓN ==============================
 class ValidadorUsuario {
+    - {static} EMAIL_PATTERN : Pattern
    + validarCorreo(correo: String): boolean
    + validarClave(clave: String): boolean
    + validarCelular(celular: String): boolean
@@ -71,21 +70,22 @@ class ServicioSesionSingleton {
   + iniciarSesion(nombreUsuario: String, clave: String): Usuario
   + cerrarSesion(): void
   + getUsuarioActivo(): Usuario
-  + estaAutenticado(): boolean
   + tienePermiso(permiso: Permiso): boolean
 }
 
 class UtilidadClave {
   + {static} hashClave(clave: String): String
   + {static} verificarClave(claveIngresada: String, claveHasheada: String): boolean
+  + {static} generarClaveAleatoria(): String
 }
 
 ' ============================== SERVICIOS DE GESTIÓN DE USUARIOS ==============================
 class ServicioUsuarios {
+  - validarDatos(correo:String, nombreUsuario:String): void
   + crearUsuario(nombreCompleto: String, cedula: String, correo: String, celular: String, estadoActivo: boolean, nombreUsuario: String, cargoSeleccionado: Rol): void
-  + buscarUsuarioPorCorreo(correo: String): Usuario
-  + buscarUsuarioPorNombreUsuario(nombreUsuario: String): Usuario
-  + buscarUsuarioPorId(id: Long): Usuario
+'  + buscarUsuarioPorCorreo(correo: String): Usuario
+'  + buscarUsuarioPorNombreUsuario(nombreUsuario: String): Usuario
+'  + buscarUsuarioPorId(id: Long): Usuario
   + listarUsuarios(): List<Usuario>
   + eliminarUsuario(id: Long): void
   + actualizarEstado(usuario: Usuario, estado: Boolean): void
@@ -95,20 +95,24 @@ class ServicioUsuarios {
 }
 
 class ServicioPerfilUsuario {
-  + puedeActualizarPerfil(usuario: Usuario, id: Long): boolean
-  + cambiarClave(usuario: Usuario, antigua: String, nueva: String): boolean
-  + obtenerPerfil(id: Long): Usuario
-  + actualizarPerfil(usuario: Usuario, correo: String, celular: String): void
+'  + puedeActualizarPerfil(usuario: Usuario, id: Long): boolean
+'  + cambiarClave(usuario: Usuario, antigua: String, nueva: String): boolean
+'  + obtenerPerfil(id: Long): Usuario
+'  + actualizarPerfil(usuario: Usuario, correo: String, celular: String): void
++actualizarCorreo(usuarioActivo: Usuario, nuevoEmail: String): void
++actualizarCelular(usuarioActivo: Usuario, nuevoCelular: String): void
++actualizarClave(usuarioActivo: Usuario, claveActual: String ,nuevaClave: String): void
 }
 
 class ServicioRoles {
-  + crearRol(rol: Rol): void
+  + obtenerRolPorIdUsuario(idUsuario: Long): Rol
   + listarRoles(): List<Rol>
+  + rolTienePermiso(idRol: Long, permiso: Permiso): boolean
+  + crearRol(rol: Rol): void
   + actualizarRol(rol: Rol): void
   + activarRol(idRol: Long): void
   + desactivarRol(idRol: Long): void
   + obtenerPermisosDelRol(idRol: Long): Set<Permiso>
-  + obtenerRolPorIdUsuario(idUsuario: Long): Rol
 }
 
 ' ============================== SERVICIOS DE COMUNICACIÓN ==============================
