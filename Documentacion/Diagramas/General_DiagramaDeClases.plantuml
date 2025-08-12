@@ -672,59 +672,6 @@ package servicios{
 
 }
 
-package utilidades {
-
-    package estrategiaValidacionDocumentos 
-    {
-
-        class ContextoValidacion #lightblue {
-            - estrategia: EstrategiaValidacion
-            + setEstrategia(estrategia: EstrategiaValidacion): void
-            + ejecutarEstrategia(documento: String): boolean
-        }
-        
-        class EstrategiaCedulaValidacion #lightblue implements EstrategiaValidacion  {
-        }
-        interface EstrategiaValidacion #lightblue {
-            + validar(documento: String): boolean
-        }
-
-        class EstrategiaPasaporteValidacion #lightblue implements EstrategiaValidacion {
-        }
-
-        class EstrategiaRucValidacion #lightblue extends EstrategiaCedulaValidacion {
-        }
-    }
-
-    package estrategiaParaDocumentos {
-        interface Exportable {
-            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
-        }
-
-        class EstrategiaExportarPDF implements Exportable {
-            +crearDocumentoPDF(): PDDocument
-            +guardarPDF(document: PDDocument, archivo: File): void
-        }
-
-        class EstrategiaExportarCSV implements Exportable {
-
-        }
-    }
-
-    class ServicioCorreoSingleton {
-        - instancia: ServicioCorreoSingleton
-        - remitente: String
-        - clave: String
-        - sesion: Session
-        - transport: Transport
-        - ServicioCorreoSingleton()
-        + getInstancia(): ServicioCorreoSingleton
-        - crearSesionSMTP(): Session
-        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje): boolean
-        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje, adjunto: File): boolean
-    }
-}
-
 ' ------------------ MODELOS ------------------
 package modelos {
 
@@ -812,6 +759,59 @@ ControladorReportesPrincipal --> Exportable
 ServicioFacturacion ..> ServicioCorreoSingleton
 
 
+}
+
+package utilidades {
+
+    package estrategiaValidacionDocumentos 
+    {
+
+        class ContextoValidacion #lightblue {
+            - estrategia: EstrategiaValidacion
+            + setEstrategia(estrategia: EstrategiaValidacion): void
+            + ejecutarEstrategia(documento: String): boolean
+        }
+        
+        class EstrategiaCedulaValidacion #lightblue implements EstrategiaValidacion  {
+        }
+        interface EstrategiaValidacion #lightblue {
+            + validar(documento: String): boolean
+        }
+
+        class EstrategiaPasaporteValidacion #lightblue implements EstrategiaValidacion {
+        }
+
+        class EstrategiaRucValidacion #lightblue extends EstrategiaCedulaValidacion {
+        }
+    }
+
+    package estrategiaParaDocumentos {
+        interface Exportable {
+            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
+        }
+
+        class EstrategiaExportarPDF implements Exportable {
+            +crearDocumentoPDF(): PDDocument
+            +guardarPDF(document: PDDocument, archivo: File): void
+        }
+
+        class EstrategiaExportarCSV implements Exportable {
+
+        }
+    }
+
+    class ServicioCorreoSingleton {
+        - instancia: ServicioCorreoSingleton
+        - remitente: String
+        - clave: String
+        - sesion: Session
+        - transport: Transport
+        - ServicioCorreoSingleton()
+        + getInstancia(): ServicioCorreoSingleton
+        - crearSesionSMTP(): Session
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje): boolean
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje, adjunto: File): boolean
+    }
 }
 
 package "Reportes"{
