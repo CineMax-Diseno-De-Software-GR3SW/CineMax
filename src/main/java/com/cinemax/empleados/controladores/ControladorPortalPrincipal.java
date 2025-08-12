@@ -63,10 +63,10 @@ public class ControladorPortalPrincipal {
         habilitarOpcionSiTienePermiso(btnGestionSalas, Permiso.GESTIONAR_SALA);
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
         habilitarOpcionSiTienePermiso(btnGestionButacas, Permiso.GESTIONAR_SALA);
-        habilitarOpcionSiTienePermiso(btnGestionFunciones, Permiso.GESTIONAR_FUNCION );
-        habilitarOpcionSiTienePermiso(btnGestionPeliculas , Permiso.GESTIONAR_FUNCION );
+        habilitarOpcionSiTienePermiso(btnGestionFunciones, Permiso.GESTIONAR_FUNCION);
+        habilitarOpcionSiTienePermiso(btnGestionPeliculas, Permiso.GESTIONAR_FUNCION);
 
-        if (ServicioTemporizador.getInstancia().tempEnEjecucion()){
+        if (ServicioTemporizador.getInstancia().tempEnEjecucion()) {
             ServicioTemporizador.getInstancia().detenerTemporizador();
         }
     }
@@ -75,7 +75,7 @@ public class ControladorPortalPrincipal {
     private void habilitarOpcionSiTienePermiso(Node nodo, Permiso permiso) {
         boolean visible = servicioSesion.tienePermiso(permiso);
         nodo.setVisible(visible);
-        //todo: Revisar huecos
+        // todo: Revisar huecos
         nodo.setManaged(visible); // evita huecos
     }
 
@@ -87,8 +87,9 @@ public class ControladorPortalPrincipal {
                 33,
                 225);
 
-//        ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionUsuarios.getScene().getWindow(),
-//                "/vistas/empleados/PantallaGestionUsuarios.fxml");
+        // ManejadorMetodosComunes.cambiarVentana((Stage)
+        // btnGestionUsuarios.getScene().getWindow(),
+        // "/vistas/empleados/PantallaGestionUsuarios.fxml");
     }
 
     @FXML
@@ -108,16 +109,17 @@ public class ControladorPortalPrincipal {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnGestionButacas.getScene().getWindow(),
                 "/vistas/salas/VistaGestionButacas.fxml");
     }
+
     @FXML
     private void onVenderBoleto() {
 
-        ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(
-            (Stage) btnVentaBoleto.getScene().getWindow(), 
-            "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 
-            33, 
-            225);
-        //ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
-        //        "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
+        // ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(
+        // (Stage) btnVentaBoleto.getScene().getWindow(),
+        // "/vistas/venta_boletos/VistaMostrarCartelera.fxml",
+        // 33,
+        // 225);
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnVentaBoleto.getScene().getWindow(),
+                "/vistas/venta_boletos/VistaMostrarCartelera.fxml");
     }
 
     @FXML
@@ -157,17 +159,17 @@ public class ControladorPortalPrincipal {
                 "/vistas/peliculas/PantallaSeleccionFuncion.fxml");
     }
 
-//    // Metodo genérico para navegación
-//    private void navegarA(String rutaFXML, String titulo, ActionEvent event) {
-//        try {
-//            FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
-//            Parent root = loader.load();
-//            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//            stage.setTitle(titulo);
-//            stage.setScene(new Scene(root));
-//            stage.show();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//    }
+    // // Metodo genérico para navegación
+    // private void navegarA(String rutaFXML, String titulo, ActionEvent event) {
+    // try {
+    // FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
+    // Parent root = loader.load();
+    // Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+    // stage.setTitle(titulo);
+    // stage.setScene(new Scene(root));
+    // stage.show();
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+    // }
 }

@@ -5,6 +5,7 @@ import com.cinemax.peliculas.modelos.entidades.Pelicula;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.venta_boletos.controladores.ControladorVisualizadorFunciones;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.stage.Stage;
@@ -12,6 +13,9 @@ import javafx.scene.Node;
 import javafx.event.ActionEvent;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Servicio para manejar la lógica de la cartelera de películas.
@@ -32,10 +36,24 @@ public class ServicioVisualizadorCartelera {
 
     // Lista observable de películas para enlace con la vista
     private ObservableList<Pelicula> listaPeliculas = FXCollections.observableArrayList();
-
     // Película actualmente seleccionada
     private Pelicula peliculaSeleccionada;
+    private static final ServicioVisualizadorCartelera instancia = new ServicioVisualizadorCartelera();
+    private final ScheduledExecutorService planificador = Executors.newScheduledThreadPool(1);
 
+    public static ServicioVisualizadorCartelera obtenerInstancia() {
+        return instancia;
+    }
+
+    private ServicioVisualizadorCartelera() {
+        // Programar la actualización automática cada 10 minutos/
+        planificador.scheduleAtFixedRate(() -> {
+            Platform.runLater(() -> {
+                cargarPeliculasDeCartelera(true); // Forzar recarga
+                System.out.println("Cartelera actualizada automáticamente a las " + new java.util.Date());
+            });
+        }, 0, 10, TimeUnit.MINUTES); // Inicia inmediatamente y luego cada 10 minutos
+    }
     // ========== MÉTODOS PÚBLICOS ==========
 
     /**
@@ -69,9 +87,24 @@ public class ServicioVisualizadorCartelera {
      * Carga inicialmente la lista de películas disponibles
      */
     public void cargarPeliculasDeCartelera() {
+        cargarPeliculasDeCartelera(false);
+    }
+
+    private void cargarPeliculasDeCartelera(boolean forzarRecarga) {
         try {
+            // Si no se fuerza la recarga y la lista ya tiene películas, no hacemos nada
+            if (!forzarRecarga && listaPeliculas != null && !listaPeliculas.isEmpty()) {
+                return;
+            }
+
             List<Pelicula> peliculasCargadas = controladorCartelera.obtenerCartelera();
-            listaPeliculas.setAll(peliculasCargadas);
+
+            if (peliculasCargadas != null) {
+                listaPeliculas.setAll(peliculasCargadas);
+            } else {
+                listaPeliculas.clear();
+            }
+
         } catch (Exception e) {
             System.err.println("Error al obtener cartelera: " + e.getMessage());
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar películas: " + e.getMessage());
