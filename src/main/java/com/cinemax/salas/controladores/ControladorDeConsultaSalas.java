@@ -66,7 +66,7 @@ public class ControladorDeConsultaSalas implements Initializable {
 
         try {
             // PASO 2: Obtener todas las butacas de esta sala desde la base de datos
-            List<Butaca> butacas = butacaService.listarButacasPorSala(salaSeleccionada.getId());
+            List<Butaca> butacas = servicioButaca.listarButacasPorSala(salaSeleccionada.getId());
             System.out.println("Total butacas obtenidas de la sala: " + butacas.size());
             
             // PASO 3: Procesar cada butaca y crear su botón visual
