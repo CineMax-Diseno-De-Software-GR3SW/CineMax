@@ -802,77 +802,37 @@ package "Reportes"{
     ' ===== MODELO (REPORTES) =====
     package "Modelo" {
 
-        class Reporte {
-            -int idReporte
-            -String tipoReporte
-            -Long intervaloEjecucion
-            -Date proximaEjecucion
-            -String contenido
-            -String formato
-            -String rutaArchivo
-        
-            +setFormatoDeContenido()
-            +guardarLocalmente(): boolean
-            +generar(IGeneradorReporte): void
-        }
+       interface EstrategiaDeFrecuencia #lightblue{
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
 
-        interface IVentas {
-            +obtenertotalVentas()
-            +obtenertotalBoletos()
-        }
-        
-        class ServicioFacturacion {
-        
-        }
-        
+    class EstrategiaDiaria #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
+    class EstrategiaSemanal #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
+    class EstrategiaMensual #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
+    class EstrategiaTrimestal #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
+    class EstrategiaAnual #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
 
-        class ReporteProgramado {
-            -String nombre
-            -String tipoReporte
-            -FrecuenciaReporte frecuencia
-            -Date fechaInicio
-            -Date fechaFin
-            -Time horaEjecucion
-            -boolean activo
-            ''-Date ultimaEjecucion
-            ''-Date proximaEjecucion
-            -String rutaAlmacenamiento
-            +programarProximaEjecucion(): void
-            +validarConfiguracion(): boolean
-        }
-
-        enum FrecuenciaReporte  {
-            DIARIO
-            SEMANAL
-            MENSUAL
-            ANUAL
-            +calcularProximaFecha(fechaBase: Date): Date
-        }
-        
-        class DatosGrafica {
-            -label String[]
-            -data: double[]
-            -metricName: String
-        }
-        
-        interface IGeneradorReporte {
-        +generarFormato(reporte: Reporte): String
-        }
-
-        class GeneradorPDF implements IGeneradorReporte {
-        +generarFormato(reporte: Reporte): String
-        }
-
-        class GeneradorCSV implements IGeneradorReporte {
-        +generarFormato(reporte: Reporte): String
-        }
-        
-
-        ServicioFacturacion .up.|> IVentas
-        Reporte --> IVentas
-        ReporteProgramado -left-> FrecuenciaReporte : tiene
-        ReporteProgramado --|> Reporte
-        Reporte -left-> IGeneradorReporte
+    class ReporteGenerado {
+        - int id
+        - String nombre
+        - String tipo
+        - LocalDateTime fechaGeneracion
+        - String rutaArchivo
+        - String descripcion
+        - String estado
+        - String frecuencia
+        --
+    }
         
         
     }
@@ -880,54 +840,112 @@ package "Reportes"{
     ' ===== SERVICIOS (REPORTES) =====
     package "Servicios" {
 
-        class ServicioReportes  {
-            - datos: Map<String, Object>
-            +generarReporteVentas(fechaInicio: Date, fechaFin: Date): Reporte
-            +guardarReporteLocalmente(reporte: Reporte, ruta: String): boolean
-            +obtenerDatosVentas(fechaInicio: Date, fechaFin: Date): Map<String, Object>
+        class ServicioDeReportes {
+        --
+        + ServicioDeReportes()
+        + Map<String, Object> getResumenDeVentas()
+        + List<Map<String, Object>> getEstadisticasDeBarras()
+        + List<Map<String, Object>> obtenerDatosFiltrados(List<Map<String, Object>> datos, String desde, String hasta)
         }
-
-        class ServicioProgramacionReportes {
-            +crearReporteProgramado(r: ReporteProgramado): ReporteProgramado
-            +actualizarReporteProgramado(reporteProgramado: ReporteProgramado): boolean
-            +eliminarReporteProgramado(idReporte: int): boolean
-            +listarReportesProgramados(): List<ReporteProgramado>
-            +obtenerReportesPendientes(): List<ReporteProgramado>
-            +ejecutarReporteProgramado(reporteProgramado: ReporteProgramado): boolean
-            +calcularProximaEjecucion(reporteProgramado: ReporteProgramado): Date
-            +verificarReportesPendientes(): void
+        class ServicioReportesProgramados #lightblue {
+            - static ServicioReportesProgramados instance
+            - List<ReporteGenerado> reportesPendientes
+            - ObservableList<ReporteGenerado> reportesEjecutados
+            - ScheduledExecutorService scheduler
+            --
+            - ServicioReportesProgramados()
+            + static ServicioReportesProgramados getInstance()
+            + void iniciarScheduler()
+            + void detenerScheduler()
+            + List<ReporteGenerado> getReportesPendientes()
+            + ObservableList<ReporteGenerado> getReportesEjecutados()
+            - void revisarReportesPendientes()
+            - EstrategiaDeFrecuencia getStrategy(String frecuencia)
+            - LocalDateTime calcularSiguienteEjecucion(LocalDateTime fechaGeneracion, String frecuencia)
+            + String calcularProximaEjecucion(String fechaGeneracionStr, String frecuencia)
         }
-
-        ServicioReportes --> IVentas : obtiene_datos
-        ServicioReportes --> Reporte
-        ServicioProgramacionReportes -right-> ReporteProgramado
+        ServicioReportesProgramados --> ReporteGenerado
+        ServicioReportesProgramados --> EstrategiaDeFrecuencia
     }
 
 
     ' ===== CONTROLADOR (REPORTES) =====
     package "Controlador" {
 
-        class ControladorReportes {
-            -ReportesView vista
-            -Reporte modelo
-            -ServicioReportes servicio
-            -ServicioProgramacionReportes servicioProgramacion
-            +inicializar(): void
-            +generarReporte(): void
-            +mostrarReporte(): void
-            +exportarReporte(formato: String): void
-            +generarGrafico(): void
-            +programarReporte(): void
-            +editarReporteProgramado(): void
-            +eliminarReporteProgramado(): void
-            +cargarReportesProgramados(): void
-            +ejecutarReportesPendientes(): void
+        class ControladorReportesPrincipal {
+            - Button botonRegresar
+            - Button botonFiltrar
+            - Button botonConfirmar
+            - ComboBox<String> elegirHorario
+            - BarChart<String, Number> diagramaBarras
+            - PieChart diagramaPastel
+            - ObservableList<ReporteGenerado> reportesGenerados
+            - ServicioDeReportes servicioReportes
+            - Map<String, Object> datos
+            - List<Map<String, Object>> estadisticas
+            - List<ReporteGenerado> reportesSimulados
+            --
+            + void initialize()
+            - void configurarTablaReportes()
+            - List<ReporteGenerado> cargarReportesDesdeCarpeta()
+            - void cargarReportesSimulados()
+            - void inicializarGraficasVacias()
+            - void abrirReporte(ReporteGenerado reporte)
+            + void irAReporteProgramado(ActionEvent event)
+            + void filtrar(ActionEvent event)
+            + void confirmarReporte(ActionEvent event)
+            - void actualizarGraficaBarras(List<Map<String, Object>> estadisticas)
+            - void actualizarGraficaPastel(List<Map<String, Object>> estadisticas)
+            - void exportarReporte(Exportable strategy, String tipo)
+            - void mostrarPrevisualizacionReporte(List<Map<String, Object>> datos, boolean permitirDescarga)
+            - VBox generarContenidoReporteCompleto(List<Map<String, Object>> datos)
+            - HBox crearEstadistica(String titulo, String valor)
+            - BarChart<String, Number> crearGraficaBarrasPreview(List<Map<String, Object>> datos)
+            - PieChart crearGraficaPastelPreview(List<Map<String, Object>> datos)
+            - Label crearCeldaTabla(String texto, boolean esHeader)
+            + void volverEscena(ActionEvent event)
         }
-
-        ControladorReportes --> Reporte : usa
-        ControladorReportes -left-> DatosGrafica: usa
-        ControladorReportes --> ServicioReportes : usa
-        ControladorReportes --> ServicioProgramacionReportes : usa
+    
+        class ControladorReportesProgramados {
+            - Button botonRegresar
+            - ComboBox<String> elegirFrecuencia
+            - ServicioReportesProgramados servicioReporteProgramado
+            - ServicioDeReportes servicioVentas
+            - Map<String, Object> datos
+            --
+            + void initialize()
+            - void inicializarTablaReportes()
+            + void confirmarReporteProgramado(ActionEvent event)
+            - boolean existeReporteConFrecuencia(String frecuencia)
+            - void mostrarVentanaPrevia()
+            - Label crearCeldaTabla(String texto, boolean esHeader)
+            - HBox crearFilaTabla(String fecha, String boletos, String ingresos)
+            - void agregarReporteATabla(String fechaEjecucion)
+            + void eliminarReporteProgramado(ReporteGenerado reporte)
+            - void mostrarVistaPrevia(ReporteGenerado reporte)
+            - VBox generarContenidoReporte(ReporteGenerado reporte)
+            - void descargarReporte(ReporteGenerado reporte, String formato)
+            + void irAReportesPrincipal(ActionEvent event)
+            + void volverEscena(ActionEvent event)
+        }
+    ControladorReportesPrincipal --> ServicioDeReportes
+    ControladorReportesPrincipal --> Exportable
+    ControladorReportesPrincipal --> EstrategiaExportarPDF
+    ControladorReportesPrincipal --> EstrategiaExportarCSV
+    
+    
+    
+    ControladorReportesProgramados --> ServicioReportesProgramados
+    ControladorReportesProgramados --> ServicioDeReportes
+    ControladorReportesProgramados --> Exportable
+    ControladorReportesProgramados --> EstrategiaExportarPDF
+    ControladorReportesProgramados --> EstrategiaExportarCSV
+    
+    ServicioReportesProgramados --> ServicioReportesProgramados
+    
+    
+    ReporteGenerado <-- ControladorReportesPrincipal
+    ReporteGenerado <-- ControladorReportesProgramados
     }
 }
 
