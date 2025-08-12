@@ -64,8 +64,8 @@ public class ControladorPortalPrincipal {
         habilitarOpcionSiTienePermiso(btnVentaBoleto, Permiso.VENDER_BOLETO);
         habilitarOpcionSiTienePermiso(btnGestionButacas, Permiso.GESTIONAR_SALA);
 
-        if (ServicioTemporizador.getInstance().tempEnEjecucion()){
-            ServicioTemporizador.getInstance().detenerTemporizador();
+        if (ServicioTemporizador.getInstancia().tempEnEjecucion()){
+            ServicioTemporizador.getInstancia().detenerTemporizador();
         }
     }
 

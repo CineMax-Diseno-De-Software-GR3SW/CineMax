@@ -16,6 +16,7 @@ package controladores {
         - cargarMapaButacas(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
         + agregarButacaSeleccionada(butaca: Butaca): void
         + quitarButacaDeseleccionada(butaca: Butaca): void
+        - timerLabel: Label
     }
 
     class ControladorFacturacion {
@@ -119,6 +120,10 @@ package servicios{
         + detenerTemporizador(): void
         + tempEnEjecucion(): boolean
         + tiempoRestanteProperty(): StringProperty
+    }
+
+    class ServicioMostrarFunciones{
+            + confirmarFuncion(): void
     }
 
 }
@@ -257,6 +262,13 @@ Boleto "1" *-- "1" Butaca
 
 ' Patrón Strategy
 ContextoValidacion o--> EstrategiaValidacion
+
+'Patron Singleton de ServicioTemporizador
+ServicioMostrarFunciones ..> ServicioTemporizador : <<usa>>
+ControladorAsignadorButacas ..> ServicioTemporizador : <<usa y observa>>
+ControladorFacturacion ..> ServicioTemporizador : <<usa y observa>>
+ControladorPortalPrincipal ..> ServicioTemporizador : <<usa>>
+
 
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
