@@ -1,0 +1,273 @@
+@startuml Gestión_de_Venta_de_Boletos
+title Diagrama de Clases - Gestión de Venta de Boletos
+
+skinparam linetype ortho
+
+' ------------------ CONTROLADORES ------------------
+
+package controladores {
+
+    class ControladorAsignadorButacas {
+        - funcionSeleccionada: Funcion
+        - ControladorInformacionDeVenta: ControladorInformacionDeVenta
+        - controladorDeConsultaSalas: ControladorDeConsultaSalas
+        - butacasSeleccionadas: List<Butaca>
+        + inicializarDatos(funcionSeleccionada: Funcion): void
+        - cargarMapaButacas(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
+        + agregarButacaSeleccionada(butaca: Butaca): void
+        + quitarButacaDeseleccionada(butaca: Butaca): void
+        - timerLabel: Label
+    }
+
+    class ControladorFacturacion {
+        - servicioFacturacion: ServicioFacturacion
+        - servicioCliente: ServicioCliente
+        - ControladorInformacionDeVenta: ControladorInformacionDeVenta
+        - boletos: List<Producto>
+        + cargarBoletosSeleccionados(boletos: List<Producto>): void
+        - crearCliente(): void
+        - actualizarCliente(): void
+        - buscarCliente(): void
+        - pagarBoletos(): void
+        - validarNumeroDocumentoCliente(): boolean
+        - timerLabel: Label
+    }
+
+    class ControladorInformacionDeVenta {
+        - cantidadDeButacasSeleccionadas: int
+        + cargarInformacionDeFuncionSeleccionada(funcion: Funcion): void
+        + calcularPosibleSubtotal(butacasSeleccionadas: List<Butaca>, funcion: Funcion): void
+        + calcularTotal(boletos: List<Producto>): void
+        + cargarButacaSeleccionada(butaca Butaca): void
+        + removerButacaSeleccionada(butaca Butaca): void
+    }
+
+    class ControladorVisualizadorCartelera {
+        - servicioVisualizarCartelera: ServicioVisualizarCartelera
+        - cargarCartelera(peliculas: List<Pelicula>): void
+    }   
+
+    class ControladorVisualizadorFunciones {
+        - servicioVisualizadorFunciones: ServicioVisualizadorFunciones
+        - peliculaSeleccionada: Pelicula
+        + asignarPeliculaSeleccionada(pelicula: Pelicula): void
+        - cargarInformacionPeliculaSeleccionada(pelicula: Pelicula): void
+        - cargarFunciones(): void
+    }
+}
+
+' ------------------ SERVICIOS ------------------
+package servicios{
+
+    class ServicioContenidoFactura {
+        +generarFactura(factura: Factura): void
+        +generarBoletos(boletos: List<Producto>): void
+        +unirPDFsFacturaYBoletos(facturaFile: File, boletosFiles: List<File>, archivoSalida: File): void
+        +generarNombreArchivoBoleto(boleto: Boleto): String
+    }
+
+    class ServicioFacturacion {
+        + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): void
+    }
+
+    interface ServicioGeneradorArchivo {
+        + generarFactura(factura: Factura): void
+        + generarBoletos(boletos: List<Producto>): void
+    }
+
+    class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
+        + generar(factura: Factura): void
+        + generar(boletos: List<Producto>): void
+        - crearCarpetaSiNoExiste(carpeta: String): void
+
+    }
+
+    class ServicioGeneradorBoleto{
+        + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
+    }
+
+    class ServicioVisualizadorCartelera {
+        - controladorCartelera: ControladorCartelera
+        - peliculaSeleccionada: Pelicula
+        + cargarPeliculasDeCartelera(): void
+        + seleccionarPelicula(pelicula: Pelicula, currentStage: Stage): void
+        - validarSeleccionPelicula(pelicula: Pelicula): void
+    }
+
+    class ServicioVisualizadorFunciones {
+        - controladorFunciones: ControladorFunciones
+        + cargarFunciones(pelicula: Pelicula): List<Funcion>
+        + seleccionarFuncion(tabla: TableView<Funcion>): void
+        - validarSeleccionFuncion(funcion: Funcion): void
+    }
+
+    class ServicioCliente {
+        + crearCliente(cliente: Cliente): void
+        + actualizarCliente(cliente: Cliente): void
+        + buscarCliente(numeroIdentificacion: String): Cliente
+        + existeCliente(numeroIdentificacion: String): boolean
+    }
+
+    class ServicioTemporizador #lightblue{
+        - {static} instancia: ServicioTemporizador
+        - temporizador: Timer
+        - tempEnEjecucion: boolean
+        - finTiempo: long
+        --
+        + {static} getInstancia(): ServicioTemporizador
+        + empezarTemporizador(stage: Stage): void
+        + detenerTemporizador(): void
+    }
+
+    class ServicioMostrarFunciones{
+            + confirmarFuncion(): void
+    }
+
+}
+
+package utilidades {
+
+    package estrategiaValidacionDocumentos  #lightyellow
+    {
+
+        class ContextoValidacion #lightblue {
+            - estrategia: EstrategiaValidacion
+            + setEstrategia(estrategia: EstrategiaValidacion): void
+            + ejecutarEstrategia(documento: String): boolean
+        }
+        
+        class EstrategiaCedulaValidacion #lightblue implements EstrategiaValidacion  {
+        }
+        interface EstrategiaValidacion #lightblue {
+            + validar(documento: String): boolean
+        }
+
+        class EstrategiaPasaporteValidacion #lightblue implements EstrategiaValidacion {
+        }
+
+        class EstrategiaRucValidacion #lightblue extends EstrategiaCedulaValidacion {
+        }
+    }
+
+    package estrategiaParaDocumentos {
+        interface Exportable {
+            +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
+        }
+
+        class EstrategiaExportarPDF implements Exportable {
+            +crearDocumentoPDF(): PDDocument
+            +guardarPDF(document: PDDocument, archivo: File): void
+        }
+
+        class EstrategiaExportarCSV implements Exportable {
+
+        }
+    }
+
+    class ServicioCorreoSingleton {
+        - instancia: ServicioCorreoSingleton
+        - remitente: String
+        - clave: String
+        - sesion: Session
+        - transport: Transport
+        - ServicioCorreoSingleton()
+        + getInstancia(): ServicioCorreoSingleton
+        - crearSesionSMTP(): Session
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje): boolean
+        + enviarCorreo(destinatario: String, contenido: ContenidoMensaje, adjunto: File): boolean
+    }
+}
+
+' ------------------ MODELOS ------------------
+package modelos {
+
+    class Boleto {
+        - funcion: Funcion
+        - butaca: Butaca
+    }
+
+    interface CalculadorImpuesto {
+        + calcularImpuesto(subtotal: double): double
+    }
+
+    class CalculadorIVA {
+        - {static} IVA_TASA: double
+    }
+
+    class Cliente {
+        - idCliente: String
+        - tipoDocumento: String
+        - nombre: String
+        - apellido: String
+        - correoElectronico: String
+    }
+
+    class Factura {
+        - codigoFactura: long
+        - fecha: String
+        - cliente: Cliente
+        - productos: List<Producto>
+        - subtotal: double
+        - total: double
+        + calcularSubTotal(): void
+        + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
+    }
+
+    abstract class Producto {
+        - precio: double
+        + {abstract} calcularPrecio(): void
+    }
+
+}
+
+
+
+' ------------------ RELACIONES ------------------
+
+' Relaciones de composición y agregación (tienen instancias como atributos)
+ControladorFacturacion *--> ServicioFacturacion
+ControladorFacturacion *--> ServicioCliente
+ControladorVisualizadorCartelera *--> ServicioVisualizadorCartelera
+ControladorVisualizadorFunciones *--> ServicioVisualizadorFunciones
+ControladorAsignadorButacas o--> ControladorInformacionDeVenta
+ControladorFacturacion o--> ControladorInformacionDeVenta
+
+' Relaciones de uso/dependencia (se crean o usan temporalmente)
+ControladorAsignadorButacas ..> ServicioGeneradorBoleto
+ControladorFacturacion ..> ContextoValidacion
+ControladorFacturacion ..> CalculadorImpuesto
+
+
+' Servicios que crean o usan entidades
+ServicioGeneradorBoleto ..> Boleto
+ServicioFacturacion ..> Factura
+ServicioFacturacion ..> ServicioGeneradorArchivoPDF
+ServicioFacturacion ..> ServicioContenidoFactura
+ServicioContenidoFactura ..> EstrategiaExportarPDF
+ServicioFacturacion ..left> Cliente
+
+' Relaciones de herencia e implementación
+Producto <|-- Boleto
+CalculadorIVA ..up|> CalculadorImpuesto
+
+' Asociaciones entre entidades
+Factura "1" *-- "1..*" Producto
+Factura "1" *-- "1..*" Cliente
+Boleto "1" *-- "1" Funcion
+Boleto "1" *-- "1" Butaca
+
+' Patrón Strategy
+ContextoValidacion o--> EstrategiaValidacion
+
+'Patron Singleton de ServicioTemporizador
+ServicioMostrarFunciones ..> ServicioTemporizador : <<usa>>
+ControladorAsignadorButacas ..> ServicioTemporizador : <<usa y observa>>
+ControladorFacturacion ..> ServicioTemporizador : <<usa y observa>>
+
+
+' Uso de interfaces/clases abstractas
+Factura ..> CalculadorImpuesto
+
+ControladorReportesPrincipal --> Exportable
+ServicioFacturacion ..> ServicioCorreoSingleton
+@enduml

@@ -1,70 +1,562 @@
 /* --- ESTILOS GENERALES (TEMA OSCURO CLÁSICO) --- */
-.root, .content-pane {
-    -fx-background-color: #1E1E1E; /* Fondo principal oscuro */
-    -fx-font-family: "Segoe UI", Arial, sans-serif;
+
+.root,
+.content-pane {
+  -fx-background-color: #1e1e1e;
+  -fx-font-family: "Segoe UI", Arial, sans-serif;
 }
 
 .label {
-    -fx-text-fill: #EAEAEA; /* Texto principal casi blanco */
-    -fx-font-size: 14px;
+  -fx-text-fill: #eaeaea;
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
 }
 
-/* --- SCROLLPANE --- */
-.scroll-pane { -fx-background-color: transparent; }
-.scroll-pane .viewport { -fx-background-color: transparent; }
-.scroll-bar:vertical .thumb { -fx-background-color: #F25F00; -fx-background-radius: 10px; }
-.scroll-bar:vertical .track { -fx-background-color: #4A4A4A; -fx-background-radius: 10px; }
+/* --- ESTRUCTURA Y PANELES --- */
 
-
-/* --- CABECERA Y NAVEGACIÓN --- */
-.header-bar { -fx-alignment: center-left; -fx-padding: 0 10px; -fx-min-height: 50px; -fx-border-color: #4A4A4A; -fx-border-width: 0 0 1px 0; }
-.icon-button { -fx-background-color: transparent; -fx-padding: 8px; -fx-border-radius: 50%; -fx-background-radius: 50%; }
-.icon-button:hover { -fx-background-color: #4A4A4A; }
-.icon-button .text { -fx-font-size: 20px; -fx-fill: white; -fx-font-weight: bold; }
-.close-button:hover { -fx-background-color: #E81123; }
-.close-button:hover .text { -fx-fill: white; }
-.theme-button .text { -fx-font-size: 16px; }
-
-/* --- PANELES Y TARJETAS --- */
-.ticket-card, .financial-summary-pane, .alert-pane, .summary-pane {
-    -fx-background-color: #2B2B2B; /* Gris oscuro para paneles */
-    -fx-background-radius: 12px;
-    -fx-padding: 20px;
-    -fx-border-color: transparent;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 10, 0, 0, 5);
+.header-bar {
+  -fx-alignment: center-left;
+  -fx-padding: 0 10px;
+  -fx-min-height: 50px;
+  -fx-border-color: #4a4a4a;
+  -fx-border-width: 0 0 1px 0;
 }
-.ticket-details-card { -fx-background-color: transparent; -fx-border-color: #4A4A4A; -fx-border-width: 0 0 1px 0; -fx-padding: 0 0 15px 0; }
-.summary-pane > .hbox { -fx-alignment: center; }
 
-/* --- TEXTOS ESPECÍFICOS --- */
-.section-title { -fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
-.ticket-price, .summary-title { -fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #FFFFFF; }
-.summary-details { -fx-font-size: 14px; -fx-text-fill: #B0B0B0; }
+.scroll-pane {
+  -fx-background-color: transparent;
+}
+
+.scroll-pane .viewport {
+  -fx-background-color: transparent;
+}
+
+.scroll-bar:vertical .thumb {
+  -fx-background-color: #0079cf;
+  -fx-background-radius: 10px;
+}
+
+.scroll-bar:vertical .track {
+  -fx-background-color: #4a4a4a;
+  -fx-background-radius: 10px;
+}
+
+.ticket-card,
+.financial-summary-pane,
+.alert-pane,
+.summary-pane,
+.info-admin-pane {
+  -fx-background-color: #2b2b2b;
+  -fx-background-radius: 12px;
+  -fx-padding: 20px;
+  -fx-border-color: transparent;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 5);
+}
+
+.ticket-details-card {
+  -fx-background-color: transparent;
+  -fx-border-color: #4a4a4a;
+  -fx-border-width: 0 0 1px 0;
+  -fx-padding: 0 0 15px 0;
+}
+
+.summary-pane > .hbox {
+  -fx-alignment: center;
+}
+
+/* --- ESTILOS DE TEXTO --- */
+
+.title {
+  -fx-font-size: 50px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #02487b;
+}
+
+.section-title {
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #ffffff;
+}
+
+.ticket-price,
+.summary-title {
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #ffffff;
+}
+
+.summary-details {
+  -fx-font-size: 14px;
+  -fx-text-fill: #b0b0b0;
+}
+
+.form-label {
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #ffffff;
+}
+
+.help-text {
+  -fx-font-size: 12px;
+  -fx-text-fill: #b0b0b0;
+  -fx-font-style: italic;
+}
+
+.required-asterisk {
+  -fx-text-fill: #f70101;
+  -fx-font-size: 10px;
+}
 
 /* --- BOTONES --- */
-.stepper-button { -fx-background-color: #F25F00; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 50em; -fx-alignment: CENTER; -fx-padding: 4px 12px; }
-.stepper-button:hover { -fx-background-color: #D85600; }
-.primary-button { -fx-background-color: #02487B; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 8px; -fx-pref-height: 45px; }
-.primary-button:hover { -fx-background-color: #035a9a; }
-.link-button { -fx-background-color: transparent; -fx-text-fill: #B0B0B0; -fx-underline: true; }
-.link-button:hover { -fx-text-fill: white; }
 
-/* --- FORMULARIOS --- */
-.text-field { -fx-background-color: #2B2B2B; -fx-text-fill: #EAEAEA; -fx-prompt-text-fill: #888888; -fx-background-radius: 8px; -fx-border-color: #4A4A4A; -fx-border-radius: 8px; -fx-font-size: 14px; -fx-padding: 8px; }
-.text-field:focused { -fx-border-color: #F25F00; }
-.combo-box { -fx-background-color: #2B2B2B; -fx-border-color: #4A4A4A; -fx-border-radius: 8px; -fx-background-radius: 8px; }
-.combo-box .list-cell { -fx-text-fill: white; -fx-background-color: #2B2B2B; }
-.combo-box-popup .list-view { -fx-background-color: #2B2B2B; -fx-border-color: #4A4A4A; }
-.combo-box-popup .list-view .list-cell:hover { -fx-background-color: #4A4A4A; }
-.combo-box-popup .list-view .list-cell:filled:selected { -fx-background-color: #F25F00; }
-.confirmation-checkbox .box { -fx-background-color: transparent; -fx-border-color: #888888; -fx-border-radius: 4px; }
-.confirmation-checkbox:selected .box .mark { -fx-background-color: #F25F00; }
+.stepper-button {
+  -fx-background-color: #02487b;
+  -fx-text-fill: white;
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-background-radius: 50em;
+  -fx-alignment: CENTER;
+  -fx-padding: 4px 12px;
+}
 
-/* --- ALERTA PERSONALIZADA --- */
-.alert-pane { -fx-background-color: #2B2B2B; -fx-border-color: #4A4A4A; -fx-border-radius: 12px; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0, 0, 10); }
-.alert-title { -fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white; }
-.alert-message { -fx-font-size: 14px; -fx-text-fill: #EAEAEA; -fx-text-alignment: center; }
+.stepper-button:hover {
+  -fx-background-color: #00345a;
+}
 
-/* --- Iconos y Contadores --- */
-.summary-ticket-count { -fx-background-color: #4A4A4A; -fx-text-fill: white; }
-.summary-price { -fx-text-fill: white; }
+.primary-button {
+  -fx-background-color: #02487b;
+  -fx-text-fill: white;
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+  -fx-background-radius: 8px;
+  -fx-pref-height: 45px;
+}
+
+.primary-button:hover {
+  -fx-background-color: #035a9a;
+}
+
+.link-button {
+  -fx-background-color: transparent;
+  -fx-text-fill: #b0b0b0;
+  -fx-underline: true;
+}
+
+.link-button:hover {
+  -fx-text-fill: white;
+}
+
+.icon-button {
+  -fx-background-color: transparent;
+  -fx-padding: 8px;
+  -fx-border-radius: 50%;
+  -fx-background-radius: 50%;
+}
+
+.icon-button:hover {
+  -fx-background-color: #4a4a4a;
+}
+
+.icon-button .text {
+  -fx-font-size: 12px;
+  -fx-fill: white;
+  -fx-font-weight: bold;
+}
+
+.close-button:hover {
+  -fx-background-color: #e81123;
+}
+
+.close-button:hover .text {
+  -fx-fill: white;
+}
+
+.btn-small {
+  -fx-font-size: 12px;
+  -fx-padding: 4 10;
+  -fx-background-radius: 5px;
+  -fx-font-weight: bold;
+  -fx-background-color: #02487b;
+  -fx-text-fill: white;
+}
+
+#btnConfirmar {
+  -fx-background-color: #02487b;
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-padding: 10 20;
+  -fx-border-radius: 5px;
+  -fx-background-radius: 5px;
+  -fx-cursor: hand;
+}
+
+#btnConfirmar:hover {
+  -fx-background-color: #02487b;
+}
+
+/* --- CONTROLES DE FORMULARIO --- */
+
+.text-field {
+  -fx-background-color: #2b2b2b;
+  -fx-text-fill: #eaeaea;
+  -fx-prompt-text-fill: #888888;
+  -fx-background-radius: 8px;
+  -fx-border-color: #4a4a4a;
+  -fx-border-radius: 8px;
+  -fx-font-size: 14px;
+  -fx-padding: 8px;
+}
+
+.text-field:focused {
+  -fx-border-color: #0079cf;
+}
+
+.text-area {
+  -fx-background-color: #3a3a3a;
+  -fx-text-fill: #eaeaea;
+}
+
+.text-area .content {
+  -fx-background-color: #3a3a3a;
+}
+
+.text-area:focused {
+  -fx-border-color: #0079cf;
+  -fx-border-width: 2px;
+}
+
+/* --- ComboBox --- */
+.combo-box {
+  -fx-background-color: #02487b;
+  -fx-border-color: #02487b;
+  -fx-border-radius: 8px;
+  -fx-background-radius: 8px;
+  -fx-mark-color: white;
+}
+
+.combo-box .list-cell {
+  -fx-text-fill: white;
+  -fx-background-color: #02487b;
+}
+
+.combo-box-popup .list-view {
+  -fx-background-color: #02487b;
+  -fx-border-color: #1f2430;
+}
+
+.combo-box-popup .list-view .list-cell {
+  -fx-background-color: #02487b;
+  -fx-text-fill: white;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+  -fx-background-color: #0079cf;
+  -fx-text-fill: #ffffff;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+  -fx-background-color: #02487b;
+}
+
+/* --- ChoiceBox --- */
+.choice-box {
+  -fx-background-color: #ffffff;
+  -fx-border-color: #4a4a4a;
+  -fx-border-radius: 8px;
+  -fx-background-radius: 8px;
+}
+
+.choice-box .label {
+  -fx-text-fill: #000000;
+  -fx-font-weight: bold;
+  -fx-background-color: #ffffff;
+}
+
+.choice-box .arrow-button {
+  -fx-background-color: #02487b;
+  -fx-border-color: #02487b;
+}
+
+.choice-box .arrow-button:hover {
+  -fx-background-color: #0079cf;
+}
+
+.choice-box-popup .list-view {
+  -fx-background-color: #ffffff;
+  -fx-border-color: #4a4a4a;
+}
+
+.choice-box-popup .list-view .list-cell {
+  -fx-background-color: #ffffff;
+  -fx-text-fill: #000000;
+  -fx-font-weight: bold;
+}
+
+.choice-box-popup .list-view .list-cell:hover {
+  -fx-background-color: #e0e0e0;
+  -fx-text-fill: #000000;
+}
+
+.choice-box-popup .list-view .list-cell:filled:selected {
+  -fx-background-color: #02487b;
+  -fx-text-fill: #ffffff;
+}
+
+/* --- CheckBox --- */
+.confirmation-checkbox {
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 19px;
+  -fx-font-weight: bold;
+}
+
+.confirmation-checkbox .box {
+  -fx-background-color: transparent;
+  -fx-border-color: #0079cf;
+  -fx-border-radius: 4px;
+}
+
+.confirmation-checkbox:selected .box .mark {
+  -fx-background-color: #aad94c; /* Verde para confirmación */
+}
+
+/* --- RadioButton --- */
+.radio-button {
+  -fx-font-size: 14px;
+  -fx-text-fill: #fff;
+  -fx-padding: 5 10;
+}
+
+.radio-button:selected {
+  -fx-text-fill: #02487b;
+  -fx-font-weight: bold;
+}
+
+.radio-button .radio {
+  -fx-border-color: #02487b;
+  -fx-border-width: 2;
+  -fx-background-color: transparent;
+  -fx-background-radius: 50%;
+  -fx-padding: 3;
+  -fx-focus-color: transparent;
+  -fx-faint-focus-color: transparent;
+  -fx-effect: none;
+}
+
+.radio-button:selected .radio {
+  -fx-background-color: #02487b;
+  -fx-effect: none;
+}
+
+/* --- ToggleButton --- */
+.toggle-button.switch {
+  -fx-background-color: #ccc;
+  -fx-background-radius: 20;
+  -fx-padding: 0 5 0 5;
+  -fx-alignment: CENTER_LEFT;
+  -fx-pref-width: 50;
+  -fx-pref-height: 25;
+}
+
+.toggle-button.switch:selected {
+  -fx-background-color: #02487b;
+  -fx-alignment: CENTER_RIGHT;
+}
+
+.toggle-button.switch > .text {
+  -fx-fill: #ffffff;
+  -fx-font-weight: bold;
+}
+
+/* --- TABLAS --- */
+
+.table-view {
+  -fx-background-color: #f9fafb;
+  -fx-border-color: #e3e6ea;
+  -fx-table-cell-border-color: transparent;
+}
+
+.table-view .column-header {
+  -fx-background-color: #02487b;
+}
+
+.table-view .column-header .label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+}
+
+.table-row-cell {
+  -fx-background-color: white;
+}
+
+.table-row-cell:filled:selected,
+.table-row-cell:focused:selected {
+  -fx-background-color: #0079cf;
+  -fx-text-fill: white;
+}
+
+/* --- GRÁFICAS --- */
+
+.chart {
+  -fx-background-color: #2b2b2b;
+  -fx-padding: 10px;
+  -fx-background-radius: 8px;
+}
+
+.chart-title {
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 16px;
+  -fx-font-weight: bold;
+}
+
+.chart-plot-background {
+  -fx-background-color: #2b2b2b;
+}
+
+.axis {
+  -fx-tick-label-fill: #ffffff;
+  -fx-tick-label-font-size: 12px;
+  -fx-font-weight: bold;
+}
+
+.axis-label {
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+}
+
+.chart-legend {
+  -fx-background-color: #2b2b2b;
+  -fx-text-fill: #ffffff;
+}
+
+.chart-legend-item .label {
+  -fx-text-fill: #ffffff;
+  -fx-font-weight: bold;
+}
+
+.pie-chart-label {
+  -fx-text-fill: #ffffff;
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+}
+
+.pie-chart .chart-pie-label {
+  -fx-text-fill: #ffffff;
+  -fx-font-weight: bold;
+  -fx-font-size: 11px;
+}
+
+/* --- ESTILOS ESPECÍFICOS DE VISTAS --- */
+
+/* Título de película para vistas generales (ej. Facturación) */
+.movie-title {
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #0079cf;
+}
+
+/* Título de película para las tarjetas de la cartelera */
+.movie-title-card {
+  -fx-font-size: 14px;
+  -fx-text-fill: #eaeaea;
+  -fx-font-weight: bold;
+  -fx-text-alignment: center;
+  -fx-wrap-text: true; /* Propiedad clave para el ajuste */
+}
+
+.movie-genre-year-card {
+  -fx-text-fill: #b0b0b0;
+  -fx-font-size: 12px;
+}
+
+.detail-label {
+  -fx-font-size: 12px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #b0b0b0;
+}
+
+.detail-value {
+  -fx-font-size: 14px;
+  -fx-text-fill: #ffffff;
+  -fx-font-weight: bold;
+}
+
+/* Dashboard o Panel Principal */
+#lblNombreUsuario {
+  -fx-font-size: 28px;
+  -fx-font-weight: bold;
+}
+
+#lblRolUsuario {
+  -fx-font-size: 18px;
+}
+
+.dashboard-button {
+  -fx-background-color: #02487b;
+  -fx-background-radius: 14px;
+  -fx-padding: 10;
+  -fx-cursor: hand;
+  -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0, 0, 5);
+}
+.dashboard-button:hover {
+  -fx-background-color: #035a9a;
+}
+
+.dashboard-button .label {
+  -fx-text-fill: white;
+  -fx-font-weight: bold;
+  -fx-font-size: 16px;
+}
+
+.section-header {
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #0079cf;
+  -fx-padding: 25 0 15 5;
+  -fx-border-color: #4a4a4a;
+  -fx-border-width: 0 0 1px 0;
+}
+
+.welcome-title {
+  -fx-font-size: 36px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #ffffff;
+}
+
+.welcome-information{
+  -fx-font-size: 18px;
+  -fx-font-weight: bold;
+  -fx-text-fill: #b0b0b0;
+}
+
+/* --- ÍCONOS --- */
+.warning-icon {
+  -fx-font-size: 32px;
+  -fx-text-fill: #ffc107;
+  -fx-font-weight: bold;
+}
+
+.error-icon {
+  -fx-font-size: 24px;
+  -fx-text-fill: #e53935;
+  -fx-font-weight: bold;
+}
+
+.success-icon {
+  -fx-font-size: 24px;
+  -fx-text-fill: #43a047;
+  -fx-font-weight: bold;
+}
+
+
+.titleLogin {
+  -fx-font-size: 42px;         /* Tamaño grande, pero no exagerado */
+  -fx-font-weight: 300;        /* Peso ligero */
+  -fx-text-fill: #1e88e5;      /* Azul moderno */
+  -fx-font-family: "Segoe UI", "Arial", sans-serif; /* Fuente limpia */
+  -fx-alignment: center;       /* Centrado horizontal */
+}
+
+.perfil-label {
+  -fx-font-size: 20px;         /* Tamaño más grande para mejor lectura */
+
+}

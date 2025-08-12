@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane prefHeight="550.0" prefWidth="800.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.venta_boletos.controladores.ControladorResumen">
+    <top>
+        <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button onAction="#onBackAction" styleClass="icon-button" text="←" />
+                <Label styleClass="section-title" text="Carrito" />
+                <Region HBox.hgrow="ALWAYS" />
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="20.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
+            </padding>
+            <Label styleClass="section-title" text="Confirmación" />
+            <VBox fx:id="ticketDetailsContainer" spacing="12.0" styleClass="ticket-details-card" />
+            <Separator />
+            <CheckBox fx:id="confirmCheckBox" styleClass="confirmation-checkbox" text="Confirmo la compra en SCALA (Quito)" />
+            <Label text="Avda. Interoceánica S/N" textFill="#B0B0B0" />
+            <Label style="-fx-font-size: 12px;" text="Una vez realizada la compra, no se aceptan cambios ni devoluciones." textFill="#888888" />
+        </VBox>
+    </center>
+
+    <right>
+        <VBox maxWidth="280" minWidth="280" spacing="15.0" styleClass="financial-summary-pane">
+            <!-- ... contenido del panel financiero ... -->
+            <GridPane hgap="10.0" vgap="10.0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                </columnConstraints>
+                <Label text="Subtotal:" styleClass="summary-label" GridPane.rowIndex="0" />
+                <Label fx:id="subtotalLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                <Label text="Impuestos (15%):" styleClass="summary-label" GridPane.rowIndex="1" />
+                <Label fx:id="impuestosLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Total del pedido:" GridPane.rowIndex="2" />
+                <Label fx:id="totalLabel" alignment="CENTER_RIGHT" maxWidth="Infinity" style="-fx-font-weight: bold; -fx-font-size: 16px;" text="0.00" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <rowConstraints>
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+            </rowConstraints>
+            </GridPane>
+            <Region VBox.vgrow="ALWAYS" />
+            <Button fx:id="continueButton" maxWidth="Infinity" onAction="#onContinuarAction" styleClass="primary-button" text="Ir a pagar" />
+        </VBox>
+    </right>
+</BorderPane>

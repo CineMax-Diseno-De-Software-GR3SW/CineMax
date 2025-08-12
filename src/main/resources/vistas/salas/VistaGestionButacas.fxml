@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/17.0.2-ea"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.cinemax.salas.controladores.ControladorButacas"
+            stylesheets="@../temas/styles.css"
+            styleClass="root"
+            prefWidth="1400.0" prefHeight="800.0">
+
+    <!-- HEADER -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
+            <children>
+                <Button fx:id="btnBack" text="←" styleClass="stepper-button" onAction="#onBackAction"/>
+                <Label text="Gestión de Butacas" styleClass="section-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+            </children>
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+        </HBox>
+    </top>
+
+    <!-- CENTRO: Panel izquierdo formulario, derecho tabla -->
+    <center>
+        <HBox spacing="20.0">
+            <padding>
+                <Insets top="15" right="20" bottom="15" left="20"/>
+            </padding>
+
+            <!-- Panel Izquierdo: Formulario -->
+            <VBox spacing="15.0" prefWidth="480.0" minWidth="480.0" maxWidth="480.0">
+                <ScrollPane fitToWidth="true" styleClass="scroll-pane" VBox.vgrow="ALWAYS">
+                    <VBox spacing="20.0">
+                        <padding>
+                            <Insets top="20" right="20" bottom="20" left="20"/>
+                        </padding>
+
+                        <VBox spacing="20.0" styleClass="ticket-card">
+                            <Label text="Datos de la Butaca" styleClass="section-title"/>
+
+                            <!-- Fila -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Fila" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <TextField fx:id="txtFila" promptText="Ej. A" styleClass="text-field"/>
+                            </VBox>
+
+                            <!-- Columna -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Columna" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <TextField fx:id="txtColumna" promptText="Ej. 5" styleClass="text-field"/>
+                            </VBox>
+
+                            <!-- Estado -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Estado" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <ComboBox fx:id="cmbEstado" promptText="Seleccione estado" styleClass="combo-box"/>
+                            </VBox>
+
+                            <!-- Sala -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="Sala" styleClass="form-label"/>
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                </HBox>
+                                <ComboBox fx:id="cmbSala" promptText="Seleccione sala" styleClass="combo-box"/>
+                            </VBox>
+
+                            <!-- Indicador obligatorio -->
+                            <VBox spacing="8.0">
+                                <HBox alignment="CENTER_LEFT" spacing="2">
+                                    <Label text="*" styleClass="required-asterisk"/>
+                                    <Label text="Campos Obligatorios" styleClass="help-text"/>
+                                </HBox>
+                            </VBox>
+                        </VBox>
+
+                        <!-- Botones del formulario -->
+                        <VBox spacing="10.0" alignment="CENTER">
+                            <Button fx:id="btnGuardar" text="Crear" styleClass="primary-button"
+                                    disable="true" prefWidth="200.0" onAction="#onGuardar"/>
+                            <HBox spacing="10.0" alignment="CENTER">
+                                <Button fx:id="btnNuevo" text="Nuevo" styleClass="link-button"
+                                        prefWidth="90.0" onAction="#onLimpiarFormulario"/>
+                                <Button fx:id="btnLimpiarFormulario" text="Limpiar" styleClass="link-button"
+                                        prefWidth="90.0" onAction="#onLimpiarFormulario"/>
+                            </HBox>
+                        </VBox>
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+
+            <!-- Panel derecho: Búsqueda y Tabla -->
+            <VBox spacing="12.0" HBox.hgrow="ALWAYS">
+
+                <!-- Búsqueda -->
+                <VBox spacing="10.0" styleClass="ticket-card">
+                    <HBox spacing="10.0" alignment="CENTER_LEFT">
+                        <children>
+                            <Label text="Buscar:"/>
+                            <TextField fx:id="txtBuscarIdSala" promptText="Nombre o ID Sala" prefWidth="220.0" styleClass="text-field"/>                            <Button fx:id="btnBuscar" onAction="#listarButacasPorSala" text="🔍" styleClass="icon-button"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                        </children>
+                    </HBox>
+                </VBox>
+
+                <!-- Tabla -->
+                <TableView fx:id="tablaButacas" styleClass="table-view" VBox.vgrow="ALWAYS">
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                    <columns>
+                        <TableColumn fx:id="colId" text="ID" prefWidth="60.0" minWidth="50.0"/>
+                        <TableColumn fx:id="colFila" text="Fila" prefWidth="120.0" minWidth="80.0"/>
+                        <TableColumn fx:id="colColumna" text="Columna" prefWidth="120.0" minWidth="80.0"/>
+                        <TableColumn fx:id="colEstado" text="Estado" prefWidth="120.0" minWidth="80.0"/>
+                        <TableColumn fx:id="colIdSala" text="ID Sala" prefWidth="120.0" minWidth="80.0"/>
+                    </columns>
+                </TableView>
+
+                <!-- Botones acción -->
+                <HBox spacing="12.0" alignment="CENTER">
+                    <children>
+                        <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarButaca" styleClass="primary-button" disable="true"/>
+                    </children>
+                </HBox>
+
+                <!-- Información -->
+                <HBox spacing="15.0" alignment="CENTER_LEFT" styleClass="summary-pane">
+                    <children>
+                        <Label fx:id="lblTotalButacas" text="Total de butacas: 0" styleClass="summary-details"/>
+                        <Label fx:id="lblEstado" text="" styleClass="summary-details"/>
+                    </children>
+                </HBox>
+            </VBox>
+        </HBox>
+    </center>
+</BorderPane>

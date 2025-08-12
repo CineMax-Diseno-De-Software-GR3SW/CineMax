@@ -1,7 +1,7 @@
 package com.cinemax.empleados.modelos.persistencia;
 
-import com.cinemax.comun.ConexionBaseSingleton;
 import com.cinemax.empleados.modelos.entidades.Rol;
+import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 import com.cinemax.empleados.modelos.entidades.Permiso;
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,10 +19,7 @@ public class RolDAO {
     }
 
     public Rol buscarRolPorIdEmpleado(Long idEmpleado) throws Exception {
-        String sql = "SELECT r.IDROL, r.NOMBRE, r.DESCRIPCION, r.ROLACTIVO " +
-                     "FROM ROL r " +
-                     "INNER JOIN USUARIO u ON r.IDROL = u.IDROL " +
-                     "WHERE u.IDUSUARIO = " + idEmpleado;
+        String sql = "SELECT * FROM buscar_rol_por_id_usuario(" + idEmpleado + ")";
 
         // SELECT
         ResultSet rs = null;

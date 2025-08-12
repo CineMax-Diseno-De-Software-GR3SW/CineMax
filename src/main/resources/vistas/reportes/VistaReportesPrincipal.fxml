@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- 
+     ═══════════════════════════════════════════════════════════════════════════════
+     VISTA PRINCIPAL DE REPORTES - CINEMAX
+     ═══════════════════════════════════════════════════════════════════════════════
+     
+     Esta vista FXML define la interfaz principal para la gestión de reportes del sistema.
+     Incluye filtros de fecha, gráficas de visualización de datos, tabla de reportes
+     generados y opciones de navegación.
+     
+     Controlador asociado: ControladorReportesPrincipal
+     ═══════════════════════════════════════════════════════════════════════════════
+-->
+<!-- Importaciones de componentes JavaFX necesarios -->
+
+<?import javafx.scene.chart.BarChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<!-- 
+     CONTENEDOR PRINCIPAL - BorderPane
+     Organiza la interfaz en regiones: top, center, left
+     Dimensiones: 1200x700 píxeles
+     Aplica hoja de estilos personalizada
+-->
+
+<BorderPane prefHeight="700" prefWidth="1200" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.reportes.controladores.ControladorReportesPrincipal">
+
+    <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+    <!-- BARRA SUPERIOR (TOP BAR) -->
+    <!-- Contiene el botón de regresar y el título de la sección -->
+    <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+    <top>
+        <!-- Contenedor horizontal para alinear elementos en la barra superior -->
+        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="header-bar">
+            <children>
+                <!-- Botón de navegación hacia atrás con símbolo de flecha -->
+                <Button fx:id="btnBack" onAction="#volverEscena" styleClass="stepper-button" text="←" />
+
+                <!-- Título principal de la sección con fuente personalizada -->
+                <Label styleClass="section-title" text="Gestión de Reportes">
+                    <font><Font name="Arial Black" size="22" /></font>
+                </Label>
+            </children>
+        </HBox>
+    </top>
+
+    <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+    <!-- PANEL CENTRAL (CENTER) -->
+    <!-- Contiene todo el contenido principal: filtros, gráficas y tabla -->
+    <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+    <center>
+        <!-- ScrollPane para hacer el contenido desplazable cuando excede el tamaño -->
+        <ScrollPane fitToHeight="true" fitToWidth="true">
+            <!-- Contenedor vertical principal con espaciado y padding -->
+            <VBox alignment="TOP_CENTER" spacing="16" style="-fx-padding: 20;">
+                
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <!-- SECCIÓN DE FILTROS -->
+                <!-- Permite seleccionar rango de fechas y horarios para filtrar datos -->
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <!-- Etiqueta y selector de fecha inicial -->
+                    <Label text="Desde:" />
+                    <DatePicker fx:id="dateDesde" />
+                    
+                    <!-- Etiqueta y selector de fecha final -->
+                    <Label text="Hasta:" />
+                    <DatePicker fx:id="dateHasta" styleClass="date-picker" />
+                    
+                    <!-- Botón para aplicar los filtros seleccionados -->
+                    <Button fx:id="btnFiltrar" onAction="#onFiltrar" styleClass="primary-button" text="Filtrar" />
+                </HBox>
+
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <!-- SECCIÓN DE GRÁFICAS -->
+                <!-- Muestra visualizaciones de datos: gráfica de barras y gráfica de pastel -->
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <HBox alignment="TOP_CENTER" spacing="20">
+                    <!-- GRÁFICA DE BARRAS - Ventas por Tipo de Boleto -->
+                    <VBox spacing="8">
+                        <!-- Título de la gráfica de barras -->
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Ventas por Tipo de Boleto" />
+                        
+                        <!-- Gráfica de barras con ejes configurados -->
+                        <BarChart fx:id="barChart" prefHeight="300" prefWidth="500">
+                            <xAxis>
+                                <!-- Eje X para fechas -->
+                                <CategoryAxis label="Fecha" />
+                            </xAxis>
+                            <yAxis>
+                                <!-- Eje Y para cantidades -->
+                                <NumberAxis label="Cantidad de Boletos" />
+                            </yAxis>
+                        </BarChart>
+                    </VBox>
+                    
+                    <!-- GRÁFICA DE PASTEL - Distribución 2D vs 3D -->
+                    <VBox spacing="8">
+                        <!-- Título de la gráfica de pastel -->
+                        <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Distribución 2D vs 3D" />
+                        
+                        <!-- Gráfica de pastel circular -->
+                        <PieChart fx:id="pieChart" prefHeight="300" prefWidth="300" />
+                    </VBox>
+                </HBox>
+
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <!-- BOTÓN DE CONFIRMACIÓN -->
+                <!-- Permite confirmar y generar reportes con los datos actuales -->
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <HBox alignment="CENTER_RIGHT" spacing="10">
+                    <Button fx:id="btnConfirmar" onAction="#onConfirmarReporte" styleClass="primary-button" stylesheets="@../temas/styles.css" text="Confirmar" />
+                </HBox>
+
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <!-- TABLA DE REPORTES GENERADOS -->
+                <!-- Muestra todos los reportes que han sido creados anteriormente -->
+                <!-- ═══════════════════════════════════════════════════════════════ -->
+                <VBox spacing="10">
+                    <!-- Título de la sección de tabla -->
+                    <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="Reportes Generados" />
+                    
+                    <!-- Tabla con columnas para mostrar información de reportes -->
+                    <TableView fx:id="tablaReportes" prefHeight="200" styleClass="report-table">
+                        <columns>
+                            <!-- Columna para el nombre del reporte -->
+                            <TableColumn fx:id="colNombre" prefWidth="200" text="Nombre" />
+                            
+                            <!-- Columna para el tipo de reporte -->
+                            <TableColumn fx:id="colTipo" prefWidth="148.7999725341797" text="Tipo" />
+                            
+                            <!-- Columna para la fecha de generación -->
+                            <TableColumn fx:id="colFecha" prefWidth="170.39999389648438" text="Fecha Generación" />
+                            
+                            <!-- Columna para la descripción del reporte -->
+                            <TableColumn fx:id="colDescripcion" prefWidth="212.0" text="Descripción" />
+                            
+                            <!-- Columna para botones de acciones (ver, descargar, eliminar) -->
+                            <TableColumn fx:id="colAcciones" prefWidth="189.60009765625" text="Acciones" />
+                        </columns>
+                    </TableView>
+                </VBox>
+            </VBox>
+        </ScrollPane>
+    </center>
+
+    <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+    <!-- PANEL LATERAL IZQUIERDO (LEFT) -->
+    <!-- Contiene opciones de navegación y funciones adicionales -->
+    <!-- ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ -->
+    <left>
+        <!-- Contenedor vertical para el panel lateral -->
+        <VBox alignment="TOP_CENTER" prefHeight="500.0" prefWidth="234.0" spacing="10" styleClass="ticket-card">
+            <children>
+                <!-- Botón para navegar a la vista de reportes programados -->
+                <Button mnemonicParsing="false" onAction="#goToReporteProgramado" styleClass="primary-button" text="Reporte Programado" />
+            </children>
+        </VBox>
+    </left>
+
+</BorderPane>

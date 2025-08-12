@@ -1,0 +1,247 @@
+package com.cinemax.venta_boletos.controladores;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.cinemax.peliculas.modelos.entidades.FormatoFuncion;
+import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.peliculas.modelos.entidades.Pelicula;
+import com.cinemax.salas.modelos.entidades.TipoSala;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.venta_boletos.servicios.ServicioVisualizadorFunciones;
+
+import javafx.fxml.FXML;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.control.*;
+import javafx.event.ActionEvent;
+import javafx.application.Platform;
+
+/**
+ * Controlador para la pantalla de visualización de funciones de cine.
+ * 
+ * Responsabilidades:
+ * - Muestra las funciones disponibles para una película seleccionada
+ * - Permite filtrar funciones por fecha, formato y tipo de sala
+ * - Gestiona la selección de funciones por parte del usuario
+ * - Navega a la pantalla de selección de butacas al confirmar
+ * 
+ * Patrones utilizados:
+ * - MVC (Model-View-Controller)
+ * - Observer (para actualizaciones de UI)
+ * 
+ * @author CineMax Development Team
+ * @version 1.3
+ */
+public class ControladorVisualizadorFunciones {
+
+    // ========== COMPONENTES UI ==========
+
+    @FXML
+    private Label etiquetaTituloPelicula;
+    @FXML
+    private TableView<Funcion> tablaFunciones;
+    @FXML
+    private TableColumn<Funcion, String> columnaHora;
+    @FXML
+    private TableColumn<Funcion, String> columnaSala;
+    @FXML
+    private TableColumn<Funcion, String> columnaTipoSala;
+    @FXML
+    private TableColumn<Funcion, String> columnaFormato;
+    @FXML
+    private TableColumn<Funcion, String> columnaTipoEstreno;
+    @FXML
+    private TableColumn<Funcion, String> columnaPrecio;
+    @FXML
+    private TableColumn<Funcion, String> columnaFecha;
+    @FXML
+    private DatePicker selectorFecha;
+    @FXML
+    private ComboBox<String> cmbFiltroFormato;
+    @FXML
+    private ComboBox<String> cmbFiltroTipoSala;
+    @FXML
+    private ImageView imagenPelicula;
+    @FXML
+    private Label etiquetaGenero;
+    @FXML
+    private Label etiquetaDuracion;
+    @FXML
+    private Label labelNombrePelicula;
+
+    // ========== DEPENDENCIAS ==========
+    private final ServicioVisualizadorFunciones servicioVisualizadorFunciones = new ServicioVisualizadorFunciones();
+    private Pelicula peliculaSeleccionada;
+
+    // ========== INICIALIZACIÓN ==========
+
+    /**
+     * Inicializa el controlador después de cargar el FXML
+     */
+    @FXML
+    public void initialize() {
+        configurarCamposTabla();
+        configurarFiltrosTabla();
+    }
+
+    /**
+     * Configura propiedades iniciales de la tabla
+     */
+    private void configurarCamposTabla() {
+        tablaFunciones.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+    }
+
+    /**
+     * Configura los componentes de filtrado
+     */
+    private void configurarFiltrosTabla() {
+        // Configura el selector de fecha para que aplique filtros al cambiar la fecha
+        if (selectorFecha != null) {
+            selectorFecha.setOnAction(event -> aplicarFiltros());
+        }
+
+        // Configura el ComboBox de formato con opciones dinámicas desde el enum
+        // FormatoFuncion
+        cmbFiltroFormato.getItems().clear();
+        cmbFiltroFormato.getItems().add("Todos"); // Opción para no filtrar por formato
+        for (FormatoFuncion formato : FormatoFuncion.values()) {
+            cmbFiltroFormato.getItems().add(formato.toString());
+        }
+        cmbFiltroFormato.getSelectionModel().selectFirst(); // Seleccionar "Todos" por defecto
+        cmbFiltroFormato.setOnAction(event -> aplicarFiltros());
+
+        // Configura el ComboBox de tipo de sala con opciones dinámicas desde el enum
+        // TipoSala
+        cmbFiltroTipoSala.getItems().clear();
+        cmbFiltroTipoSala.getItems().add("Todos"); // Opción para no filtrar por tipo de sala
+        for (TipoSala tipoSala : TipoSala.values()) {
+            cmbFiltroTipoSala.getItems().add(tipoSala.name());
+        }
+        cmbFiltroTipoSala.getSelectionModel().selectFirst(); // Seleccionar "Todos" por defecto
+        cmbFiltroTipoSala.setOnAction(event -> aplicarFiltros());
+
+    }
+
+    // ========== MÉTODOS PRINCIPALES ==========
+
+    /**
+     * Establece la película actual y actualiza la UI
+     * 
+     * @param pelicula Película seleccionada
+     */
+    public void asignarPeliculaSeleccionada(Pelicula pelicula) {
+        this.peliculaSeleccionada = pelicula;
+        Platform.runLater(() -> {
+            cargarInformacionPelicula(pelicula);
+            cargarFunciones();
+        });
+    }
+
+    /**
+     * Actualiza los componentes UI con información de la película
+     * 
+     * @param pelicula Película a mostrar
+     */
+    private void cargarInformacionPelicula(Pelicula pelicula) {
+        etiquetaTituloPelicula.setText("Funciones de: " + pelicula.getTitulo());
+        labelNombrePelicula.setText(pelicula.getTitulo());
+        etiquetaGenero.setText(pelicula.getGenerosComoString());
+        etiquetaDuracion.setText(pelicula.getDuracionMinutos() + " min");
+        cargarImagenPelicula(pelicula.getImagenUrl());
+    }
+
+    /**
+     * Carga la imagen de la película con manejo de errores
+     * 
+     * @param urlImagen URL de la imagen a cargar
+     */
+    private void cargarImagenPelicula(String urlImagen) {
+        try {
+            Image imagen = new Image(urlImagen, true);
+            imagen.errorProperty().addListener((observable, valorAnterior, esError) -> {
+                if (esError) {
+                    imagenPelicula.setImage(new Image("https://i.imgur.com/6LWDqET.png"));
+                }
+            });
+            imagenPelicula.setImage(imagen);
+        } catch (Exception excepcion) {
+            imagenPelicula.setImage(new Image("https://i.imgur.com/6LWDqET.png"));
+        }
+    }
+
+    /**
+     * Carga las funciones aplicando los filtros actuales
+     */
+    private void cargarFunciones() {
+        LocalDate fecha = selectorFecha.getValue();
+        String formato = cmbFiltroFormato.getValue();
+        String tipoSala = cmbFiltroTipoSala.getValue();
+
+        if (peliculaSeleccionada != null) {
+            servicioVisualizadorFunciones.cargarFunciones(
+                    tablaFunciones,
+                    columnaHora,
+                    columnaSala,
+                    columnaFormato,
+                    columnaTipoEstreno,
+                    columnaPrecio,
+                    columnaFecha,
+                    columnaTipoSala,
+                    peliculaSeleccionada.getTitulo(),
+                    fecha,
+                    formato,
+                    tipoSala);
+        }
+    }
+
+    // ========== MANEJADORES DE EVENTOS ==========
+
+    /**
+     * Maneja el evento de regresar a la cartelera
+     * 
+     * @param evento Evento de acción
+     */
+    @FXML
+    public void onRegresar(ActionEvent evento) {
+        servicioVisualizadorFunciones.regresarPantallaCartelera(evento);
+    }
+
+    /**
+     * Maneja la confirmación de función seleccionada
+     */
+    @FXML
+    private void onConfirmacion() {
+        servicioVisualizadorFunciones.seleccionarFuncion(tablaFunciones);
+    }
+
+    /**
+     * Aplica los filtros actuales y recarga las funciones
+     */
+    private void aplicarFiltros() {
+        cargarFunciones();
+    }
+
+    /**
+     * Limpia los filtros de selección (fecha, formato y tipo de sala) y recarga
+     * la tabla de funciones sin aplicar ningún filtro.
+     * <p>
+     * Este método restablece el selector de fecha a nulo, y los ComboBoxes de
+     * formato y tipo de sala a la opción "Todos". Luego invoca la recarga de
+     * funciones para mostrar todas las funciones disponibles para la película
+     * seleccionada.
+     * </p>
+     * <p>
+     * Debe ser invocado desde la interfaz de usuario, típicamente asociado a un
+     * botón de "Limpiar filtros".
+     * </p>
+     */
+    @FXML
+    private void onLimpiarFiltros() {
+        selectorFecha.setValue(null);
+        cmbFiltroFormato.getSelectionModel().selectFirst(); // Selecciona "Todos"
+        cmbFiltroTipoSala.getSelectionModel().selectFirst(); // Selecciona "Todos"
+        cargarFunciones();
+    }
+
+}

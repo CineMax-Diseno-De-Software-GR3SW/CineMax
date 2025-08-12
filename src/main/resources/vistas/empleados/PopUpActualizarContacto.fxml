@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/17.0.2-ea" stylesheets="@../temas/styles.css" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorActualizarContacto" spacing="15.0" styleClass="popup-container">
+    <padding>
+        <Insets top="50" right="40" bottom="40" left="40"/>
+    </padding>
+
+    <Label text="Actualizar Información de Contacto" styleClass="popup-title"/>
+
+    <GridPane hgap="10.0" vgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="200.0"/>
+        </columnConstraints>
+
+        <Label text="Correo:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="txtCorreo" promptText="Ingrese nuevo correo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Celular:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="txtCelular" promptText="Ingrese nuevo número" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+    </GridPane>
+
+    <HBox spacing="15.0" alignment="CENTER">
+        <Button fx:id="btnCancelar" text="Cancelar" onAction="#onCerrar" styleClass="primary-button"/>
+        <Button fx:id="btnActualizar" text="Actualizar" onAction="#onActualizar" styleClass="primary-button"/>
+    </HBox>
+</VBox>

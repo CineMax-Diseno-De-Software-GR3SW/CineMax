@@ -3,26 +3,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
 
-<!-- stylesheets = "@ayu-theme.css" -->
 
-<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
+<VBox alignment="CENTER" minHeight="500" minWidth="800" spacing="20.0" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorLogin">
 
-    <Label text="CineMAX">
-        <font>
-            <Font size="60" />
-        </font>
-    </Label>
+    <ImageView fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
+        <image>
+            <Image url="@../../imagenes/logoMax_v4.png" />
+        </image>
+    </ImageView>
+    <Label maxWidth="300" text="CineMax" wrapText="true" styleClass="title"  alignment="CENTER" />
 
     <TextField fx:id="txtUsuario" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Usuario" />
 
     <PasswordField fx:id="txtPassword" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Contraseña" />
 
-    <Button onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Log In">
+    <Button fx:id="btnIngresar" styleClass="primary-button" onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Iniciar Sesión">
       <font>
          <Font size="18.0" />
       </font></Button>
 
     <Label fx:id="lblError" maxWidth="300" visible="false" wrapText="true" />
+    <Hyperlink  fx:id="vinculoRecuperarContrasena" onAction="#onForgotPasswordClick" text="¿Olvidaste tu contraseña?">
+        <font>
+            <Font size="14.0" />
+        </font>
+    </Hyperlink>
 
 </VBox>

@@ -2,24 +2,33 @@ package com.cinemax.empleados.controladores;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+import com.cinemax.Main;
+import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.empleados.modelos.entidades.Usuario;
+import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 
+import com.cinemax.empleados.servicios.ServicioUsuarios;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class ControladorPerfil implements Initializable {
 
+    public Button btnBack;
+    public Button btnActualizarContacto;
     @FXML
     private Label lblNombreCompleto;
 
@@ -33,13 +42,10 @@ public class ControladorPerfil implements Initializable {
     private Label lblRol;
 
     @FXML
-    private TextField txtEmail;
+    private Label txtEmail;
 
     @FXML
-    private TextField txtTelefono;
-
-    @FXML
-    private Button btnEditarPerfil;
+    private Label txtTelefono;
 
     @FXML
     private Button btnCambiarContrasena;
@@ -49,10 +55,13 @@ public class ControladorPerfil implements Initializable {
     private boolean editandoEmail = false;
 
     private boolean editandoTelefono = false;
+    private ServicioPerfilUsuario servicioPerfilUsuario;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         sesionSingleton = ServicioSesionSingleton.getInstancia();
+        servicioPerfilUsuario = new ServicioPerfilUsuario();
+
         cargarDatosUsuario();
     }
 
@@ -71,38 +80,24 @@ public class ControladorPerfil implements Initializable {
     }
 
     @FXML
-    private void onVolver(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PantallaPortalPrincipal.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((javafx.scene.Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    private void onVolver() {
+        ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(),
+                "/vistas/empleados/PantallaPortalPrincipal.fxml");
     }
 
-    @FXML
-    private void onEditarPerfil(ActionEvent event) {
-        // Implementar funcionalidad para editar perfil
-        System.out.println("Editar perfil clicked");
-    }
 
     @FXML
     private void onCambiarContrasena(ActionEvent event) {
-        // Implementar funcionalidad para cambiar contraseña
-        //System.out.println("Cambiar contraseña clicked");
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PopUpCambiarContrasena.fxml"));
             Parent root = loader.load();
 
             Scene scene = new Scene(root);
-            // Aplicar hoja de estilos
-            scene.getStylesheets().add(getClass().getResource("/vistas/temas/ayu-theme.css").toExternalForm());
 
             // Crear stage
             Stage stage = new Stage();
+            Image icon = new Image(Main.class.getResourceAsStream("/imagenes/logo.png"));
+            stage.getIcons().add(icon);
             stage.setTitle("Cambiar Contraseña");
             stage.setScene(scene);
             stage.setResizable(false);
@@ -114,27 +109,67 @@ public class ControladorPerfil implements Initializable {
         }
     }
 
-    @FXML
-    private void onEditarEmail() {
-        editandoEmail = !editandoEmail;
-        txtEmail.setEditable(editandoEmail);
+//    @FXML
+//    private void onEditarEmail() {
+//        editandoEmail = !editandoEmail;
+//        txtEmail.setEditable(editandoEmail);
+//
+//        if (!editandoEmail) {
+//            String nuevoEmail = txtEmail.getText();
+//            System.out.println("Nuevo email guardado: " + nuevoEmail);
+//            try {
+//                servicioPerfilUsuario.actualizarCorreo(sesionSingleton.getUsuarioActivo(),nuevoEmail);
+//                ManejadorMetodosComunes.mostrarVentanaExito("Correo actualizado exitosamente");
+//
+//            } catch (SQLException e) {
+//                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar el correo");
+//
+//            }
+//        }
+//    }
+//
+//    @FXML
+//    private void onEditarTelefono() {
+//        editandoTelefono = !editandoTelefono;
+//        txtTelefono.setEditable(editandoTelefono);
+//
+//        if (!editandoTelefono) {
+//            String nuevoCelular = txtTelefono.getText();
+//
+//            try {
+//                servicioPerfilUsuario.actualizarCelular(sesionSingleton.getUsuarioActivo(),nuevoCelular);
+//                ManejadorMetodosComunes.mostrarVentanaExito("Celular actualizado exitosamente");
+//
+//            } catch (SQLException e) {
+//                ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al registrar el celular");
+//
+//            }
+//        }
+//    }
 
-        if (!editandoEmail) {
-            String nuevoEmail = txtEmail.getText();
-            // Aquí podrías guardar el email a base de datos o backend
-            System.out.println("Nuevo email guardado: " + nuevoEmail);
+    @FXML
+    private void onActualizarContacto() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/vistas/empleados/PopUpActualizarContacto.fxml"));
+            Parent root = loader.load();
+
+            ControladorActualizarContacto controller = loader.getController();
+            controller.setDatosActuales(txtEmail.getText(), txtTelefono.getText());
+//            controller.setDialogStage(new Stage());
+            controller.setDialogStage((Stage)this.btnActualizarContacto.getScene().getWindow());
+            Scene scene = new Scene(root);
+            Stage stage = new Stage();
+            Image icon = new Image(Main.class.getResourceAsStream("/imagenes/logo.png"));
+            stage.getIcons().add(icon);
+            stage.setTitle("Actualizar Contacto");
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.initOwner(((Stage) btnActualizarContacto.getScene().getWindow()));
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-    @FXML
-    private void onEditarTelefono() {
-        editandoTelefono = !editandoTelefono;
-        txtTelefono.setEditable(editandoTelefono);
-
-        if (!editandoTelefono) {
-            String nuevoTelefono = txtTelefono.getText();
-            // Aquí podrías guardar el teléfono a base de datos o backend
-            System.out.println("Nuevo teléfono guardado: " + nuevoTelefono);
-        }
-    }
 }

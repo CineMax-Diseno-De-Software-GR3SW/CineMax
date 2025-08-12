@@ -4,23 +4,27 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox fx:id="root" spacing="15.0" alignment="CENTER" styleClass="dialog-box"
+<VBox fx:id="root" spacing="20.0" alignment="CENTER" stylesheets="@../temas/styles.css" styleClass="dialog-box"
       xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.cinemax.empleados.controladores.ControladorCambiarContrasena">
 
 <padding>
-        <Insets top="10" right="20" bottom="20" left="20"/>
+        <Insets top="50" right="40" bottom="40" left="40"/>
     </padding>
-
-    <Label text="Cambiar Contraseña" style="-fx-font-size: 16px;" />
 
     <PasswordField fx:id="txtContrasenaActual" promptText="Contraseña actual"/>
     <PasswordField fx:id="txtNuevaContrasena" promptText="Nueva contraseña"/>
-    <PasswordField fx:id="txtConfirmarContrasena" promptText="Confirmar nueva contraseña"/>
+    <PasswordField fx:id="txtConfirmarContrasena" promptText="Confirmar nueva contraseña" minWidth="200"/>
+
+    <Label text="La contraseña debe contener al menos 6 caracteres.">
+    </Label>
+
+    <Label text="Incluir una letra, un número y un carácter especial.">
+    </Label>
 
     <HBox spacing="10" alignment="CENTER">
-        <Button text="Cancelar" onAction="#onCancelar"/>
-        <Button text="Guardar" onAction="#onGuardar"/>
+        <Button text="Cancelar" onAction="#onCancelar" styleClass="primary-button"/>
+        <Button text="Guardar" onAction="#onGuardar" styleClass="primary-button"/>
     </HBox>
 </VBox>

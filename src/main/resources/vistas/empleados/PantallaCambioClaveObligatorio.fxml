@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox alignment="CENTER" prefHeight="500" prefWidth="800" spacing="20.0"
+      stylesheets="@../temas/styles.css"
+      xmlns="http://javafx.com/javafx/17.0.2-ea"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.cinemax.empleados.controladores.ControladorCambioClaveObligatorio">
+
+    <Label styleClass="title" text="Cambio Obligatorio de Contraseña" />
+
+    <Label text="Por seguridad, debes cambiar tu contraseña temporal.">
+        <font>
+            <Font size="16.0" />
+        </font>
+    </Label>
+    <Label text="La contraseña debe contener al menos 6 caracteres, incluyendo: una letra, un número y un carácter especial.">
+
+    <font>
+            <Font size="16.0" />
+        </font>
+    </Label>
+
+    <PasswordField fx:id="txtNuevaClave" maxWidth="400" prefHeight="36" promptText="Nueva Contraseña" />
+
+    <PasswordField fx:id="txtConfirmarClave" maxWidth="400" prefHeight="36" promptText="Confirmar Nueva Contraseña" />
+
+    <Button fx:id="cambiarClave" onAction="#onCambiarClave" prefHeight="45" prefWidth="250.0" styleClass="primary-button" text="Cambiar Contraseña">
+        <font>
+            <Font size="18.0" />
+        </font>
+    </Button>
+
+    <Label fx:id="lblMensaje" maxWidth="400" wrapText="true" visible="false" styleClass="mensaje-error" />
+
+</VBox>

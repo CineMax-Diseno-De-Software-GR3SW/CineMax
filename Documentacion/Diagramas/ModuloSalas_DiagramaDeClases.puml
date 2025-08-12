@@ -1,0 +1,121 @@
+@startuml
+'https://plantuml.com/class-diagram
+package salas {
+package modelos {
+
+package entidades{
+    class Sala {
+        -id: int
+        -nombre: String
+        -capacidad: int
+        -tipo: TipoSala
+        -estado: EstadoSala
+    }
+   class Butaca {
+   -id: int
+   -idSala: int
+   -fila: String
+   -columna: String
+   -estado: EstadoButaca
+   }
+   enum EstadoSala{
+   DISPONIBLE,
+   MANTENIMIENTO
+   }
+   enum EstadoButaca{
+   DISPONIBLE,
+   OCUPADA,
+   INHABILITADA
+   }
+   abstract class SalaFactory{
+   +crearSala(int id, String nombre, int capacidad, EstadoSala estado)
+   }
+   class SalaNormalFactory implements SalaFactory{
+   +crearSala(int id, String nombre, int capacidad, EstadoSala estado) {
+   }
+   class SalaVIPFactory implements SalaFactory{
+   +crearSala(int id, String nombre, int capacidad, EstadoSala estado)
+   }
+   enum TipoSala{
+   -multiplicador: double
+   NORMAL(1.00),
+   VIP(1.50)
+   +getMultiplicador()
+
+   }
+
+   }
+
+
+
+    }
+
+    Sala -u> TipoSala
+    SalaNormalFactory -u> Sala
+    SalaVIPFactory -u> Sala
+    Sala -u> EstadoSala
+    Sala o- Butaca
+    Butaca -u> EstadoButaca
+    package servicios{
+    class ServicioButaca{
+    +listarButacasPorSala() : List<Butaca>
+    +generarButacasAutomatica() : void
+    +crearButaca(Butaca butaca) : void
+    +actualizarButaca(Butaca butaca) : void
+    +validarDatosBasicos(Butaca butaca) : void
+    +listarTodasButacas() : List<Butaca>
+    +eliminarButaca(int id) : void
+    }
+    class ServicioSala{
+    -ServicioButaca : ServicioButaca
+    +crearSala(Sala sala) : void
+    +obtenerSalaPorId(int id) : Sala
+    +listarSalas() : List<Sala>
+    +actualizarSala(Sala sala) : void
+    +eliminarSala(int id) : void
+    +buscarSalaPorNombre(String nombre) : List<Sala>
+    }
+    }
+    package controladores{
+    class ControladorSalas {
+
+        -servicioSala: ServicioSala
+        -salas: ObservableList<Sala>
+        -servicioButaca: ServicioButaca
+        -salaEnEdicion: Sala
+        +initialize(): void
+        +onGuardar(event: ActionEvent): void
+        +onBackAction(event: ActionEvent): void
+    }
+    class ControladorButacas {
+        -servicioSala : ServicioSala
+        -servicioButaca: ServicioButaca
+        -salas: ObservableList<Sala>
+        -butacas: ObservableList<Butaca>
+        +initialize(): void
+        +onBackAction(event: ActionEvent): void
+    }
+    class ControladorDeConsultaSalas {
+        -servicioButaca : ServicioButaca
+        -butacasSeleccionadas: List<Butaca>
+        -controladorAsignadorButacas: ControladorAsignadorButacas
+        +initialize(location: URL, resources: ResourceBundle): void
+        +mostrarButacasDeSala(codigosButacasOcupadas: Set<Integer>, salaSeleccionada: Sala): void
+        +getButacasSeleccionadas(): List<Butaca>
+        +setControladorAsignadorButacas(controladorAsignadorButacas: ControladorAsignadorButacas): void
+    }
+    }
+
+ServicioSala -u-> ServicioButaca
+ControladorButacas -u-> ServicioSala
+ControladorButacas -u-> ServicioButaca
+Sala -u-o ControladorButacas
+Butaca -u-o ControladorButacas
+ControladorSalas -u-> ServicioSala
+ControladorSalas o-u- Sala
+ControladorSalas -u-> ServicioButaca
+ControladorDeConsultaSalas -u-> ServicioButaca
+ControladorDeConsultaSalas o-u- Butaca
+ControladorSalas -u-> SalaFactory
+}
+@enduml

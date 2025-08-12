@@ -1,83 +1,155 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 
-<!-- prefHeight="40" -->
-
-<BorderPane prefHeight="550.0" prefWidth="800.0" stylesheets="@../temas/ayu-theme.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorPortalPrincipal">
-    <top>
-        <HBox fx:id="headerBar" alignment="CENTER_LEFT" spacing="15.0" styleClass="header-bar">
-            <children>
-<!--                <Button onAction="#onBackAction" styleClass="icon-button" text="←" />-->
-<!--                <Label styleClass="section-title" text="Checkout" />-->
-<!--                <Region HBox.hgrow="ALWAYS" />-->
-<!--                &lt;!&ndash; NUEVO: Botón para cambiar el tema &ndash;&gt;-->
-<!--                <Button onAction="#onThemeToggleAction" styleClass="icon-button, theme-button" text="🎨" />-->
-<!--                <Button onAction="#onCloseAction" styleClass="icon-button, close-button" text="✕" />-->
-                <!-- Título -->
-                <Label text="Panel Principal">
-                    <font>
-                        <Font name="Arial Black" size="28" />
-                    </font>
-                </Label>
-            </children>
-        </HBox>
-    </top>
-
-    <center>
-        <VBox spacing="15.0">
-            <padding>
-                <Insets bottom="20.0" left="40.0" right="40.0" top="20.0" />
-            </padding>
-            <Label styleClass="section-title" text="Panel Principal" />
-            <GridPane hgap="10.0" vgap="15.0">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
-                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="300.0" />
-                </columnConstraints>
-            <rowConstraints>
-               <RowConstraints />
-            </rowConstraints>
-            </GridPane>
-             <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" text=" Gestión de Usuarios" />
-
-             <Button fx:id="btnVerReportes" onAction="#onVerReportes" text="Reportes" />
-
-             <Button fx:id="btnConfiguracionFunciones" onAction="#onConfiguracionFunciones" text="Configuración de Funciones" />
-
-            <Button fx:id="btnConfiguracionSalas" onAction="#onConfiguracionSalas" text="Configuración de Salas" />
-
-            <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" text="Venta de Boletos" />
-
-
-
-        </VBox>
-    </center>
+<BorderPane minHeight="720.0" minWidth="1280.0" styleClass="root" stylesheets="@../temas/styles.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cinemax.empleados.controladores.ControladorPortalPrincipal">
 
     <left>
-        <VBox alignment="TOP_CENTER" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="180.0" spacing="15.0" styleClass="summary-pane">
-            <HBox alignment="BOTTOM_LEFT" maxWidth="175.0" prefWidth="90.0">
+        <VBox alignment="TOP_CENTER" prefWidth="280.0" spacing="20.0" style="-fx-background-color: #2b2b2b;">
+            <padding>
+                <Insets bottom="20.0" top="30.0" />
+            </padding>
+            <children>
+                <FontIcon iconLiteral="fas-user-circle" iconSize="160" iconColor="white" />
 
-            <!-- Datos de sesión -->
-            <VBox alignment="TOP_CENTER" maxWidth="153.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="468.0" prefWidth="153.0" spacing="2" styleClass="side-bar">
-                <Label fx:id="lblNombreUsuario" prefHeight="26.0" prefWidth="172.0" text="-----" textAlignment="CENTER">
-                  <font>
-                     <Font size="20.0" />
-                  </font></Label>
-                <Label fx:id="lblRolUsuario" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="44.0" prefWidth="150.0" text="-------" textAlignment="CENTER">
-                  <font>
-                     <Font name="System Bold Italic" size="15.0" />
-                  </font></Label>
-               <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" onAction="#onMiPerfil" prefHeight="6.0" prefWidth="87.0" text="Mi Perfil" />
-            </VBox>
+                <Label fx:id="lblNombreUsuario" text="Nombre Usuario" textAlignment="CENTER" wrapText="true" />
+                <Label fx:id="lblRolUsuario" style="-fx-text-fill: #b0b0b0;" text="Rol de Usuario" textAlignment="CENTER" wrapText="true" />
 
-            </HBox>
+                <Button fx:id="btnMiPerfil" onAction="#onMiPerfil" prefWidth="180.0" styleClass="primary-button" text="Mi Perfil" />
 
-             <Button onAction="#onCerrarSesion" text="Log Out" />
+                <Pane VBox.vgrow="ALWAYS" />
+
+                <Button fx:id="btnCerrarSesion" onAction="#onCerrarSesion" prefWidth="180.0" styleClass="primary-button" text="Cerrar Sesión" />
+            </children>
         </VBox>
     </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER">
+            <content>
+                <VBox spacing="20.0"> <padding>
+                        <Insets bottom="30.0" left="30.0" right="30.0" top="30.0" />
+                    </padding>
+                    <children>
+                        <HBox alignment="CENTER" spacing="40.0" styleClass="ticket-card">
+                            <children>
+                                <VBox alignment="CENTER_LEFT" spacing="10.0" HBox.hgrow="ALWAYS">
+                                    <children>
+                                        <Label styleClass="welcome-title" text="Bienvenido a CineMax" />
+                                        <Label maxWidth="600.0" styleClass="welcome-information" text="Sistema de gestión integral. Navega por los módulos para comenzar." wrapText="true" />
+                                    </children>
+                                </VBox>
+                                <ImageView fitHeight="280.0" fitWidth="280.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../imagenes/logoMax_v4.png" />
+                                    </image>
+                                </ImageView>
+                            </children>
+                        </HBox>
+
+                        <GridPane hgap="20" vgap="20">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.33" />
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.33" />
+                                <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.33" />
+                            </columnConstraints>
+                            <children>
+                                <Label styleClass="section-header" text="Ventas" GridPane.columnSpan="3" GridPane.rowIndex="0" />
+
+                                <Button fx:id="btnVentaBoleto" onAction="#onVenderBoleto" contentDisplay="GRAPHIC_ONLY" maxWidth="Infinity" maxHeight="Infinity" styleClass="dashboard-button" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                                    <graphic>
+                                        <VBox alignment="CENTER" prefHeight="140.0" spacing="15.0">
+                                            <children>
+                                                <FontIcon iconLiteral="fas-ticket-alt" iconSize="70" iconColor="WHITE" />
+                                                <Label text="Venta de Boletos" textAlignment="CENTER" textFill="#b0b0b0" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+
+                                <Label styleClass="section-header" text="Módulos de Gestión" GridPane.columnSpan="3" GridPane.rowIndex="2" />
+
+                                <!-- Botones de gestion -->
+                                <Button fx:id="btnGestionPeliculas" onAction="#onGestionPeliculas" contentDisplay="GRAPHIC_ONLY" maxWidth="Infinity" maxHeight="Infinity" styleClass="dashboard-button" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                                    <graphic>
+                                        <VBox alignment="CENTER" prefHeight="140.0" spacing="15.0">
+                                            <children>
+                                                <FontIcon iconLiteral="fas-film" iconSize="70" iconColor="WHITE" />
+                                                <Label text="Gestión de Películas" textAlignment="CENTER" textFill="#b0b0b0" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnGestionSalas" onAction="#onGestionSalas" contentDisplay="GRAPHIC_ONLY" maxWidth="Infinity" maxHeight="Infinity" styleClass="dashboard-button" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                    <graphic>
+                                        <VBox alignment="CENTER" prefHeight="140.0" spacing="15.0">
+                                            <children>
+                                                <FontIcon iconLiteral="fas-tv" iconSize="70" iconColor="WHITE" />
+                                                <Label text="Gestión de Salas" textAlignment="CENTER" textFill="#b0b0b0" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnGestionUsuarios" onAction="#onGestionUsuarios" contentDisplay="GRAPHIC_ONLY" maxWidth="Infinity" maxHeight="Infinity" styleClass="dashboard-button" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                    <graphic>
+                                        <VBox alignment="CENTER" prefHeight="140.0" spacing="15.0">
+                                            <children>
+                                                <FontIcon iconLiteral="fas-users-cog" iconSize="70" iconColor="WHITE" />
+                                                <Label text="Gestión de Usuarios" textAlignment="CENTER" textFill="#e0e0e0" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                
+                                <Button fx:id="btnGestionFunciones" onAction="#onGestionFunciones" contentDisplay="GRAPHIC_ONLY" maxWidth="Infinity" maxHeight="Infinity" styleClass="dashboard-button" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                                    <graphic>
+                                        <VBox alignment="CENTER" prefHeight="140.0" spacing="15.0">
+                                            <children>
+                                                <FontIcon iconLiteral="fas-calendar-alt" iconSize="70" iconColor="WHITE" />
+                                                <Label text="Gestión de Funciones" textAlignment="CENTER" textFill="#b0b0b0" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnGestionButacas" onAction="#onGestionButacas" contentDisplay="GRAPHIC_ONLY" maxWidth="Infinity" maxHeight="Infinity" styleClass="dashboard-button" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                    <graphic>
+                                        <VBox alignment="CENTER" prefHeight="140.0" spacing="15.0">
+                                            <children>
+                                                <FontIcon iconLiteral="fas-chair" iconSize="70" iconColor="WHITE" />
+                                                <Label text="Gestión de Butacas" textAlignment="CENTER" textFill="#e0e0e0" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                                <Button fx:id="btnVerReportes" onAction="#onVerReportes" contentDisplay="GRAPHIC_ONLY" maxWidth="Infinity" maxHeight="Infinity" styleClass="dashboard-button" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                    <graphic>
+                                        <VBox alignment="CENTER" prefHeight="140.0" spacing="15.0">
+                                            <children>
+                                                <FontIcon iconLiteral="fas-chart-bar" iconSize="70" iconColor="WHITE" />
+                                                <Label text="Reportes" textAlignment="CENTER" textFill="#e0e0e0" wrapText="true" />
+                                            </children>
+                                        </VBox>
+                                    </graphic>
+                                </Button>
+                            </children>
+                        </GridPane>
+                    </children>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
 
 </BorderPane>
