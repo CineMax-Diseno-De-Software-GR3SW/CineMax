@@ -48,7 +48,6 @@ CineMax/
 - 🗄️ **PostgreSQL** (JDBC)
 - 📦 **Maven** (gestión de dependencias)
 - ☁️ **Firebase Storage** (opcional, para almacenamiento de archivos)
-- 🧪 **JUnit** (pruebas unitarias)
 
 
 ## 📋 Requisitos previos
@@ -63,7 +62,7 @@ CineMax/
 
 1. **Clona el repositorio**  
    ```sh
-   git clone <url-del-repositorio>
+   git clone https://github.com/CineMax-Diseno-De-Software-GR3SW/CineMax.git
    cd CineMax
    ```
 
