@@ -10,6 +10,8 @@
 # Carpetas de compilación de Maven
 # Ignora la carpeta target principal, pero no las subcarpetas con el mismo nombre
 /target/
+.mvn/
+.gitattributes
 !**/src/main/**/target/
 !**/src/test/**/target/
 

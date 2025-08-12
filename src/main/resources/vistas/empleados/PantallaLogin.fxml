@@ -11,10 +11,9 @@
 
     <ImageView fitHeight="350.0" fitWidth="350.0" pickOnBounds="true" preserveRatio="true">
         <image>
-            <Image url="@../../imagenes/logoMax_v4.png" />
+            <Image url="@../../imagenes/logoMax.png" />
         </image>
     </ImageView>
-    <Label maxWidth="300" text="CineMax" wrapText="true" styleClass="title"  alignment="CENTER" />
 
     <TextField fx:id="txtUsuario" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Usuario" />
 

@@ -10,7 +10,7 @@
 
     <ImageView fitWidth="400" preserveRatio="true" smooth="true">
         <image>
-            <Image url="@../../imagenes/logoMax_v4.png" />
+            <Image url="@../../imagenes/logoMax.png" />
         </image>
     </ImageView>
 
