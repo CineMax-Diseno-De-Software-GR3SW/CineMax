@@ -661,7 +661,6 @@ ServicioGeneradorBoleto ..> Boleto
 ServicioFacturacion ..> Factura
 ServicioFacturacion ..> ServicioGeneradorArchivoPDF
 ServicioFacturacion ..> ServicioContenidoFactura
-ServicioContenidoFactura ..> EstrategiaExportarPDF
 ServicioFacturacion ..left> Cliente
 
 ' Relaciones de herencia e implementación
@@ -679,9 +678,6 @@ ContextoValidacion o--> EstrategiaValidacion
 
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
-
-ControladorReportesPrincipal --> Exportable
-ServicioFacturacion ..> ServicioCorreoSingleton
 
 
 }
@@ -711,16 +707,16 @@ package utilidades {
     }
 
     package estrategiaParaDocumentos {
-        interface Exportable {
+        interface Exportable #lightblue{
             +exportar(reporte: ReporteGenerado, archivo: File, datos: Map<String, Object>): void
         }
 
-        class EstrategiaExportarPDF implements Exportable {
+        class EstrategiaExportarPDF #lightblue implements Exportable {
             +crearDocumentoPDF(): PDDocument
             +guardarPDF(document: PDDocument, archivo: File): void
         }
 
-        class EstrategiaExportarCSV implements Exportable {
+        class EstrategiaExportarCSV #lightblue implements Exportable {
 
         }
     }
@@ -902,5 +898,7 @@ ControladorVisualizadorFunciones ..> ControladorFunciones
 ServicioVisualizadorFunciones ..> ServicioTemporizador
 ControladorAsignadorButacas ..> ServicioTemporizador
 ControladorFacturacion ..> ServicioTemporizador
+ServicioFacturacion ..> ServicioCorreoSingleton
+ServicioContenidoFactura ..> EstrategiaExportarPDF
 
 @enduml
