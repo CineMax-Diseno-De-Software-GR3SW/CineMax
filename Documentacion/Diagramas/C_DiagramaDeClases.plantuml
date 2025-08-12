@@ -184,47 +184,45 @@ package utilidades {
 ' ------------------ MODELOS ------------------
 package modelos {
 
-    package entidades{
-
-        class Boleto {
-            - funcion: Funcion
-            - butaca: Butaca
-        }
-
-        interface CalculadorImpuesto {
-            + calcularImpuesto(subtotal: double): double
-        }
-
-        class CalculadorIVA {
-            - {static} IVA_TASA: double
-        }
-
-        class Cliente {
-            - idCliente: String
-            - tipoDocumento: String
-            - nombre: String
-            - apellido: String
-            - correoElectronico: String
-        }
-
-        class Factura {
-            - codigoFactura: long
-            - fecha: String
-            - cliente: Cliente
-            - productos: List<Producto>
-            - subtotal: double
-            - total: double
-            + calcularSubTotal(): void
-            + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
-        }
-
-        abstract class Producto {
-            - precio: double
-            + {abstract} calcularPrecio(): void
-        }
-
+    class Boleto {
+        - funcion: Funcion
+        - butaca: Butaca
     }
+
+    interface CalculadorImpuesto {
+        + calcularImpuesto(subtotal: double): double
+    }
+
+    class CalculadorIVA {
+        - {static} IVA_TASA: double
+    }
+
+    class Cliente {
+        - idCliente: String
+        - tipoDocumento: String
+        - nombre: String
+        - apellido: String
+        - correoElectronico: String
+    }
+
+    class Factura {
+        - codigoFactura: long
+        - fecha: String
+        - cliente: Cliente
+        - productos: List<Producto>
+        - subtotal: double
+        - total: double
+        + calcularSubTotal(): void
+        + calcularTotal(calculadorImpuesto:CalculadorImpuesto): void
+    }
+
+    abstract class Producto {
+        - precio: double
+        + {abstract} calcularPrecio(): void
+    }
+
 }
+
 
 
 ' ------------------ RELACIONES ------------------
