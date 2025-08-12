@@ -540,18 +540,6 @@ package servicios{
         + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): void
     }
 
-    interface ServicioGeneradorArchivo {
-        + generarFactura(factura: Factura): void
-        + generarBoletos(boletos: List<Producto>): void
-    }
-
-    class ServicioGeneradorArchivoPDF implements ServicioGeneradorArchivo {
-        + generar(factura: Factura): void
-        + generar(boletos: List<Producto>): void
-        - crearCarpetaSiNoExiste(carpeta: String): void
-
-    }
-
     class ServicioGeneradorBoleto{
         + generarBoletos(funcion: Funcion, butacas: List<Butaca>): List<Boleto>
     }
@@ -643,23 +631,19 @@ package modelos {
 ' ------------------ RELACIONES ------------------
 
 ' Relaciones de composición y agregación (tienen instancias como atributos)
-ControladorFacturacion *--> ServicioFacturacion
-ControladorFacturacion *--> ServicioCliente
+ControladorFacturacion --> ServicioFacturacion
+ControladorFacturacion --> ServicioCliente
 ControladorVisualizadorCartelera --> ServicioVisualizadorCartelera
 ControladorVisualizadorFunciones --> ServicioVisualizadorFunciones
-ControladorAsignadorButacas o--> ControladorInformacionDeVenta
-ControladorFacturacion o--> ControladorInformacionDeVenta
+ControladorAsignadorButacas --> ControladorInformacionDeVenta
+ControladorFacturacion --> ControladorInformacionDeVenta
 
 ' Relaciones de uso/dependencia (se crean o usan temporalmente)
 ControladorAsignadorButacas ..> ServicioGeneradorBoleto
-ControladorFacturacion ..> ContextoValidacion
-ControladorFacturacion ..> CalculadorImpuesto
-
 
 ' Servicios que crean o usan entidades
 ServicioGeneradorBoleto ..> Boleto
 ServicioFacturacion ..> Factura
-ServicioFacturacion ..> ServicioGeneradorArchivoPDF
 ServicioFacturacion ..> ServicioContenidoFactura
 ServicioFacturacion ..left> Cliente
 
@@ -668,13 +652,10 @@ Producto <|-- Boleto
 CalculadorIVA ..up|> CalculadorImpuesto
 
 ' Asociaciones entre entidades
-Factura "1" *-- "1..*" Producto
-Factura "1" *-- "1..*" Cliente
-Boleto "1" *-- "1" Funcion
-Boleto "1" *-- "1" Butaca
-
-' Patrón Strategy
-ContextoValidacion o--> EstrategiaValidacion
+Factura "1" --> "1..*" Producto
+Factura "1" --> "1..*" Cliente
+Boleto "1..*" --> "1" Funcion
+Boleto "1" --> "1" Butaca
 
 ' Uso de interfaces/clases abstractas
 Factura ..> CalculadorImpuesto
@@ -704,6 +685,8 @@ package utilidades {
 
         class EstrategiaRucValidacion #lightblue extends EstrategiaCedulaValidacion {
         }
+
+        ContextoValidacion o--> EstrategiaValidacion
     }
 
     package estrategiaParaDocumentos {
@@ -900,5 +883,6 @@ ControladorAsignadorButacas ..> ServicioTemporizador
 ControladorFacturacion ..> ServicioTemporizador
 ServicioFacturacion ..> ServicioCorreoSingleton
 ServicioContenidoFactura ..> EstrategiaExportarPDF
+venta_boletos.controladores.ControladorFacturacion ..> utilidades.estrategiaValidacionDocumentos.ContextoValidacion
 
 @enduml
