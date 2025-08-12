@@ -772,8 +772,8 @@ package modelos {
 ' Relaciones de composición y agregación (tienen instancias como atributos)
 ControladorFacturacion *--> ServicioFacturacion
 ControladorFacturacion *--> ServicioCliente
-ControladorVisualizadorCartelera *--> ServicioVisualizadorCartelera
-ControladorVisualizadorFunciones *--> ServicioVisualizadorFunciones
+ControladorVisualizadorCartelera /--> ServicioVisualizadorCartelera
+ControladorVisualizadorFunciones --> ServicioVisualizadorFunciones
 ControladorAsignadorButacas o--> ControladorInformacionDeVenta
 ControladorFacturacion o--> ControladorInformacionDeVenta
 
@@ -972,4 +972,7 @@ ControladorPortalPrincipal ..> ControladorFuncion
 ControladorPortalPrincipal ..> ControladorSalas
 ControladorPortalPrincipal ..> ControladorButacas
 ControladorPortalPrincipal ..> ControladorReportes
+ControladorReportes ..> ControladorVentaBoletos 
+ControladorVisualizadorCartelera ..> ControladorCartelera 
+ControladorVisualizadorFunciones ..> ControladorFunciones 
 @enduml
