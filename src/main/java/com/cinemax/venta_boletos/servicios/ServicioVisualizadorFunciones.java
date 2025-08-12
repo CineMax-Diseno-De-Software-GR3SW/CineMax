@@ -134,7 +134,7 @@ public class ServicioVisualizadorFunciones {
         try {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
-            ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(stage, "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 38, 500);
+            ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada(stage, "/vistas/venta_boletos/VistaMostrarCartelera.fxml", 33, 225);
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al regresar: " + e.getMessage());
             e.printStackTrace();
