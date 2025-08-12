@@ -1,4 +1,4 @@
-package com.cinemax.utilidades.strategyValidacionDocumentos;
+package com.cinemax.utilidades.estrategiaValidacionDocumentos;
 
 /**
  * Esta interfaz es parte del patrón de diseño Strategy, permitiendo intercambiar

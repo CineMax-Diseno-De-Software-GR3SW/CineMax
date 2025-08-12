@@ -1,186 +1,173 @@
 @startuml ModuloReportes_DiagramaDeClases
 
 ' Estilos
-skinparam classAttributeIconSize 0
-skinparam classFontSize 12
-skinparam classFontStyle bold
-skinparam packageStyle rectangle
+left to right direction
+skinparam linetype ortho
 
-package "com.cinemax.reportes" {
-    
-    package "controladores" {
-        class ControladorReportesPrincipal {
-            -btnBack: Button
-            -dateDesde: DatePicker
-            -dateHasta: DatePicker
-            -choiceHorario: ChoiceBox<String>
-            -choiceTipoBoleto: ChoiceBox<String>
-            -choiceSala: ChoiceBox<String>
-            -tablaPreview: TableView<ReporteVentaDTO>
-            -labelTotales: Label
-            -barChart: BarChart<String, Number>
-            -menuExportar: MenuButton
-            -menuExportarPDF: MenuItem
-            -menuExportarCSV: MenuItem
-            -reporteDAO: ReporteDAO
-            --
-            +initialize(): void
-            +onBackAction(event: ActionEvent): void
-            +goToReporteProgramado(event: ActionEvent): void
-            +onCerrarSesion(event: ActionEvent): void
-            +onFiltrar(event: ActionEvent): void
-            +onExportarPDF(event: ActionEvent): void
-            +onExportarCSV(event: ActionEvent): void
-            -exportarReporte(strategy: ExportStrategy, tipo: String): void
-            -mostrarAlerta(titulo: String, mensaje: String): void
-        }
-        
-        class ControladorReportesProgramados {
-            -btnBack: Button
-            -choiceFrecuencia: ChoiceBox<String>
-            -tablaReportesGenerados: TableView<ReporteGenerado>
-            -columnaNombre: TableColumn<ReporteGenerado, String>
-            -columnaEstado: TableColumn<ReporteGenerado, String>
-            -columnaFecha: TableColumn<ReporteGenerado, LocalDate>
-            -columnaAcciones: TableColumn<ReporteGenerado, Void>
-            -schedulerService: ReportesSchedulerService
-            --
-            +initialize(): void
-            +confirmarReporteProgramado(event: ActionEvent): void
-            +goToReportesPrincipal(event: ActionEvent): void
-            +onBackAction(event: ActionEvent): void
-            +onCerrarSesion(event: ActionEvent): void
-            -inicializarTablaReportes(): void
-            -existeReporteConFrecuencia(frecuencia: String): boolean
-            -mostrarVentanaPrevia(): void
-            -agregarReporteATabla(fechaEjecucion: String): void
-            +eliminarReporteProgramado(reporte: ReporteGenerado): void
-            -mostrarVistaPrevia(reporte: ReporteGenerado): void
-            -descargarReportePDF(reporte: ReporteGenerado): void
-            -generarPDFConPDFBox(reporte: ReporteGenerado, archivo: File): void
-            -mostrarAlerta(titulo: String, mensaje: String): void
-        }
+
+' Paquetes principales
+package com.cinemax.reportes.controladores {
+    class ControladorReportesPrincipal {
+        - Button botonRegresar
+        - Button botonFiltrar
+        - Button botonConfirmar
+        - ComboBox<String> elegirHorario
+        - BarChart<String, Number> diagramaBarras
+        - PieChart diagramaPastel
+        - ObservableList<ReporteGenerado> reportesGenerados
+        - ServicioDeReportes servicioReportes
+        - Map<String, Object> datos
+        - List<Map<String, Object>> estadisticas
+        - List<ReporteGenerado> reportesSimulados
+        --
+        + void initialize()
+        - void configurarTablaReportes()
+        - List<ReporteGenerado> cargarReportesDesdeCarpeta()
+        - void cargarReportesSimulados()
+        - void inicializarGraficasVacias()
+        - void abrirReporte(ReporteGenerado reporte)
+        + void irAReporteProgramado(ActionEvent event)
+        + void filtrar(ActionEvent event)
+        + void confirmarReporte(ActionEvent event)
+        - void actualizarGraficaBarras(List<Map<String, Object>> estadisticas)
+        - void actualizarGraficaPastel(List<Map<String, Object>> estadisticas)
+        - void exportarReporte(Exportable strategy, String tipo)
+        - void mostrarPrevisualizacionReporte(List<Map<String, Object>> datos, boolean permitirDescarga)
+        - VBox generarContenidoReporteCompleto(List<Map<String, Object>> datos)
+        - HBox crearEstadistica(String titulo, String valor)
+        - BarChart<String, Number> crearGraficaBarrasPreview(List<Map<String, Object>> datos)
+        - PieChart crearGraficaPastelPreview(List<Map<String, Object>> datos)
+        - Label crearCeldaTabla(String texto, boolean esHeader)
+        + void volverEscena(ActionEvent event)
     }
-    
-    package "modelos" {
-        class ReporteVentaDTO {
-            +fecha: String
-            +boletosVendidos: int
-            +ingresos: double
-            --
-            +ReporteVentaDTO(fecha: String, boletosVendidos: int, ingresos: double)
-        }
-        
-        class ReporteGenerado {
-            -nombreReporte: String
-            -fechaGeneracion: LocalDateTime
-            -estado: String
-            -frecuencia: String
-            -rutaArchivo: String
-            --
-            +ReporteGenerado(nombreReporte: String, fechaGeneracion: LocalDateTime, estado: String, rutaArchivo: String, frecuencia: String)
-            +ReporteGenerado()
-            +getNombreReporte(): String
-            +setNombreReporte(nombreReporte: String): void
-            +getFechaGeneracion(): LocalDateTime
-            +setFechaGeneracion(fechaGeneracion: LocalDateTime): void
-            +getEstado(): String
-            +setEstado(estado: String): void
-            +getRutaArchivo(): String
-            +setRutaArchivo(rutaArchivo: String): void
-            +getFrecuencia(): String
-        }
-        
-        package "persistencia" {
-            class ReporteDAO {
-                --
-                +obtenerVentas(desde: LocalDate, hasta: LocalDate, sala: String, tipoBoleto: String, horario: String): List<ReporteVentaDTO>
-            }
-        }
-        
-        ' Strategy Pattern para frecuencias
-        interface FrecuenciaStrategy {
-            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
-        }
-        
-        class DiarioStrategy {
-            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
-        }
-        
-        class SemanalStrategy {
-            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
-        }
-        
-        class MensualStrategy {
-            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
-        }
-        
-        class TrimestralStrategy {
-            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
-        }
-        
-        class AnualStrategy {
-            +calcularSiguienteEjecucion(fechaActual: LocalDateTime): LocalDateTime
-        }
+
+    class ControladorReportesProgramados {
+        - Button botonRegresar
+        - ComboBox<String> elegirFrecuencia
+        - ServicioReportesProgramados servicioReporteProgramado
+        - ServicioDeReportes servicioVentas
+        - Map<String, Object> datos
+        --
+        + void initialize()
+        - void inicializarTablaReportes()
+        + void confirmarReporteProgramado(ActionEvent event)
+        - boolean existeReporteConFrecuencia(String frecuencia)
+        - void mostrarVentanaPrevia()
+        - Label crearCeldaTabla(String texto, boolean esHeader)
+        - HBox crearFilaTabla(String fecha, String boletos, String ingresos)
+        - void agregarReporteATabla(String fechaEjecucion)
+        + void eliminarReporteProgramado(ReporteGenerado reporte)
+        - void mostrarVistaPrevia(ReporteGenerado reporte)
+        - VBox generarContenidoReporte(ReporteGenerado reporte)
+        - void descargarReporte(ReporteGenerado reporte, String formato)
+        + void irAReportesPrincipal(ActionEvent event)
+        + void volverEscena(ActionEvent event)
     }
-    
-    package "servicios" {
-        class ReportesSchedulerService {
-            -instance: ReportesSchedulerService
-            -reportesPendientes: List<ReporteGenerado>
-            -reportesEjecutados: ObservableList<ReporteGenerado>
-            -scheduler: ScheduledExecutorService
-            --
-            -ReportesSchedulerService()
-            +getInstance(): ReportesSchedulerService
-            +iniciarScheduler(): void
-            +detenerScheduler(): void
-            +getReportesPendientes(): List<ReporteGenerado>
-            +getReportesEjecutados(): ObservableList<ReporteGenerado>
-            -revisarReportesPendientes(): void
-            -getStrategy(frecuencia: String): FrecuenciaStrategy
-            -calcularSiguienteEjecucion(fechaGeneracion: LocalDateTime, frecuencia: String): LocalDateTime
-            +calcularProximaEjecucion(fechaGeneracionStr: String, frecuencia: String): String
-        }
+}
+
+package com.cinemax.reportes.modelos #lightgoldenrodyellow {
+    interface EstrategiaDeFrecuencia #lightblue{
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
     }
-    
-    ' Interfaces para Strategy Pattern de exportación
-    interface ExportStrategy {
-        +exportar(datos: List<ReporteVentaDTO>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+
+    class EstrategiaDiaria #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
     }
-    
-    class ExportPDFStrategy {
-        +exportar(datos: List<ReporteVentaDTO>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+    class EstrategiaSemanal #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
     }
-    
-    class ExportCSVStrategy {
-        +exportar(datos: List<ReporteVentaDTO>, destino: File, tituloReporte: String, infoExtra: Map<String, Object>): void
+    class EstrategiaMensual #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
+    class EstrategiaTrimestal #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
+    class EstrategiaAnual #lightblue implements EstrategiaDeFrecuencia {
+        + LocalDateTime calcularSiguiente(LocalDateTime fechaGeneracion)
+    }
+
+    class ReporteGenerado {
+        - int id
+        - String nombre
+        - String tipo
+        - LocalDateTime fechaGeneracion
+        - String rutaArchivo
+        - String descripcion
+        - String estado
+        - String frecuencia
+        --
+    }
+}
+
+
+package com.cinemax.reportes.servicios #lightgoldenrodyellow {
+    class ServicioDeReportes {
+        --
+        + ServicioDeReportes()
+        + Map<String, Object> getResumenDeVentas()
+        + List<Map<String, Object>> getEstadisticasDeBarras()
+        + List<Map<String, Object>> obtenerDatosFiltrados(List<Map<String, Object>> datos, String desde, String hasta)
+    }
+    class ServicioReportesProgramados #lightblue {
+        - static ServicioReportesProgramados instance
+        - List<ReporteGenerado> reportesPendientes
+        - ObservableList<ReporteGenerado> reportesEjecutados
+        - ScheduledExecutorService scheduler
+        --
+        - ServicioReportesProgramados()
+        + static ServicioReportesProgramados getInstance()
+        + void iniciarScheduler()
+        + void detenerScheduler()
+        + List<ReporteGenerado> getReportesPendientes()
+        + ObservableList<ReporteGenerado> getReportesEjecutados()
+        - void revisarReportesPendientes()
+        - EstrategiaDeFrecuencia getStrategy(String frecuencia)
+        - LocalDateTime calcularSiguienteEjecucion(LocalDateTime fechaGeneracion, String frecuencia)
+        + String calcularProximaEjecucion(String fechaGeneracionStr, String frecuencia)
+    }
+    ServicioReportesProgramados --> ReporteGenerado
+    ServicioReportesProgramados --> EstrategiaDeFrecuencia
+}
+
+
+
+package com.cinemax.utilidades.strategyParaDocumentos #lightgoldenrodyellow {
+    interface Exportable #lightblue {
+        + void exportar(ReporteGenerado reporte, File archivo, Map<String, Object> datos)
+        + void exportarFormatoPrincipal(List<Map<String, Object>> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
+    }
+
+    class EstrategiaExportarPDF #lightblue implements Exportable  {
+        + void exportar(ReporteGenerado reporte, File archivo, Map<String, Object> datos)
+        + void exportarFormatoPrincipal(List<Map<String, Object>> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
+        + static PDDocument crearDocumentoPDF()
+        + static void guardarPDF(PDDocument document, File archivo)
+    }
+
+    class EstrategiaExportarCSV #lightblue implements Exportable {
+        + void exportar(ReporteGenerado reporte, File archivo, Map<String, Object> datos)
+        + void exportarFormatoPrincipal(List<Map<String, Object>> datos, File destino, String tituloReporte, Map<String, Object> infoExtra)
     }
 }
 
 ' Relaciones
-ControladorReportesPrincipal --> ReporteDAO : usa
-ControladorReportesPrincipal --> ReporteVentaDTO : maneja
-ControladorReportesPrincipal --> ExportStrategy : usa
-ControladorReportesProgramados --> ReporteGenerado : maneja
-ControladorReportesProgramados --> ReportesSchedulerService : usa
+ControladorReportesPrincipal --> ServicioDeReportes
+ControladorReportesPrincipal --> Exportable
+ControladorReportesPrincipal --> EstrategiaExportarPDF
+ControladorReportesPrincipal --> EstrategiaExportarCSV
 
-ReportesSchedulerService --> ReporteGenerado : gestiona
-ReportesSchedulerService --> FrecuenciaStrategy : usa
-ReporteDAO --> ReporteVentaDTO : retorna
 
-' Strategy Pattern para frecuencias
-FrecuenciaStrategy <|.. DiarioStrategy
-FrecuenciaStrategy <|.. SemanalStrategy
-FrecuenciaStrategy <|.. MensualStrategy
-FrecuenciaStrategy <|.. TrimestralStrategy
-FrecuenciaStrategy <|.. AnualStrategy
 
-' Strategy Pattern para exportación
-ExportStrategy <|.. ExportPDFStrategy
-ExportStrategy <|.. ExportCSVStrategy
+ControladorReportesProgramados --> ServicioReportesProgramados
+ControladorReportesProgramados --> ServicioDeReportes
+ControladorReportesProgramados --> Exportable
+ControladorReportesProgramados --> EstrategiaExportarPDF
+ControladorReportesProgramados --> EstrategiaExportarCSV
 
-' Singleton pattern
-ReportesSchedulerService --> ReportesSchedulerService : instance
+ServicioReportesProgramados --> ServicioReportesProgramados
 
-@enduml 
+
+ReporteGenerado <-- ControladorReportesPrincipal
+ReporteGenerado <-- ControladorReportesProgramados
+
+@enduml
