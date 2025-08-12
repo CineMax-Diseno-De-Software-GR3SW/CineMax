@@ -64,9 +64,9 @@
                         styleClass="primary-button"/>
                 <Button fx:id="btnActualizar"
                         text="Actualizar"
-                        onAction="#onActualizar"
+                        onAction="#actualizarUsuarios"
                         styleClass="primary-button"/>
-                <Button fx:id="btnEliminar" text="Eliminar" onAction="#onEliminar" styleClass="primary-button" disable="true"/>
+                <Button fx:id="btnEliminar" text="Eliminar" onAction="#eliminarUsuario" styleClass="primary-button" disable="true"/>
             </HBox>
 
             <HBox alignment="CENTER_LEFT" spacing="15.0" styleClass="summary-pane" maxWidth="Infinity">

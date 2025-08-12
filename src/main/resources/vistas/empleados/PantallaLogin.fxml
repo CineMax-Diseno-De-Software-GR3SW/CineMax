@@ -20,13 +20,13 @@
 
     <PasswordField fx:id="txtPassword" maxWidth="-Infinity" prefHeight="36.0" prefWidth="476.0" promptText="Contraseña" />
 
-    <Button fx:id="btnIngresar" styleClass="primary-button" onAction="#onLoginClick" prefHeight="45" prefWidth="192.0" text="Iniciar Sesión">
+    <Button fx:id="btnIngresar" styleClass="primary-button" onAction="#onIniciarSesion" prefHeight="45" prefWidth="192.0" text="Iniciar Sesión">
       <font>
          <Font size="18.0" />
       </font></Button>
 
     <Label fx:id="lblError" maxWidth="300" visible="false" wrapText="true" />
-    <Hyperlink  fx:id="vinculoRecuperarContrasena" onAction="#onForgotPasswordClick" text="¿Olvidaste tu contraseña?">
+    <Hyperlink fx:id="vinculoRecuperarContrasena" onAction="#onRecuperarContrasena" text="¿Olvidaste tu contraseña?">
         <font>
             <Font size="14.0" />
         </font>

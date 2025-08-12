@@ -142,69 +142,60 @@ package controladores {
 
 ' ============================== CONTROLADORES PRINCIPALES ==============================
 class ControladorGestionUsuarios {
-  + initialize(): void
+  + actualizarUsuarios(): void
+  + eliminarUsuario(): void
   + onAgregarUsuario(): void
-  + onEliminar(): void
-  + onBuscar(): void
-  + onLimpiar(): void
-  + onBackAction(): void
+
 }
 
 class ControladorLogin {
-  + initialize(): void
   + onIniciarSesion(): void
   + onRecuperarContrasena(): void
-  + validarCampos(): boolean
+  + iniciarSesion(): boolean
 }
 
 class ControladorPortalPrincipal {
-  + initialize(): void
-  + onCerrarSesion(): void
+  + cerrarSesion(): void
+  + onMiPerfil(): void
   + onGestionUsuarios(): void
   + onGestionSalas(): void
   + onGestionPeliculas(): void
   + onVentaBoletos(): void
   + onReportes(): void
-  + onPerfil(): void
 }
 
 ' ============================== CONTROLADORES DE PERFIL ==============================
 class ControladorPerfil {
-  + initialize(): void
-  + onActualizarContacto(): void
-  + onCambiarContrasena(): void
-  + onRegresar(): void
+  + cargarDatosUsuario(): void
+  + actualizarContacto(): void
+  + cambiarContrasena(): void
 }
 
 class ControladorActualizarContacto {
-  + initialize(): void
-  + onGuardar(): void
-  + onCancelar(): void
+  + setDatosActuales(): void
+  + actualizarContacto(): void
+  + cancelarActualizacion(): void
+
 }
 
 class ControladorCambiarContrasena {
-  + initialize(): void
-  + onGuardar(): void
-  + onCancelar(): void
+  + cancelarCambio(): void
+  + guardarNuevaContrasena(): void
 }
 
 ' ============================== CONTROLADORES DE REGISTRO Y RECUPERACIÓN ==============================
 class ControladorRegistrarUsuario {
-  + initialize(): void
-  + onGuardar(): void
-  + onCancelar(): void
-  + limpiarCampos(): void
+  + registrarUsuario(): void
+  + cancelarREgistro(): void
 }
 
 class ControladorRecuperarContrasena {
-  + initialize(): void
-  + onEnviarCodigo(): void
-  + onRegresar(): void
+  + enviarClaveTemporal(): void
+  + regresarAlLogin(): void
 }
 
 class ControladorCambioClaveObligatorio {
-  + initialize(): void
-  + onCambiarClave(): void
+  + cambiarClave(): void
 }
 
 }

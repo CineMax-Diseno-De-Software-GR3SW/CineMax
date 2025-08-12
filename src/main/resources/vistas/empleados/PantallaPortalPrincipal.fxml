@@ -32,7 +32,7 @@
 
                 <Pane VBox.vgrow="ALWAYS" />
 
-                <Button fx:id="btnCerrarSesion" onAction="#onCerrarSesion" prefWidth="180.0" styleClass="primary-button" text="Cerrar Sesión" />
+                <Button fx:id="btnCerrarSesion" onAction="#cerrarSesion" prefWidth="180.0" styleClass="primary-button" text="Cerrar Sesión" />
             </children>
         </VBox>
     </left>

@@ -28,7 +28,7 @@
 
     <PasswordField fx:id="txtConfirmarClave" maxWidth="400" prefHeight="36" promptText="Confirmar Nueva Contraseña" />
 
-    <Button fx:id="cambiarClave" onAction="#onCambiarClave" prefHeight="45" prefWidth="250.0" styleClass="primary-button" text="Cambiar Contraseña">
+    <Button fx:id="cambiarClave" onAction="#cambiarClave" prefHeight="45" prefWidth="250.0" styleClass="primary-button" text="Cambiar Contraseña">
         <font>
             <Font size="18.0" />
         </font>

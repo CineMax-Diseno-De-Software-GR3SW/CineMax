@@ -6,7 +6,6 @@ import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
 import java.sql.SQLException;
@@ -29,12 +28,12 @@ public class ControladorCambiarContrasena {
     private ServicioPerfilUsuario servicioPerfilUsuario;
 
     @FXML
-    private void onCancelar() {
+    private void cancelarCambio() {
         ((Stage) txtContrasenaActual.getScene().getWindow()).close();
     }
 
     @FXML
-    private void onGuardar() {
+    private void guardarNuevaContrasena() {
         sesionSingleton = ServicioSesionSingleton.getInstancia();
         servicioPerfilUsuario = new ServicioPerfilUsuario();
 
@@ -59,6 +58,8 @@ public class ControladorCambiarContrasena {
             ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al actualizar la contraseña");
 
 //            mostrarAlerta(Alert.AlertType.ERROR, "Error", "No se pudo actualizar la contraseña", e.getMessage());
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaAdvertencia(e.getMessage());
         }
     }
 

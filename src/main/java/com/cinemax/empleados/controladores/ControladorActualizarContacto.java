@@ -6,7 +6,6 @@ import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 import com.cinemax.empleados.servicios.ValidadorUsuario;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -63,7 +62,7 @@ public class ControladorActualizarContacto {
     }
 
     @FXML
-    private void onActualizar() {
+    private void actualizarContacto() {
         String nuevoCorreo = txtCorreo.getText().trim();
         String nuevoCelular = txtCelular.getText().trim();
 
@@ -103,7 +102,7 @@ public class ControladorActualizarContacto {
     }
 
     @FXML
-    private void onCerrar() {
+    private void cancelarActualizacion() {
             ((Stage) btnCancelar.getScene().getWindow()).close();
     }
 

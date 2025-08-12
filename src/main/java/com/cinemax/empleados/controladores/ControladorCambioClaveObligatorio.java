@@ -1,7 +1,5 @@
 package com.cinemax.empleados.controladores;
 
-import com.cinemax.Main;
-import com.cinemax.utilidades.ControladorAlertas;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.empleados.servicios.ServicioPerfilUsuario;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
@@ -14,8 +12,6 @@ import javafx.scene.control.PasswordField;
 import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioSesionSingleton;
 import javafx.stage.Stage;
-
-import java.io.InvalidObjectException;
 
 public class ControladorCambioClaveObligatorio {
 
@@ -34,7 +30,7 @@ public class ControladorCambioClaveObligatorio {
     private final ServicioPerfilUsuario servicioPerfilUsuario = new ServicioPerfilUsuario();
 
     @FXML
-    private void onCambiarClave() {
+    private void cambiarClave() {
         String nuevaClave = txtNuevaClave.getText();
         String confirmarClave = txtConfirmarClave.getText();
 
@@ -51,7 +47,7 @@ public class ControladorCambioClaveObligatorio {
             return;
         }
 
-        if (ValidadorUsuario.validarClave(nuevaClave)) {
+        if (!ValidadorUsuario.validarClave(nuevaClave)) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva contraseña no cumple con los requisitos de seguridad.");
             return;
         }

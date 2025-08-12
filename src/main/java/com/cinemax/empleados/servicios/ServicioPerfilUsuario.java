@@ -64,15 +64,15 @@ public class ServicioPerfilUsuario {
         usuarioDAO.actualizarCelular(usuarioActivo.getId(), nuevoCelular);
     }
 
-    public void actualizarClave(Usuario usuarioActivo, String claveActual,String nuevaClave) throws SQLException {
+    public void actualizarClave(Usuario usuarioActivo, String claveActual,String nuevaClave) throws Exception {
         if (!usuarioActivo.verificarClave(claveActual)) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La contraseña actual es incorrecta.");
+//            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La contraseña actual es incorrecta.");
             throw new IllegalArgumentException("La contraseña actual es incorrecta.");
         }
 
         if (!ValidadorUsuario.validarClave(nuevaClave)) {
-            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad.");
-            throw new IllegalArgumentException("Nueva clave inválida");
+//            ManejadorMetodosComunes.mostrarVentanaAdvertencia("La nueva clave no cumple con los requisitos de seguridad.");
+            throw new IllegalArgumentException("La nueva clave no cumple con los requisitos de seguridad.");
         }
         String claveHasheada = ServicioClave.hashClave(nuevaClave);
         usuarioActivo.setClave(claveHasheada);

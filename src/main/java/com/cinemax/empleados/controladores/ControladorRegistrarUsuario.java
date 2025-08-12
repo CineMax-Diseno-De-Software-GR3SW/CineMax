@@ -1,7 +1,6 @@
 package com.cinemax.empleados.controladores;
 
 import com.cinemax.empleados.modelos.entidades.Rol;
-import com.cinemax.empleados.modelos.entidades.Usuario;
 import com.cinemax.empleados.servicios.ServicioRoles;
 import com.cinemax.empleados.servicios.ServicioUsuarios;
 
@@ -18,11 +17,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.PasswordField;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -147,7 +143,7 @@ public class ControladorRegistrarUsuario implements Initializable {
     }
 
     @FXML
-    private void handleRegistrarUsuario(ActionEvent event) {
+    private void registrarUsuario(ActionEvent event) {
         String nombres = campoNombres.getText().trim();
         String apellidos = campoApellidos.getText().trim();
         String cedula = campoCedula.getText().trim();
@@ -213,7 +209,7 @@ public class ControladorRegistrarUsuario implements Initializable {
     }
 
     @FXML
-    private void handleCancelar() {
+    private void cancelarRegistro() {
         ManejadorMetodosComunes.cambiarVentana((Stage) btnBack.getScene().getWindow(),
                 "/vistas/empleados/PantallaGestionUsuarios.fxml");
 //        try {

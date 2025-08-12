@@ -17,7 +17,7 @@
             <children>
                 <Button fx:id="btnBack"
                         text="←"
-                        onAction="#onVolver"
+                        onAction="#onRegresar"
                         styleClass="stepper-button"/>
                 <Label text="Información del Perfil" styleClass="section-title" />
             </children>
@@ -74,11 +74,11 @@
             <!-- BOTONES -->
             <HBox spacing="30.0" alignment="CENTER">
                 <Button fx:id="btnCambiarContrasena"
-                        onAction="#onCambiarContrasena"
+                        onAction="#cambiarContrasena"
                         text="Cambiar Contraseña"
                         styleClass="primary-button" />
                 <Button fx:id="btnActualizarContacto"
-                        onAction="#onActualizarContacto"
+                        onAction="#actualizarContacto"
                         text="Actualizar Contacto"
                         styleClass="primary-button" />
             </HBox>

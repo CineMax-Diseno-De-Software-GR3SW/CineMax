@@ -24,7 +24,7 @@
     </Label>
 
     <HBox spacing="10" alignment="CENTER">
-        <Button text="Cancelar" onAction="#onCancelar" styleClass="primary-button"/>
-        <Button text="Guardar" onAction="#onGuardar" styleClass="primary-button"/>
+        <Button text="Cancelar" onAction="#cancelarCambio" styleClass="primary-button"/>
+        <Button text="Guardar" onAction="#guardarNuevaContrasena" styleClass="primary-button"/>
     </HBox>
 </VBox>

@@ -25,7 +25,7 @@
     </GridPane>
 
     <HBox spacing="15.0" alignment="CENTER">
-        <Button fx:id="btnCancelar" text="Cancelar" onAction="#onCerrar" styleClass="primary-button"/>
-        <Button fx:id="btnActualizar" text="Actualizar" onAction="#onActualizar" styleClass="primary-button"/>
+        <Button fx:id="btnCancelar" text="Cancelar" onAction="#cancelarActualizacion" styleClass="primary-button"/>
+        <Button fx:id="btnActualizar" text="Actualizar" onAction="#actualizarContacto" styleClass="primary-button"/>
     </HBox>
 </VBox>

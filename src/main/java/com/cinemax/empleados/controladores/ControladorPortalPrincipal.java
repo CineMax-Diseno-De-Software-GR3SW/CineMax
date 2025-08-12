@@ -121,7 +121,7 @@ public class ControladorPortalPrincipal {
     }
 
     @FXML
-    private void onCerrarSesion() {
+    private void cerrarSesion() {
         servicioSesion.cerrarSesion();
         ManejadorMetodosComunes.cambiarVentana((Stage) btnCerrarSesion.getScene().getWindow(),
                 "/vistas/empleados/PantallaLogin.fxml");

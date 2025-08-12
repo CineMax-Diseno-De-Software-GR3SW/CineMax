@@ -231,7 +231,7 @@ public class ControladorGestionUsuarios {
     }
 
     @FXML
-    private void onActualizar() {
+    private void actualizarUsuarios() {
         for (Usuario u : cambiosPendientes.values()) {
             try {
                 servicioUsuarios.actualizarEstado(u.getId(), u.isActivo());
@@ -291,7 +291,7 @@ public class ControladorGestionUsuarios {
 
     // Método para eliminar usuario seleccionado
     @FXML
-    private void onEliminar() {
+    private void eliminarUsuario() {
         Usuario usuarioSeleccionado = tableUsuarios.getSelectionModel().getSelectedItem();
         if (usuarioSeleccionado == null) {
             ManejadorMetodosComunes.mostrarVentanaAdvertencia("Por favor, selecciona un usuario para eliminar.");
