@@ -25,7 +25,7 @@ public class ServicioUsuarios {
     public void crearUsuario(String nombreCompleto, String cedula, String correo, String celular, boolean estadoActivo, String nombreUsuario, Rol cargoSeleccionado) throws Exception {
 
         validarDatos(correo, nombreUsuario);
-        String clave = generarClaveAleatoria();
+        String clave = ServicioClave.generarClaveAleatoria();
         String claveHasheada = ServicioClave.hashClave(clave);
 
         Usuario usuario = new Usuario(nombreUsuario,correo,claveHasheada,nombreCompleto,
@@ -42,40 +42,40 @@ public class ServicioUsuarios {
         ServicioCorreoSingleton.getInstancia().enviarCorreo(usuario.getCorreo(), ContenidoMensaje.crearMensajeCreacionUsuario(usuario.getNombreCompleto(), usuario.getNombreUsuario(), clave));
 
     }
-
-    private String generarClaveAleatoria() {
-        final String MAYUSCULAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
-        final String NUMEROS = "0123456789";
-        final String ESPECIALES = "!@#$%&*";
-        final String TODOS = MAYUSCULAS + MINUSCULAS + NUMEROS + ESPECIALES;
-        final int LONGITUD = 12;
-
-        SecureRandom random = new SecureRandom();
-        StringBuilder clave = new StringBuilder();
-
-        // Garantiza al menos un carácter de cada tipo
-        clave.append(MAYUSCULAS.charAt(random.nextInt(MAYUSCULAS.length())));
-        clave.append(MINUSCULAS.charAt(random.nextInt(MINUSCULAS.length())));
-        clave.append(NUMEROS.charAt(random.nextInt(NUMEROS.length())));
-        clave.append(ESPECIALES.charAt(random.nextInt(ESPECIALES.length())));
-
-        // Completa el resto aleatoriamente
-        for (int i = 4; i < LONGITUD; i++) {
-            clave.append(TODOS.charAt(random.nextInt(TODOS.length())));
-        }
-
-        // Mezcla los caracteres para que no sigan un patrón predecible
-        List<Character> caracteres = clave.chars()
-                .mapToObj(c -> (char) c)
-                .collect(Collectors.toList());
-        Collections.shuffle(caracteres, random);
-
-        StringBuilder claveFinal = new StringBuilder();
-        caracteres.forEach(claveFinal::append);
-
-        return claveFinal.toString();
-    }
+//
+//    private String generarClaveAleatoria() {
+//        final String MAYUSCULAS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//        final String MINUSCULAS = "abcdefghijklmnopqrstuvwxyz";
+//        final String NUMEROS = "0123456789";
+//        final String ESPECIALES = "!@#$%&*";
+//        final String TODOS = MAYUSCULAS + MINUSCULAS + NUMEROS + ESPECIALES;
+//        final int LONGITUD = 12;
+//
+//        SecureRandom random = new SecureRandom();
+//        StringBuilder clave = new StringBuilder();
+//
+//        // Garantiza al menos un carácter de cada tipo
+//        clave.append(MAYUSCULAS.charAt(random.nextInt(MAYUSCULAS.length())));
+//        clave.append(MINUSCULAS.charAt(random.nextInt(MINUSCULAS.length())));
+//        clave.append(NUMEROS.charAt(random.nextInt(NUMEROS.length())));
+//        clave.append(ESPECIALES.charAt(random.nextInt(ESPECIALES.length())));
+//
+//        // Completa el resto aleatoriamente
+//        for (int i = 4; i < LONGITUD; i++) {
+//            clave.append(TODOS.charAt(random.nextInt(TODOS.length())));
+//        }
+//
+//        // Mezcla los caracteres para que no sigan un patrón predecible
+//        List<Character> caracteres = clave.chars()
+//                .mapToObj(c -> (char) c)
+//                .collect(Collectors.toList());
+//        Collections.shuffle(caracteres, random);
+//
+//        StringBuilder claveFinal = new StringBuilder();
+//        caracteres.forEach(claveFinal::append);
+//
+//        return claveFinal.toString();
+//    }
 
 
     private void validarDatos(String correo, String nombreUsuario) throws Exception {
@@ -113,29 +113,29 @@ public class ServicioUsuarios {
         usuarioDAO.actualizarRol(idUsuario,nuevoRol.getId());
     }
 
-    public Usuario buscarUsuarioPorCorreo(String correo) throws Exception {
-        if (correo == null || correo.trim().isEmpty()) {
-            return null;
-        }
+//    public Usuario buscarUsuarioPorCorreo(String correo) throws Exception {
+//        if (correo == null || correo.trim().isEmpty()) {
+//            return null;
+//        }
+//
+//        return usuarioDAO.buscarPorCorreo(correo);
+//    }
 
-        return usuarioDAO.buscarPorCorreo(correo);
-    }
+//    public Usuario buscarUsuarioPorNombreUsuario(String nombreUsuario) throws Exception {
+//        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
+//            return null;
+//        }
+//
+//        return usuarioDAO.buscarPorNombreUsuario(nombreUsuario);
+//    }
 
-    public Usuario buscarUsuarioPorNombreUsuario(String nombreUsuario) throws Exception {
-        if (nombreUsuario == null || nombreUsuario.trim().isEmpty()) {
-            return null;
-        }
-
-        return usuarioDAO.buscarPorNombreUsuario(nombreUsuario);
-    }
-
-    public Usuario buscarUsuarioPorId(Long id) throws Exception {
-        if (id == null) {
-            return null;
-        }
-
-        return usuarioDAO.buscarPorId(id);
-    }
+//    public Usuario buscarUsuarioPorId(Long id) throws Exception {
+//        if (id == null) {
+//            return null;
+//        }
+//
+//        return usuarioDAO.buscarPorId(id);
+//    }
 
     public List<Usuario> listarUsuarios() throws Exception {
         return usuarioDAO.listarTodos();
@@ -175,7 +175,7 @@ public class ServicioUsuarios {
 
             Usuario usuario = usuarioDAO.buscarPorCorreo(correo);
 
-            String nuevaClave = generarClaveAleatoria();
+            String nuevaClave = ServicioClave.generarClaveAleatoria();
             String claveHasheada = ServicioClave.hashClave(nuevaClave);
             usuario.setClave(claveHasheada);
             usuarioDAO.actualizarClave(usuario.getId(), usuario.getClave());
@@ -188,7 +188,7 @@ public class ServicioUsuarios {
 
     public void actualizarClaveTemporal(Usuario usuarioActivo, String nuevaClave) throws SQLException {
         String claveHasheada = ServicioClave.hashClave(nuevaClave);
-        usuarioActivo.actualizarClave(claveHasheada);
+        usuarioActivo.setClave(claveHasheada);
         usuarioDAO.actualizarClaveTemporal(usuarioActivo.getId(), claveHasheada);
     }
 

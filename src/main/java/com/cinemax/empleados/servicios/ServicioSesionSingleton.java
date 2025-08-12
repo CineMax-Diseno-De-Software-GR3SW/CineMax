@@ -55,14 +55,10 @@ public class ServicioSesionSingleton {
         return usuarioActivo;
     }
     
-    public boolean estaAutenticado() {
-        return usuarioActivo != null;
-    }
-    
-//    public void setUsuarioActivo(Usuario usuario) {
-//        this.usuarioActivo = usuario;
+//    public boolean estaAutenticado() {
+//        return usuarioActivo != null;
 //    }
-    
+
     /**
      * Verifica si el usuario activo tiene un permiso específico
      */
@@ -74,20 +70,20 @@ public class ServicioSesionSingleton {
     }
 
 
-    /**
-     * Verifica si el usuario activo está activo
-     */
-    public boolean usuarioActivoEstaActivo() {
-        return usuarioActivo != null && usuarioActivo.isActivo();
-    }
-
-    public String getNombreUsuario() {
-        return usuarioActivo.getNombreCompleto();
-   }
-
-    public String getRolUsuarioActivo() {
-        return usuarioActivo.getDescripcionRol();
-    }
+//    /**
+//     * Verifica si el usuario activo está activo
+//     */
+//    public boolean usuarioActivoEstaActivo() {
+//        return usuarioActivo != null && usuarioActivo.isActivo();
+//    }
+//
+//    public String getNombreUsuario() {
+//        return usuarioActivo.getNombreCompleto();
+//   }
+//
+//    public String getRolUsuarioActivo() {
+//        return usuarioActivo.getDescripcionRol();
+//    }
 
 
 }
