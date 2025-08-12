@@ -49,7 +49,7 @@ import javafx.stage.Stage;
  * @author GR3SW
  * @version 1.0
  */
-public class ControladorAsignadorButacas {
+public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
 
     // ===== ELEMENTOS DE LA INTERFAZ (FXML) =====
 
@@ -194,7 +194,8 @@ public class ControladorAsignadorButacas {
 
             // 3. Configurar comunicación bidireccional entre controladores
             controladorDeConsultaSalas = loader.getController();
-            controladorDeConsultaSalas.setControladorAsignadorButacas(this);
+            //controladorDeConsultaSalas.setControladorAsignadorButacas(this);
+            controladorDeConsultaSalas.setSuscriptoresSeleccionButacas(this);
 
             // 4. Renderizar butacas con estado visual (ocupada/disponible)
             controladorDeConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);
@@ -283,8 +284,44 @@ public class ControladorAsignadorButacas {
      * 
      * @param butaca La butaca que se quiere agregar a la selección
      */
+    //public void agregarButacaSeleccionada(Butaca butaca) {
+    //    // Validar que la butaca sea válida y no esté ya seleccionada
+    //    if (butaca == null || butacasSeleccionadas.contains(butaca)) {
+    //        return;
+    //    }
+//
+    //    // Agregar a la lista interna de seleccionadas
+    //    butacasSeleccionadas.add(butaca);
+//
+    //    // Actualizar visualización en panel lateral
+    //    ControladorInformacionDeVenta.cargarButacaSeleccionada(butaca);
+    //    ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
+    //}
+
+    /**
+     * Método llamado cuando el usuario hace clic nuevamente en una butaca
+     * ya seleccionada para deseleccionarla. Actualiza tanto la lista como
+     * la visualización del panel lateral.
+     * 
+     * @param butaca La butaca que se quiere remover de la selección
+     */
+    //public void quitarButacaDeseleccionada(Butaca butaca) {
+    //    // Validar que la butaca sea válida y esté en la lista de seleccionadas
+    //    if (butaca == null || !butacasSeleccionadas.contains(butaca)) {
+    //        return;
+    //    }
+//
+    //    // Remover de la lista interna
+    //    butacasSeleccionadas.remove(butaca);
+//
+    //    // Actualizar visualización en panel lateral
+    //    ControladorInformacionDeVenta.removerButacaSeleccionada(butaca);
+    //    ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
+    //}
+
+    @Override
     public void agregarButacaSeleccionada(Butaca butaca) {
-        // Validar que la butaca sea válida y no esté ya seleccionada
+         // Validar que la butaca sea válida y no esté ya seleccionada
         if (butaca == null || butacasSeleccionadas.contains(butaca)) {
             return;
         }
@@ -297,14 +334,8 @@ public class ControladorAsignadorButacas {
         ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
-    /**
-     * Método llamado cuando el usuario hace clic nuevamente en una butaca
-     * ya seleccionada para deseleccionarla. Actualiza tanto la lista como
-     * la visualización del panel lateral.
-     * 
-     * @param butaca La butaca que se quiere remover de la selección
-     */
-    public void quitarButacaDeseleccionada(Butaca butaca) {
+    @Override
+    public void eliminarButacaSeleccionada(Butaca butaca) {
         // Validar que la butaca sea válida y esté en la lista de seleccionadas
         if (butaca == null || !butacasSeleccionadas.contains(butaca)) {
             return;

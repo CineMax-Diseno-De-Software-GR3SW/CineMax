@@ -7,6 +7,7 @@ import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.ServicioButaca;
 import com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas;
+import com.cinemax.venta_boletos.controladores.SuscriptorSeleccionButaca;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,7 +45,12 @@ public class ControladorDeConsultaSalas implements Initializable {
     private final ServicioButaca servicioButaca = new ServicioButaca();
     private List<Butaca> butacasSeleccionadas = new ArrayList<>();
 
-    private ControladorAsignadorButacas controladorAsignadorButacas;
+    //private ControladorAsignadorButacas controladorAsignadorButacas;
+    private List<SuscriptorSeleccionButaca> suscriptoresSeleccionButacas = new ArrayList<>();
+
+    public void setSuscriptoresSeleccionButacas(SuscriptorSeleccionButaca suscriptorSeleccionButaca) {
+        this.suscriptoresSeleccionButacas.add(suscriptorSeleccionButaca);
+    }
 
     /**
      * 1. Limpia la cuadrícula anterior
@@ -142,11 +148,14 @@ public class ControladorDeConsultaSalas implements Initializable {
      * 4. Notifica al controlador asignador sobre la nueva selección
      */
     private void seleccionarButaca(Butaca butaca, Button btn) {
-        if (!butacasSeleccionadas.contains(butaca)) {
+        if (!butacasSeleccionadas.contains(butaca) && suscriptoresSeleccionButacas != null) {
             butacasSeleccionadas.add(butaca); // Agregar a la lista
             btn.setStyle("-fx-background-color: #02487B; -fx-text-fill: white;"); // Color azul
             btn.setOnAction(e -> deseleccionarButaca(butaca, btn)); // Cambiar acción a deseleccionar
-            controladorAsignadorButacas.agregarButacaSeleccionada(butaca); // Notificar
+            for (SuscriptorSeleccionButaca suscriptorButaca : suscriptoresSeleccionButacas) {
+                suscriptorButaca.agregarButacaSeleccionada(butaca);
+            }
+            //controladorAsignadorButacas.agregarButacaSeleccionada(butaca); // Notificar
         }
     }
 
@@ -162,7 +171,10 @@ public class ControladorDeConsultaSalas implements Initializable {
             butacasSeleccionadas.remove(butaca); // Remover de la lista
             btn.setStyle("-fx-background-color: green; -fx-text-fill: white;"); // Color verde
             btn.setOnAction(e -> seleccionarButaca(butaca, btn)); // Cambiar acción a seleccionar
-            controladorAsignadorButacas.quitarButacaDeseleccionada(butaca); // Notificar
+            //controladorAsignadorButacas.quitarButacaDeseleccionada(butaca); // Notificar
+            for (SuscriptorSeleccionButaca suscriptorButaca : suscriptoresSeleccionButacas) {
+                suscriptorButaca.eliminarButacaSeleccionada(butaca);
+            }
         }
     }
 
@@ -170,7 +182,7 @@ public class ControladorDeConsultaSalas implements Initializable {
         return new ArrayList<>(butacasSeleccionadas);
     }
 
-    public void setControladorAsignadorButacas(ControladorAsignadorButacas controladorAsignadorButacas) {
-        this.controladorAsignadorButacas = controladorAsignadorButacas;
-    }
+    //public void setControladorAsignadorButacas(ControladorAsignadorButacas controladorAsignadorButacas) {
+    //    this.controladorAsignadorButacas = controladorAsignadorButacas;
+    //}
 }
