@@ -25,7 +25,7 @@ public class ServicioGeneradorBoleto {
      * @param butacas Lista de butacas seleccionadas por el cliente
      * @return Lista de productos (boletos) generados, uno por cada butaca
      */
-    public List<Producto> generarBoleto(Funcion funcion, List<Butaca> butacas) {
+    public List<Producto> generarBoletos(Funcion funcion, List<Butaca> butacas) {
         // Inicializa la lista que contendrá todos los boletos generados
         List<Producto> boletos = new ArrayList<>();
         

@@ -82,7 +82,7 @@ public class ControladorAsignadorButacas {
     private ControladorInformacionDeVenta ControladorInformacionDeVenta;
 
     /** Controlador para la gestión del mapa de butacas y su visualización */
-    private ControladorDeConsultaSalas controladorConsultaSalas;
+    private ControladorDeConsultaSalas controladorDeConsultaSalas;
 
     private List<Butaca> butacasSeleccionadas;
 
@@ -193,11 +193,11 @@ public class ControladorAsignadorButacas {
             mapaButacasContainer.getChildren().add(mapaButacas);
 
             // 3. Configurar comunicación bidireccional entre controladores
-            controladorConsultaSalas = loader.getController();
-            controladorConsultaSalas.setControladorAsignadorButacas(this);
+            controladorDeConsultaSalas = loader.getController();
+            controladorDeConsultaSalas.setControladorAsignadorButacas(this);
 
             // 4. Renderizar butacas con estado visual (ocupada/disponible)
-            controladorConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);
+            controladorDeConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
@@ -244,7 +244,7 @@ public class ControladorAsignadorButacas {
         try {
             // 1. Generar boletos basados en función y butacas seleccionadas
             ServicioGeneradorBoleto servicioGeneradorBoleto = new ServicioGeneradorBoleto();
-            List<Producto> boletosGenerados = servicioGeneradorBoleto.generarBoleto(funcionSeleccionada,
+            List<Producto> boletosGenerados = servicioGeneradorBoleto.generarBoletos(funcionSeleccionada,
                     butacasSeleccionadas);
 
             // 2. Obtener referencia a la ventana actual
@@ -314,7 +314,7 @@ public class ControladorAsignadorButacas {
         butacasSeleccionadas.remove(butaca);
 
         // Actualizar visualización en panel lateral
-        ControladorInformacionDeVenta.removerButacaDeLista(butaca);
+        ControladorInformacionDeVenta.removerButacaSeleccionada(butaca);
         ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
     }
 

@@ -66,7 +66,7 @@ package servicios{
     }
 
     class ServicioFacturacion {
-        + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): Factura
+        + generarFactura(productos: List<Producto>, cliente: Cliente, calculadorImpuesto: CalculadorImpuesto): void
     }
 
     interface ServicioGeneradorArchivo {
@@ -125,24 +125,25 @@ package servicios{
 
 package utilidades {
 
-    package strategyValidacionDocumentos {
+    package strategyValidacionDocumentos  #lightyellow
+    {
 
-        class ContextoValidacion{
+        class ContextoValidacion #lightblue {
             - estrategia: EstrategiaValidacion
             + setEstrategia(estrategia: EstrategiaValidacion): void
             + ejecutarEstrategia(documento: String): boolean
         }
         
-        class EstrategiaCedulaValidacion implements EstrategiaValidacion {
+        class EstrategiaCedulaValidacion #lightblue implements EstrategiaValidacion  {
         }
-        interface EstrategiaValidacion {
+        interface EstrategiaValidacion #lightblue {
             + validar(documento: String): boolean
         }
 
-        class EstrategiaPasaporteValidacion implements EstrategiaValidacion {
+        class EstrategiaPasaporteValidacion #lightblue implements EstrategiaValidacion {
         }
 
-        class EstrategiaRucValidacion extends EstrategiaCedulaValidacion {
+        class EstrategiaRucValidacion #lightblue extends EstrategiaCedulaValidacion {
         }
     }
 
