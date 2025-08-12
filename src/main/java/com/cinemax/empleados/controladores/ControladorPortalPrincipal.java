@@ -45,7 +45,7 @@ public class ControladorPortalPrincipal {
     @FXML
     private HBox headerBar;
 
-    private ServicioSesionSingleton gestorSesion;
+    private ServicioSesionSingleton servicioSesion;
 
     /**
      * Método para inicializar el controlador con el usuario activo.
@@ -53,8 +53,8 @@ public class ControladorPortalPrincipal {
      */
     @FXML
     public void initialize() {
-        gestorSesion = ServicioSesionSingleton.getInstancia();
-        Usuario u = gestorSesion.getUsuarioActivo();
+        servicioSesion = ServicioSesionSingleton.getInstancia();
+        Usuario u = servicioSesion.getUsuarioActivo();
         lblNombreUsuario.setText(u.getNombreCompleto());
         lblRolUsuario.setText(u.getDescripcionRol());
 
@@ -73,7 +73,7 @@ public class ControladorPortalPrincipal {
 
     /* Simplifica: si no tiene alguno de los permisos, oculta (sin dejar hueco) */
     private void habilitarOpcionSiTienePermiso(Node nodo, Permiso permiso) {
-        boolean visible = gestorSesion.tienePermiso(permiso);
+        boolean visible = servicioSesion.tienePermiso(permiso);
         nodo.setVisible(visible);
         //todo: Revisar huecos
         nodo.setManaged(visible); // evita huecos
@@ -122,6 +122,7 @@ public class ControladorPortalPrincipal {
 
     @FXML
     private void onCerrarSesion() {
+        servicioSesion.cerrarSesion();
         ManejadorMetodosComunes.cambiarVentana((Stage) btnCerrarSesion.getScene().getWindow(),
                 "/vistas/empleados/PantallaLogin.fxml");
     }

@@ -40,21 +40,11 @@ public class Usuario {
     }
 
     // Métodos de negocio
-    public void actualizarContacto(String nuevoCorreo, String nuevoCelular) {
-        this.correo = nuevoCorreo;
-        this.celular = nuevoCelular;
-        this.fechaUltimaModificacion = LocalDateTime.now();
-    }
-
-    public void activar() {
-        this.activo = true;
-        this.fechaUltimaModificacion = LocalDateTime.now();
-    }
-
-    public void desactivar() {
-        this.activo = false;
-        this.fechaUltimaModificacion = LocalDateTime.now();
-    }
+//    public void actualizarContacto(String nuevoCorreo, String nuevoCelular) {
+//        this.correo = nuevoCorreo;
+//        this.celular = nuevoCelular;
+//        this.fechaUltimaModificacion = LocalDateTime.now();
+//    }
 
     public boolean verificarClave(String ingresada) {
         return ServicioClave.verificarClave(ingresada, this.clave);
@@ -167,14 +157,14 @@ public class Usuario {
 //        throw new UnsupportedOperationException("Unimplemented method 'getTelefono'");
 //    }
 
-    public void actualizarCorreo(String nuevoEmail) {
-        this.correo = nuevoEmail;
-    }
+//    public void setCorreo(String nuevoEmail) {
+//        this.correo = nuevoEmail;
+//    }
 
-    public void actualizarCelular(String nuevoCelular) { this.celular = nuevoCelular; }
+//    public void setCelular(String nuevoCelular) { this.celular = nuevoCelular; }
 
-    public void actualizarClave(String nuevaClave) { this.clave = nuevaClave;
-    }
+//    public void setClave(String nuevaClave) { this.clave = nuevaClave;
+//    }
 
     public boolean isRequiereCambioClave() {
         return requiereCambioClave;

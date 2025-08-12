@@ -17,10 +17,10 @@
             <ColumnConstraints hgrow="SOMETIMES" minWidth="20.0" prefWidth="200.0"/>
         </columnConstraints>
 
-        <Label text="Correo Electrónico:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <Label text="Correo:" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
         <TextField fx:id="txtCorreo" promptText="Ingrese nuevo correo" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
-        <Label text="Número de Celular:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <Label text="Celular:" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
         <TextField fx:id="txtCelular" promptText="Ingrese nuevo número" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
     </GridPane>
 
