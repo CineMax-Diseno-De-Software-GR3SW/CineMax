@@ -9,6 +9,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.venta_boletos.modelos.entidades.Boleto;
+import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
 
 /**
  * Servicio Singleton para gestionar un temporizador de inactividad durante la venta de boletos.
@@ -21,6 +23,7 @@ public class ServicioTemporizador {
     private boolean tempEnEjecucion = false;
     private long finTiempo;
     private final StringProperty tiempoRestante = new SimpleStringProperty("15:00");
+    private String idDeSesion;
 
 
     private ServicioTemporizador() {}
@@ -69,6 +72,12 @@ public class ServicioTemporizador {
 
                     Platform.runLater(() -> {
                         System.out.println("Tiempo de venta expirado. Redirigiendo al menú principal.");
+                        BoletoDAO boletoDAO = new BoletoDAO();
+                        try {
+                            boletoDAO.liberarTodasButacasReservadasTemporalmentePorSession(idDeSesion);
+                        } catch (Exception e) {
+                            ManejadorMetodosComunes.mostrarVentanaError("Error al liberar butacas reservadas temporalmente: " + e.getMessage());
+                        }
                         ManejadorMetodosComunes.mostrarVentanaAdvertencia("El tiempo para completar la compra ha expirado. Serás redirigido al menú principal.");
                         ManejadorMetodosComunes.cambiarVentana(stage, "/vistas/empleados/PantallaPortalPrincipal.fxml");
                     });
@@ -100,4 +109,12 @@ public class ServicioTemporizador {
      * @return true si el temporizador está activo, false en caso contrario.
      */
     public boolean tempEnEjecucion() {return tempEnEjecucion;}
+
+    public void setIdDeSesion(String idDeSesion) {
+        this.idDeSesion = idDeSesion;
+    }
+
+    public String getIdDeSesion() {
+        return idDeSesion;
+    }
 }

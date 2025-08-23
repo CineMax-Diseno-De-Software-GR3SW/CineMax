@@ -2,8 +2,11 @@ package com.cinemax;
 
 import java.io.IOException;
 
+import com.cinemax.reportes.servicios.ServicioReportesProgramados;
 import com.cinemax.utilidades.conexiones.ConexionBaseSingleton;
 import com.cinemax.utilidades.conexiones.ConexionFirebaseStorage;
+import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
+import com.cinemax.venta_boletos.servicios.ServicioVisualizadorCartelera;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -35,8 +38,38 @@ public class Main extends Application {
     public void stop() {
         // Aquí cierras la conexión
         System.out.println("Cerrando conexion");
+        
+        // Detener todos los servicios con hilos en background
+        try {
+            // Detener el temporizador de ventas si está activo
+            ServicioTemporizador.getInstancia().detenerTemporizador();
+            System.out.println("Temporizador de ventas detenido");
+        } catch (Exception e) {
+            System.err.println("Error al detener temporizador: " + e.getMessage());
+        }
+        
+        try {
+            // Detener el scheduler de reportes programados
+            ServicioReportesProgramados.getInstance().detenerScheduler();
+            System.out.println("Scheduler de reportes detenido");
+        } catch (Exception e) {
+            System.err.println("Error al detener scheduler de reportes: " + e.getMessage());
+        }
+        
+        try {
+            // Detener el planificador de actualizaciones de cartelera
+            ServicioVisualizadorCartelera.obtenerInstancia().detenerPlanificador();
+            System.out.println("Planificador de cartelera detenido");
+        } catch (Exception e) {
+            System.err.println("Error al detener planificador de cartelera: " + e.getMessage());
+        }
+        
+        // Cerrar conexiones de base de datos
         ConexionBaseSingleton.getInstancia().cerrar();
         //ConexionFirebaseStorage.getInstancia().cerrar();
+        
+        // Forzar la terminación de la aplicación
+        System.exit(0);
     }
 
 

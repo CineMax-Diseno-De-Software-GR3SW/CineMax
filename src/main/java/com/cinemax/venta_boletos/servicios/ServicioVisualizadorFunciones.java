@@ -155,6 +155,7 @@ public class ServicioVisualizadorFunciones {
         try {
             Stage currentStage = (Stage) tabla.getScene().getWindow();
             ServicioTemporizador.getInstancia().empezarTemporizador(currentStage);
+            crearIdDeSesion();
 
             ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
                     "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
@@ -165,8 +166,17 @@ public class ServicioVisualizadorFunciones {
                     12, 350);
 
         } catch (Exception e) {
-
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar la vista de la seleccion de butacas: " + e.getMessage());
         }
+    }
+
+    public void crearIdDeSesion() {
+        // Generar un ID de sesión único
+        // Combinar timestamp + número aleatorio para garantizar unicidad
+        long timestamp = System.currentTimeMillis();
+        int random = (int) (Math.random() * 10000);
+        ServicioTemporizador.getInstancia().setIdDeSesion("SESION_" + timestamp + "_" + random);
+        // Ejemplo: "SESION_1692633842123_7392"
     }
 
     // ==================== MÉTODOS PRIVADOS ====================

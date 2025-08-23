@@ -79,7 +79,7 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
     private Funcion funcionSeleccionada;
 
     /** Controlador del panel lateral que muestra información de la función */
-    private ControladorInformacionDeVenta ControladorInformacionDeVenta;
+    private ControladorInformacionDeVenta controladorInformacionDeVenta;
 
     /** Controlador para la gestión del mapa de butacas y su visualización */
     //private ControladorDeConsultaSalas controladorDeConsultaSalas;
@@ -88,10 +88,17 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
 
     private BoletoDAO boletoDAO;
 
+    private List<Butaca> butacasYaSeleccionadas;
+
+    //private String idDeSesion;
+
     public ControladorAsignadorButacas() {
         boletoDAO = new BoletoDAO();
         butacasSeleccionadas = new ArrayList<>();
+        butacasYaSeleccionadas = new ArrayList<>();
     }
+
+    
 
     /**
      * Inicializa todos los datos necesarios para mostrar el mapa de butacas.
@@ -107,6 +114,8 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
      * @param funcionSeleccionada La función para la cual se seleccionarán butacas
      */
     public void inicializarDatos(Funcion funcionSeleccionada) {
+        // 0. id de sesion
+        //crearIdDeSesion();
 
         // 1. Configurar encabezado con tipo de sala (VIP, Normal, etc.)
         labelTipoSala.setText(funcionSeleccionada.getSala().getTipo().name());
@@ -121,7 +130,7 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
             System.out.println("=== DEBUG BUTACAS OCUPADAS ===");
             System.out.println("Butacas ocupadas encontradas: " + butacasOcupadas.size());
         } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas ocupadas: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas OCUPADAS: " + e.getMessage());
             e.printStackTrace();
             return;
         }
@@ -132,18 +141,38 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
             codigosButacasOcupadas.add(butacaOcupada.getId());
         }
 
-        // 5. Renderizar el mapa visual de butacas con estado ocupado/disponible
-        cargarMapaButacas(codigosButacasOcupadas, funcionSeleccionada.getSala());
+        // 4.5 Obtener butacas reservadas
+        List<Butaca> butacasReservadas;
+        try {
+            butacasReservadas = boletoDAO.listarButacasReservadasPorFuncion(funcionSeleccionada, ServicioTemporizador.getInstancia().getIdDeSesion());
+            System.out.println("=== DEBUG BUTACAS RESERVADAS ===");
+            System.out.println("Butacas reservadas encontradas: " + butacasReservadas.size());
+        } catch (Exception e) {
+            ManejadorMetodosComunes.mostrarVentanaError("Error al cargar las butacas RESERVADAS: " + e.getMessage());
+            e.printStackTrace();
+            return;
+        }
+
+        // 4.75 Crear Set de IDs para búsqueda eficiente O(1) de butacas reservadas
+        Set<Integer> codigosButacasReservadas = new HashSet<>();
+        for (Butaca butacaReservada : butacasReservadas) {
+            codigosButacasReservadas.add(butacaReservada.getId());
+        }
 
         // 6. Guardar referencia para uso posterior en otros métodos
         this.funcionSeleccionada = funcionSeleccionada;
 
+        // 5. Renderizar el mapa visual de butacas con estado ocupado/disponible
+        cargarMapaButacas(codigosButacasOcupadas, funcionSeleccionada.getSala(), codigosButacasReservadas);
+
+        
         // Vincular el label del temporizador para que se actualice automáticamente
         if (timerLabel != null) {
             timerLabel.textProperty().bind(ServicioTemporizador.getInstancia().tiempoRestanteProperty());
         }
 
-
+        // Configurar el cierre de ventana cuando esté disponible
+        configurarCierreDeVentanaConListener();
     }
 
     /**
@@ -162,10 +191,9 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
             informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
 
             // Configurar el controlador del panel lateral
-            ControladorInformacionDeVenta = loader.getController();
-            ControladorInformacionDeVenta.setRoot(vistaInformacionLateral);
-            ControladorInformacionDeVenta.cargarInformacionDeFuncionSeleccionada(funcion);
-            ControladorInformacionDeVenta.mostrarSoloSubtotal(); // Vista inicial simplificada
+            controladorInformacionDeVenta = loader.getController();
+            controladorInformacionDeVenta.setRoot(vistaInformacionLateral);
+            controladorInformacionDeVenta.cargarInformacionDeFuncionSeleccionada(funcion);            
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
@@ -182,7 +210,7 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
      * @param codigosButacasOcupadas Set con IDs de butacas ya vendidas
      * @param salaSeleccionada       Sala cuyo mapa se debe renderizar
      */
-    private void cargarMapaButacas(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada) {
+    private void cargarMapaButacas(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada, Set<Integer> codigosButacasReservadas) {
         try {
             // 1. Cargar vista FXML del mapa de butacas
             FXMLLoader loader = new FXMLLoader();
@@ -197,8 +225,12 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
             //controladorDeConsultaSalas.setControladorAsignadorButacas(this);
             controladorDeConsultaSalas.suscribir(this);
 
+            controladorDeConsultaSalas.setButacasYaSeleccionadas(butacasYaSeleccionadas);
+
             // 4. Renderizar butacas con estado visual (ocupada/disponible)
-            controladorDeConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada);
+            controladorDeConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada, codigosButacasReservadas, funcionSeleccionada, ServicioTemporizador.getInstancia().getIdDeSesion());
+            //controladorDeConsultaSalas.mostrarButacasDeSala(codigosButacasOcupadas, salaSeleccionada, funcionSeleccionada, idDeSesion);
+
 
         } catch (IOException e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al cargar el mapa de butacas: " + e.getMessage());
@@ -218,6 +250,8 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
         ServicioTemporizador.getInstancia().detenerTemporizador();
         // Obtener referencia a la ventana actual
         Stage currentStage = (Stage) buttonContinuar.getScene().getWindow();
+
+        realizarAccionesAntesDeCerrarVentana();
 
         // Cambiar a la vista de funciones preservando el contexto de la película
         ControladorVisualizadorFunciones controladorFunciones = ManejadorMetodosComunes
@@ -258,7 +292,7 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
 
             // 4. Configurar el controlador de facturación con datos necesarios
             ControladorFacturacion controladorFacturacion = loader.getController();
-            controladorFacturacion.setControladorInformacionDeVenta(ControladorInformacionDeVenta);
+            controladorFacturacion.setControladorInformacionDeVenta(controladorInformacionDeVenta);
 
             // 5. Inicializar datos ANTES de mostrar la vista (evita problemas de
             // renderizado)
@@ -267,7 +301,7 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
             // 6. Ahora sí cambiar la escena con todos los datos ya cargados
             Scene newScene = new Scene(root);
             currentStage.setScene(newScene);
-            currentStage.setTitle("CineMax");
+            currentStage.setTitle("CineMax"); 
 
         } catch (Exception e) {
             ManejadorMetodosComunes.mostrarVentanaError("Error al confirmar: " + e.getMessage());
@@ -330,8 +364,8 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
         butacasSeleccionadas.add(butaca);
 
         // Actualizar visualización en panel lateral
-        ControladorInformacionDeVenta.cargarButacaSeleccionada(butaca);
-        ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        controladorInformacionDeVenta.cargarButacaSeleccionada(butaca);
+        controladorInformacionDeVenta.calcularSubTotalImpuestoYTotal(butacasSeleccionadas, funcionSeleccionada);
     }
 
     @Override
@@ -345,8 +379,85 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
         butacasSeleccionadas.remove(butaca);
 
         // Actualizar visualización en panel lateral
-        ControladorInformacionDeVenta.removerButacaSeleccionada(butaca);
-        ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        controladorInformacionDeVenta.removerButacaSeleccionada(butaca);
+        controladorInformacionDeVenta.calcularSubTotalImpuestoYTotal(butacasSeleccionadas, funcionSeleccionada);
+    }
+
+    /**
+     * Configura el manejo del evento de cierre de ventana usando un listener
+     * que se activa cuando la escena está disponible
+     */
+    private void configurarCierreDeVentanaConListener() {
+        // Agregar un listener a la propiedad scene del botón
+        buttonContinuar.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                System.out.println("Escena detectada, configurando cierre de ventana...");
+                // Agregar un listener adicional para cuando la ventana esté disponible
+                newScene.windowProperty().addListener((obs, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        System.out.println("Ventana detectada, configurando evento de cierre...");
+                        configurarCierreDeVentana((Stage) newWindow);
+                    }
+                });
+                
+                // Si la ventana ya está disponible, configurar inmediatamente
+                if (newScene.getWindow() != null) {
+                    System.out.println("Ventana ya disponible, configurando evento de cierre...");
+                    configurarCierreDeVentana((Stage) newScene.getWindow());
+                }
+            }
+        });
+        
+        // Si la escena ya está disponible, configurar inmediatamente
+        if (buttonContinuar.getScene() != null) {
+            System.out.println("Escena ya disponible, configurando cierre...");
+            if (buttonContinuar.getScene().getWindow() != null) {
+                configurarCierreDeVentana((Stage) buttonContinuar.getScene().getWindow());
+            }
+        }
+    }
+
+    /**
+     * Configura el manejo del evento de cierre de ventana
+     */
+    private void configurarCierreDeVentana(Stage stage) {
+        try {
+            System.out.println("Configurando evento setOnCloseRequest...");
+            // Interceptar el evento de cierre (cuando presionan la "X")
+            stage.setOnCloseRequest(e -> {
+                System.out.println("Usuario cerró la ventana - Liberando reservas...");
+                realizarAccionesAntesDeCerrarVentana();
+            });
+            System.out.println("Evento de cierre configurado exitosamente!");
+            
+        } catch (Exception e) {
+            System.err.println("Error al configurar el cierre de ventana: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Libera las reservas cuando se cierra la ventana
+     */
+    private void realizarAccionesAntesDeCerrarVentana() {
+        try {
+            // Detener temporizador
+            ServicioTemporizador.getInstancia().detenerTemporizador();
+            
+            // Liberar reservas de este session
+            if (ServicioTemporizador.getInstancia().getIdDeSesion() != null) {
+                boletoDAO.liberarTodasButacasReservadasTemporalmentePorSession(ServicioTemporizador.getInstancia().getIdDeSesion());
+                System.out.println("Reservas liberadas para session: " + ServicioTemporizador.getInstancia().getIdDeSesion());
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error al liberar reservas al cerrar: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    public void setButacasYaSeleccionadas(List<Butaca> butacasYaSeleccionadas) {
+        this.butacasYaSeleccionadas = butacasYaSeleccionadas;
     }
 
 }

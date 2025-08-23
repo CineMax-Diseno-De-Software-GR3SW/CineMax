@@ -54,6 +54,16 @@ public class ServicioVisualizadorCartelera {
             });
         }, 0, 10, TimeUnit.MINUTES); // Inicia inmediatamente y luego cada 10 minutos
     }
+    /**
+     * Detiene el planificador de actualizaciones automáticas
+     */
+    public void detenerPlanificador() {
+        if (planificador != null && !planificador.isShutdown()) {
+            planificador.shutdownNow();
+            System.out.println("Planificador de cartelera detenido");
+        }
+    }
+
     // ========== MÉTODOS PÚBLICOS ==========
 
     /**

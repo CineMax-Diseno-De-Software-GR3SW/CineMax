@@ -41,7 +41,7 @@ public class FacturaDAO {
             ps.setLong(1, factura.getCodigoFactura());
             ps.setString(2, factura.getCliente().getIdCliente());
 
-            DateTimeFormatter entrada = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+            DateTimeFormatter entrada = DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
             LocalDateTime fechaFormateada = LocalDateTime.parse(factura.getFecha(), entrada);
             ps.setTimestamp(3, Timestamp.valueOf(fechaFormateada));
 

@@ -1,6 +1,7 @@
 package com.cinemax.venta_boletos.controladores;
 
 import com.cinemax.venta_boletos.servicios.ServicioTemporizador;
+import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.utilidades.ControladorCargaConDatos;
 import com.cinemax.utilidades.ManejadorMetodosComunes;
 import com.cinemax.utilidades.estrategiaValidacionDocumentos.ContextoValidacion;
@@ -11,6 +12,7 @@ import com.cinemax.venta_boletos.modelos.entidades.Boleto;
 import com.cinemax.venta_boletos.modelos.entidades.CalculadorIVA;
 import com.cinemax.venta_boletos.modelos.entidades.Cliente;
 import com.cinemax.venta_boletos.modelos.entidades.Producto;
+import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
 import com.cinemax.venta_boletos.servicios.ServicioContenidoFactura;
 import com.cinemax.venta_boletos.servicios.ServicioCliente;
 import com.cinemax.venta_boletos.servicios.ServicioFacturacion;
@@ -104,6 +106,8 @@ public class ControladorFacturacion {
     /** Controlador del panel lateral que muestra información de la función. */
     private ControladorInformacionDeVenta controladorInformacionDeVenta;
 
+    private BoletoDAO boletoDAO = new BoletoDAO();
+
     /**
      * Inicializa los elementos gráficos de la vista y configura los eventos asociados.
      *
@@ -188,6 +192,9 @@ public class ControladorFacturacion {
                 identificacionField.setText(filteredValue);
             }
         });
+
+        // Configurar el cierre de ventana cuando esté disponible
+        configurarCierreDeVentanaConListener();
     }
 
 
@@ -220,7 +227,7 @@ public class ControladorFacturacion {
         informacionFuncionContainer.getChildren().add(vistaInformacionLateral);
 
         // 5. Calcular el total a pagar por los boletos seleccionados.
-        controladorInformacionDeVenta.calcularTotal(boletos);
+        //controladorInformacionDeVenta.calcularTotal();
     }
 
     /**
@@ -379,18 +386,21 @@ public class ControladorFacturacion {
             servicioCliente.crearCliente(cliente);
         }
 
+        // Redirigir al usuario a la pantalla principal del portal de empleados.
+        ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", 30, 225);
+        //ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
+
         // Generar los boletos y la factura.
         ServicioContenidoFactura generador = new ServicioContenidoFactura();
         generador.generarBoletos(boletos);
         CalculadorImpuesto calculadorImpuesto = new CalculadorIVA();
         servicioFacturacion.generarFactura(this.boletos, cliente,calculadorImpuesto);
 
-
         // Detener el temporizador después de un pago exitoso.
         ServicioTemporizador.getInstancia().detenerTemporizador();
 
-        // Redirigir al usuario a la pantalla principal del portal de empleados.
-        ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
+        realizarAccionesAntesDeCerrarVentana();
+
     }
 
     /**
@@ -406,13 +416,26 @@ public class ControladorFacturacion {
             // Obtener la ventana actual desde el headerBar.
             Stage currentStage = (Stage) headerBar.getScene().getWindow();
 
+            List<Butaca> butacasSeleccionadas = new ArrayList<>();
+            for (Producto boleto : boletos) {
+                butacasSeleccionadas.add(((Boleto) boleto).getButaca());
+            }
+
             // Crear el controlador de carga para la vista de selección de butacas,
             // pasando la ruta FXML, la ventana actual y la función asociada al primer boleto
+            List<Object> datosTransferencia = new ArrayList<>();
+            datosTransferencia.add(((Boleto) boletos.get(0)).getFuncion());
+            datosTransferencia.add(butacasSeleccionadas);
+            
+            // Debug: Verificar que se están pasando los datos correctamente
+            System.out.println("DEBUG - Datos transferencia size: " + datosTransferencia.size());
+            System.out.println("DEBUG - Butacas seleccionadas size: " + butacasSeleccionadas.size());
+            
             ControladorCargaConDatos controladorCargaConDatos = new ControladorCargaAsignacionButacas(
                 "/vistas/venta_boletos/VistaSeleccionButacas.fxml",
                 currentStage,
-                new ArrayList<>(List.of(((Boleto) boletos.get(0)).getFuncion()))
-            );            
+                datosTransferencia
+            );
 
             // 3. Llamar al manejador de métodos comunes para mostrar la pantalla de carga
             ManejadorMetodosComunes.mostrarVistaDeCargaPasandoDatosOptimizada(currentStage, controladorCargaConDatos, 8, 325);
@@ -430,7 +453,6 @@ public class ControladorFacturacion {
      */
     public void setControladorInformacionDeVenta(ControladorInformacionDeVenta controladorInformacionLateral) {
         this.controladorInformacionDeVenta = controladorInformacionLateral;
-        controladorInformacionLateral.mostrarTodaLaInformacionDelPago();
     }
 
     /**
@@ -539,4 +561,79 @@ public class ControladorFacturacion {
             ManejadorMetodosComunes.mostrarVentanaExito("Cliente actualizado exitosamente.");
         }
     }
+
+    /**
+     * Configura el manejo del evento de cierre de ventana usando un listener
+     * que se activa cuando la escena está disponible
+     */
+    private void configurarCierreDeVentanaConListener() {
+        // Agregar un listener a la propiedad scene del botón
+        buttonPagar.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                System.out.println("Escena detectada en ControladorFacturacion, configurando cierre de ventana...");
+                // Agregar un listener adicional para cuando la ventana esté disponible
+                newScene.windowProperty().addListener((obs, oldWindow, newWindow) -> {
+                    if (newWindow != null) {
+                        System.out.println("Ventana detectada en ControladorFacturacion, configurando evento de cierre...");
+                        configurarCierreDeVentana((Stage) newWindow);
+                    }
+                });
+                
+                // Si la ventana ya está disponible, configurar inmediatamente
+                if (newScene.getWindow() != null) {
+                    System.out.println("Ventana ya disponible en ControladorFacturacion, configurando evento de cierre...");
+                    configurarCierreDeVentana((Stage) newScene.getWindow());
+                }
+            }
+        });
+        
+        // Si la escena ya está disponible, configurar inmediatamente
+        if (buttonPagar.getScene() != null) {
+            System.out.println("Escena ya disponible en ControladorFacturacion, configurando cierre...");
+            if (buttonPagar.getScene().getWindow() != null) {
+                configurarCierreDeVentana((Stage) buttonPagar.getScene().getWindow());
+            }
+        }
+    }
+
+    /**
+     * Configura el manejo del evento de cierre de ventana
+     */
+    private void configurarCierreDeVentana(Stage stage) {
+        try {
+            System.out.println("Configurando evento setOnCloseRequest en ControladorFacturacion...");
+            // Interceptar el evento de cierre (cuando presionan la "X")
+            stage.setOnCloseRequest(e -> {
+                System.out.println("Usuario cerró la ventana desde ControladorFacturacion - Liberando reservas...");
+                realizarAccionesAntesDeCerrarVentana();
+            });
+            System.out.println("Evento de cierre configurado exitosamente en ControladorFacturacion!");
+            
+        } catch (Exception e) {
+            System.err.println("Error al configurar el cierre de ventana en ControladorFacturacion: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Libera las reservas cuando se cierra la ventana
+     */
+    private void realizarAccionesAntesDeCerrarVentana() {
+        try {
+            // Detener temporizador
+            ServicioTemporizador.getInstancia().detenerTemporizador();
+            
+            // Liberar reservas de este session
+            if (ServicioTemporizador.getInstancia().getIdDeSesion() != null) {
+                boletoDAO.liberarTodasButacasReservadasTemporalmentePorSession(ServicioTemporizador.getInstancia().getIdDeSesion());
+                System.out.println("Reservas liberadas para session: " + ServicioTemporizador.getInstancia().getIdDeSesion());
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error al liberar reservas al cerrar: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+
 }

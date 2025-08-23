@@ -2,12 +2,14 @@
 package com.cinemax.salas.controladores;
 
 import com.cinemax.utilidades.ManejadorMetodosComunes;
+import com.cinemax.peliculas.modelos.entidades.Funcion;
 import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.salas.modelos.entidades.EstadoButaca;
 import com.cinemax.salas.modelos.entidades.Sala;
 import com.cinemax.salas.servicios.ServicioButaca;
 import com.cinemax.venta_boletos.controladores.ControladorAsignadorButacas;
 import com.cinemax.venta_boletos.controladores.SuscriptorSeleccionButaca;
+import com.cinemax.venta_boletos.modelos.persistencia.BoletoDAO;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -44,6 +46,8 @@ public class ControladorDeConsultaSalas implements Initializable {
 
     private final ServicioButaca servicioButaca = new ServicioButaca();
     private List<Butaca> butacasSeleccionadas = new ArrayList<>();
+    private List<Butaca> butacasYaSeleccionadas = new ArrayList<>();
+    private BoletoDAO boletoDAO = new BoletoDAO();
 
     //private ControladorAsignadorButacas controladorAsignadorButacas;
     private List<SuscriptorSeleccionButaca> suscriptoresSeleccionButacas = new ArrayList<>();
@@ -65,8 +69,9 @@ public class ControladorDeConsultaSalas implements Initializable {
      *
      * @param codigosButacasOcupadas IDs de las butacas que YA están ocupadas para esta función específica
      * @param salaSeleccionada La sala de la cual queremos mostrar las butacas
+     * @param idDeSesion 
      */
-    public void mostrarButacasDeSala(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada) {
+    public void mostrarButacasDeSala(Set<Integer> codigosButacasOcupadas, Sala salaSeleccionada, Set<Integer> codigoButacasReservadas, Funcion funcionSeleccionada, String idDeSesion) {
         // PASO 1: Limpiar la cuadrícula antes de mostrar las nuevas butacas
         gridButacas.getChildren().clear();
 
@@ -88,32 +93,61 @@ public class ControladorDeConsultaSalas implements Initializable {
                 btn.setMaxSize(60, 60);
 
                 System.out.println("Procesando butaca: " + butaca.getFila() + butaca.getColumna() + " Estado: " + butaca.getEstado() + " ID: " + butaca.getId());
-                
-                // CASO 1: Si el usuario ya seleccionó esta butaca (color azul)
-                if (butacasSeleccionadas.contains(butaca)) {
-                    // Butaca seleccionada por el usuario actual
-                    btn.setStyle("-fx-background-color: #02487B; -fx-text-fill: white;");
-                    btn.setOnAction(e -> deseleccionarButaca(butaca, btn));
-                    continue;
+
+                boolean butacaYaProcesada = false;
+                if(butacasYaSeleccionadas.size()>0) {
+                    System.out.println("-------------------------Butacas ya seleccionadas: -----------------------------" + butacasYaSeleccionadas.size());
+                    for (Butaca butacaYaSeleccionada : butacasYaSeleccionadas) {
+                        if(butacaYaSeleccionada.getId() == butaca.getId()) {
+                            butacasSeleccionadas.add(butaca); // Agregar a la lista
+                            btn.setStyle("-fx-background-color: #02487B; -fx-text-fill: white;"); // Color azul
+                            btn.setOnAction(e -> deseleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion)); // Cambiar acción a deseleccionar
+                            for (SuscriptorSeleccionButaca suscriptorButaca : suscriptoresSeleccionButacas) {
+                                suscriptorButaca.agregarButacaSeleccionada(butaca);
+                            }
+                            butacaYaProcesada = true;
+                        }
+                    }
                 }
 
-                // CASO 2: Si la butaca está en la lista de ocupadas (color rojo)
-                if (codigosButacasOcupadas.contains(butaca.getId())) {
-
-                    // Si la butaca no estaba marcada como ocupada, la marcamos ahora
-                    if(!butaca.getEstado().equals("OCUPADA")) { 
-                        butaca.setEstado(EstadoButaca.OCUPADA.toString());
-                        servicioButaca.actualizarButaca(butaca);
-                    }
-                    btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
-                    btn.setDisable(true); // No se puede hacer clic
+                if(!butacaYaProcesada) {
                     
-                } else { 
+                    // CASO 1: Si el usuario ya seleccionó esta butaca (color azul)
+                    if (butacasSeleccionadas.contains(butaca)) {
+                        // Butaca seleccionada por el usuario actual
+                        //btn.setStyle("-fx-background-color: #02487B; -fx-text-fill: white;");
+                        System.out.println("CASO 1: Butaca ya seleccionada por el usuario: " + butaca.getFila() + butaca.getColumna());
+                        btn.setOnAction(e -> deseleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion)); // Cambiar acción a deseleccionar
+                        continue;
+                    }
+
+                    // CASO 2: Si la butaca está en la lista de ocupadas (color rojo)
+                    if (codigosButacasOcupadas.contains(butaca.getId())) {
+
+                        // Si la butaca no estaba marcada como ocupada, la marcamos ahora
+                        if(!butaca.getEstado().equals("OCUPADA")) { 
+                            butaca.setEstado(EstadoButaca.OCUPADA.toString());
+                            servicioButaca.actualizarButaca(butaca);
+                        }
+                        System.out.println("CASO 2: Butaca ocupada: " + butaca.getFila() + butaca.getColumna());
+                        btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                        btn.setDisable(true); // No se puede hacer clic
+
+                    } else if (codigoButacasReservadas.contains(butaca.getId()) && boletoDAO.determinarSiLaButacaEstaReservada(butaca, funcionSeleccionada, idDeSesion)) {
+                        System.out.println("CASO RESERVADA: Butaca reservada temporalmente por otro usuario: " + butaca.getFila() + butaca.getColumna());
+                        btn.setStyle("-fx-background-color: orange; -fx-text-fill: white;");
+                        btn.setOnAction(e -> seleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion));
+                        //btn.setDisable(true); // No se puede hacer clic
+                    }else if (codigoButacasReservadas.contains(butaca.getId()) && !boletoDAO.determinarSiLaButacaEstaReservada(butaca, funcionSeleccionada, idDeSesion)) {
+                        btn.setOnAction(e -> seleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion));
+                        //btn.setDisable(true); // No se puede hacer clic
+                    } else {
                     // CASO 3: Determinar color según el estado de la butaca
                     switch (butaca.getEstado()) {
                         case "DISPONIBLE": 
                             btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");
-                            btn.setOnAction(e -> seleccionarButaca(butaca, btn));
+                            
+                            btn.setOnAction(e -> seleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion));
                             break;
                         case "INHABILITADA": 
                             btn.setStyle("-fx-background-color: gray; -fx-text-fill: white;");
@@ -121,12 +155,13 @@ public class ControladorDeConsultaSalas implements Initializable {
                             break;
                         case "OCUPADA": // Puede estar disponible (ocupada en otra función)
                             btn.setStyle("-fx-background-color: green; -fx-text-fill: white;");
-                            btn.setOnAction(e -> seleccionarButaca(butaca, btn));
+                            btn.setOnAction(e -> seleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion));
                             break;
                         default:
                             ManejadorMetodosComunes.mostrarVentanaError("La butaca " + butaca.getFila() + butaca.getColumna() + " tiene un estado no reconocido: " + butaca.getEstado() + "o desde la base de datos su estado es 'OCUPADA'");
                             break;
                     }
+                }
                 }
 
                 // PASO 4: Calcular posición en la cuadrícula y agregar el botón
@@ -151,11 +186,22 @@ public class ControladorDeConsultaSalas implements Initializable {
      * 3. Cambia la acción del clic para que ahora deseleccione
      * 4. Notifica al controlador asignador sobre la nueva selección
      */
-    private void seleccionarButaca(Butaca butaca, Button btn) {
+    private void seleccionarButaca(Butaca butaca, Button btn, Funcion funcionSeleccionada, String idDeSesion) {
         if (!butacasSeleccionadas.contains(butaca) && suscriptoresSeleccionButacas != null) {
+            
+            try {
+                if(!boletoDAO.reservarButacaTemporalmente(butaca, funcionSeleccionada, idDeSesion)) {
+                    btn.setStyle("-fx-background-color: orange; -fx-text-fill: white;");
+                    //btn.setDisable(true); // No se puede hacer clic
+                    ManejadorMetodosComunes.mostrarVentanaError("La butaca " + butaca.getFila() + butaca.getColumna() + " ya está reservada.");
+                    return;
+                }
+            } catch (Exception e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Error al reservar butaca temporalmente: " + e.getMessage());
+            }
             butacasSeleccionadas.add(butaca); // Agregar a la lista
             btn.setStyle("-fx-background-color: #02487B; -fx-text-fill: white;"); // Color azul
-            btn.setOnAction(e -> deseleccionarButaca(butaca, btn)); // Cambiar acción a deseleccionar
+            btn.setOnAction(e -> deseleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion)); // Cambiar acción a deseleccionar
             for (SuscriptorSeleccionButaca suscriptorButaca : suscriptoresSeleccionButacas) {
                 suscriptorButaca.agregarButacaSeleccionada(butaca);
             }
@@ -170,16 +216,27 @@ public class ControladorDeConsultaSalas implements Initializable {
      * 3. Cambia la acción del clic para que ahora seleccione
      * 4. Notifica al controlador asignador sobre la deselección
      */
-    private void deseleccionarButaca(Butaca butaca, Button btn) {
+    private void deseleccionarButaca(Butaca butaca, Button btn, Funcion funcionSeleccionada, String idDeSesion) {
         if(butacasSeleccionadas.contains(butaca)) {
+            
+            try {
+                boletoDAO.liberarButacaReservadaTemporalmentePorSession(idDeSesion, butaca.getId());
+            } catch (Exception e) {
+                ManejadorMetodosComunes.mostrarVentanaError("Error al liberar butaca reservada temporalmente: " + e.getMessage());
+            }
             butacasSeleccionadas.remove(butaca); // Remover de la lista
             btn.setStyle("-fx-background-color: green; -fx-text-fill: white;"); // Color verde
-            btn.setOnAction(e -> seleccionarButaca(butaca, btn)); // Cambiar acción a seleccionar
+
+            btn.setOnAction(e -> seleccionarButaca(butaca, btn, funcionSeleccionada, idDeSesion)); // Cambiar acción a seleccionar
             //controladorAsignadorButacas.quitarButacaDeseleccionada(butaca); // Notificar
             for (SuscriptorSeleccionButaca suscriptorButaca : suscriptoresSeleccionButacas) {
                 suscriptorButaca.eliminarButacaSeleccionada(butaca);
             }
         }
+    }
+
+    public void setButacasYaSeleccionadas(List<Butaca> butacas) {
+        this.butacasYaSeleccionadas = butacas;
     }
 
     //public List<Butaca> getButacasSeleccionadas() {

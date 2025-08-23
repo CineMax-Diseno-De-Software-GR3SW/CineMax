@@ -40,7 +40,8 @@ public class ServicioFacturacion {
             // Guardar la factura en la base de datos.
             facturaDAO.crearFactura(factura);
         } catch (Exception e) {
-            ManejadorMetodosComunes.mostrarVentanaError("Sucedió algo inesperado al crear la factura: " + e.getMessage());
+            ManejadorMetodosComunes.mostrarVentanaError("1. Sucedió algo inesperado al crear la factura: " + e.getMessage());
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
 

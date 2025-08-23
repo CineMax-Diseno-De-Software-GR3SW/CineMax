@@ -66,6 +66,54 @@ public class BoletoDAO {
         }
     }
 
+    public List<Butaca> listarButacasReservadasPorFuncion(Funcion funcion, String idDeSesion) throws Exception {
+        List<Butaca> butacas = new ArrayList<>();
+        String sql = """
+        SELECT 
+            bu.id AS id_butaca,
+            bu.sala_id,
+            bu.fila,
+            bu.columna,
+            bu.estado
+        FROM 
+            butacas_reservadas_temporalmente brt
+        JOIN 
+            butaca bu ON brt.butaca_id = bu.id
+        WHERE 
+            brt.funcion_id = ? 
+            AND brt.session_id != ?  -- Excluir nuestras propias reservas
+        """;
+        
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        Connection conn = null;
+        try {
+            conn = conexionBase.conectar(); 
+            ps = conn.prepareStatement(sql);
+            ps.setInt(1, funcion.getId());
+            ps.setString(2, idDeSesion);
+
+            rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Butaca butaca = new Butaca();
+                butaca.setId(rs.getInt("id_butaca"));
+                butaca.setIdSala(rs.getInt("sala_id"));
+                butaca.setFila(rs.getString("fila"));
+                butaca.setColumna(rs.getString("columna"));
+                butaca.setEstado(rs.getString("estado"));
+                butacas.add(butaca);
+            }
+            return butacas;
+        } catch (SQLException e) {
+            System.err.println("Error al listar butacas reservadas: " + e.getMessage());
+            throw new Exception("Error al consultar butacas reservadas", e);
+        } finally {
+            ConexionBaseSingleton.cerrarRecursos(rs, ps);
+            if (conn != null) conn.close();
+        }
+    }
+
     /**
      * Inserta un nuevo boleto en la base de datos.
      * @param boleto El objeto Boleto que contiene la información del boleto a insertar.
@@ -86,4 +134,75 @@ public class BoletoDAO {
             System.err.println("Error al insertar boleto: " + e.getMessage());
         }
     }
+
+    public boolean determinarSiLaButacaEstaReservada(Butaca butaca, Funcion funcion, String sessionId) throws Exception {
+        String sqlCheck = "SELECT COUNT(*) FROM butacas_reservadas_temporalmente WHERE butaca_id = ? AND funcion_id = ?";
+        
+        try (Connection conn = conexionBase.conectar();
+             PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
+            psCheck.setInt(1, butaca.getId());
+            psCheck.setInt(2, funcion.getId());
+            
+            try (ResultSet rs = psCheck.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    return true; // Ya está reservada
+                }
+            }
+            return false; // No está reservada
+        }
+    }
+
+     // Método para reservar temporalmente una butaca
+    public boolean reservarButacaTemporalmente(Butaca butaca, Funcion funcion, String sessionId) throws Exception {
+        // Primero verificar si ya existe
+        String sqlCheck = "SELECT COUNT(*) FROM butacas_reservadas_temporalmente WHERE butaca_id = ? AND funcion_id = ?";
+        String sqlInsert = "INSERT INTO butacas_reservadas_temporalmente (butaca_id, funcion_id, session_id) VALUES (?, ?, ?)";
+        
+        try (Connection conn = conexionBase.conectar()) {
+            // Verificar si ya existe
+            try (PreparedStatement psCheck = conn.prepareStatement(sqlCheck)) {
+                psCheck.setInt(1, butaca.getId());
+                psCheck.setInt(2, funcion.getId());
+                
+                try (ResultSet rs = psCheck.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        return false; // Ya existe, no se puede reservar
+                    }
+                }
+            }
+            
+            // Si no existe, insertar
+            try (PreparedStatement psInsert = conn.prepareStatement(sqlInsert)) {
+                psInsert.setInt(1, butaca.getId());
+                psInsert.setInt(2, funcion.getId());
+                psInsert.setString(3, sessionId);
+                
+                return psInsert.executeUpdate() > 0;
+            }
+        }
+    }
+
+    // Método para liberar reserva temporal
+    public void liberarButacaReservadaTemporalmentePorSession(String sessionId, int butacaId) throws Exception {
+        String sql = "DELETE FROM butacas_reservadas_temporalmente WHERE session_id = ? AND butaca_id = ?";
+        try (Connection conn = conexionBase.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, sessionId);
+            ps.setInt(2, butacaId);
+            ps.executeUpdate();
+        }
+    }
+
+    public void liberarTodasButacasReservadasTemporalmentePorSession(String sessionId) throws Exception {
+        String sql = "DELETE FROM butacas_reservadas_temporalmente WHERE session_id = ?";
+        try (Connection conn = conexionBase.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, sessionId);
+            ps.executeUpdate();
+        }
+    }
+
+
  }

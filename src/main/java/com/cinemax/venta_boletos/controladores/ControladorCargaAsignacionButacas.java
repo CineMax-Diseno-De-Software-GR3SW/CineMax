@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.cinemax.peliculas.modelos.entidades.Funcion;
+import com.cinemax.salas.modelos.entidades.Butaca;
 import com.cinemax.utilidades.ControladorCargaConDatos;
 import com.cinemax.utilidades.ResultadoCarga;
 
@@ -50,9 +51,20 @@ public class ControladorCargaAsignacionButacas extends ControladorCargaConDatos 
             ControladorAsignadorButacas controller = loader.getController();
             
             // 3. Inicializar datos en background
-            Funcion funcion = (Funcion) getDatosTransferencia().get(0);
+            System.out.println("DEBUG - ControladorCargaAsignacionButacas - Size datos: " + getDatosTransferencia().size());
             
-            // Aquí ocurre el procesamiento pesado y se hace EN PARALELO con la animación de la barra
+            //if (getDatosTransferencia().size() < 2) {
+            //    throw new IllegalArgumentException("Se esperan al menos 2 elementos en datosTransferencia, pero se recibieron: " + getDatosTransferencia().size());
+            //}
+            
+            Funcion funcion = (Funcion) getDatosTransferencia().get(0);
+
+            if (getDatosTransferencia().size() > 1) {
+                List<Butaca> butacasSeleccionadas = (List<Butaca>) getDatosTransferencia().get(1);
+                controller.setButacasYaSeleccionadas(butacasSeleccionadas);
+            }
+
+            //// Aquí ocurre el procesamiento pesado y se hace EN PARALELO con la animación de la barra
             controller.inicializarDatos(funcion);
 
             // Si hubiera más procesamiento pesado, se haría aquí: carga de datos de base de datos, procesar listas grandes, inicializar componentes complejos, etc.

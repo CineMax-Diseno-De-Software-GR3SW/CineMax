@@ -132,41 +132,6 @@ public class ControladorInformacionDeVenta {
         this.cantidadDeButacasSeleccionadas = 1;
     }
 
-    /**
-     * Configura la vista para mostrar solo el precio total.
-     * 
-     * Oculta los elementos de desglose (subtotal e impuestos) para
-     * mostrar una vista simplificada durante la selección de butacas.
-     * Útil cuando solo se necesita ver el precio final sin detalles.
-     */
-    public void mostrarSoloSubtotal() {
-        HBoxImpuesto.setVisible(false);
-        HBoxSubtotal.setVisible(false);
-        labelTotalTexto.setVisible(false);
-    }
-
-    /**
-     * Configura la vista para mostrar toda la información de pago.
-     * 
-     * Muestra el desglose completo con subtotal, impuestos y total.
-     * Calcula automáticamente el subtotal e impuesto basado en el total actual.
-     * Se utiliza típicamente en la pantalla de facturación.
-     */
-    public void mostrarTodaLaInformacionDelPago() {
-        HBoxImpuesto.setVisible(true);
-        HBoxSubtotal.setVisible(true);
-        labelTotalTexto.setVisible(true);
-        
-        // Transferir el total actual como subtotal
-        subtotalLabel.setText((totalLabel.getText()));
-
-        // Reemplazar la coma por un punto antes de la conversion
-        String totalText = totalLabel.getText().replace(",", ".");
-
-        // Calcular impuesto basado en el total y la tasa de IVA
-        impuestoLabel.setText(String.format("%.2f", Double.parseDouble(totalText) * CalculadorIVA.getIVA_TASA()));
-    }
-
 
     /**
      * Obtiene la referencia a la vista raíz.
@@ -242,7 +207,7 @@ public class ControladorInformacionDeVenta {
      * @param butacasSeleccionadas Lista de butacas que el usuario ha seleccionado
      * @param funcion Función que contiene los multiplicadores de precio
      */
-    public void calcularPosibleSubtotal(List<Butaca> butacasSeleccionadas, Funcion funcion) {
+    public void calcularSubtotal(List<Butaca> butacasSeleccionadas, Funcion funcion) {
 
         // Obtener todos los multiplicadores que afectan el precio
         double multiplicadorTipoDeSala = funcion.getSala().getTipo().getMultiplicador();
@@ -252,7 +217,7 @@ public class ControladorInformacionDeVenta {
 
         // Calcular subtotal aplicando todos los multiplicadores
         double subtotal = butacasSeleccionadas.size() * multiplicadorTipoDeSala * multiplicadorFormatoFuncion * multiplicadorTipoFuncion * multiplicadorHorario;
-        totalLabel.setText(String.format("%.2f", subtotal));
+        subtotalLabel.setText(String.format("%.2f", subtotal));
     }
 
     /**
@@ -263,13 +228,28 @@ public class ControladorInformacionDeVenta {
      * 
      * @param boletos Lista de productos/boletos (parámetro para compatibilidad)
      */
-    public void calcularTotal(List<Producto> boletos) {
+    public void calcularTotal() {
         String subtotalText = subtotalLabel.getText().replace(",", ".");
         String impuestoText = impuestoLabel.getText().replace(",", ".");
 
         // Sumar subtotal + impuesto para obtener el total final
         double total = Double.parseDouble(subtotalText) + Double.parseDouble(impuestoText);
         totalLabel.setText(String.format("%.2f", total));
+    }
+
+    public void calcularImpuesto() {
+        String subtotalText = subtotalLabel.getText().replace(",", ".");
+        double subtotal = Double.parseDouble(subtotalText);
+
+        
+        double impuesto = subtotal * CalculadorIVA.getIVA_TASA();
+        impuestoLabel.setText(String.format("%.2f", impuesto));
+    }
+
+    public void calcularSubTotalImpuestoYTotal(List<Butaca> butacasSeleccionadas, Funcion funcionSeleccionada) {
+        calcularSubtotal(butacasSeleccionadas, funcionSeleccionada);
+        calcularImpuesto();
+        calcularTotal();
     }
 
     /**
