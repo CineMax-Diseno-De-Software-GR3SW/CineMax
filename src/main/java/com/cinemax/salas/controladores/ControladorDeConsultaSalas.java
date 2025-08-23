@@ -96,7 +96,7 @@ public class ControladorDeConsultaSalas implements Initializable {
 
                 boolean butacaYaProcesada = false;
                 if(butacasYaSeleccionadas.size()>0) {
-                    System.out.println("-------------------------Butacas ya seleccionadas: -----------------------------" + butacasYaSeleccionadas.size());
+                    //System.out.println("-------------------------Butacas ya seleccionadas: -----------------------------" + butacasYaSeleccionadas.size());
                     for (Butaca butacaYaSeleccionada : butacasYaSeleccionadas) {
                         if(butacaYaSeleccionada.getId() == butaca.getId()) {
                             butacasSeleccionadas.add(butaca); // Agregar a la lista
@@ -196,6 +196,13 @@ public class ControladorDeConsultaSalas implements Initializable {
                     ManejadorMetodosComunes.mostrarVentanaError("La butaca " + butaca.getFila() + butaca.getColumna() + " ya está reservada.");
                     return;
                 }
+
+                if(boletoDAO.determinarSiLaButacaOcupada(butaca, funcionSeleccionada)) {
+                    btn.setStyle("-fx-background-color: red; -fx-text-fill: white;");
+                    btn.setDisable(true);
+                    ManejadorMetodosComunes.mostrarVentanaError("La butaca " + butaca.getFila() + butaca.getColumna() + " ya está ocupada.");
+                    return;
+                }
             } catch (Exception e) {
                 ManejadorMetodosComunes.mostrarVentanaError("Error al reservar butaca temporalmente: " + e.getMessage());
             }
@@ -239,11 +246,4 @@ public class ControladorDeConsultaSalas implements Initializable {
         this.butacasYaSeleccionadas = butacas;
     }
 
-    //public List<Butaca> getButacasSeleccionadas() {
-    //    return new ArrayList<>(butacasSeleccionadas);
-    //}
-
-    //public void setControladorAsignadorButacas(ControladorAsignadorButacas controladorAsignadorButacas) {
-    //    this.controladorAsignadorButacas = controladorAsignadorButacas;
-    //}
 }

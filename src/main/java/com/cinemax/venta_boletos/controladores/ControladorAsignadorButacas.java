@@ -311,48 +311,6 @@ public class ControladorAsignadorButacas implements SuscriptorSeleccionButaca {
 
     }
 
-    /**
-     * Método llamado por el controlador del mapa de butacas cuando el usuario
-     * hace clic en una butaca disponible. Actualiza tanto la lista interna
-     * como la visualización en el panel lateral.
-     * 
-     * @param butaca La butaca que se quiere agregar a la selección
-     */
-    //public void agregarButacaSeleccionada(Butaca butaca) {
-    //    // Validar que la butaca sea válida y no esté ya seleccionada
-    //    if (butaca == null || butacasSeleccionadas.contains(butaca)) {
-    //        return;
-    //    }
-//
-    //    // Agregar a la lista interna de seleccionadas
-    //    butacasSeleccionadas.add(butaca);
-//
-    //    // Actualizar visualización en panel lateral
-    //    ControladorInformacionDeVenta.cargarButacaSeleccionada(butaca);
-    //    ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
-    //}
-
-    /**
-     * Método llamado cuando el usuario hace clic nuevamente en una butaca
-     * ya seleccionada para deseleccionarla. Actualiza tanto la lista como
-     * la visualización del panel lateral.
-     * 
-     * @param butaca La butaca que se quiere remover de la selección
-     */
-    //public void quitarButacaDeseleccionada(Butaca butaca) {
-    //    // Validar que la butaca sea válida y esté en la lista de seleccionadas
-    //    if (butaca == null || !butacasSeleccionadas.contains(butaca)) {
-    //        return;
-    //    }
-//
-    //    // Remover de la lista interna
-    //    butacasSeleccionadas.remove(butaca);
-//
-    //    // Actualizar visualización en panel lateral
-    //    ControladorInformacionDeVenta.removerButacaSeleccionada(butaca);
-    //    ControladorInformacionDeVenta.calcularPosibleSubtotal(butacasSeleccionadas, funcionSeleccionada);
-    //}
-
     @Override
     public void agregarButacaSeleccionada(Butaca butaca) {
          // Validar que la butaca sea válida y no esté ya seleccionada

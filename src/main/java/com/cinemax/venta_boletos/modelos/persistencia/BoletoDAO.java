@@ -204,5 +204,22 @@ public class BoletoDAO {
         }
     }
 
+    public boolean determinarSiLaButacaOcupada(Butaca butaca, Funcion funcionSeleccionada) {
+        String sql = "SELECT COUNT(*) FROM boleto WHERE idbutaca = ? AND idfuncion = ?";
+        try (Connection conn = conexionBase.conectar();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, butaca.getId());
+            ps.setInt(2, funcionSeleccionada.getId());
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Mayor que 0 significa que está ocupada
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al determinar si la butaca está ocupada: " + e.getMessage());
+        }
+        return false;
+    }
+
 
  }

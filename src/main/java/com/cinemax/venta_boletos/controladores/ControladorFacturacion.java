@@ -386,10 +386,6 @@ public class ControladorFacturacion {
             servicioCliente.crearCliente(cliente);
         }
 
-        // Redirigir al usuario a la pantalla principal del portal de empleados.
-        ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", 30, 225);
-        //ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
-
         // Generar los boletos y la factura.
         ServicioContenidoFactura generador = new ServicioContenidoFactura();
         generador.generarBoletos(boletos);
@@ -400,6 +396,10 @@ public class ControladorFacturacion {
         ServicioTemporizador.getInstancia().detenerTemporizador();
 
         realizarAccionesAntesDeCerrarVentana();
+
+        // Redirigir al usuario a la pantalla principal del portal de empleados.
+        ManejadorMetodosComunes.mostrarPantallaDeCargaOptimizada((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", 30, 225);
+        //ManejadorMetodosComunes.cambiarVentana((Stage) buttonPagar.getScene().getWindow(), "/vistas/empleados/PantallaPortalPrincipal.fxml", "CineMAX");
 
     }
 
